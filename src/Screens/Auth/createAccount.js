@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -15,8 +15,11 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Util from '../../utils';
-import {A_KEY, BASE_URL, MY_HEADER} from '../../config';
+import { A_KEY, BASE_URL, MY_HEADER } from '../../config';
 import DatePicker from 'react-native-date-picker';
+import TextInputField from '../../Component/TextInputField';
+import ThemeButton from '../../Component/ThemeButton';
+import { FontFamily } from '../../Theme/FontFamily';
 export default class CreateAccount extends Component {
   constructor(props) {
     super(props);
@@ -54,7 +57,7 @@ export default class CreateAccount extends Component {
 
   setDateInState(value) {
     if (Platform.OS == 'android' && value == undefined) {
-      this.setState({showDatePicker: false});
+      this.setState({ showDatePicker: false });
     } else {
       var MyDate = value;
       var dateOfBirth = '';
@@ -64,13 +67,13 @@ export default class CreateAccount extends Component {
       if (tempoMonth < 10) tempoMonth = '0' + tempoMonth;
       if (tempoDate < 10) tempoDate = '0' + tempoDate;
       dateOfBirth = tempoDate + '-' + tempoMonth + '-' + MyDate.getFullYear();
-      this.setState({dateOfBirth, showDatePicker: false});
+      this.setState({ dateOfBirth, showDatePicker: false });
     }
   }
 
   async onProceed() {
     console.log(this.state.mobileNumber, ':', this.state.password);
-
+    this.props.navigation.navigate('VerifyOtp', FinalResponse);
     // check Not Blank
     if (this.state.mobileNumber == null) {
       ToastAndroid.showWithGravity(
@@ -145,7 +148,7 @@ export default class CreateAccount extends Component {
   }
 
   sendCredentials() {
-    this.setState({loader: true});
+    this.setState({ loader: true });
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('A_Key', A_KEY);
@@ -167,13 +170,13 @@ export default class CreateAccount extends Component {
       body: raw,
       redirect: 'follow',
     };
-
+    this.props.navigation.navigate('VerifyOtp', FinalResponse);
     fetch(`${BASE_URL}/auth/sign-up`, requestOptions)
       .then(result => result.json())
       .then(response => {
         console.log('getAuthenticateUser Action', response);
         if (response.response) {
-          this.setState({loader: false});
+          this.setState({ loader: false });
           let FinalResponse = {
             response: response.response,
             mobileNumber: this.state.mobileNumber,
@@ -184,7 +187,7 @@ export default class CreateAccount extends Component {
         }
 
         if (response.errors) {
-          this.setState({loader: false});
+          this.setState({ loader: false });
           ToastAndroid.showWithGravity(
             response.errors[0].msg,
             ToastAndroid.LONG,
@@ -194,7 +197,7 @@ export default class CreateAccount extends Component {
       })
       .catch(error => {
         console.log('error', error);
-        this.setState({loader: false});
+        this.setState({ loader: false });
         ToastAndroid.showWithGravity(
           error,
           ToastAndroid.LONG,
@@ -219,56 +222,38 @@ export default class CreateAccount extends Component {
           backgroundColor="#E5E5E5"
           barStyle={'dark-content'}
         />
-        <View style={{flex: 1}}>
+        <View style={{ flex: 1 }}>
           <View style={styles.createView}>
             <Text style={styles.createText}>Create an account</Text>
           </View>
           <View style={styles.viewInput}>
             <View style={styles.sectionStyle}>
-              <Icon
-                name="call"
-                size={22}
-                color="#741728"
-                style={styles.imageStyle}
-              />
-              <TextInput
-                style={{
-                  flex: 1,
-                  // color:
-                    // this.state.mobileNumber == null ? '#A39B9B' : '#741728',
-                }}
+
+              <TextInputField
                 placeholder="Mobile Number"
-                underlineColorAndroid="transparent"
-                keyboardType="numeric"
+                iconName={'call'}
                 onChangeText={text => {
-                  this.setState({mobileNumber: text});
+                  this.setState({ mobileNumber: text });
                 }}
-                placeholderTextColor={'#A39B9B'}
+                isPassword={false}
+                visibility={false}
               />
             </View>
             <View style={styles.sectionStyle}>
-              <Icon
-                name="mail"
-                size={22}
-                color="#741728"
-                style={styles.imageStyle}
-              />
-              <TextInput
-                style={{
-                  flex: 1,
-                  // color: this.state.emailId == null ? '#A39B9B' : '#741728',
-                }}
+              <TextInputField
                 placeholder="Email Address"
-                underlineColorAndroid="transparent"
-                placeholderTextColor="#A39B9B"
+                iconName={'mail'}
                 onChangeText={text => {
-                  this.setState({emailId: text});
+                  this.setState({ password: text });
                 }}
+                isPassword={false}
+                visibility={false}
               />
+
             </View>
 
             <TouchableOpacity
-              onPress={() => this.setState({showDatePicker: true})}>
+              onPress={() => this.setState({ showDatePicker: true })}>
               <View style={styles.sectionStyle}>
                 <Icon
                   name="event-note"
@@ -280,7 +265,7 @@ export default class CreateAccount extends Component {
                   style={{
                     flex: 1,
                     // color:
-                      // this.state.dateOfBirth == null ? '#A39B9B' : '#741728',
+                    // this.state.dateOfBirth == null ? '#A39B9B' : '#741728',
                   }}
                   placeholder="Date of Birth"
                   placeholderTextColor="#A39B9B"
@@ -303,7 +288,7 @@ export default class CreateAccount extends Component {
                 this.setDateInState(date);
               }}
               onCancel={() => {
-                this.setState({showDatePicker: false});
+                this.setState({ showDatePicker: false });
               }}
             />
 
@@ -319,7 +304,7 @@ export default class CreateAccount extends Component {
               />
             )} */}
             <View style={styles.sectionStyle}>
-              <Icon
+              {/* <Icon
                 name="lock"
                 size={22}
                 color="#741728"
@@ -349,16 +334,26 @@ export default class CreateAccount extends Component {
                   size={22}
                   color="#A39B9B"
                   style={styles.imageStyle}
-                />
-              </TouchableOpacity>
+                /> </TouchableOpacity>
+                */}
+              <TextInputField
+                placeholder="Password"
+                iconName={'lock'}
+                onChangeText={text => {
+                  this.setState({ password: text });
+                }}
+                isPassword={true}
+                visibility={true}
+              />
+
             </View>
             <View style={styles.term}>
               <View style={styles.termInner}>
                 <TouchableOpacity
                   onPress={() =>
                     this.state.privacyCheck
-                      ? this.setState({privacyCheck: false})
-                      : this.setState({privacyCheck: true})
+                      ? this.setState({ privacyCheck: false })
+                      : this.setState({ privacyCheck: true })
                   }>
                   <Icon
                     name={
@@ -371,14 +366,14 @@ export default class CreateAccount extends Component {
                     style={styles.imageStyle}
                   />
                 </TouchableOpacity>
-                <Text>
+                <Text style={styles.termText}>
                   {' '}
                   I agree with the{' '}
                   <Text
                     onPress={async () =>
                       await Linking.openURL('https://www.mobar.sg/p/terms')
                     }
-                    style={{color: '#741728'}}>
+                    style={{ color: '#751728' }}>
                     Terms
                   </Text>{' '}
                   and{' '}
@@ -386,7 +381,7 @@ export default class CreateAccount extends Component {
                     onPress={async () =>
                       await Linking.openURL('https://mobar.sg/')
                     }
-                    style={{color: '#741728'}}>
+                    style={{ color: '#751728' }}>
                     Privacy Policy
                   </Text>
                 </Text>
@@ -396,8 +391,8 @@ export default class CreateAccount extends Component {
                 <TouchableOpacity
                   onPress={() =>
                     this.state.legalCheck
-                      ? this.setState({legalCheck: false})
-                      : this.setState({legalCheck: true})
+                      ? this.setState({ legalCheck: false })
+                      : this.setState({ legalCheck: true })
                   }>
                   <Icon
                     name={
@@ -410,11 +405,11 @@ export default class CreateAccount extends Component {
                     style={styles.imageStyle}
                   />
                 </TouchableOpacity>
-                <Text> I am of legal drinking age in Singapore </Text>
+                <Text style={styles.termText}> I am of legal drinking age in Singapore </Text>
               </View>
             </View>
 
-            <View style={styles.signup}>
+            {/* <View style={styles.signup}>
               <TouchableOpacity
                 style={styles.signupInner}
                 onPress={() => this.onProceed()}>
@@ -427,14 +422,16 @@ export default class CreateAccount extends Component {
                   </Text>
                 )}
               </TouchableOpacity>
-            </View>
+            </View> */}
+
+            <ThemeButton title={'Sign in'} isLoading={this.state.loader} />
 
             <View style={styles.signin}>
-              <Text style={{fontSize: 17}}>I’m already a member, </Text>
+              <Text style={styles.textMember}>I’m already a member, </Text>
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate('SignIn')}>
                 <Text
-                  style={{fontSize: 17, color: '#741728', fontWeight: '700'}}>
+                  style={{ fontSize: 17, color: '#741728', fontWeight: '700' }}>
                   {' '}
                   Sign in
                 </Text>
@@ -451,36 +448,20 @@ const styles = StyleSheet.create({
   createView: {
     marginTop: '15%',
     alignItems: 'center',
+    marginRight: 8
   },
   createText: {
-    fontSize: 28,
-    color: '#000',
+    fontSize: 32,
+    color: '#000000',
     fontWeight: '500',
+    fontFamily: FontFamily.TAJAWAL_LIGHT,
   },
   viewInput: {
     flex: 1,
     alignItems: 'center',
     marginTop: '10%',
   },
-  input: {
-    height: 50,
-    width: '80%',
-    margin: 12,
-    borderRadius: 10,
-    padding: 10,
-    shadowColor: '#470000',
-    shadowOpacity: 1,
-    // elevation: 1,
-    borderWidth: 1,
-    flex: 1,
-  },
-  inputView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  inputIcon: {
-    left: '70%',
-  },
+
   sectionStyle: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -500,30 +481,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   term: {
-    //   flexDirection:'row',
-    // alignItems: 'center',
     marginTop: '5%',
     marginRight: '10%',
-    // alignSelf:'flex-start',
+    marginLeft: '7%'
+  },
+  termText: {
+    fontFamily: FontFamily.TAJAWAL_LIGHT,
+    fontWeight: '400',
+    fontSize: 15,
+    color: '#3C3C3C',
+    alignContent: 'flex-start'
+  },
+  textMember: {
+    fontFamily: FontFamily.TAJAWAL_LIGHT,
+    fontWeight: '700',
+    fontSize: 18,
+    color: '#000000'
   },
   termInner: {
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
   },
-  signup: {
-    marginTop: '10%',
-    width: '80%',
-    height: 44,
-  },
-  signupInner: {
-    backgroundColor: '#741728',
-    height: 44,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-  },
-
   signin: {
     marginTop: '10%',
     width: '80%',
