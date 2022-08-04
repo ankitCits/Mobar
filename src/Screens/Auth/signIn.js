@@ -213,7 +213,7 @@ class SignIn extends Component {
                     style={styles.signupInner}
                     onPress={() => this.onProceed()}>
                     <Text
-                      style={{ color: '#fff', fontSize: 20, fontWeight: '700' }}>
+                      style={{ color: '#FFFFFF',fontFamily:FontFamily.TAJAWAL_BOLD, fontSize: 23, fontWeight: 'bold' }}>
                       Sign In
                     </Text>
                   </TouchableOpacity>
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   },
   createText: {
     fontSize: 32,
-    color: '#000',
+    color: '#000000',
     fontWeight: '500',
     fontFamily: FontFamily.TAJAWAL_REGULAR
   },
@@ -280,27 +280,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: '15%',
   },
-  input: {
-    height: 50,
-    width: '80%',
-    margin: 12,
-    borderRadius: 10,
-    padding: 10,
-    shadowColor: '#470000',
-    shadowOpacity: 1,
-    // elevation: 1,
-    borderWidth: 1,
-    flex: 1,
-  },
   signup: {
     marginTop: '10%',
     width: '80%',
     height: 44,
   },
   signupInner: {
-    backgroundColor: '#741728',
+    backgroundColor: '#751123',
     height: 44,
-    justifyContent: 'center',
+    //width:320,
+    // /justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
   },
