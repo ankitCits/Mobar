@@ -424,7 +424,7 @@ export default class CreateAccount extends Component {
               </TouchableOpacity>
             </View> */}
 
-            <ThemeButton title={'Sign Un'} isLoading={this.state.loader} />
+            <ThemeButton title={'Sign Up'} isLoading={this.state.loader} />
 
             <View style={styles.signin}>
               <Text style={styles.textMember}>I’m already a member, </Text>
