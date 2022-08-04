@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -19,20 +19,20 @@ import images from '../../assets/images';
 import Header from '../Component/Header';
 
 const data = [
-  {id: 'a', value: 'Whisky', image: images.productFilter1},
-  {id: 'b', value: 'Wine', image: images.productFilter2},
-  {id: 'c', value: 'Beer', image: images.productFilter3},
-  {id: 'd', value: 'Cocktail', image: images.productFilter4},
-  {id: 'e', value: 'Vodka', image: images.productFilter5},
-  {id: 'f', value: 'Rum', image: images.productFilter6},
-  {id: 'g', value: 'Gin', image: images.productFilter7},
+  { id: 'a', value: 'Whisky', image: images.productFilter1 },
+  { id: 'b', value: 'Wine', image: images.productFilter2 },
+  { id: 'c', value: 'Beer', image: images.productFilter3 },
+  { id: 'd', value: 'Cocktail', image: images.productFilter4 },
+  { id: 'e', value: 'Vodka', image: images.productFilter5 },
+  { id: 'f', value: 'Rum', image: images.productFilter6 },
+  { id: 'g', value: 'Gin', image: images.productFilter7 },
 ];
 import LinearGradient from 'react-native-linear-gradient';
-import {connect} from 'react-redux';
-import {A_KEY, BASE_URL} from '../../config';
+import { connect } from 'react-redux';
+import { A_KEY, BASE_URL } from '../../config';
 import NoContentFound from '../../Component/NoContentFound';
-import {getAccessToken} from '../../localstorage';
-import {addTocard, addToFav, removeToFav} from '../../Redux/actions/product';
+import { getAccessToken } from '../../localstorage';
+import { addTocard, addToFav, removeToFav } from '../../Redux/actions/product';
 const numColumns = 2;
 const size = Dimensions.get('window').width / numColumns;
 
@@ -69,11 +69,11 @@ class Product extends Component {
       .then(response => response.json())
       .then(result => {
         if (result.response) {
-          this.setState({categoryList: result.response.result});
+          this.setState({ categoryList: result.response.result });
           return this.getProductList(0);
         }
         if (result.errors) {
-          this.setState({loader: false});
+          this.setState({ loader: false });
           ToastAndroid.showWithGravity(
             result.errors[0].msg,
             ToastAndroid.LONG,
@@ -82,7 +82,7 @@ class Product extends Component {
         }
       })
       .catch(error => {
-        this.setState({loader: false});
+        this.setState({ loader: false });
         ToastAndroid.showWithGravity(
           'Network Error!',
           ToastAndroid.LONG,
@@ -93,7 +93,7 @@ class Product extends Component {
   };
 
   getProductList = cat => {
-    this.setState({loader: true, itemIndex: cat});
+    this.setState({ loader: true, itemIndex: cat });
     let myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('A_Key', A_KEY);
@@ -115,7 +115,7 @@ class Product extends Component {
         if (result.response) {
           let data = [];
           for (let i = 0; i < result.response.result.data.length; i++) {
-            data.push({...result.response.result.data[i], card: 0, fav: 0});
+            data.push({ ...result.response.result.data[i], card: 0, fav: 0 });
           }
           this.setState({
             categoryData: {
@@ -123,10 +123,10 @@ class Product extends Component {
               hostUrl: result.response.result.hostUrl,
             },
           });
-          this.setState({loader: false});
+          this.setState({ loader: false });
         }
         if (result.errors) {
-          this.setState({loader: false});
+          this.setState({ loader: false });
           ToastAndroid.showWithGravity(
             result.errors[0].msg,
             ToastAndroid.LONG,
@@ -135,7 +135,7 @@ class Product extends Component {
         }
       })
       .catch(error => {
-        this.setState({loader: false});
+        this.setState({ loader: false });
         ToastAndroid.showWithGravity(
           'Network Error!',
           ToastAndroid.LONG,
@@ -161,7 +161,7 @@ class Product extends Component {
   };
 
   addCardToState = (item, index) => {
-    this.setState({innerLoader: true});
+    this.setState({ innerLoader: true });
 
     let data = this.state.categoryData.data;
     data[index].card = data[index].card + 1;
@@ -172,7 +172,7 @@ class Product extends Component {
         hostUrl: this.state.categoryData.hostUrl,
       },
     });
-    this.setState({innerLoader: false});
+    this.setState({ innerLoader: false });
     let sendData = {
       productUnitId: 57,
       comboId: 0,
@@ -183,7 +183,7 @@ class Product extends Component {
   };
 
   removeCardToState = (item, index) => {
-    this.setState({innerLoader: true});
+    this.setState({ innerLoader: true });
 
     let data = this.state.categoryData.data;
     data[index].card = data[index].card - 1;
@@ -194,7 +194,7 @@ class Product extends Component {
         hostUrl: this.state.categoryData.hostUrl,
       },
     });
-    this.setState({innerLoader: false});
+    this.setState({ innerLoader: false });
 
     let sendData = {
       productUnitId: 57,
@@ -206,7 +206,7 @@ class Product extends Component {
   };
 
   addFavToState = (item, index) => {
-    this.setState({innerLoader: true});
+    this.setState({ innerLoader: true });
 
     let data = this.state.categoryData.data;
     data[index].fav = 1;
@@ -217,7 +217,7 @@ class Product extends Component {
         hostUrl: this.state.categoryData.hostUrl,
       },
     });
-    this.setState({innerLoader: false});
+    this.setState({ innerLoader: false });
     let sendData = {
       productId: 0,
       comboId: 4,
@@ -228,7 +228,7 @@ class Product extends Component {
   };
 
   removeFavToState = (item, index) => {
-    this.setState({innerLoader: true});
+    this.setState({ innerLoader: true });
 
     let data = this.state.categoryData.data;
     data[index].fav = 0;
@@ -239,7 +239,7 @@ class Product extends Component {
         hostUrl: this.state.categoryData.hostUrl,
       },
     });
-    this.setState({innerLoader: false});
+    this.setState({ innerLoader: false });
 
     let sendData = {
       wishlistId: 11,
@@ -279,7 +279,7 @@ class Product extends Component {
                 }
               />
             </View>
-            <View style={{alignSelf: 'center', marginTop: -5}}>
+            <View style={{ alignSelf: 'center', marginTop: -5 }}>
               <View style={styles.sectionStyle}>
                 <Icon
                   name="search"
@@ -288,7 +288,7 @@ class Product extends Component {
                   style={styles.imageStyle}
                 />
                 <TextInput
-                  style={{flex: 1}}
+                  style={{ flex: 1 }}
                   placeholder="Search for Drinks..."
                   underlineColorAndroid="transparent"
                 />
@@ -304,7 +304,7 @@ class Product extends Component {
             </View>
           </View>
           <>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <View style={styles.filterView}>
                 <View
                   style={{
@@ -357,8 +357,8 @@ class Product extends Component {
                       height: 140,
                       marginTop: 5,
                     }}
-                    keyExtractor={item => item.id}
-                    renderItem={({item, index}) => (
+                    keyExtractor={(item,index) => index.toString()}
+                    renderItem={({ item, index }) => (
                       <View
                         style={{
                           margin: 10,
@@ -369,7 +369,7 @@ class Product extends Component {
                           onPress={() => this.getProductList(index)}
                           style={{
                             shadowColor: '#fff',
-                            shadowOffset: {width: 1, height: 0},
+                            shadowOffset: { width: 1, height: 0 },
                             shadowOpacity: 0.4,
                             shadowRadius: 3,
                             elevation: 5,
@@ -387,9 +387,8 @@ class Product extends Component {
                           <Image
                             resizeMode={'cover'}
                             source={{
-                              uri: `${
-                                this.state.categoryList.hostUrl + item.images
-                              }`,
+                              uri: `${this.state.categoryList.hostUrl + item.images
+                                }`,
                             }}
                             defaultSource={item.image}
                             style={{
@@ -430,14 +429,14 @@ class Product extends Component {
                           featureValue: e.nativeEvent.contentOffset.y,
                         });
                         if (e.nativeEvent.contentOffset.y < 50) {
-                          return this.setState({feature: true});
+                          return this.setState({ feature: true });
                         } else {
-                          this.setState({feature: false});
+                          this.setState({ feature: false });
                         }
                       }}
-                      keyExtractor={item => item.id}
+                      keyExtractor={(item,index) => index.toString()}
                       numColumns={numColumns}
-                      renderItem={({item, index}) => (
+                      renderItem={({ item, index }) => (
                         <View style={styles.itemOuterContailner}>
                           <View style={styles.itemContainer}>
                             <View
@@ -480,10 +479,9 @@ class Product extends Component {
                                 resizeMode={'cover'}
                                 source={{
                                   uri: item.images
-                                    ? `${
-                                        this.state.categoryData.hostUrl +
-                                        item.images
-                                      }`
+                                    ? `${this.state.categoryData.hostUrl +
+                                    item.images
+                                    }`
                                     : images.wine,
                                 }}
                                 defaultSource={images.wine}
@@ -630,7 +628,7 @@ function mapDispatchToProps(dispatch) {
 //getting props from redux
 function mapStateToProps(state) {
   let redux = state;
-  return {redux};
+  return { redux };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Product);
@@ -665,7 +663,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: '50%',
     shadowColor: '#000',
-    shadowOffset: {width: 1, height: 0},
+    shadowOffset: { width: 1, height: 0 },
     shadowOpacity: 0.4,
     shadowRadius: 3,
     elevation: 5,
@@ -686,7 +684,7 @@ const styles = StyleSheet.create({
     // padding:,
     marginLeft: 20,
     shadowColor: '#fff',
-    shadowOffset: {width: 0, height: 0},
+    shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.4,
     shadowRadius: 3,
     elevation: 1,
