@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../assets/images';
+import { FontFamily } from '../Theme/FontFamily';
 class BarCard extends Component {
     constructor(props) {
         super(props);
@@ -23,12 +24,13 @@ class BarCard extends Component {
                     onPress={() => this.props.navigation.navigate('BarList')}
                     style={{
                         marginTop: 20,
-                        backgroundColor: '#fff',
+                        backgroundColor: '#2B247A',
+                        borderBottomRightRadius: 8,
                         shadowColor: '#000',
                         shadowOffset: { width: 1, height: 1 },
                         shadowOpacity: 0.4,
                         shadowRadius: 15,
-                        borderRadius: 15,
+                        borderRadius: 25,
                         elevation: 5,
                         alignSelf: 'center',
                         width: 350,
@@ -40,7 +42,7 @@ class BarCard extends Component {
                         source={{
                             uri: `${this.props.hostUrl + this.props.item.images}`,
                         }}>
-                        <View style={{ marginTop: '2%', marginRight: 10 }}>
+                        <View style={{ marginTop: '3%', marginRight: '7%',fontSize:15 }}>
                             <TouchableOpacity
                                 style={{
                                     alignItems: 'flex-end',
@@ -52,7 +54,6 @@ class BarCard extends Component {
                                     defaultSource={images.heart}
                                 />
                             </TouchableOpacity>
-
                             <View
                                 style={{
                                     //   marginLeft:10,
@@ -77,13 +78,15 @@ class BarCard extends Component {
                     </ImageBackground>
                     <View
                         style={{
-                            margin: 15,
+                            margin: 20,
+                            backgroundColor:'#2B247A',
                         }}>
                         <Text
                             style={{
-                                fontSize: 17,
-                                color: '#3C3C3C',
-                                fontWeight: '500',
+                                fontSize: 20,
+                                color: '#FFFFFF',
+                                fontWeight: '400',
+                                fontFamily:FontFamily.ROBOTO
                             }}>
                             {this.props.item.vendorShopName}
                         </Text>
@@ -93,14 +96,35 @@ class BarCard extends Component {
                                 // marginBottom: -10,
                                 // alignSelf: 'flex-end',
                             }}>
-                            <Text>{this.props.item.address}</Text>
+                            <Text style={innerStyle.textAddress}>{this.props.item.address}</Text>
                         </View>
                         <View
                             style={{
                                 flexDirection: 'row',
-                                width: '70%',
-                                justifyContent: 'space-between',
+                                width: '100%',
+                                justifyContent: 'space-around',
                             }}>
+                                <TouchableOpacity
+                                style={{
+                                    marginTop: 10,
+                                    //marginLeft: 10,
+                                    flexDirection: 'row',
+                                    
+                                }}>
+                                <Icon
+                                    name="star"
+                                    size={16}
+                                    color="#FAB914"
+                                    style={{ marginTop: 2 }}
+                                />
+                                <Icon
+                                    name="star"
+                                    size={16}
+                                    color="#FAB914"
+                                    style={{ marginTop: 2 }}
+                                />
+                            </TouchableOpacity>
+
                             <TouchableOpacity
                                 style={{
                                     marginTop: 10,
@@ -110,10 +134,10 @@ class BarCard extends Component {
                                 <Icon
                                     name="directions-run"
                                     size={16}
-                                    color="#808080"
+                                    color="#FFFFFF"
                                     style={{ marginTop: 2 }}
                                 />
-                                <Text style={{ color: '#3C3C3C', marginLeft: 5 }}>
+                                <Text style={innerStyle.textAddress}>
                                     {this.props.item.distance.toFixed(2)}Km
                                 </Text>
                             </TouchableOpacity>
@@ -130,29 +154,9 @@ class BarCard extends Component {
                                     color="#26B90E"
                                     style={{ marginTop: 2 }}
                                 />
-                                <Text style={{ color: '#3C3C3C', marginLeft: 5 }}>
+                                <Text style={innerStyle.openText}>
                                     open
                                 </Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={{
-                                    marginTop: 10,
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                }}>
-                                <Icon
-                                    name="star"
-                                    size={16}
-                                    color="#FAB914"
-                                    style={{ marginTop: 2 }}
-                                />
-                                <Icon
-                                    name="star"
-                                    size={16}
-                                    color="#FAB914"
-                                    style={{ marginTop: 2 }}
-                                />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -164,6 +168,20 @@ class BarCard extends Component {
 export default BarCard;
 const innerStyle = StyleSheet.create({
     container: {
+        
+    },
+    textAddress:{
+        flexDirection:'row',
+        fontFamily:FontFamily.ROBOTO,
+        fontSize:13,
+        fontWeight:'400',
+        color:'#FFFFFF'
+    },
+    openText:{
+        fontFamily:FontFamily.TAJAWAL_BLACK,
+        fontSize:15,
+        fontWeight:'500',
+        color:'#FFFFFF'
     },
     promotionsImg: {
         borderBottomLeftRadius: 15,
