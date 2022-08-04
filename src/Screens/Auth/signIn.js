@@ -194,8 +194,6 @@ class SignIn extends Component {
                 onChangeText={text => {
                   this.setState({ mobileNumber: text });
                 }}
-                isPassword={false}
-                visibility={false}
               />
               <TextInputField
                 placeholder="Password"
@@ -207,7 +205,7 @@ class SignIn extends Component {
                 visibility={true}
               />
 
-              <ThemeButton title={'Sign in'} isLoading={this.state.loader} />
+              <ThemeButton title={'Sign in'} isLoading={this.state.loader} onPress={() => this.onProceed()} />
 
               <View style={{ marginTop: '5%' }}>
                 <TouchableOpacity

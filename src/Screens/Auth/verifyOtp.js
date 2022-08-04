@@ -197,16 +197,8 @@ export default class VerifyOtp extends Component {
                 onTextChange={password => this.setState({ password })}
               />
             </View>
-            <ThemeButton title={'Confirm'} isLoading={this.state.loader} />
-            {/* <View style={styles.signup}>
-              <TouchableOpacity
-                style={styles.signupInner}
-                onPress={() => this.VerifyOtp()}>
-                <Text style={{color: '#fff', fontSize: 20, fontWeight: '700'}}>
-                  Confirm
-                </Text>
-              </TouchableOpacity>
-            </View> */}
+
+            <ThemeButton title={'Confirm'} isLoading={this.state.loader} onPress={() => this.VerifyOtp()} />
 
             <View style={styles.signin}>
               <TouchableOpacity onPress={() => this.resendOtp()}>

@@ -11,6 +11,11 @@ export default class TextInputField extends React.Component {
     }
 
     render() {
+        const {
+            editable = true,
+            isPassword = false,
+            visibility = false
+        } = this.props
         return (
             <>
                 {/* Input Icon */}
@@ -30,18 +35,20 @@ export default class TextInputField extends React.Component {
                         keyboardType={this.props.keyboardType}
                         onChangeText={this.props.onChangeText}
                         placeholderTextColor={'#A39B9B'}
-                        secureTextEntry={!this.state.visibility ? false : true}
+                        secureTextEntry={!visibility ? false : true}
+                        value={this.props.value}
+                        editable={editable}
                     />
                     {/* Password icon */}
-                    {this.props.isPassword
+                    {isPassword
                         && <TouchableOpacity
                             onPress={() =>
-                                this.state.visibility
+                                visibility
                                     ? this.setState({ visibility: false })
                                     : this.setState({ visibility: true })
                             }>
                             <Icon
-                                name={!this.state.visibility ? 'visibility' : 'visibility-off'}
+                                name={!visibility ? 'visibility' : 'visibility-off'}
                                 size={22}
                                 color="#A39B9B"
                                 style={[innerStyle.imageStyle, { marginRight: 10 }]}

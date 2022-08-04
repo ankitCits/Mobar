@@ -73,7 +73,7 @@ export default class CreateAccount extends Component {
 
   async onProceed() {
     console.log(this.state.mobileNumber, ':', this.state.password);
-    
+
     // check Not Blank
     if (this.state.mobileNumber == null) {
       ToastAndroid.showWithGravity(
@@ -227,54 +227,31 @@ export default class CreateAccount extends Component {
             <Text style={styles.createText}>Create an account</Text>
           </View>
           <View style={styles.viewInput}>
-            <View style={styles.sectionStyle}>
 
-              <TextInputField
-                placeholder="Mobile Number"
-                iconName={'call'}
-                onChangeText={text => {
-                  this.setState({ mobileNumber: text });
-                }}
-                isPassword={false}
-                visibility={false}
-              />
-            </View>
-            <View style={styles.sectionStyle}>
-              <TextInputField
-                placeholder="Email Address"
-                iconName={'mail'}
-                onChangeText={text => {
-                  this.setState({ password: text });
-                }}
-                isPassword={false}
-                visibility={false}
-              />
+            <TextInputField
+              placeholder="Mobile Number"
+              iconName={'call'}
+              onChangeText={text => {
+                this.setState({ mobileNumber: text });
+              }}
+            />
 
-            </View>
+            <TextInputField
+              placeholder="Email Address"
+              iconName={'mail'}
+              onChangeText={text => {
+                this.setState({ password: text });
+              }}
+            />
 
             <TouchableOpacity
               onPress={() => this.setState({ showDatePicker: true })}>
-              <View style={styles.sectionStyle}>
-                <Icon
-                  name="event-note"
-                  size={22}
-                  color="#741728"
-                  style={styles.imageStyle}
-                />
-                <TextInput
-                  style={{
-                    flex: 1,
-                    // color:
-                    // this.state.dateOfBirth == null ? '#A39B9B' : '#741728',
-                  }}
-                  placeholder="Date of Birth"
-                  placeholderTextColor="#A39B9B"
-                  underlineColorAndroid="transparent"
-                  editable={false}
-                  selectTextOnFocus={false}
-                  value={this.state.dateOfBirth}
-                />
-              </View>
+              <TextInputField
+                placeholder="Date of Birth"
+                iconName={'event-note'}
+                value={this.state.dateOfBirth}
+                editable={false}
+              />
             </TouchableOpacity>
 
             <DatePicker
@@ -283,8 +260,6 @@ export default class CreateAccount extends Component {
               open={this.state.showDatePicker}
               date={new Date()}
               onConfirm={date => {
-                console.log('=====>>>', date);
-                // this.setState({dateofbirth:date})
                 this.setDateInState(date);
               }}
               onCancel={() => {
@@ -292,61 +267,16 @@ export default class CreateAccount extends Component {
               }}
             />
 
-            {/* {this.state.showDatePicker && (
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={this.dateToUnix(this.state.dateOfBirth)}
-                mode={'date'}
-                maximumDate={this.maxDateTwelve()}
-                onChange={(event, value) => {
-                  this.setDateInState(event, value);
-                }}
-              />
-            )} */}
-            <View style={styles.sectionStyle}>
-              {/* <Icon
-                name="lock"
-                size={22}
-                color="#741728"
-                style={styles.imageStyle}
-              />
-              <TextInput
-                style={{
-                  flex: 1,
-                  // color: this.state.password == null ? '#A39B9B' : '#741728',
-                }}
-                placeholder="Password"
-                underlineColorAndroid="transparent"
-                placeholderTextColor="#A39B9B"
-                secureTextEntry={this.state.visibility ? false : true}
-                onChangeText={text => {
-                  this.setState({password: text});
-                }}
-              />
-              <TouchableOpacity
-                onPress={() =>
-                  this.state.visibility
-                    ? this.setState({visibility: false})
-                    : this.setState({visibility: true})
-                }>
-                <Icon
-                  name={this.state.visibility ? 'visibility' : 'visibility-off'}
-                  size={22}
-                  color="#A39B9B"
-                  style={styles.imageStyle}
-                /> </TouchableOpacity>
-                */}
-              <TextInputField
-                placeholder="Password"
-                iconName={'lock'}
-                onChangeText={text => {
-                  this.setState({ password: text });
-                }}
-                isPassword={true}
-                visibility={true}
-              />
+            <TextInputField
+              placeholder="Password"
+              iconName={'lock'}
+              onChangeText={text => {
+                this.setState({ password: text });
+              }}
+              isPassword={true}
+              visibility={true}
+            />
 
-            </View>
             <View style={styles.term}>
               <View style={styles.termInner}>
                 <TouchableOpacity
@@ -409,22 +339,7 @@ export default class CreateAccount extends Component {
               </View>
             </View>
 
-            {/* <View style={styles.signup}>
-              <TouchableOpacity
-                style={styles.signupInner}
-                onPress={() => this.onProceed()}>
-                {this.state.loader ? (
-                  <ActivityIndicator size="small" color="#fff" />
-                ) : (
-                  <Text
-                    style={{color: '#fff', fontSize: 20, fontWeight: '700'}}>
-                    Sign up
-                  </Text>
-                )}
-              </TouchableOpacity>
-            </View> */}
-
-            <ThemeButton title={'Sign Up'} isLoading={this.state.loader} />
+            <ThemeButton title={'Sign up'} isLoading={this.state.loader} onPress={() => this.onProceed()} />
 
             <View style={styles.signin}>
               <Text style={styles.textMember}>I’m already a member, </Text>
@@ -432,7 +347,6 @@ export default class CreateAccount extends Component {
                 onPress={() => this.props.navigation.navigate('SignIn')}>
                 <Text
                   style={{ fontSize: 17, color: '#741728', fontWeight: '700' }}>
-                  {' '}
                   Sign in
                 </Text>
               </TouchableOpacity>
