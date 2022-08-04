@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -13,11 +13,14 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {connect} from 'react-redux';
-import {BASE_URL, MY_HEADER} from '../../config';
-import {getAccessToken, setAccessToken} from '../../localstorage';
-import {getAuthenticateUser, setUserDetail} from '../../Redux/actions/auth';
+import { connect } from 'react-redux';
+import { BASE_URL, MY_HEADER } from '../../config';
+import { getAccessToken, setAccessToken } from '../../localstorage';
+import { getAuthenticateUser, setUserDetail } from '../../Redux/actions/auth';
 import Util from '../../utils';
+
+import TextInputField from '../../Component/TextInputField';
+import { FontFamily } from '../../Theme/FontFamily';
 class SignIn extends Component {
   constructor(props) {
     super(props);
@@ -40,15 +43,15 @@ class SignIn extends Component {
     let token = await getAccessToken();
     if (token != null || token != undefined) {
       // setLoggedIn(1);
-      this.setState({loggedIn: 1});
+      this.setState({ loggedIn: 1 });
       console.log('=======xxxxxxxxxxxx>>>>>>', token);
     } else {
-      this.setState({loggedIn: -1});
+      this.setState({ loggedIn: -1 });
     }
   };
   async onProceed() {
     // this.props.navigation.navigate('Drawer');
-    this.setState({loader: true});
+    this.setState({ loader: true });
     // this.props.navigation.navigate('VerifyOtp')
     console.log(this.state.mobileNumber, ':', this.state.password);
 
@@ -59,7 +62,7 @@ class SignIn extends Component {
         ToastAndroid.LONG,
         ToastAndroid.TOP,
       );
-      this.setState({loader: false});
+      this.setState({ loader: false });
       return;
     }
     if (this.state.password == null) {
@@ -68,7 +71,7 @@ class SignIn extends Component {
         ToastAndroid.LONG,
         ToastAndroid.TOP,
       );
-      this.setState({loader: false});
+      this.setState({ loader: false });
       return;
     }
 
@@ -80,7 +83,7 @@ class SignIn extends Component {
         ToastAndroid.LONG,
         ToastAndroid.TOP,
       );
-      this.setState({loader: false});
+      this.setState({ loader: false });
       return;
     }
 
@@ -93,7 +96,7 @@ class SignIn extends Component {
         ToastAndroid.LONG,
         ToastAndroid.TOP,
       );
-      this.setState({loader: false});
+      this.setState({ loader: false });
       return;
     }
 
@@ -125,11 +128,11 @@ class SignIn extends Component {
       .then(response => {
         if (response.response) {
           console.log('getAuthenticateUser Action', response.response.token);
-          this.setState({loader: false});
+          this.setState({ loader: false });
           this.forWard(response);
         }
         if (response.errors) {
-          this.setState({loader: false});
+          this.setState({ loader: false });
           ToastAndroid.showWithGravity(
             response.errors[0].msg,
             ToastAndroid.LONG,
@@ -138,7 +141,7 @@ class SignIn extends Component {
         }
       })
       .catch(error => {
-        this.setState({loader: false});
+        this.setState({ loader: false });
         ToastAndroid.showWithGravity(
           'Error on SignIn Api',
           ToastAndroid.LONG,
@@ -180,69 +183,34 @@ class SignIn extends Component {
             <ActivityIndicator size="large" color="#741728" />
           </View>
         ) : (
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <View style={styles.createView}>
               <Text style={styles.createText}>Sign in</Text>
             </View>
             <View style={styles.viewInput}>
-              <View style={styles.sectionStyle}>
-                <Icon
-                  name="call"
-                  size={22}
-                  color="#741728"
-                  style={styles.imageStyle}
-                />
-                <TextInput
-                  style={{
-                    flex: 1,
-                    // color:
-                    //   this.state.mobileNumber == null ? '#A39B9B' : '#741728',
-                  }}
-                  placeholder="Mobile Number"
-                  underlineColorAndroid="transparent"
-                  keyboardType="numeric"
-                  onChangeText={text => {
-                    this.setState({mobileNumber: text});
-                  }}
-                  placeholderTextColor={'#A39B9B'}
-                />
-              </View>
-              <View style={styles.sectionStyle}>
-                <Icon
-                  name="lock"
-                  size={22}
-                  color="#741728"
-                  style={styles.imageStyle}
-                />
-                <TextInput
-                  style={{
-                    flex: 1,
-                    // color: this.state.password == null ? '#A39B9B' : '#741728',
-                  }}
-                  placeholder="Password"
-                  underlineColorAndroid="transparent"
-                  placeholderTextColor={'#A39B9B'}
-                  onChangeText={text => {
-                    this.setState({password: text});
-                  }}
-                  secureTextEntry={this.state.visibility ? false : true}
-                />
-                <TouchableOpacity
-                  onPress={() =>
-                    this.state.visibility
-                      ? this.setState({visibility: false})
-                      : this.setState({visibility: true})
-                  }>
-                  <Icon
-                    name={
-                      this.state.visibility ? 'visibility' : 'visibility-off'
-                    }
-                    size={22}
-                    color="#A39B9B"
-                    style={styles.imageStyle}
-                  />
-                </TouchableOpacity>
-              </View>
+              {/* <View style={styles.sectionStyle}> */}
+              <TextInputField
+                placeholder="Mobile Number"
+                keyboardType="numeric"
+                iconName={'call'}
+                onChangeText={text => {
+                  this.setState({ mobileNumber: text });
+                }}
+                isPassword={false}
+                visibility={false}
+              />
+              {/* </View> */}
+              {/* <View style={styles.sectionStyle}> */}
+              <TextInputField
+                placeholder="Password"
+                iconName={'lock'}
+                onChangeText={text => {
+                  this.setState({ password: text });
+                }}
+                isPassword={true}
+                visibility={true}
+              />
+              {/* </View> */}
 
               <View style={styles.signup}>
                 {this.state.loader ? (
@@ -252,14 +220,14 @@ class SignIn extends Component {
                     style={styles.signupInner}
                     onPress={() => this.onProceed()}>
                     <Text
-                      style={{color: '#fff', fontSize: 20, fontWeight: '700'}}>
+                      style={{ color: '#fff', fontSize: 20, fontWeight: '700' }}>
                       Sign In
                     </Text>
                   </TouchableOpacity>
                 )}
               </View>
 
-              <View style={{marginTop: '5%'}}>
+              <View style={{ marginTop: '5%' }}>
                 <TouchableOpacity
                   onPress={() =>
                     this.props.navigation.navigate('ForgetPassword')
@@ -269,13 +237,13 @@ class SignIn extends Component {
               </View>
 
               <View style={styles.signin}>
-                <Text style={{fontSize: 17}}>I’m a new user, </Text>
+                <Text style={{ fontSize: 17 }}>I’m a new user, </Text>
                 <TouchableOpacity
                   onPress={() =>
                     this.props.navigation.navigate('createAccount')
                   }>
                   <Text
-                    style={{fontSize: 17, color: '#741728', fontWeight: '700'}}>
+                    style={{ fontSize: 17, color: '#741728', fontWeight: '700' }}>
                     {' '}
                     Sign up
                   </Text>
@@ -288,7 +256,7 @@ class SignIn extends Component {
                     this.props.navigation.navigate('Drawer')
                   }>
                   <Text
-                    style={{fontSize: 17, color: '#741728', fontWeight: '700',textDecorationLine:'underline'}}>
+                    style={{ fontSize: 17, color: '#741728', fontWeight: '700', textDecorationLine: 'underline' }}>
                     {' '}
                     Skip
                   </Text>
@@ -296,7 +264,8 @@ class SignIn extends Component {
               </View>
             </View>
           </View>
-        )}
+        )
+        }
       </SafeAreaView>
     );
   }
@@ -308,9 +277,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   createText: {
-    fontSize: 28,
+    fontSize: 32,
     color: '#000',
     fontWeight: '500',
+    fontFamily: FontFamily.TAJAWAL_REGULAR
   },
   viewInput: {
     flex: 1,
@@ -336,19 +306,19 @@ const styles = StyleSheet.create({
   inputIcon: {
     left: '70%',
   },
-  sectionStyle: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderWidth: 0,
-    borderColor: '#000',
-    height: 44,
-    width: 320,
-    borderRadius: 5,
-    margin: 10,
-    elevation: 2,
-  },
+  // sectionStyle: {
+  //   flexDirection: 'row',
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   backgroundColor: '#fff',
+  //   borderWidth: 0,
+  //   borderColor: '#000',
+  //   height: 44,
+  //   width: 320,
+  //   borderRadius: 5,
+  //   margin: 10,
+  //   elevation: 2,
+  // },
   imageStyle: {
     margin: 5,
     resizeMode: 'stretch',
@@ -383,6 +353,7 @@ const styles = StyleSheet.create({
     color: '#3C3C3C',
     fontSize: 17,
     fontWeight: '500',
+    fontFamily: FontFamily.TAJAWAL_MEDIUM
   },
 });
 
@@ -396,7 +367,7 @@ function mapDispatchToProps(dispatch) {
 //getting props from redux
 function mapStateToProps(state) {
   let redux = state;
-  return {redux};
+  return { redux };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -13,10 +13,10 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../../assets/images';
 import Header from '../../Component/Header';
-import {getAccessToken} from '../../../localstorage';
+import { getAccessToken } from '../../../localstorage';
 // import images from '../../assets/images';
 // import MyTabs from './Tabs';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import Carousel from 'react-native-snap-carousel';
 
 export const SLIDER_WIDTH = Dimensions.get('window').width + 40;
@@ -48,7 +48,7 @@ class Dashboard extends Component {
     };
   }
 
-  renderItem = ({item}) => {
+  renderItem = ({ item }) => {
     return (
       <View
         style={{
@@ -71,7 +71,7 @@ class Dashboard extends Component {
           backgroundColor: '#fff',
         }}>
         <>
-          <View style={{alignSelf: 'center', marginTop: -5}}>
+          <View style={{ alignSelf: 'center', marginTop: -5 }}>
             <TouchableOpacity
               style={styles.sectionStyle}
               onPress={() => this.props.navigation.navigate('Product')}>
@@ -82,7 +82,7 @@ class Dashboard extends Component {
                 style={styles.imageStyle}
               />
               <TextInput
-                style={{flex: 1}}
+                style={{ flex: 1 }}
                 placeholder="Search for Drinks..."
                 underlineColorAndroid="transparent"
                 editable={false}
@@ -99,8 +99,8 @@ class Dashboard extends Component {
             </TouchableOpacity>
           </View>
 
-          <View style={{alignItems: 'center', marginTop: -15}}>
-            <View style={{marginVertical: 10}}>
+          <View style={{ alignItems: 'center', marginTop: -15 }}>
+            <View style={{ marginVertical: 10 }}>
               <Carousel
                 data={data2}
                 renderItem={this.renderItem}
@@ -133,7 +133,7 @@ function mapDispatchToProps(dispatch) {
 //getting props from redux
 function mapStateToProps(state) {
   let redux = state;
-  return {redux};
+  return { redux };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

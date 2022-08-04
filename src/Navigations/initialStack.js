@@ -15,7 +15,7 @@ import Dashboard from '../Screens/Dashboard';
 import ForgetPassword from '../Screens/ForgetPassword';
 import forgetPasswordOtp from '../Screens/ForgetPassword/forgetPasswordOtp';
 import ForgetEnterPassword from '../Screens/ForgetPassword/forgetEnterPassword';
-import passwordSuccessFullyChanged from '../Screens/ForgetPassword/passwordSuccessFullyChanged';
+import PasswordSuccessFullyChanged from '../Screens/ForgetPassword/passwordSuccessFullyChanged';
 import { getAccessToken } from '../localstorage';
 const Stack = createStackNavigator();
 
@@ -42,8 +42,8 @@ const InitialStack = () => {
           component={ForgetEnterPassword}
         />
         <Stack.Screen
-          name="passwordSuccessFullyChanged"
-          component={passwordSuccessFullyChanged}
+          name="PasswordSuccessFullyChanged"
+          component={PasswordSuccessFullyChanged}
         />
         <Stack.Screen name="Drawer" component={Drawer} />
       </Stack.Navigator>

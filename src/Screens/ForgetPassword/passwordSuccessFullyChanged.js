@@ -13,7 +13,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import images from '../../assets/images';
-export default class passwordSuccessFullyChanged extends Component {
+export default class PasswordSuccessFullyChanged extends Component {
   constructor(props) {
     super(props);
     this.state = {

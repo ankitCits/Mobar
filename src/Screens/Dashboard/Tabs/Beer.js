@@ -66,7 +66,7 @@ export default class Beer extends Component {
               data={DATA}
               initialNumToRender={5}
               maxToRenderPerBatch={10}
-              keyExtractor={(item, index) => index}
+              keyExtractor={(item, index) => index.toString()}
               renderItem={({item, index}) => (
                 <>
                   <View

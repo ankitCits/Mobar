@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React,{useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -25,7 +25,7 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import SplashScreen from 'react-native-splash-screen'
-const Section = ({children, title}): Node => {
+const Section = ({ children, title }): Node => {
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
@@ -51,9 +51,9 @@ const Section = ({children, title}): Node => {
   );
 };
 
-const App= () => {
+const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
-  useEffect(()=>{
+  useEffect(() => {
     SplashScreen.hide();
   })
 

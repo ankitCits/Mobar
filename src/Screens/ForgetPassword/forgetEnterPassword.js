@@ -81,7 +81,7 @@ export default class ForgetEnterPassword extends Component {
               <TouchableOpacity
                 style={styles.signupInner}
                 onPress={() =>
-                  this.props.navigation.navigate('passwordSuccessFullyChanged')
+                  this.props.navigation.navigate('PasswordSuccessFullyChanged')
                 }>
                 <Text
                   style={{color: '#BE212F', fontSize: 18, fontWeight: '700'}}>
