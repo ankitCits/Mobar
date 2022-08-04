@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -14,10 +14,10 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
-import {A_KEY, BASE_URL} from '../../config';
-import {getAccessToken} from '../../localstorage';
+import { A_KEY, BASE_URL } from '../../config';
+import { getAccessToken } from '../../localstorage';
 import HeaderSide from '../Component/HeaderSide';
-
+import ThemeFullPagerLoader from '../../Component/ThemeFullPageLoader';
 export default class ProductDetailBars extends Component {
   constructor(props) {
     super(props);
@@ -34,13 +34,13 @@ export default class ProductDetailBars extends Component {
   }
 
   fetchData = () => {
-    this.setState({loader: true});
+    this.setState({ loader: true });
     let myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('A_Key', A_KEY);
 
     let raw = JSON.stringify({
-      vendorId: this.props.route.params.id ? this.props.route.params.id : 1,
+      vendorId: this.props.route.params && this.props.route.params.id ? this.props.route.params.id : 1,
       latitude: 1.28668,
       longitude: 103.853607,
     });
@@ -55,12 +55,12 @@ export default class ProductDetailBars extends Component {
     fetch(`${BASE_URL}/vendor/details`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result);
+        console.log(JSON.stringify(result));
         if (result.response) {
-          this.setState({data: result.response.result, loader: false});
+          this.setState({ data: result.response.result, loader: false });
         }
         if (result.errors) {
-          this.setState({loader: false});
+          this.setState({ loader: false });
           ToastAndroid.showWithGravity(
             result.errors[0].msg,
             ToastAndroid.LONG,
@@ -70,7 +70,7 @@ export default class ProductDetailBars extends Component {
       })
       .catch(error => {
         console.log('error', error);
-        this.setState({loader: false});
+        this.setState({ loader: false });
         ToastAndroid.showWithGravity(
           'Network Error!',
           ToastAndroid.LONG,
@@ -79,7 +79,7 @@ export default class ProductDetailBars extends Component {
       });
   };
 
-  whisListAdd = async id => {
+  wishListAdd = async id => {
     console.log(id);
     let token = await getAccessToken(token);
     let myHeaders = new Headers();
@@ -103,12 +103,12 @@ export default class ProductDetailBars extends Component {
     fetch(`${BASE_URL}/wishlist/addToWishlist`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log('ADD_IN_WHISLIST', result);
+        console.log('ADD_IN_WISHLIST', result);
       })
       .catch(error => console.log('error', error));
   };
 
-  whisListRemove = () => {
+  wishListRemove = () => {
     let myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('A_Key', A_KEY);
@@ -141,13 +141,7 @@ export default class ProductDetailBars extends Component {
           backgroundColor: '#E5E5E5',
         }}>
         {this.state.data == null ? (
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-            }}>
-            <ActivityIndicator size="large" color="#741728" />
-          </View>
+          <ThemeFullPagerLoader />
         ) : (
           <ScrollView>
             <View
@@ -163,7 +157,7 @@ export default class ProductDetailBars extends Component {
                     this.state.data.hostUrl +
                     this.state.data.vendorDetail[0].images,
                 }}
-                // defaultSource={images.promotions1}
+              // defaultSource={images.promotions1}
               >
                 <View
                   style={{
@@ -178,7 +172,7 @@ export default class ProductDetailBars extends Component {
 
                   <TouchableOpacity
                     onPress={() => {
-                      // this.whisList(this.state.data.vendorDetail[0].vendorId);
+                      // this.wishList(this.state.data.vendorDetail[0].vendorId);
                     }}>
                     <Image
                       resizeMode={'cover'}
@@ -224,14 +218,14 @@ export default class ProductDetailBars extends Component {
                 backgroundColor: '#fff',
                 // height: 275,
                 shadowColor: '#000',
-                shadowOffset: {width: 1, height: 1},
+                shadowOffset: { width: 1, height: 1 },
                 shadowOpacity: 0.4,
                 shadowRadius: 3,
                 elevation: 0,
                 marginTop: -10,
                 borderRadius: 20,
               }}>
-              <View style={{margin: 15}}>
+              <View style={{ margin: 15 }}>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -245,12 +239,12 @@ export default class ProductDetailBars extends Component {
                     }}>
                     {this.state.data.vendorDetail[0].vendorShopName}
                   </Text>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Icon
                       name="directions-run"
                       size={25}
                       color="#C11331"
-                      style={{marginRight: 7}}
+                      style={{ marginRight: 7 }}
                     />
                     <Text
                       style={{
@@ -272,7 +266,7 @@ export default class ProductDetailBars extends Component {
                     resizeMode={'cover'}
                     source={images.location}
                     defaultSource={images.location}
-                    // style={{width:14,height:17}}
+                  // style={{width:14,height:17}}
                   />
                   <Text
                     style={{
@@ -288,7 +282,7 @@ export default class ProductDetailBars extends Component {
                 {/* <View style={{marginTop: 10}}>
                   <Text>Star</Text>
                 </View> */}
-                <View style={{marginTop: 10}}>
+                <View style={{ marginTop: 10 }}>
                   <Text
                     style={{
                       color: '#424242',
@@ -306,12 +300,12 @@ export default class ProductDetailBars extends Component {
                     alignItems: 'flex-end',
                     marginTop: 10,
                   }}>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Image
                       resizeMode={'cover'}
                       source={images.call}
                       defaultSource={images.call}
-                      // style={{width:14,height:17}}
+                    // style={{width:14,height:17}}
                     />
                     <Text
                       style={{
@@ -357,7 +351,7 @@ export default class ProductDetailBars extends Component {
               </View>
             </View>
 
-            <View style={{margin: 15, marginTop: 20}}>
+            <View style={{ margin: 15, marginTop: 20 }}>
               <Text
                 style={{
                   fontSize: 20,
@@ -379,7 +373,7 @@ export default class ProductDetailBars extends Component {
                 />
               </View>
             </View>
-            <View style={{margin: 15, marginTop: 20}}>
+            <View style={{ margin: 15, marginTop: 20 }}>
               <Text
                 style={{
                   fontSize: 20,
@@ -389,125 +383,125 @@ export default class ProductDetailBars extends Component {
                 Redeemable Products
               </Text>
 
-              {this.state.data.vendorDetail[0].ecom_ac_products 
+              {this.state.data.vendorDetail[0].ecom_ac_products
                 ? this.state.data.vendorDetail[0].ecom_ac_products.map(item => (
-                    <View
-                      style={styles.productView}
-                      onPress={() =>
-                        this.props.navigation.navigate('OrderHistoryDetail')
-                      }>
-                      <View style={styles.productInnerView}>
-                        <Image
+                  <View
+                    style={styles.productView}
+                    onPress={() =>
+                      this.props.navigation.navigate('OrderHistoryDetail')
+                    }>
+                    <View style={styles.productInnerView}>
+                      <Image
+                        style={{
+                          width: 75,
+                          height: 75,
+                        }}
+                        resizeMode={'cover'}
+                        source={{
+                          uri: `${this.state.data.hostUrl + item.images}`,
+                        }}
+                        defaultSource={images.product2}
+                      />
+                    </View>
+
+                    <View style={{ margin: 5, marginLeft: 10 }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          marginTop: 5,
+                        }}>
+                        <Text
                           style={{
-                            width: 75,
-                            height: 75,
-                          }}
-                          resizeMode={'cover'}
-                          source={{
-                            uri: `${this.state.data.hostUrl + item.images}`,
-                          }}
-                          defaultSource={images.product2}
-                        />
+                            fontSize: 16,
+                            fontWeight: '500',
+                            color: '#4D4F50',
+                          }}>
+                          {item.name}
+                        </Text>
                       </View>
 
-                      <View style={{margin: 5, marginLeft: 10}}>
-                        <View
+                      <View>
+                        <Text
                           style={{
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
+                            fontSize: 14,
+                            color: '#4D4F50',
+                            fontWeight: '400',
+                          }}>
+                          {item.shortDescription}
+                        </Text>
+                      </View>
+
+                      <View
+                        style={{
+                          marginTop: 7,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            marginLeft: 5,
+                            fontSize: 18,
+                            color: '#424242',
+                            fontWeight: '700',
+                          }}>
+                          ${item.ecom_aca_product_units[0].unitUserPrice}
+                        </Text>
+
+                        {item.ecom_aca_product_units[0].unitDiscountPrice ? (
+                          <Text
+                            style={{
+                              marginLeft: 10,
+                              fontSize: 15,
+                              color: '#969696',
+                              textDecorationLine: 'line-through',
+                            }}>
+                            $
+                            {item.ecom_aca_product_units[0].unitDiscountPrice}
+                          </Text>
+                        ) : null}
+                      </View>
+                      <View
+                        style={{
+                          // top: '15%',
+                          marginLeft: '60%',
+                          flex: 1,
+                          justifyContent: 'flex-end',
+                        }}>
+                        <TouchableOpacity
+                          onPress={
+                            () =>
+                              this.props.navigation.navigate('Redeem', {
+                                item,
+                                uri: this.state.data.hostUrl,
+                                image: this.state.data.vendorDetail[0].images,
+                                vendorId: this.props.route.params.id ? this.props.route.params.id : 1
+                              })
+                            // console.log('--->xxxxxxx', item.images)
+                          }
+                          style={{
+                            backgroundColor: '#C11331',
+                            marginTop: 10,
+                            borderRadius: 10,
+                            height: 25,
+                            width: 70,
                             alignItems: 'center',
-                            marginTop: 5,
+                            justifyContent: 'center',
                           }}>
                           <Text
                             style={{
-                              fontSize: 16,
+                              fontSize: 12,
+                              color: '#fff',
                               fontWeight: '500',
-                              color: '#4D4F50',
                             }}>
-                            {item.name}
+                            Redeem
                           </Text>
-                        </View>
-
-                        <View>
-                          <Text
-                            style={{
-                              fontSize: 14,
-                              color: '#4D4F50',
-                              fontWeight: '400',
-                            }}>
-                            {item.shortDescription}
-                          </Text>
-                        </View>
-
-                        <View
-                          style={{
-                            marginTop: 7,
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                          }}>
-                          <Text
-                            style={{
-                              marginLeft: 5,
-                              fontSize: 18,
-                              color: '#424242',
-                              fontWeight: '700',
-                            }}>
-                            ${item.ecom_aca_product_units[0].unitUserPrice}
-                          </Text>
-
-                          {item.ecom_aca_product_units[0].unitDiscountPrice ? (
-                            <Text
-                              style={{
-                                marginLeft: 10,
-                                fontSize: 15,
-                                color: '#969696',
-                                textDecorationLine: 'line-through',
-                              }}>
-                              $
-                              {item.ecom_aca_product_units[0].unitDiscountPrice}
-                            </Text>
-                          ) : null}
-                        </View>
-                        <View
-                          style={{
-                            // top: '15%',
-                            marginLeft: '60%',
-                            flex: 1,
-                            justifyContent: 'flex-end',
-                          }}>
-                          <TouchableOpacity
-                            onPress={
-                              () =>
-                                this.props.navigation.navigate('Redeem', {
-                                  item,
-                                  uri: this.state.data.hostUrl,
-                                  image: this.state.data.vendorDetail[0].images,
-                                  vendorId:this.props.route.params.id ? this.props.route.params.id : 1
-                                })
-                              // console.log('--->xxxxxxx', item.images)
-                            }
-                            style={{
-                              backgroundColor: '#C11331',
-                              marginTop: 10,
-                              borderRadius: 10,
-                              height: 25,
-                              width: 70,
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}>
-                            <Text
-                              style={{
-                                fontSize: 12,
-                                color: '#fff',
-                                fontWeight: '500',
-                              }}>
-                              Redeem
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
+                        </TouchableOpacity>
                       </View>
                     </View>
-                  ))
+                  </View>
+                ))
                 : null}
             </View>
 
@@ -533,7 +527,7 @@ export default class ProductDetailBars extends Component {
                   borderTopRightRadius: 20,
                   overflow: 'hidden',
                 }}>
-                <View style={{margin: 20}}>
+                <View style={{ margin: 20 }}>
                   <View>
                     <Text
                       style={{
@@ -544,7 +538,7 @@ export default class ProductDetailBars extends Component {
                     </Text>
                   </View>
 
-                  <View style={{marginTop: 20}}>
+                  <View style={{ marginTop: 20 }}>
                     <View
                       style={{
                         flexDirection: 'row',
@@ -560,7 +554,7 @@ export default class ProductDetailBars extends Component {
                         Chivas Regal 12
                       </Text>
                       <View
-                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <TouchableOpacity>
                           <Icon name="remove" size={20} color="#4D4F50" />
                         </TouchableOpacity>
@@ -579,13 +573,13 @@ export default class ProductDetailBars extends Component {
                       </View>
                     </View>
 
-                    <View style={{marginTop: '10%', marginBottom: 10}}>
+                    <View style={{ marginTop: '10%', marginBottom: 10 }}>
                       <TouchableOpacity
                         style={styles.save}
                         onPress={() =>
                           this.props.navigation.navigate('MyCard')
                         }>
-                        <Text style={{color: '#fff', fontSize: 15}}>
+                        <Text style={{ color: '#fff', fontSize: 15 }}>
                           VIEW CART
                         </Text>
                       </TouchableOpacity>
@@ -611,7 +605,7 @@ const styles = StyleSheet.create({
     height: 100,
     width: '96%',
     shadowColor: '#000',
-    shadowOffset: {width: 1, height: 1},
+    shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
     shadowRadius: 12,
     borderRadius: 12,
