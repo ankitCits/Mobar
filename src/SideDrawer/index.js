@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -11,10 +11,11 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RNRestart from 'react-native-restart';
-import {connect} from 'react-redux';
-import {getAccessToken, removeAccessToken} from '../localstorage';
-import {A_KEY, BASE_URL} from '../config';
+import { connect } from 'react-redux';
+import { getAccessToken, removeAccessToken } from '../localstorage';
+import { A_KEY, BASE_URL } from '../config';
 import LoginButton from '../Component/LoginButton';
+import { FontFamily } from '../Theme/FontFamily';
 
 class SideDrawer extends Component {
   constructor(props) {
@@ -26,22 +27,22 @@ class SideDrawer extends Component {
 
   onPressFun = screen => {
     if (screen == 'MyBottomTabs') {
-      this.setState({drawerIndex: 0});
+      this.setState({ drawerIndex: 0 });
     }
     if (screen == 'MyProfile') {
-      this.setState({drawerIndex: 1});
+      this.setState({ drawerIndex: 1 });
     }
     if (screen == 'ChangePassword') {
-      this.setState({drawerIndex: 2});
+      this.setState({ drawerIndex: 2 });
     }
     if (screen == 'OrderHistory') {
-      this.setState({drawerIndex: 3});
+      this.setState({ drawerIndex: 3 });
     }
     if (screen == 'HelpSupport') {
-      this.setState({drawerIndex: 5});
+      this.setState({ drawerIndex: 5 });
     }
     if (screen == 'About') {
-      this.setState({drawerIndex: 6});
+      this.setState({ drawerIndex: 6 });
     }
     this.props.navigation.navigate(screen);
   };
@@ -80,9 +81,10 @@ class SideDrawer extends Component {
     await removeAccessToken();
     RNRestart.Restart();
   };
+
   render() {
     var drawerIndex = this.state.drawerIndex;
-    console.log("========>>>>",this.props.redux)
+    console.log("========>>>>", this.props.redux)
     return (
       <>
         <StatusBar
@@ -92,7 +94,7 @@ class SideDrawer extends Component {
             Platform.OS === 'android' ? 'dark-content' : 'light-content'
           }
         />
-        <View style={{flex: 1, backgroundColor: '#fff'}}>
+        <View style={{ flex: 1, backgroundColor: '#fff' }}>
           <View
             style={{
               width: '90%',
@@ -106,12 +108,12 @@ class SideDrawer extends Component {
               <Icon name="arrow-back" size={30} color="#424242" />
             </TouchableOpacity>
 
-            <Text style={{fontSize: 20, fontWeight: '500'}}>My Account</Text>
+            <Text style={{ fontSize: 20, color: '#424242', fontFamily: FontFamily.TAJAWAL_BOLD }}>My Account</Text>
             <Text></Text>
           </View>
 
           {this.props.redux ? (
-            <View style={{marginTop: '10%'}}>
+            <View style={{ marginTop: '10%' }}>
               <View
                 style={{
                   width: '90%',
@@ -127,8 +129,8 @@ class SideDrawer extends Component {
                 <View>
                   <Icon name="account-circle" size={50} color="#711323" />
                 </View>
-                <View style={{marginLeft: 10}}>
-                  <Text style={{fontSize: 17, fontWeight: '700'}}>
+                <View style={{ marginLeft: 10 }}>
+                  <Text style={{ fontSize: 17, fontWeight: '700' }}>
                     {this.props.redux ? this.props.redux.name : 'User'}
                   </Text>
                   <View
@@ -139,7 +141,7 @@ class SideDrawer extends Component {
                     }}>
                     <Icon name="location-on" size={12} color="#711323" />
                     <Text
-                      style={{marginLeft: 5, fontSize: 12, fontWeight: '500'}}>
+                      style={{ marginLeft: 5, fontSize: 12, fontWeight: '500' }}>
                       {this.props.redux
                         ? this.props.redux.address
                         : 'Singapore'}
@@ -163,7 +165,7 @@ class SideDrawer extends Component {
                         name="edit"
                         size={10}
                         color="#711323"
-                        style={{marginTop: 2, marginLeft: 5}}
+                        style={{ marginTop: 2, marginLeft: 5 }}
                       />
                     </TouchableOpacity>
                   </View>
@@ -176,7 +178,7 @@ class SideDrawer extends Component {
 
           <View>
             {drawerIndex == 0 ? (
-              <View style={{backgroundColor: '#711323', marginTop: 30}}>
+              <View style={{ backgroundColor: '#711323', marginTop: 30 }}>
                 <TouchableOpacity
                   style={styles.listItemProfile}
                   onPress={() => this.onPressFun('MyBottomTabs')}>
@@ -185,7 +187,7 @@ class SideDrawer extends Component {
                 </TouchableOpacity>
               </View>
             ) : (
-              <View style={{marginTop: 30, marginLeft: 30}}>
+              <View style={{ marginTop: 30, marginLeft: 30 }}>
                 <TouchableOpacity
                   style={styles.listItem}
                   onPress={() => this.onPressFun('MyBottomTabs')}>
@@ -197,7 +199,7 @@ class SideDrawer extends Component {
 
             {this.props.redux ? (
               drawerIndex == 1 ? (
-                <View style={{backgroundColor: '#711323', marginTop: 15}}>
+                <View style={{ backgroundColor: '#711323', marginTop: 15 }}>
                   <TouchableOpacity
                     style={styles.listItemProfile}
                     onPress={() => this.onPressFun('MyProfile')}>
@@ -206,7 +208,7 @@ class SideDrawer extends Component {
                   </TouchableOpacity>
                 </View>
               ) : (
-                <View style={{marginTop: 2, marginLeft: 30}}>
+                <View style={{ marginTop: 2, marginLeft: 30 }}>
                   <TouchableOpacity
                     style={styles.listItem}
                     onPress={() => this.onPressFun('MyProfile')}>
@@ -219,7 +221,7 @@ class SideDrawer extends Component {
 
             {this.props.redux ? (
               drawerIndex == 2 ? (
-                <View style={{backgroundColor: '#711323', marginTop: 15}}>
+                <View style={{ backgroundColor: '#711323', marginTop: 15 }}>
                   <TouchableOpacity
                     style={styles.listItemProfile}
                     onPress={() => this.onPressFun('ChangePassword')}>
@@ -228,7 +230,7 @@ class SideDrawer extends Component {
                   </TouchableOpacity>
                 </View>
               ) : (
-                <View style={{marginTop: 2, marginLeft: 30}}>
+                <View style={{ marginTop: 2, marginLeft: 30 }}>
                   <TouchableOpacity
                     style={styles.listItem}
                     onPress={() => {
@@ -244,7 +246,7 @@ class SideDrawer extends Component {
 
             {this.props.redux ? (
               drawerIndex == 3 ? (
-                <View style={{backgroundColor: '#711323', marginTop: 15}}>
+                <View style={{ backgroundColor: '#711323', marginTop: 15 }}>
                   <TouchableOpacity
                     style={styles.listItemProfile}
                     onPress={() => this.onPressFun('OrderHistory')}>
@@ -253,7 +255,7 @@ class SideDrawer extends Component {
                   </TouchableOpacity>
                 </View>
               ) : (
-                <View style={{marginTop: 2, marginLeft: 30}}>
+                <View style={{ marginTop: 2, marginLeft: 30 }}>
                   <TouchableOpacity
                     style={styles.listItem}
                     onPress={() => this.onPressFun('OrderHistory')}>
@@ -266,10 +268,10 @@ class SideDrawer extends Component {
 
             {this.props.redux ? (
               drawerIndex == 4 ? (
-                <View style={{backgroundColor: '#711323', marginTop: 15}}>
+                <View style={{ backgroundColor: '#711323', marginTop: 15 }}>
                   <TouchableOpacity
                     style={styles.listItemProfile}
-                    // onPress={() => this.onPressFun('share')}
+                  // onPress={() => this.onPressFun('share')}
                   >
                     <Icon name="share" size={26} color="#fff" />
                     <Text style={styles.listTextProfile}>
@@ -278,10 +280,10 @@ class SideDrawer extends Component {
                   </TouchableOpacity>
                 </View>
               ) : (
-                <View style={{marginTop: 2, marginLeft: 30}}>
+                <View style={{ marginTop: 2, marginLeft: 30 }}>
                   <TouchableOpacity
                     style={styles.listItem}
-                    // onPress={() => this.onPressFun('share')}
+                  // onPress={() => this.onPressFun('share')}
                   >
                     <Icon name="share" size={26} color="#711323" />
                     <Text style={styles.listText}>Invite Your Friends</Text>
@@ -291,7 +293,7 @@ class SideDrawer extends Component {
             ) : null}
 
             {drawerIndex == 5 ? (
-              <View style={{backgroundColor: '#711323', marginTop: 15}}>
+              <View style={{ backgroundColor: '#711323', marginTop: 15 }}>
                 <TouchableOpacity
                   style={styles.listItemProfile}
                   onPress={() => this.onPressFun('HelpSupport')}>
@@ -300,7 +302,7 @@ class SideDrawer extends Component {
                 </TouchableOpacity>
               </View>
             ) : (
-              <View style={{marginTop: 2, marginLeft: 30}}>
+              <View style={{ marginTop: 2, marginLeft: 30 }}>
                 <TouchableOpacity
                   style={styles.listItem}
                   onPress={() => this.onPressFun('HelpSupport')}>
@@ -311,7 +313,7 @@ class SideDrawer extends Component {
             )}
 
             {drawerIndex == 6 ? (
-              <View style={{backgroundColor: '#711323', marginTop: 15}}>
+              <View style={{ backgroundColor: '#711323', marginTop: 15 }}>
                 <TouchableOpacity
                   style={styles.listItemProfile}
                   onPress={() => this.onPressFun('About')}>
@@ -320,7 +322,7 @@ class SideDrawer extends Component {
                 </TouchableOpacity>
               </View>
             ) : (
-              <View style={{marginTop: 2, marginLeft: 30}}>
+              <View style={{ marginTop: 2, marginLeft: 30 }}>
                 <TouchableOpacity
                   style={styles.listItem}
                   onPress={() => this.onPressFun('About')}>
@@ -331,7 +333,7 @@ class SideDrawer extends Component {
             )}
 
             {this.props.redux ? (
-              <View style={{marginLeft: 30}}>
+              <View style={{ marginLeft: 30 }}>
                 <TouchableOpacity
                   style={styles.listItem}
                   onPress={() => this.loggedOut()}>
@@ -424,7 +426,7 @@ function mapDispatchToProps(dispatch) {
 //getting props from redux
 function mapStateToProps(state) {
   let redux = state.auth.userData;
-  return {redux};
+  return { redux };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SideDrawer);

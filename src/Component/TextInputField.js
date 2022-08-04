@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-export default class CustomText extends React.Component {
+export default class TextInputField extends React.Component {
     constructor(props) {
         super(props);
         this.state = {

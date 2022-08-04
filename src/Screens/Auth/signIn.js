@@ -9,15 +9,16 @@ import {
   ToastAndroid,
   ActivityIndicator,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { connect } from 'react-redux';
 import { BASE_URL, MY_HEADER } from '../../config';
 import { getAccessToken, setAccessToken } from '../../localstorage';
 import { getAuthenticateUser, setUserDetail } from '../../Redux/actions/auth';
 import Util from '../../utils';
 
-import TextInputField from '../../Component/TextInputField';
 import { FontFamily } from '../../Theme/FontFamily';
+
+import TextInputField from '../../Component/TextInputField';
+import ThemeButton from '../../Component/ThemeButton';
 class SignIn extends Component {
   constructor(props) {
     super(props);
@@ -47,7 +48,8 @@ class SignIn extends Component {
     }
   };
   async onProceed() {
-    // this.props.navigation.navigate('Drawer');
+    this.props.navigation.navigate('Drawer');
+    return;
     this.setState({ loader: true });
     // this.props.navigation.navigate('VerifyOtp')
     console.log(this.state.mobileNumber, ':', this.state.password);
@@ -205,20 +207,7 @@ class SignIn extends Component {
                 visibility={true}
               />
 
-              <View style={styles.signup}>
-                {this.state.loader ? (
-                  <ActivityIndicator size="large" color="#741728" />
-                ) : (
-                  <TouchableOpacity
-                    style={styles.signupInner}
-                    onPress={() => this.onProceed()}>
-                    <Text
-                      style={{ color: '#FFFFFF',fontFamily:FontFamily.TAJAWAL_BOLD, fontSize: 23, fontWeight: 'bold' }}>
-                      Sign In
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              </View>
+              <ThemeButton title={'Sign in'} isLoading={this.state.loader} />
 
               <View style={{ marginTop: '5%' }}>
                 <TouchableOpacity
@@ -230,14 +219,13 @@ class SignIn extends Component {
               </View>
 
               <View style={styles.signin}>
-                <Text style={{ fontSize: 17 }}>I’m a new user, </Text>
+                <Text style={[{ fontSize: 17, color: '#000000', fontFamily: FontFamily.TAJAWAL_REGULAR }]}>I’m a new user, </Text>
                 <TouchableOpacity
                   onPress={() =>
                     this.props.navigation.navigate('createAccount')
                   }>
                   <Text
-                    style={{ fontSize: 17, color: '#741728', fontWeight: '700' }}>
-                    {' '}
+                    style={{ fontSize: 18, color: '#741728', fontWeight: '700', fontFamily: FontFamily.TAJAWAL_MEDIUM }}>
                     Sign up
                   </Text>
                 </TouchableOpacity>
@@ -250,7 +238,6 @@ class SignIn extends Component {
                   }>
                   <Text
                     style={{ fontSize: 17, color: '#741728', fontWeight: '700', textDecorationLine: 'underline' }}>
-                    {' '}
                     Skip
                   </Text>
                 </TouchableOpacity>
@@ -279,19 +266,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     marginTop: '15%',
-  },
-  signup: {
-    marginTop: '10%',
-    width: '80%',
-    height: 44,
-  },
-  signupInner: {
-    backgroundColor: '#751123',
-    height: 44,
-    //width:320,
-    // /justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
   },
   signin: {
     marginTop: '10%',
