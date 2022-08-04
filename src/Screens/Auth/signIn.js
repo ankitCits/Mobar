@@ -3,12 +3,9 @@ import {
   Text,
   View,
   SafeAreaView,
-  Image,
   StatusBar,
   TouchableOpacity,
   StyleSheet,
-  TextInput,
-  Alert,
   ToastAndroid,
   ActivityIndicator,
 } from 'react-native';
@@ -188,7 +185,6 @@ class SignIn extends Component {
               <Text style={styles.createText}>Sign in</Text>
             </View>
             <View style={styles.viewInput}>
-              {/* <View style={styles.sectionStyle}> */}
               <TextInputField
                 placeholder="Mobile Number"
                 keyboardType="numeric"
@@ -199,8 +195,6 @@ class SignIn extends Component {
                 isPassword={false}
                 visibility={false}
               />
-              {/* </View> */}
-              {/* <View style={styles.sectionStyle}> */}
               <TextInputField
                 placeholder="Password"
                 iconName={'lock'}
@@ -210,7 +204,6 @@ class SignIn extends Component {
                 isPassword={true}
                 visibility={true}
               />
-              {/* </View> */}
 
               <View style={styles.signup}>
                 {this.state.loader ? (
@@ -298,31 +291,6 @@ const styles = StyleSheet.create({
     // elevation: 1,
     borderWidth: 1,
     flex: 1,
-  },
-  inputView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  inputIcon: {
-    left: '70%',
-  },
-  // sectionStyle: {
-  //   flexDirection: 'row',
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   backgroundColor: '#fff',
-  //   borderWidth: 0,
-  //   borderColor: '#000',
-  //   height: 44,
-  //   width: 320,
-  //   borderRadius: 5,
-  //   margin: 10,
-  //   elevation: 2,
-  // },
-  imageStyle: {
-    margin: 5,
-    resizeMode: 'stretch',
-    alignItems: 'center',
   },
   signup: {
     marginTop: '10%',
