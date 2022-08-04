@@ -73,7 +73,6 @@ export default class CreateAccount extends Component {
 
   async onProceed() {
     console.log(this.state.mobileNumber, ':', this.state.password);
-    this.props.navigation.navigate('VerifyOtp', FinalResponse);
     // check Not Blank
     if (this.state.mobileNumber == null) {
       ToastAndroid.showWithGravity(
