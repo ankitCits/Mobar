@@ -7,6 +7,9 @@ import {
   Text,
   ToastAndroid,
   ActivityIndicator,
+  ImageBackground,
+  TouchableOpacity,
+  Image
 } from 'react-native';
 import { SceneMap, TabBar } from 'react-native-tab-view';
 import { HPageViewHoc, HScrollView } from 'react-native-head-tab-view';
@@ -17,7 +20,6 @@ import Beer from './Tabs/Beer';
 import Cocktail from './Tabs/Cocktails';
 import DashboardHead from './Tabs';
 import MyTabBar from './Tabs/TabBar';
-// const HScrollView = HPageViewHoc(ScrollView)
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { getAccessToken } from '../../localstorage';
 import { A_KEY, BASE_URL, MY_HEADER } from '../../config';
@@ -25,6 +27,7 @@ import { connect } from 'react-redux';
 import { setUserDetail } from '../../Redux/actions/auth';
 import Header from '../Component/Header';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
+import images from '../../assets/images';
 
 const initialLayout = { width: Dimensions.get('window').width };
 
@@ -238,6 +241,9 @@ function Dashboard(props) {
               />
             )}
           />
+
+
+       
         </>
       )}
     </>

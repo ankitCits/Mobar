@@ -32,6 +32,55 @@ export default class Cocktails extends Component {
     this.state = {};
   }
 
+  renderItems = (item) =>
+    <View
+      style={{ marginTop: 28, marginBottom: 30, marginLeft: 10 }}>
+      <ImageBackground
+        style={styles.boxInner}
+        resizeMode={'cover'}
+        source={images.boxOuter}
+        defaultSource={images.boxOuter}>
+        <View style={styles.innerTop}>
+          <TouchableOpacity>
+            <Icon
+              name={'favorite'}
+              size={22}
+              color="#FF1405"
+              style={styles.imageStyle}
+            />
+          </TouchableOpacity>
+          <Text style={{ color: '#fff', fontSize: 12 }}>300ml</Text>
+        </View>
+        <Image
+          style={styles.productImg}
+          resizeMode={'cover'}
+          source={images.product1}
+          defaultSource={images.product1}
+        />
+        <Image
+          style={styles.boxOuter}
+          resizeMode={'cover'}
+          source={images.boxInner}
+          defaultSource={images.boxInner}
+        />
+        <View style={styles.innerBottom}>
+          <View>
+            <Text style={styles.innerBottomText}>
+              Ballantines Blended
+            </Text>
+          </View>
+          <View>
+            <Text style={styles.innerBottomText2}>
+              Your Saving: $19
+            </Text>
+          </View>
+          <View>
+            <Text style={styles.innerBottomText3}>$ 89</Text>
+          </View>
+        </View>
+      </ImageBackground>
+    </View>
+
   render() {
     return (
       <SafeAreaView
@@ -66,59 +115,8 @@ export default class Cocktails extends Component {
               data={DATA}
               initialNumToRender={5}
               maxToRenderPerBatch={10}
-              keyExtractor={(item, index) => index}
-              renderItem={({ item, index }) => (
-                <>
-                  <View
-                    key={index}
-                    style={{ marginTop: 28, marginBottom: 30, marginLeft: 10 }}>
-                    <ImageBackground
-                      style={styles.boxInner}
-                      resizeMode={'cover'}
-                      source={images.boxOuter}
-                      defaultSource={images.boxOuter}>
-                      <View style={styles.innerTop}>
-                        <TouchableOpacity>
-                          <Icon
-                            name={'favorite'}
-                            size={22}
-                            color="#FF1405"
-                            style={styles.imageStyle}
-                          />
-                        </TouchableOpacity>
-                        <Text style={{ color: '#fff', fontSize: 12 }}>300ml</Text>
-                      </View>
-                      <Image
-                        style={styles.productImg}
-                        resizeMode={'cover'}
-                        source={images.product1}
-                        defaultSource={images.product1}
-                      />
-                      <Image
-                        style={styles.boxOuter}
-                        resizeMode={'cover'}
-                        source={images.boxInner}
-                        defaultSource={images.boxInner}
-                      />
-                      <View style={styles.innerBottom}>
-                        <View>
-                          <Text style={styles.innerBottomText}>
-                            Ballantines Blended
-                          </Text>
-                        </View>
-                        <View>
-                          <Text style={styles.innerBottomText2}>
-                            Your Saving: $19
-                          </Text>
-                        </View>
-                        <View>
-                          <Text style={styles.innerBottomText3}>$ 89</Text>
-                        </View>
-                      </View>
-                    </ImageBackground>
-                  </View>
-                </>
-              )}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={(item, index) => this.renderItems(item)}
             />
 
             <View>
@@ -219,24 +217,6 @@ export default class Cocktails extends Component {
                         defaultSource={images.Fivestar}
                       />
                     </View>
-
-                    {/* <TouchableOpacity
-                      style={{
-                        marginTop: 5,
-                        borderWidth: 2,
-                        borderRadius: 20,
-                        padding: 2,
-                        alignItems: 'center',
-                      }}>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          fontWeight: '400',
-                          color: '#000',
-                        }}>
-                        Redeem Now
-                      </Text>
-                    </TouchableOpacity> */}
                   </View>
                   <View>
                     <Image
@@ -450,6 +430,7 @@ export default class Cocktails extends Component {
                 </ImageBackground>
               </View>
             </View>
+
           </View>
         </ScrollView>
       </SafeAreaView>

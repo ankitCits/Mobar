@@ -13,21 +13,7 @@ import {
 } from 'react-native';
 import images from '../../../assets/images';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: 'First Item',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: 'Second Item',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: 'Third Item',
-  },
-];
+import { HScrollView } from 'react-native-head-tab-view';
 
 export default class Whiskey extends Component {
   constructor(props) {
@@ -251,24 +237,6 @@ export default class Whiskey extends Component {
                             defaultSource={images.Fivestar}
                           />
                         </View>
-
-                        {/* <TouchableOpacity
-                          style={{
-                            marginTop: 5,
-                            borderWidth: 2,
-                            borderRadius: 20,
-                            padding: 2,
-                            alignItems: 'center',
-                          }}>
-                          <Text
-                            style={{
-                              fontSize: 14,
-                              fontWeight: '400',
-                              color: '#000',
-                            }}>
-                            Redeem Now
-                          </Text>
-                        </TouchableOpacity> */}
                       </View>
                       <View>
                         {item.images == '' || item.images == null ? (

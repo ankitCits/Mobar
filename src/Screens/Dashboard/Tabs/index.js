@@ -70,57 +70,44 @@ class Dashboard extends Component {
           flex: 1,
           backgroundColor: '#fff',
         }}>
-        <>
-          <View style={{ alignSelf: 'center', marginTop: -5 }}>
-            <TouchableOpacity
-              style={styles.sectionStyle}
-              onPress={() => this.props.navigation.navigate('Product')}>
+        <View style={{ alignSelf: 'center', marginTop: -5 }}>
+          <TouchableOpacity
+            style={styles.sectionStyle}
+            onPress={() => this.props.navigation.navigate('Product')}>
+            <Icon
+              name="search"
+              size={28}
+              color="#A39B9B"
+              style={styles.imageStyle}
+            />
+            <TextInput
+              style={{ flex: 1 }}
+              placeholder="Search for Drinks..."
+              underlineColorAndroid="transparent"
+              editable={false}
+              selectTextOnFocus={false}
+            />
+            <TouchableOpacity>
               <Icon
-                name="search"
-                size={28}
+                name={'filter-list'}
+                size={22}
                 color="#A39B9B"
                 style={styles.imageStyle}
               />
-              <TextInput
-                style={{ flex: 1 }}
-                placeholder="Search for Drinks..."
-                underlineColorAndroid="transparent"
-                editable={false}
-                selectTextOnFocus={false}
-              />
-              <TouchableOpacity>
-                <Icon
-                  name={'filter-list'}
-                  size={22}
-                  color="#A39B9B"
-                  style={styles.imageStyle}
-                />
-              </TouchableOpacity>
             </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
+
+        <View style={{ alignItems: 'center', marginTop: -15 }}>
+          <View style={{ marginVertical: 10 }}>
+            <Carousel
+              data={data2}
+              renderItem={this.renderItem}
+              sliderWidth={SLIDER_WIDTH}
+              itemWidth={ITEM_WIDTH}
+            />
           </View>
-
-          <View style={{ alignItems: 'center', marginTop: -15 }}>
-            <View style={{ marginVertical: 10 }}>
-              <Carousel
-                data={data2}
-                renderItem={this.renderItem}
-                sliderWidth={SLIDER_WIDTH}
-                itemWidth={ITEM_WIDTH}
-              />
-            </View>
-          </View>
-
-
-
-          {/* <View style={{marginLeft: 20, marginTop: 10}}>
-            <Text style={{fontSize: 18, color: '#000', fontWeight: '500'}}>
-              Categories
-            </Text>
-          </View> */}
-        </>
-        {/* <View style={{flex: 1}}>
-          <MyTabs />
-        </View> */}
+        </View>
       </SafeAreaView>
     );
   }
