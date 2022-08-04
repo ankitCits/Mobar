@@ -162,7 +162,7 @@ class MyProfile extends Component {
     var month = splitDate[1];
     var day = splitDate[2]; 
 
-    return month + '-' + day + '-' + year;
+    return day + '-' + month + '-' + year;
 }
 
   render() {

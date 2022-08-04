@@ -100,7 +100,7 @@ const inactiveTab = label => {
 };
 
 const MyTabBar = ({state, descriptors, navigation, position}) => (
-  <View style={{height: 50, marginBottom: 10}} key={state}>
+  <View style={{height: 50, marginBottom: 10}}>
     <ScrollView horizontal={true} style={styles.topTab}>
       <View style={styles.parentTab}>
         {state.routes.map((route, index) => {

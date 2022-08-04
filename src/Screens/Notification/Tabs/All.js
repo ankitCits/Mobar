@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -62,7 +62,7 @@ export default class AllNotification extends Component {
                 name={'check-circle'}
                 size={25}
                 color="#4FEA36"
-                // style={styles.iconStyle}
+              // style={styles.iconStyle}
               />
 
               <View
@@ -102,19 +102,19 @@ export default class AllNotification extends Component {
                         name={'close'}
                         size={22}
                         color="#969696"
-                        // style={styles.iconStyle}
+                      // style={styles.iconStyle}
                       />
                     </TouchableOpacity>
                   </View>
 
                   <View style={{
-                    margin:'3%',
-                    marginTop:-3
+                    margin: '3%',
+                    marginTop: -3
                   }}>
                     <Text style={{
-                      color:'#969696',
-                      fontSize:14,
-                      fontWeight:'400'
+                      color: '#969696',
+                      fontSize: 14,
+                      fontWeight: '400'
                     }}>
                       Nibh vestibulum egestas condimentum nibh arcu mauris
                       lacus, malesuada sed. Etiam volutpat condimentum vitae.
@@ -122,15 +122,15 @@ export default class AllNotification extends Component {
                   </View>
 
                   <View style={{
-                    margin:'3%',
-                    marginTop:-5
+                    margin: '3%',
+                    marginTop: -5
                   }}>
                     <Text style={{
-                      fontSize:13,
-                      fontWeight:'400',
-                      color:'#4D4F50'
+                      fontSize: 13,
+                      fontWeight: '400',
+                      color: '#4D4F50'
                     }}>
-                    Purchase ID- 24551364698156
+                      Purchase ID- 24551364698156
                     </Text>
                   </View>
                 </ImageBackground>

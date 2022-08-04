@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -33,9 +33,9 @@ export default class Notification extends Component {
           onClick={() => this.props.navigation.pop()}
         />
         <>
-        <View style={{flex:1,marginTop:0}}>
-          <MyTabs />
-        </View>
+          <View style={{ flex: 1, marginTop: 0 }}>
+            <MyTabs />
+          </View>
         </>
       </SafeAreaView>
     );
