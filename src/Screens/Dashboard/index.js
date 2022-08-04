@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -8,9 +8,9 @@ import {
   ToastAndroid,
   ActivityIndicator,
 } from 'react-native';
-import {SceneMap, TabBar} from 'react-native-tab-view';
-import {HPageViewHoc, HScrollView} from 'react-native-head-tab-view';
-import {CollapsibleHeaderTabView} from 'react-native-tab-view-collapsible-header';
+import { SceneMap, TabBar } from 'react-native-tab-view';
+import { HPageViewHoc, HScrollView } from 'react-native-head-tab-view';
+import { CollapsibleHeaderTabView } from 'react-native-tab-view-collapsible-header';
 import Whiskey from './Tabs/Whiskey';
 import Wine from './Tabs/Wine';
 import Beer from './Tabs/Beer';
@@ -18,24 +18,25 @@ import Cocktail from './Tabs/Cocktails';
 import DashboardHead from './Tabs';
 import MyTabBar from './Tabs/TabBar';
 // const HScrollView = HPageViewHoc(ScrollView)
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {getAccessToken} from '../../localstorage';
-import {A_KEY, BASE_URL, MY_HEADER} from '../../config';
-import {connect} from 'react-redux';
-import {setUserDetail} from '../../Redux/actions/auth';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { getAccessToken } from '../../localstorage';
+import { A_KEY, BASE_URL, MY_HEADER } from '../../config';
+import { connect } from 'react-redux';
+import { setUserDetail } from '../../Redux/actions/auth';
 import Header from '../Component/Header';
+import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 
-const initialLayout = {width: Dimensions.get('window').width};
+const initialLayout = { width: Dimensions.get('window').width };
 
 function Dashboard(props) {
   const [index, setIndex] = useState(0);
   const [loader, setLoader] = useState(true);
   const [data, setData] = useState(null);
   const [routes] = useState([
-    {key: 'first', title: 'Whiskey'},
-    {key: 'second', title: 'Wine'},
-    {key: 'third', title: 'Beer'},
-    {key: 'fourth', title: 'Cocktail'},
+    { key: 'first', title: 'Whiskey' },
+    { key: 'second', title: 'Wine' },
+    { key: 'third', title: 'Beer' },
+    { key: 'fourth', title: 'Cocktail' },
   ]);
 
   const [drinkCategory, setdrinkCategory] = useState(null)
@@ -74,7 +75,7 @@ function Dashboard(props) {
   useEffect(() => {
     getDetail();
     getTabDetail();
-  }, [getDetail,getTabDetail]);
+  }, [getDetail, getTabDetail]);
   // Fetch Detail on the Basic of Token
   const getDetail = async () => {
     let token = await getAccessToken(token);
@@ -138,10 +139,10 @@ function Dashboard(props) {
     fetch(`${BASE_URL}/home/homelists`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        if(result.response){        
-        console.log("GET_TAB",result.response.result.drinkCategory)
-        setdrinkCategory(result.response.result)
-        setLoader(false);
+        if (result.response) {
+          console.log("GET_TAB", result.response.result.drinkCategory)
+          setdrinkCategory(result.response.result)
+          setLoader(false);
         }
         if (result.errors) {
           setLoader(false);
@@ -165,85 +166,78 @@ function Dashboard(props) {
   return (
     <>
       {loader ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignSelf: 'center',
-          }}>
-          <ActivityIndicator size="large" color="#741728" />
-        </View>
+        <ThemeFullPageLoader />
       ) : (
         <>
-        <View
+          <View
             style={{
               height: 70,
               backgroundColor: '#fff',
             }}>
+
             <Header
               onClick={() => props.navigation.openDrawer()}
               onCard={() => props.navigation.navigate('MyCard')}
-              onNotification={() =>
-                props.navigation.navigate('Notification')
-              }
+              onNotification={() => props.navigation.navigate('Notification')}
               IconName="account-circle"
               IconColor="#711323"
               Address={'Duxten Road, 338750'}
             />
           </View>
-        <CollapsibleHeaderTabView
-          makeHeaderHeight={() => 200}
-          renderScrollHeader={() => <DashboardHead {...props} />}
-          navigationState={{index, routes}}
-          renderScene={renderScene}
-          onIndexChange={setIndex}
-          initialLayout={initialLayout}
-          renderTabBar={props => (
-            <TabBar
-              {...props}
-              indicatorStyle={{backgroundColor: '#711323'}}
-              style={{
-                backgroundColor: '#711323',
-                shadowColor: '#000',
-                shadowOffset: {
-                  width: 0,
-                  height: 0,
-                },
-                // shadowOpacity: 1,
-                // shadowRadius: 10,
-                elevation: 1,
-                backgroundColor: '#fff',
-                borderBottomLeftRadius: 20,
-                borderBottomRightRadius: 20,
-                overflow: 'hidden',
-                bottom: 1,
-              }}
-              tabStyle={{backgroundColor: '#fff'}}
-              renderLabel={({route}) => (
-                <>
-                  <Text
-                    style={
-                      route.key === props.navigationState.routes[index].key
-                        ? styles.selectedTabTextStyle
-                        : styles.label
-                    }>
-                    {route.title}
-                  </Text>
-                  {route.key === props.navigationState.routes[index].key ? (
-                    <View
-                      style={{
-                        backgroundColor: '#711323',
-                        height: 3,
-                        top: '30%',
-                      }}
-                    />
-                  ) : null}
-                </>
-              )}
-              labelStyle={styles.noLabel}
-            />
-          )}
-        />
+
+          <CollapsibleHeaderTabView
+            makeHeaderHeight={() => 200}
+            renderScrollHeader={() => <DashboardHead {...props} />}
+            navigationState={{ index, routes }}
+            renderScene={renderScene}
+            onIndexChange={setIndex}
+            initialLayout={initialLayout}
+            renderTabBar={props => (
+              <TabBar
+                {...props}
+                indicatorStyle={{ backgroundColor: '#711323' }}
+                style={{
+                  backgroundColor: '#711323',
+                  shadowColor: '#000',
+                  shadowOffset: {
+                    width: 0,
+                    height: 0,
+                  },
+                  // shadowOpacity: 1,
+                  // shadowRadius: 10,
+                  elevation: 1,
+                  backgroundColor: '#fff',
+                  borderBottomLeftRadius: 20,
+                  borderBottomRightRadius: 20,
+                  overflow: 'hidden',
+                  bottom: 1,
+                }}
+                tabStyle={{ backgroundColor: '#fff' }}
+                renderLabel={({ route }) => (
+                  <>
+                    <Text
+                      style={
+                        route.key === props.navigationState.routes[index].key
+                          ? styles.selectedTabTextStyle
+                          : styles.label
+                      }>
+                      {route.title}
+                    </Text>
+                    {route.key === props.navigationState.routes[index].key ? (
+                      <View
+                        style={{
+                          backgroundColor: '#711323',
+                          height: 3,
+                          top: '30%',
+                        }}
+                      />
+                    ) : null}
+                  </>
+                )}
+                labelStyle={styles.noLabel}
+              />
+            )}
+          />
         </>
       )}
     </>
@@ -260,16 +254,12 @@ function mapDispatchToProps(dispatch) {
 //getting props from redux
 function mapStateToProps(state) {
   let redux = state;
-  return {redux};
+  return { redux };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
 
 const styles = StyleSheet.create({
-  scene: {
-    flex: 1,
-    // height:200
-  },
   noLabel: {
     display: 'none',
     height: 0,

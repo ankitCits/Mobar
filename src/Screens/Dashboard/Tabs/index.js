@@ -109,6 +109,9 @@ class Dashboard extends Component {
               />
             </View>
           </View>
+
+
+
           {/* <View style={{marginLeft: 20, marginTop: 10}}>
             <Text style={{fontSize: 18, color: '#000', fontWeight: '500'}}>
               Categories

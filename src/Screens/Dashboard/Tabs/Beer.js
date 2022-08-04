@@ -220,7 +220,7 @@ export default class Beer extends Component {
                       />
                     </View>
 
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                       style={{
                         marginTop: 5,
                         borderWidth: 2,
@@ -236,7 +236,7 @@ export default class Beer extends Component {
                         }}>
                         Redeem Now
                       </Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                   </View>
                   <View>
                     <Image

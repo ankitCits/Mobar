@@ -66,11 +66,11 @@ export default class Wine extends Component {
               data={DATA}
               initialNumToRender={5}
               maxToRenderPerBatch={10}
-              keyExtractor={(item, index) => index}
+              keyExtractor={(item, index) => index.toString()}
               renderItem={({item, index}) => (
                 <>
                   <View
-                    key={index}
+                    key={index.toString()}
                     style={{marginTop: 28, marginBottom: 30, marginLeft: 10}}>
                     <ImageBackground
                       style={styles.boxInner}
@@ -220,7 +220,7 @@ export default class Wine extends Component {
                       />
                     </View>
 
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                       style={{
                         marginTop: 5,
                         borderWidth: 2,
@@ -236,7 +236,7 @@ export default class Wine extends Component {
                         }}>
                         Redeem Now
                       </Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                   </View>
                   <View>
                     <Image

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -58,7 +58,7 @@ export default class Cocktails extends Component {
             </TouchableOpacity>
           </View>
 
-          <View style={{marginTop: '7%'}}>
+          <View style={{ marginTop: '7%' }}>
             <FlatList
               nestedScrollEnabled={true}
               showsHorizontalScrollIndicator={false}
@@ -67,11 +67,11 @@ export default class Cocktails extends Component {
               initialNumToRender={5}
               maxToRenderPerBatch={10}
               keyExtractor={(item, index) => index}
-              renderItem={({item, index}) => (
+              renderItem={({ item, index }) => (
                 <>
                   <View
                     key={index}
-                    style={{marginTop: 28, marginBottom: 30, marginLeft: 10}}>
+                    style={{ marginTop: 28, marginBottom: 30, marginLeft: 10 }}>
                     <ImageBackground
                       style={styles.boxInner}
                       resizeMode={'cover'}
@@ -86,7 +86,7 @@ export default class Cocktails extends Component {
                             style={styles.imageStyle}
                           />
                         </TouchableOpacity>
-                        <Text style={{color: '#fff', fontSize: 12}}>300ml</Text>
+                        <Text style={{ color: '#fff', fontSize: 12 }}>300ml</Text>
                       </View>
                       <Image
                         style={styles.productImg}
@@ -220,7 +220,7 @@ export default class Cocktails extends Component {
                       />
                     </View>
 
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                       style={{
                         marginTop: 5,
                         borderWidth: 2,
@@ -236,7 +236,7 @@ export default class Cocktails extends Component {
                         }}>
                         Redeem Now
                       </Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                   </View>
                   <View>
                     <Image
@@ -276,7 +276,7 @@ export default class Cocktails extends Component {
                   marginTop: 20,
                   backgroundColor: '#fff',
                   shadowColor: '#000',
-                  shadowOffset: {width: 1, height: 1},
+                  shadowOffset: { width: 1, height: 1 },
                   shadowOpacity: 0.4,
                   shadowRadius: 15,
                   borderRadius: 15,
@@ -288,7 +288,7 @@ export default class Cocktails extends Component {
                   resizeMode={'cover'}
                   source={images.promotions1}
                   defaultSource={images.promotions1}>
-                  <View style={{marginTop: '2%', marginRight: 10}}>
+                  <View style={{ marginTop: '2%', marginRight: 10 }}>
                     <TouchableOpacity
                       style={{
                         alignItems: 'flex-end',
@@ -359,9 +359,9 @@ export default class Cocktails extends Component {
                         name="directions-run"
                         size={16}
                         color="#808080"
-                        style={{marginTop: 2}}
+                        style={{ marginTop: 2 }}
                       />
-                      <Text style={{color: '#3C3C3C', marginLeft: 5}}>
+                      <Text style={{ color: '#3C3C3C', marginLeft: 5 }}>
                         2.8Km
                       </Text>
                     </TouchableOpacity>
@@ -376,9 +376,9 @@ export default class Cocktails extends Component {
                         name="fiber-manual-record"
                         size={15}
                         color="#26B90E"
-                        style={{marginTop: 2}}
+                        style={{ marginTop: 2 }}
                       />
-                      <Text style={{color: '#3C3C3C', marginLeft: 5}}>
+                      <Text style={{ color: '#3C3C3C', marginLeft: 5 }}>
                         open
                       </Text>
                     </TouchableOpacity>
@@ -393,13 +393,13 @@ export default class Cocktails extends Component {
                         name="star"
                         size={16}
                         color="#FAB914"
-                        style={{marginTop: 2}}
+                        style={{ marginTop: 2 }}
                       />
                       <Icon
                         name="star"
                         size={16}
                         color="#FAB914"
-                        style={{marginTop: 2}}
+                        style={{ marginTop: 2 }}
                       />
                     </TouchableOpacity>
                   </View>
@@ -418,7 +418,7 @@ export default class Cocktails extends Component {
                   resizeMode={'cover'}
                   source={images.promotions2}
                   defaultSource={images.promotions2}>
-                  <View style={{marginTop: '10%', marginLeft: '65%'}}>
+                  <View style={{ marginTop: '10%', marginLeft: '65%' }}>
                     <TouchableOpacity
                       style={{
                         alignItems: 'center',
@@ -438,7 +438,7 @@ export default class Cocktails extends Component {
                       </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      style={{alignItems: 'center', marginTop: 7}}>
+                      style={{ alignItems: 'center', marginTop: 7 }}>
                       <Text
                         style={{
                           color: '#fff',
