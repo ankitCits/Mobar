@@ -73,6 +73,7 @@ export default class CreateAccount extends Component {
 
   async onProceed() {
     console.log(this.state.mobileNumber, ':', this.state.password);
+    
     // check Not Blank
     if (this.state.mobileNumber == null) {
       ToastAndroid.showWithGravity(
@@ -423,7 +424,7 @@ export default class CreateAccount extends Component {
               </TouchableOpacity>
             </View> */}
 
-            <ThemeButton title={'Sign in'} isLoading={this.state.loader} />
+            <ThemeButton title={'Sign Up'} isLoading={this.state.loader} />
 
             <View style={styles.signin}>
               <Text style={styles.textMember}>I’m already a member, </Text>
