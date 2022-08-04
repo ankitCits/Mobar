@@ -1,0 +1,185 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (malloc) failed to allocate 1048576 bytes for AllocateHeap
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   The process is running with CompressedOops enabled, and the Java Heap may be blocking the growth of the native heap
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (./src/hotspot/share/memory/allocation.cpp:46), pid=17804, tid=2592
+#
+# JRE version:  (11.0.10) (build )
+# Java VM: OpenJDK 64-Bit Server VM (11.0.10+0-b96-7249189, mixed mode, sharing, tiered, compressed oops, g1 gc, windows-amd64)
+# No core dump will be written. Minidumps are not enabled by default on client versions of Windows
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: org.jetbrains.kotlin.cli.jvm.K2JVMCompiler @C:\Users\ankit\Documents\Mobar\Mobar\node_modules\react-native-gradle-plugin\build\20220624_7128613512349648196.compiler.options
+
+Host: Intel(R) Core(TM) i5-10200H CPU @ 2.40GHz, 8 cores, 7G,  Windows 10 , 64 bit Build 22000 (10.0.22000.708)
+Time: Fri Jun 24 16:45:14 2022 India Standard Time elapsed time: 0.195729 seconds (0d 0h 0m 0s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0000021d25a8e800):  JavaThread "Unknown thread" [_thread_in_vm, id=2592, stack(0x0000002084300000,0x0000002084400000)]
+
+Stack: [0x0000002084300000,0x0000002084400000]
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x5ecfaa]
+V  [jvm.dll+0x722bd5]
+V  [jvm.dll+0x72412d]
+V  [jvm.dll+0x7247e3]
+V  [jvm.dll+0x242928]
+V  [jvm.dll+0xb39a4]
+V  [jvm.dll+0x2e08f7]
+V  [jvm.dll+0x2d99fa]
+V  [jvm.dll+0x701737]
+V  [jvm.dll+0x702f2c]
+V  [jvm.dll+0x3587d9]
+V  [jvm.dll+0x6e4fae]
+V  [jvm.dll+0x3c0be3]
+V  [jvm.dll+0x3c2e91]
+C  [jli.dll+0x5373]
+C  [ucrtbase.dll+0x26c0c]
+C  [KERNEL32.DLL+0x154e0]
+C  [ntdll.dll+0x485b]
+
+
+---------------  P R O C E S S  ---------------
+
+Threads class SMR info:
+_java_thread_list=0x0000021d23805990, length=0, elements={
+}
+
+Java Threads: ( => current thread )
+
+Other Threads:
+  0x0000021d25aa6000 GCTaskThread "GC Thread#0" [stack: 0x0000002084500000,0x0000002084600000] [id=20224]
+
+[error occurred during error reporting (printing all threads), id 0xc0000005, EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ffeeb3e5ec0]
+
+VM state:not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x0000021d25a8c010] Heap_lock - owner thread: 0x0000021d25a8e800
+
+Heap address: 0x0000000083800000, size: 1992 MB, Compressed Oops mode: Non-zero based: 0x0000000083800000
+Narrow klass base: 0x0000000000000000, Narrow klass shift: 0
+
+GC Heap History (0 events):
+No events
+
+Deoptimization events (0 events):
+No events
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (0 events):
+No events
+
+Events (1 events):
+Event: 0.119 Loaded shared library C:\Program Files\Android\Android Studio1\jre\bin\zip.dll
+
+
+Dynamic libraries:
+0x00007ff78b6e0000 - 0x00007ff78b6ea000 	C:\Program Files\Android\Android Studio1\jre\bin\java.exe
+0x00007fff82360000 - 0x00007fff82569000 	C:\WINDOWS\SYSTEM32\ntdll.dll
+0x00007fff80be0000 - 0x00007fff80c9d000 	C:\WINDOWS\System32\KERNEL32.DLL
+0x00007fff7f960000 - 0x00007fff7fcd9000 	C:\WINDOWS\System32\KERNELBASE.dll
+0x00007fff7f840000 - 0x00007fff7f951000 	C:\WINDOWS\System32\ucrtbase.dll
+0x00007fff74cb0000 - 0x00007fff74cc9000 	C:\Program Files\Android\Android Studio1\jre\bin\jli.dll
+0x00007fff80a30000 - 0x00007fff80bdc000 	C:\WINDOWS\System32\USER32.dll
+0x00007fff7ff40000 - 0x00007fff7ff66000 	C:\WINDOWS\System32\win32u.dll
+0x00007fff80e60000 - 0x00007fff80e89000 	C:\WINDOWS\System32\GDI32.dll
+0x00007fff7ff70000 - 0x00007fff80082000 	C:\WINDOWS\System32\gdi32full.dll
+0x00007fff80150000 - 0x00007fff801ed000 	C:\WINDOWS\System32\msvcp_win.dll
+0x00007fff6c280000 - 0x00007fff6c297000 	C:\Program Files\Android\Android Studio1\jre\bin\VCRUNTIME140.dll
+0x00007fff6a1b0000 - 0x00007fff6a455000 	C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.22000.120_none_9d947278b86cc467\COMCTL32.dll
+0x00007fff80360000 - 0x00007fff80403000 	C:\WINDOWS\System32\msvcrt.dll
+0x00007fff80530000 - 0x00007fff80561000 	C:\WINDOWS\System32\IMM32.DLL
+0x00007fff3ca80000 - 0x00007fff3cb1d000 	C:\Program Files\Android\Android Studio1\jre\bin\msvcp140.dll
+0x00007ffeeb100000 - 0x00007ffeebbcf000 	C:\Program Files\Android\Android Studio1\jre\bin\server\jvm.dll
+0x00007fff80980000 - 0x00007fff80a2e000 	C:\WINDOWS\System32\ADVAPI32.dll
+0x00007fff80e90000 - 0x00007fff80f2e000 	C:\WINDOWS\System32\sechost.dll
+0x00007fff80240000 - 0x00007fff80360000 	C:\WINDOWS\System32\RPCRT4.dll
+0x00007fff81f90000 - 0x00007fff81f98000 	C:\WINDOWS\System32\PSAPI.DLL
+0x00007fff61180000 - 0x00007fff61189000 	C:\WINDOWS\SYSTEM32\WSOCK32.dll
+0x00007fff808b0000 - 0x00007fff8091f000 	C:\WINDOWS\System32\WS2_32.dll
+0x00007fff74c00000 - 0x00007fff74c33000 	C:\WINDOWS\SYSTEM32\WINMM.dll
+0x00007fff740b0000 - 0x00007fff740ba000 	C:\WINDOWS\SYSTEM32\VERSION.dll
+0x00007fff7ea30000 - 0x00007fff7ea48000 	C:\WINDOWS\SYSTEM32\kernel.appcore.dll
+0x00007fff74cf0000 - 0x00007fff74d01000 	C:\Program Files\Android\Android Studio1\jre\bin\verify.dll
+0x00007fff7d320000 - 0x00007fff7d541000 	C:\WINDOWS\SYSTEM32\DBGHELP.DLL
+0x00007fff73160000 - 0x00007fff73191000 	C:\WINDOWS\SYSTEM32\dbgcore.DLL
+0x00007fff7fec0000 - 0x00007fff7ff3f000 	C:\WINDOWS\System32\bcryptPrimitives.dll
+0x00007fff696c0000 - 0x00007fff696e9000 	C:\Program Files\Android\Android Studio1\jre\bin\java.dll
+0x00007fff74ce0000 - 0x00007fff74ceb000 	C:\Program Files\Android\Android Studio1\jre\bin\jimage.dll
+0x00007fff69f80000 - 0x00007fff69f98000 	C:\Program Files\Android\Android Studio1\jre\bin\zip.dll
+
+dbghelp: loaded successfully - version: 4.0.5 - missing functions: none
+symbol engine: initialized successfully - sym options: 0x614 - pdb path: .;C:\Program Files\Android\Android Studio1\jre\bin;C:\WINDOWS\SYSTEM32;C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.22000.120_none_9d947278b86cc467;C:\Program Files\Android\Android Studio1\jre\bin\server
+
+VM Arguments:
+java_command: org.jetbrains.kotlin.cli.jvm.K2JVMCompiler @C:\Users\ankit\Documents\Mobar\Mobar\node_modules\react-native-gradle-plugin\build\20220624_7128613512349648196.compiler.options
+java_class_path (initial): C:\Users\ankit\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlin\kotlin-compiler-embeddable\1.6.10\88f2073f4020cdb83132cfe940ceb9a60aba54ea\kotlin-compiler-embeddable-1.6.10.jar;C:\Users\ankit\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlin\kotlin-reflect\1.6.10\1cbe9c92c12a94eea200d23c2bbaedaf3daf5132\kotlin-reflect-1.6.10.jar;C:\Users\ankit\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlin\kotlin-stdlib\1.6.10\b8af3fe6f1ca88526914929add63cf5e7c5049af\kotlin-stdlib-1.6.10.jar;C:\Users\ankit\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlin\kotlin-script-runtime\1.6.10\d0a7ff2e2500ef497ed0214ae40ad3c8387a6164\kotlin-script-runtime-1.6.10.jar;C:\Users\ankit\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlin\kotlin-daemon-embeddable\1.6.10\a56d79bcbea411fa6058e4ecffc2de73e742bd2a\kotlin-daemon-embeddable-1.6.10.jar;C:\Users\ankit\.gradle\caches\modules-2\files-2.1\org.jetbrains.intellij.deps\trove4j\1.0.20181211\216c2e14b070f334479d800987affe4054cd563f\trove4j-1.0.20181211.jar;C:\Users\ankit\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna\5.6.0\330f2244e9030119ab3030fc3fededc86713d9cc\jna-5.6.0.jar;C:\Users\ankit\.gradle\caches\modules-2\files-2.1\org.jetbrains\annotations\13.0\919f0dfe192fb4e063e7dacadee7f8bb9a2672a9\annotations-13.0.jar;C:\Users\ankit\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlin\kotlin-stdlib-common\1.6.10\c118700e3a33c8a0d9adc920e9dec0831171925\kotlin-stdlib-common-1.6.10.jar
+Launcher Type: SUN_STANDARD
+
+[Global flags]
+     intx CICompilerCount                          = 4                                         {product} {ergonomic}
+     uint ConcGCThreads                            = 2                                         {product} {ergonomic}
+     uint G1ConcRefinementThreads                  = 8                                         {product} {ergonomic}
+   size_t G1HeapRegionSize                         = 1048576                                   {product} {ergonomic}
+    uintx GCDrainStackTargetSize                   = 64                                        {product} {ergonomic}
+   size_t InitialHeapSize                          = 132120576                                 {product} {ergonomic}
+   size_t MarkStackSize                            = 4194304                                   {product} {ergonomic}
+   size_t MaxHeapSize                              = 2088763392                                {product} {ergonomic}
+   size_t MinHeapDeltaBytes                        = 1048576                                   {product} {ergonomic}
+    uintx NonNMethodCodeHeapSize                   = 5836300                                {pd product} {ergonomic}
+    uintx NonProfiledCodeHeapSize                  = 122910970                              {pd product} {ergonomic}
+    uintx ProfiledCodeHeapSize                     = 122910970                              {pd product} {ergonomic}
+    uintx ReservedCodeCacheSize                    = 251658240                              {pd product} {ergonomic}
+     bool SegmentedCodeCache                       = true                                      {product} {ergonomic}
+     bool UseCompressedClassPointers               = true                                 {lp64_product} {ergonomic}
+     bool UseCompressedOops                        = true                                 {lp64_product} {ergonomic}
+     bool UseG1GC                                  = true                                      {product} {ergonomic}
+     bool UseLargePagesIndividualAllocation        = false                                  {pd product} {ergonomic}
+
+Logging:
+Log output configuration:
+ #0: stdout all=warning uptime,level,tags
+ #1: stderr all=off uptime,level,tags
+
+Environment Variables:
+JAVA_HOME=C:\Program Files\Java\jdk-16.0.1
+PATH=C:\Program Files\Common Files\Oracle\Java\javapath;C:\Python310\Scripts\;C:\Python310\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\ProgramData\chocolatey\bin;C:\Program Files\Java\jdk-16.0.1;C:\Users\ankit\AppData\Local\Android\Sdk\platform-tools;C:\Program Files\Git\cmd;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Program Files\nodejs\;C:\Program Files\dotnet\;C:\Users\ankit\AppData\Local\Microsoft\WindowsApps;C:\Users\ankit\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\ankit\AppData\Local\Android\Sdk\platform-tools;C:\Users\ankit\AppData\Roaming\npm
+USERNAME=ankit
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 165 Stepping 2, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 10 , 64 bit Build 22000 (10.0.22000.708)
+OS uptime: 1 days 1:29 hours
+
+CPU:total 8 (initial active 8) (4 cores per cpu, 2 threads per core) family 6 model 165 stepping 2 microcode 0xf0, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, avx2, aes, clmul, erms, 3dnowpref, lzcnt, ht, tsc, tscinvbit, bmi1, bmi2, adx, fma
+
+Memory: 4k page, system-wide physical 7967M (32M free)
+TotalPageFile size 32543M (AvailPageFile size 0M)
+current process WorkingSet (physical memory assigned to process): 10M, peak: 10M
+current process commit charge ("private bytes"): 55M, peak: 56M
+
+vm_info: OpenJDK 64-Bit Server VM (11.0.10+0-b96-7249189) for windows-amd64 JRE (11.0.10+0-b96-7249189), built on Mar 31 2021 21:44:00 by "builder" with MS VC++ 14.0 (VS2015)
+
+END.
