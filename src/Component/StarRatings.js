@@ -2,10 +2,8 @@ import React, { Component } from "react";
 import {
     View,
     StyleSheet,
-    TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { FontFamily } from "../Theme/FontFamily";
 
 export default class StarRating extends Component {
     constructor(props) {
@@ -13,11 +11,6 @@ export default class StarRating extends Component {
         this.state = {count: 0};
     }
     
-    //  _incrementCount() {
-    //     this.setState = ({
-    //       count: count + 1
-    //     });
-    //   }
     render() {
         const {
             isEdit = true,
@@ -30,20 +23,22 @@ export default class StarRating extends Component {
             <View style={styles.containerStyle}>
                 {[...Array(5)].map((star, index) => {
                     return (
-                    //console.log("index",index)
+                    
                     isEdit ?
                             <Icon
                                 name="star"
                                 size={16}
-                                color={index < rating ? "#FAB914" : '#DADADA'}
-                                //onPress={() => _incrementCount(++index)}
+                                
+                                color='#DADADA'
+                                
                                 style={{ marginTop: 2 }}
                             />
                             :
                             <Icon
                                 name="star"
                                 size={16}
-                                color={index < rating ? "#FAB914" : '#DADADA'}
+                                
+                                color='#DADADA'
                                 style={{ marginTop: 2 }}
                             />
                )
@@ -59,17 +54,5 @@ const styles = StyleSheet.create({
     },
     textStyle: {
         letterSpacing: 1,
-        fontFamily: FontFamily.ROBOTO_Medium
     },
-    star: {
-        marginVertical: 10,
-        marginHorizontal: 1,
-        marginLeft:10
-    },
-    on: {
-         color: '#FAB914',
-    },
-    off: {
-        color: '#ccc'
-    }
 });

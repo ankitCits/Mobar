@@ -60,21 +60,9 @@ class BarCard extends Component {
                         <View style={innerStyle.footer}>
                             <TouchableOpacity
                                 style={innerStyle.details}>
-                                <View style={{marginLeft:18}}>
+                                
                                     <StarRating isEdit={true} size={5} />
-                                </View>
-                                {/* <Icon
-                                    name="star"
-                                    size={16}
-                                    color="#FAB914"
-                                    style={{ marginTop: 2 }}
-                                />
-                                <Icon
-                                    name="star"
-                                    size={16}
-                                    color="#FAB914"
-                                    style={{ marginTop: 2 }}
-                                /> */}
+                            
                             </TouchableOpacity>
 
                             <TouchableOpacity
