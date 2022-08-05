@@ -5,7 +5,8 @@ import {
     Text,
     TouchableOpacity,
     View,
-    Image
+    Image,
+    Dimensions
 } from 'react-native';
 import images from '../assets/images';
 import { FontFamily } from '../Theme/FontFamily';
@@ -18,34 +19,46 @@ export default class CategoryCard extends React.Component {
     }
 
     render() {
+        const {
+            item,
+            hostUrl,
+            navigation,
+        } = this.props
         return (
             <>
                 <TouchableOpacity
                     onPress={() =>
-                        console.log(
-                            this.props.hostUrl + this.props.item.images,
-                        )
-                        // this.props.navigation.navigate('Product')
+                        console.log(hostUrl + item.images,)
+                        //navigation.navigate('Product')
                     }
                     style={{
                         marginTop: 28,
                         marginBottom: 30,
                         marginLeft: 10,
                     }}>
+
                     <ImageBackground
                         style={styles.boxInner}
                         resizeMode={'cover'}
                         source={images.boxOuter}
                         defaultSource={images.boxOuter}>
 
+                        {/* <View style={{
+                            position: 'absolute',
+                            top: 0,
+                            backgroundColor: 'red',
+                            height: '55%',
+                            width: '150%',
+                            left: -10,
+                            borderBottomRightRadius: 65,
+                            borderBottomLeftRadius: 120,
+                            
+                        }}>
+                        </View> */}
+
                         <View style={styles.innerTop}>
                             <TouchableOpacity
-                                onPress={() =>
-                                    // console.log(
-                                    //     this.props.hostUrl + this.props.item.images,
-                                    // )
-                                    console.log('nothing')
-                                }>
+                                onPress={() => console.log('nothing')}>
                                 <Icon
                                     name={'favorite'}
                                     size={22}
@@ -57,30 +70,33 @@ export default class CategoryCard extends React.Component {
                                 300ml
                             </Text>
                         </View>
+
                         <Image
                             style={styles.productImg}
                             resizeMode={'cover'}
                             source={{
-                                uri: `${this.props.hostUrl + this.props.item.images}`,
+                                uri: `${hostUrl + item.images}`,
                             }}
                         />
+
                         <Image
                             style={styles.boxOuter}
                             resizeMode={'cover'}
                             source={images.boxInner}
                             defaultSource={images.boxInner}
                         />
+
                         <View style={styles.innerBottom}>
                             <View>
                                 <Text style={styles.innerBottomText}>
-                                    {this.props.item.ecom_ac_products[0].name}
+                                    {item.ecom_ac_products[0].name}
                                 </Text>
                             </View>
                             <View>
                                 <Text style={styles.innerBottomText2}>
                                     Your Saving:{' '}
                                     {
-                                        this.props.item.ecom_ac_products[0].ecom_aca_product_units[0].unitDiscountPrice
+                                        item.ecom_ac_products[0].ecom_aca_product_units[0].unitDiscountPrice
                                     }
                                 </Text>
                             </View>
@@ -88,7 +104,7 @@ export default class CategoryCard extends React.Component {
                                 <Text style={styles.innerBottomText3}>
                                     ${' '}
                                     {
-                                        this.props.item.ecom_ac_products[0].ecom_aca_product_units[0].unitUserPrice
+                                        item.ecom_ac_products[0].ecom_aca_product_units[0].unitUserPrice
                                     }
                                 </Text>
                             </View>
@@ -104,8 +120,11 @@ const styles = StyleSheet.create({
         marginTop: '-30%',
         marginRight: 10,
         height: 70,
+        // height: '100%',
         width: 70,
+        // width: 70,
         alignSelf: 'center',
+        // position: 'absolute'
     },
     innerTop: {
         flexDirection: 'row',
@@ -126,6 +145,7 @@ const styles = StyleSheet.create({
     innerBottom: {
         alignItems: 'center',
         marginTop: '25%',
+        // marginTop: '45%',
     },
     innerBottomText: {
         color: '#fff',
