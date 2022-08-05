@@ -10,44 +10,29 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../assets/images';
 import { FontFamily } from '../Theme/FontFamily';
+import StarRating from './StarRatings';
 class BarCard extends Component {
     constructor(props) {
         super(props);
-
     }
-
+    
     render() {
         return (
-            <View style={innerStyle.container}>
+            <View>
                 <TouchableOpacity
                     activeOpacity={1}
                     onPress={() => this.props.navigation.navigate('BarList')}
-                    style={{
-                        marginTop: 20,
-                        backgroundColor: '#2B247A',
-                        borderBottomRightRadius: 8,
-                        shadowColor: '#000',
-                        shadowOffset: { width: 1, height: 1 },
-                        shadowOpacity: 0.4,
-                        shadowRadius: 15,
-                        borderRadius: 25,
-                        elevation: 5,
-                        alignSelf: 'center',
-                        width: 350,
-                        margin: 10,
-                    }}>
+                    style={innerStyle.container}>
                     <ImageBackground
                         style={innerStyle.promotionsImg}
-                        resizeMode={'cover'}
                         source={{
                             uri: `${this.props.hostUrl + this.props.item.images}`,
                         }}>
-                        <View style={{ marginTop: '3%', marginRight: '7%',fontSize:15 }}>
+                        <View style={innerStyle.heartContainer}>
                             <TouchableOpacity
                                 style={{
                                     alignItems: 'flex-end',
                                 }}>
-                                {/* <Icon name="favorite" size={28} color="#FF1405" /> */}
                                 <Image
                                     resizeMode={'cover'}
                                     source={images.heart}
@@ -55,63 +40,30 @@ class BarCard extends Component {
                                 />
                             </TouchableOpacity>
                             <View
-                                style={{
-                                    //   marginLeft:10,
-                                    marginTop: 20,
-                                    backgroundColor: '#26B90E',
-                                    width: 68,
-                                    height: 20,
-                                    alignItems: 'center',
-                                    //   borderRadius:10
-                                    borderTopRightRadius: 8,
-                                    borderBottomRightRadius: 8,
-                                }}>
+                                  style={innerStyle.off}>
                                 <Text
-                                    style={{
-                                        color: '#fff',
-                                        //   marginTop:2
-                                    }}>
+                                    style={{color: '#FFFFFF'}}>
                                     50% Off
                                 </Text>
                             </View>
                         </View>
                     </ImageBackground>
                     <View
-                        style={{
-                            margin: 20,
-                            backgroundColor:'#2B247A',
-                        }}>
+                     style={innerStyle.addressContainer}>
                         <Text
-                            style={{
-                                fontSize: 20,
-                                color: '#FFFFFF',
-                                fontWeight: '400',
-                                fontFamily:FontFamily.ROBOTO
-                            }}>
+                            style={innerStyle.textTitle}>
                             {this.props.item.vendorShopName}
                         </Text>
-                        <View
-                            style={{
-                                marginTop: 5,
-                                // marginBottom: -10,
-                                // alignSelf: 'flex-end',
-                            }}>
+                        <View>
                             <Text style={innerStyle.textAddress}>{this.props.item.address}</Text>
                         </View>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                width: '100%',
-                                justifyContent: 'space-around',
-                            }}>
-                                <TouchableOpacity
-                                style={{
-                                    marginTop: 10,
-                                    //marginLeft: 10,
-                                    flexDirection: 'row',
-                                    
-                                }}>
-                                <Icon
+                        <View style={innerStyle.footer}>
+                            <TouchableOpacity
+                                style={innerStyle.details}>
+                                <View style={{marginLeft:18}}>
+                                    <StarRating isEdit={true} size={5} />
+                                </View>
+                                {/* <Icon
                                     name="star"
                                     size={16}
                                     color="#FAB914"
@@ -122,15 +74,11 @@ class BarCard extends Component {
                                     size={16}
                                     color="#FAB914"
                                     style={{ marginTop: 2 }}
-                                />
+                                /> */}
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                style={{
-                                    marginTop: 10,
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                }}>
+                                style={innerStyle.distanceContainer}>
                                 <Icon
                                     name="directions-run"
                                     size={16}
@@ -143,11 +91,7 @@ class BarCard extends Component {
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                style={{
-                                    marginTop: 10,
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                }}>
+                                style={innerStyle.openLink}>
                                 <Icon
                                     name="fiber-manual-record"
                                     size={15}
@@ -165,10 +109,38 @@ class BarCard extends Component {
         );
     }
 }
+
 export default BarCard;
+
 const innerStyle = StyleSheet.create({
     container: {
-        
+        marginTop: 20,
+        backgroundColor: '#8A87AC',
+        alignSelf: 'center',
+        margin: 10,    
+    },
+    off:{
+        marginTop: 20,
+        backgroundColor: '#26B90E',
+        width: 68,
+        height: 20,
+        alignItems: 'center',
+        borderRadius:10
+    },
+    textTitle:{
+        fontSize: 20,
+        color: '#FFFFFF',
+        fontWeight: '400',
+        fontFamily:FontFamily.ROBOTO,
+        marginBottom:5
+    }, 
+    addressContainer:{
+        margin: 20,
+    },
+    heartContainer:{
+        marginTop: '3%', 
+        marginRight: '7%',
+        fontSize:15
     },
     textAddress:{
         flexDirection:'row',
@@ -177,15 +149,33 @@ const innerStyle = StyleSheet.create({
         fontWeight:'400',
         color:'#FFFFFF'
     },
+    footer:{
+        flexDirection: 'row',
+        width: '100%',
+        justifyContent: 'space-evenly',
+    },
+    distanceContainer:{
+        marginTop: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    details:{
+        marginTop: 10,
+        marginLeft: -53,
+        flexDirection: 'row',
+    },
     openText:{
         fontFamily:FontFamily.TAJAWAL_BLACK,
         fontSize:15,
         fontWeight:'500',
         color:'#FFFFFF'
     },
+    openLink:{
+        marginTop: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     promotionsImg: {
-        borderBottomLeftRadius: 15,
-        borderBottomRightRadius: 15,
         width: 350,
         height: 223,
     },
