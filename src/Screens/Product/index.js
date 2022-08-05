@@ -250,6 +250,216 @@ class Product extends Component {
     this.removeToFav(sendData);
   };
 
+  renderCategories = (item, index) =>
+    <View
+      style={{
+        margin: 10,
+        marginLeft: 15,
+        marginBottom: 0,
+      }}>
+      <TouchableOpacity
+        onPress={() => this.getProductList(index)}
+        style={{
+          shadowColor: '#fff',
+          shadowOffset: { width: 1, height: 0 },
+          shadowOpacity: 0.4,
+          shadowRadius: 3,
+          elevation: 5,
+          height: 48,
+          width: 48,
+          backgroundColor: index == this.state.itemIndex ? '#B01732' : '#fff',
+          borderRadius: 10,
+          alignSelf: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Image
+          resizeMode={'cover'}
+          source={{
+            uri: `${this.state.categoryList.hostUrl + item.images}`,
+          }}
+          defaultSource={item.image}
+          style={{
+            alignSelf: 'center',
+            marginTop: index == this.state.itemIndex ? 5 : 10,
+            height: 35,
+            width: 35,
+          }}
+        />
+      </TouchableOpacity>
+      <Text
+        style={{
+          fontSize: 10,
+          fontWeight: '500',
+          color: index != this.state.itemIndex ? '#7B7B7B' : '#711323',
+          textAlign: 'center',
+        }}>
+        {item.name}
+      </Text>
+    </View>
+
+  renderProducts = (item, index) =>
+    <View style={styles.itemOuterContainer}>
+      <View style={styles.itemContainer}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            padding: 10,
+          }}>
+          <Text style={styles.item}>
+            {item.ecom_aca_product_units[0].unitQty}{' '}
+            {item.ecom_aca_product_units[0].unitType}
+          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              item.fav
+                ? this.removeFavToState(item, index)
+                : this.addFavToState(item, index);
+            }}>
+            <Image
+              resizeMode={'cover'}
+              source={
+                item.fav ? images.heartFill : images.heart
+              }
+              defaultSource={
+                item.fav ? images.heartFill : images.heart
+              }
+              style={{
+                width: 20.57,
+                height: 18,
+              }}
+            />
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            alignItems: 'center',
+            marginTop: -5,
+          }}>
+          <Image
+            resizeMode={'cover'}
+            source={{
+              uri: item.images
+                ? `${this.state.categoryData.hostUrl +
+                item.images
+                }`
+                : images.wine,
+            }}
+            defaultSource={images.wine}
+            style={{
+              height: 80,
+              width: 40,
+            }}
+          />
+          <Text
+            style={{
+              fontSize: 14,
+              fontWeight: '500',
+              color: '#050505',
+              marginTop: 10,
+            }}>
+            {item.name}
+          </Text>
+          <Text
+            style={{
+              fontSize: 12,
+              fontWeight: '400',
+              color: '#000',
+            }}>
+            {item.shortDescription}
+          </Text>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: '700',
+              color: '#000',
+            }}>
+            ${item.ecom_aca_product_units[0].unitUserPrice}
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginBottom: 10,
+          }}>
+          {item.ecom_aca_product_units.savedPrices ? (
+            <ImageBackground
+              resizeMode={'cover'}
+              source={images.saveTemplate}
+              defaultSource={images.saveTemplate}
+              style={{
+                width: 76,
+                height: 19,
+                marginTop: 5,
+              }}>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: '500',
+                  color: '#fff',
+                  marginLeft: 5,
+                }}>
+                Save $100
+              </Text>
+            </ImageBackground>
+          ) : (
+            <View />
+          )}
+          <View
+            style={{
+              flexDirection: 'row',
+            }}>
+            {item.card ? (
+              <>
+                <TouchableOpacity
+                  onPress={() =>
+                    this.removeCardToState(item, index)
+                  }
+                  style={{
+                    alignSelf: 'center',
+                    backgroundColor: '#BABABA',
+                    borderRadius: 20,
+                    marginTop: -5,
+                    marginRight: 5,
+                  }}>
+                  <Icon
+                    name="remove"
+                    size={18}
+                    color="#fff"
+                  />
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: '700',
+                    alignItems: 'center',
+                    marginTop: -5,
+                    marginRight: 5,
+                  }}>
+                  {item.card}
+                </Text>
+              </>
+            ) : null}
+            <TouchableOpacity
+              onPress={() =>
+                this.addCardToState(item, index)
+              }
+              style={{
+                alignSelf: 'center',
+                backgroundColor: '#BABABA',
+                borderRadius: 20,
+                marginTop: -5,
+                marginRight: 5,
+              }}>
+              <Icon name="add" size={18} color="#fff" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </View>
+
   render() {
     return (
       <SafeAreaView style={styles.container}>
@@ -344,59 +554,9 @@ class Product extends Component {
                     data={this.state.categoryList.data}
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    style={{
-                      height: 140,
-                      marginTop: 5,
-                    }}
+                    style={styles.categoryFlatList}
                     keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item, index }) => (
-                      <View
-                        style={{
-                          margin: 10,
-                          marginLeft: 15,
-                          marginBottom: 0,
-                        }}>
-                        <TouchableOpacity
-                          onPress={() => this.getProductList(index)}
-                          style={{
-                            shadowColor: '#fff',
-                            shadowOffset: { width: 1, height: 0 },
-                            shadowOpacity: 0.4,
-                            shadowRadius: 3,
-                            elevation: 5,
-                            height: 48,
-                            width: 48,
-                            backgroundColor: index == this.state.itemIndex ? '#B01732' : '#fff',
-                            borderRadius: 10,
-                            alignSelf: 'center',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}>
-                          <Image
-                            resizeMode={'cover'}
-                            source={{
-                              uri: `${this.state.categoryList.hostUrl + item.images}`,
-                            }}
-                            defaultSource={item.image}
-                            style={{
-                              alignSelf: 'center',
-                              marginTop: index == this.state.itemIndex ? 5 : 10,
-                              height: 35,
-                              width: 35,
-                            }}
-                          />
-                        </TouchableOpacity>
-                        <Text
-                          style={{
-                            fontSize: 10,
-                            fontWeight: '500',
-                            color: index != this.state.itemIndex ? '#7B7B7B' : '#711323',
-                            textAlign: 'center',
-                          }}>
-                          {item.name}
-                        </Text>
-                      </View>
-                    )}
+                    renderItem={({ item, index }) => this.renderCategories(item, index)}
                   />
                 </>
               ) : null}
@@ -421,168 +581,7 @@ class Product extends Component {
                       // }}
                       keyExtractor={(item, index) => index.toString()}
                       numColumns={numColumns}
-                      renderItem={({ item, index }) => (
-                        <View style={styles.itemOuterContainer}>
-                          <View style={styles.itemContainer}>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                padding: 10,
-                              }}>
-                              <Text style={styles.item}>
-                                {item.ecom_aca_product_units[0].unitQty}{' '}
-                                {item.ecom_aca_product_units[0].unitType}
-                              </Text>
-                              <TouchableOpacity
-                                onPress={() => {
-                                  item.fav
-                                    ? this.removeFavToState(item, index)
-                                    : this.addFavToState(item, index);
-                                }}>
-                                <Image
-                                  resizeMode={'cover'}
-                                  source={
-                                    item.fav ? images.heartFill : images.heart
-                                  }
-                                  defaultSource={
-                                    item.fav ? images.heartFill : images.heart
-                                  }
-                                  style={{
-                                    width: 20.57,
-                                    height: 18,
-                                  }}
-                                />
-                              </TouchableOpacity>
-                            </View>
-                            <View
-                              style={{
-                                alignItems: 'center',
-                                marginTop: -5,
-                              }}>
-                              <Image
-                                resizeMode={'cover'}
-                                source={{
-                                  uri: item.images
-                                    ? `${this.state.categoryData.hostUrl +
-                                    item.images
-                                    }`
-                                    : images.wine,
-                                }}
-                                defaultSource={images.wine}
-                                style={{
-                                  height: 80,
-                                  width: 40,
-                                }}
-                              />
-                              <Text
-                                style={{
-                                  fontSize: 14,
-                                  fontWeight: '500',
-                                  color: '#050505',
-                                  marginTop: 10,
-                                }}>
-                                {item.name}
-                              </Text>
-                              <Text
-                                style={{
-                                  fontSize: 12,
-                                  fontWeight: '400',
-                                  color: '#000',
-                                }}>
-                                {item.shortDescription}
-                              </Text>
-                              <Text
-                                style={{
-                                  fontSize: 18,
-                                  fontWeight: '700',
-                                  color: '#000',
-                                }}>
-                                ${item.ecom_aca_product_units[0].unitUserPrice}
-                              </Text>
-                            </View>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                marginBottom: 10,
-                              }}>
-                              {item.ecom_aca_product_units.savedPrices ? (
-                                <ImageBackground
-                                  resizeMode={'cover'}
-                                  source={images.saveTemplate}
-                                  defaultSource={images.saveTemplate}
-                                  style={{
-                                    width: 76,
-                                    height: 19,
-                                    marginTop: 5,
-                                  }}>
-                                  <Text
-                                    style={{
-                                      fontSize: 12,
-                                      fontWeight: '500',
-                                      color: '#fff',
-                                      marginLeft: 5,
-                                    }}>
-                                    Save $100
-                                  </Text>
-                                </ImageBackground>
-                              ) : (
-                                <View />
-                              )}
-                              <View
-                                style={{
-                                  flexDirection: 'row',
-                                }}>
-                                {item.card ? (
-                                  <>
-                                    <TouchableOpacity
-                                      onPress={() =>
-                                        this.removeCardToState(item, index)
-                                      }
-                                      style={{
-                                        alignSelf: 'center',
-                                        backgroundColor: '#BABABA',
-                                        borderRadius: 20,
-                                        marginTop: -5,
-                                        marginRight: 5,
-                                      }}>
-                                      <Icon
-                                        name="remove"
-                                        size={18}
-                                        color="#fff"
-                                      />
-                                    </TouchableOpacity>
-                                    <Text
-                                      style={{
-                                        fontSize: 16,
-                                        fontWeight: '700',
-                                        alignItems: 'center',
-                                        marginTop: -5,
-                                        marginRight: 5,
-                                      }}>
-                                      {item.card}
-                                    </Text>
-                                  </>
-                                ) : null}
-                                <TouchableOpacity
-                                  onPress={() =>
-                                    this.addCardToState(item, index)
-                                  }
-                                  style={{
-                                    alignSelf: 'center',
-                                    backgroundColor: '#BABABA',
-                                    borderRadius: 20,
-                                    marginTop: -5,
-                                    marginRight: 5,
-                                  }}>
-                                  <Icon name="add" size={18} color="#fff" />
-                                </TouchableOpacity>
-                              </View>
-                            </View>
-                          </View>
-                        </View>
-                      )}
+                      renderItem={({ item, index }) => this.renderProducts(item, index)}
                     />
                   </>
                 ) : (

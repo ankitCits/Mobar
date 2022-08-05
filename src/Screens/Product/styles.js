@@ -74,5 +74,9 @@ const styles = StyleSheet.create({
         width: size,
         height: size + 50,
     },
+    categoryFlatList: {
+        height: 140,
+        marginTop: 5,
+    }
 });
 export default styles;
