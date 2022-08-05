@@ -15,20 +15,25 @@ class BarCard extends Component {
     constructor(props) {
         super(props);
     }
-    
+
     render() {
+        const {
+            navigation,
+            hostUrl,
+            item
+        } = this.props;
         return (
             <View>
                 <TouchableOpacity
                     activeOpacity={1}
-                    onPress={() => this.props.navigation.navigate('BarList')}
-                    style={innerStyle.container}>
+                    onPress={() => navigation.navigate('BarList')}
+                    style={styles.container}>
                     <ImageBackground
-                        style={innerStyle.promotionsImg}
+                        style={styles.promotionsImg}
                         source={{
-                            uri: `${this.props.hostUrl + this.props.item.images}`,
+                            uri: `${hostUrl + item.images}`,
                         }}>
-                        <View style={innerStyle.heartContainer}>
+                        <View style={styles.heartContainer}>
                             <TouchableOpacity
                                 style={{
                                     alignItems: 'flex-end',
@@ -40,54 +45,51 @@ class BarCard extends Component {
                                 />
                             </TouchableOpacity>
                             <View
-                                  style={innerStyle.off}>
+                                style={styles.off}>
                                 <Text
-                                    style={{color: '#FFFFFF'}}>
+                                    style={{ color: '#FFFFFF' }}>
                                     50% Off
                                 </Text>
                             </View>
                         </View>
                     </ImageBackground>
                     <View
-                     style={innerStyle.addressContainer}>
+                        style={styles.addressContainer}>
                         <Text
-                            style={innerStyle.textTitle}>
-                            {this.props.item.vendorShopName}
+                            style={styles.textTitle}>
+                            {item.vendorShopName}
                         </Text>
                         <View>
-                            <Text style={innerStyle.textAddress}>{this.props.item.address}</Text>
+                            <Text style={styles.textAddress}>{item.address}</Text>
                         </View>
-                        <View style={innerStyle.footer}>
-                            <TouchableOpacity
-                                style={innerStyle.details}>
-                                
-                                    <StarRating isEdit={true} size={5} />
-                            
+                        <View style={styles.footer}>
+                            <TouchableOpacity style={styles.details}>
+                                <StarRating isEdit={false} size={4} />
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                style={innerStyle.distanceContainer}>
+                                style={styles.distanceContainer}>
                                 <Icon
                                     name="directions-run"
                                     size={16}
                                     color="#FFFFFF"
                                     style={{ marginTop: 2 }}
                                 />
-                                <Text style={innerStyle.textAddress}>
-                                    {this.props.item.distance.toFixed(2)}Km
+                                <Text style={styles.textAddress}>
+                                    {item.distance.toFixed(2)}Km
                                 </Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                style={innerStyle.openLink}>
+                                style={styles.openLink}>
                                 <Icon
                                     name="fiber-manual-record"
                                     size={15}
                                     color="#26B90E"
                                     style={{ marginTop: 2 }}
                                 />
-                                <Text style={innerStyle.openText}>
-                                    open
+                                <Text style={styles.openText}>
+                                    Open
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -100,65 +102,64 @@ class BarCard extends Component {
 
 export default BarCard;
 
-const innerStyle = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         marginTop: 20,
         backgroundColor: '#8A87AC',
-        alignSelf: 'center',
-        margin: 10,    
+        margin: 10,
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20
     },
-    off:{
+    off: {
         marginTop: 20,
         backgroundColor: '#26B90E',
         width: 68,
         height: 20,
         alignItems: 'center',
-        borderRadius:10
+        borderTopRightRadius: 10,
+        borderBottomRightRadius: 10
     },
-    textTitle:{
+    textTitle: {
         fontSize: 20,
         color: '#FFFFFF',
         fontWeight: '400',
-        fontFamily:FontFamily.ROBOTO,
-        marginBottom:5
-    }, 
-    addressContainer:{
-        margin: 20,
+        fontFamily: FontFamily.ROBOTO_REGULAR,
+        marginBottom: 5
     },
-    heartContainer:{
-        marginTop: '3%', 
+    addressContainer: {
+        margin: 12,
+    },
+    heartContainer: {
+        marginTop: '3%',
         marginRight: '7%',
-        fontSize:15
+        fontSize: 15
     },
-    textAddress:{
-        flexDirection:'row',
-        fontFamily:FontFamily.ROBOTO,
-        fontSize:13,
-        fontWeight:'400',
-        color:'#FFFFFF'
-    },
-    footer:{
+    textAddress: {
         flexDirection: 'row',
-        width: '100%',
-        justifyContent: 'space-evenly',
+        fontFamily: FontFamily.ROBOTO_REGULAR,
+        fontSize: 13,
+        fontWeight: '400',
+        color: '#FFFFFF'
     },
-    distanceContainer:{
-        marginTop: 10,
+    footer: {
         flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
     },
-    details:{
+    distanceContainer: {
         marginTop: 10,
-        marginLeft: -53,
         flexDirection: 'row',
     },
-    openText:{
-        fontFamily:FontFamily.TAJAWAL_BLACK,
-        fontSize:15,
-        fontWeight:'500',
-        color:'#FFFFFF'
+    details: {
+        marginTop: 10,
     },
-    openLink:{
+    openText: {
+        fontFamily: FontFamily.TAJAWAL_BLACK,
+        fontSize: 15,
+        fontWeight: '500',
+        color: '#FFFFFF'
+    },
+    openLink: {
         marginTop: 10,
         flexDirection: 'row',
         alignItems: 'center',

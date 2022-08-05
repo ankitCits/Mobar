@@ -2,48 +2,50 @@ import React, { Component } from "react";
 import {
     View,
     StyleSheet,
+    TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export default class StarRating extends Component {
     constructor(props) {
         super(props);
-        this.state = {count: 0};
+        this.state = { size: this.props.size };
     }
-    
+
     render() {
         const {
             isEdit = true,
             size = 0,
-            rating = size
         } = this.props
-        console.log("edit =>",isEdit);
-        console.log("rating =>",rating);
         return (
             <View style={styles.containerStyle}>
                 {[...Array(5)].map((star, index) => {
                     return (
-                    
-                    isEdit ?
-                            <Icon
-                                name="star"
-                                size={16}
-                                
-                                color='#DADADA'
-                                
-                                style={{ marginTop: 2 }}
-                            />
+                        isEdit ?
+                            <TouchableOpacity
+                                key={index}
+                                onPress={() =>
+                                    this.setState({ size: ++index })
+                                }
+                            >
+                                <Icon
+                                    name="star"
+                                    size={16}
+                                    color={index < this.state.size ? '#FAB914' : '#DADADA'}
+                                    style={{ marginTop: 2 }}
+                                />
+                            </TouchableOpacity>
                             :
                             <Icon
                                 name="star"
                                 size={16}
-                                
-                                color='#DADADA'
+                                color={index < size ? '#FAB914' : '#DADADA'}
                                 style={{ marginTop: 2 }}
                             />
-               )
-            })}
-            </View>
+                    )
+                })
+                }
+            </View >
         );
     }
 }
