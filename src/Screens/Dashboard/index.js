@@ -3,13 +3,8 @@ import {
   View,
   StyleSheet,
   Dimensions,
-  ScrollView,
   Text,
   ToastAndroid,
-  ActivityIndicator,
-  ImageBackground,
-  TouchableOpacity,
-  Image
 } from 'react-native';
 import { SceneMap, TabBar } from 'react-native-tab-view';
 import { HPageViewHoc, HScrollView } from 'react-native-head-tab-view';
@@ -28,6 +23,8 @@ import { setUserDetail } from '../../Redux/actions/auth';
 import Header from '../Component/Header';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import images from '../../assets/images';
+import { colors } from '../../Theme/colors';
+import { FontFamily } from '../../Theme/FontFamily';
 
 const initialLayout = { width: Dimensions.get('window').width };
 
@@ -172,12 +169,7 @@ function Dashboard(props) {
         <ThemeFullPageLoader />
       ) : (
         <>
-          <View
-            style={{
-              height: 70,
-              backgroundColor: '#fff',
-            }}>
-
+          <View>
             <Header
               onClick={() => props.navigation.openDrawer()}
               onCard={() => props.navigation.navigate('MyCard')}
@@ -198,41 +190,24 @@ function Dashboard(props) {
             renderTabBar={props => (
               <TabBar
                 {...props}
-                indicatorStyle={{ backgroundColor: '#711323' }}
+                indicatorStyle={{ backgroundColor: colors.CLR_WHITE }}
                 style={{
-                  backgroundColor: '#711323',
-                  shadowColor: '#000',
-                  shadowOffset: {
-                    width: 0,
-                    height: 0,
-                  },
-                  // shadowOpacity: 1,
-                  // shadowRadius: 10,
-                  elevation: 1,
-                  backgroundColor: '#fff',
-                  borderBottomLeftRadius: 20,
-                  borderBottomRightRadius: 20,
-                  overflow: 'hidden',
-                  bottom: 1,
+                  
                 }}
-                tabStyle={{ backgroundColor: '#fff' }}
+                tabStyle={{ backgroundColor: colors.CLR_WHITE, }}
                 renderLabel={({ route }) => (
                   <>
                     <Text
-                      style={
+                      style={[styles.label,
                         route.key === props.navigationState.routes[index].key
-                          ? styles.selectedTabTextStyle
-                          : styles.label
-                      }>
+                          ? styles.selectedTabText
+                          : styles.tabText
+                      ]}>
                       {route.title}
                     </Text>
                     {route.key === props.navigationState.routes[index].key ? (
                       <View
-                        style={{
-                          backgroundColor: '#711323',
-                          height: 3,
-                          top: '30%',
-                        }}
+                        style={styles.selectedTabBorder}
                       />
                     ) : null}
                   </>
@@ -240,10 +215,7 @@ function Dashboard(props) {
                 labelStyle={styles.noLabel}
               />
             )}
-          />
-
-
-       
+          />       
         </>
       )}
     </>
@@ -266,18 +238,38 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
 
 const styles = StyleSheet.create({
+  // tabStyle:{
+  //   // backgroundColor: 'yellow',
+  //   //               shadowColor: 'red',
+  //   //               shadowOffset: {
+  //   //                 width: 0,
+  //   //                 height: 0,
+  //   //               },
+  //   //               elevation: 1,
+  //                 //backgroundColor: 'red',
+  //                 // // borderBottomLeftRadius: 20,
+  //                 // // borderBottomRightRadius: 20,
+  //                 // overflow: 'hidden',
+  //                 // bottom: 1,
+  // },
   noLabel: {
     display: 'none',
     height: 0,
   },
-  selectedTabTextStyle: {
-    color: '#711323',
-    fontSize: 15,
-    fontWeight: '700',
+  selectedTabText: {
+    color: colors.CLR_TAB,
+  },
+  selectedTabBorder:{
+    backgroundColor: colors.CLR_TAB,
+    height: 3,
+    top: '30%',
+  },
+  tabText:{
+    color: '#000000',
   },
   label: {
-    color: '#000',
     fontSize: 15,
-    fontWeight: '500',
+    fontFamily:FontFamily.ROBOTO_REGULAR,
+    fontWeight: '400',
   },
 });

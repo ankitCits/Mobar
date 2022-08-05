@@ -16,6 +16,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import BarCard from '../../../Component/BarCard';
 import CategoryCard from '../../../Component/CategoryCard';
 import ComboOfferCard from '../../../Component/ComboOfferCard';
+import { colors } from '../../../Theme/colors';
 
 export default class Whiskey extends Component {
   constructor(props) {
@@ -28,7 +29,7 @@ export default class Whiskey extends Component {
       <SafeAreaView
         style={{
           flex: 1,
-          backgroundColor: '#fff',
+          backgroundColor: colors.CLR_WHITE,
         }}>
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -139,6 +140,7 @@ const styles = StyleSheet.create({
   whiskeyText: {
     fontSize: 18,
     fontWeight: '500',
+    color:colors.THEME_COLOR
   },
   ViewAll: {
     fontSize: 13,
