@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -31,13 +31,13 @@ export default class ProductDetailDrinks extends Component {
           backgroundColor: '#E5E5E5',
         }}>
         <ScrollView>
-          <View style={{backgroundColor: '#fff'}}>
+          <View style={{ backgroundColor: '#fff' }}>
             <View
               style={{
                 backgroundColor: '#fff',
                 height: 390,
                 shadowColor: '#000',
-                shadowOffset: {width: 1, height: 1},
+                shadowOffset: { width: 1, height: 1 },
                 shadowOpacity: 0.4,
                 shadowRadius: 3,
                 elevation: 5,
@@ -155,14 +155,14 @@ export default class ProductDetailDrinks extends Component {
                         justifyContent: 'space-around',
                       }}>
                       <TouchableOpacity
-                        onPress={() => this.setState({visibilityQuantity: 30})}
+                        onPress={() => this.setState({ visibilityQuantity: 30 })}
                         style={
                           this.state.visibilityQuantity == 30
                             ? styles.itemQuantitySelected
                             : styles.itemQuantity
                         }>
                         <View
-                          style={{flexDirection: 'row', alignItems: 'center'}}>
+                          style={{ flexDirection: 'row', alignItems: 'center' }}>
                           <Text
                             style={{
                               fontSize: 15,
@@ -175,14 +175,14 @@ export default class ProductDetailDrinks extends Component {
                       </TouchableOpacity>
 
                       <TouchableOpacity
-                        onPress={() => this.setState({visibilityQuantity: 60})}
+                        onPress={() => this.setState({ visibilityQuantity: 60 })}
                         style={
                           this.state.visibilityQuantity == 60
                             ? styles.itemQuantitySelected
                             : styles.itemQuantity
                         }>
                         <View
-                          style={{flexDirection: 'row', alignItems: 'center'}}>
+                          style={{ flexDirection: 'row', alignItems: 'center' }}>
                           <Text
                             style={{
                               fontSize: 15,
@@ -195,14 +195,14 @@ export default class ProductDetailDrinks extends Component {
                       </TouchableOpacity>
 
                       <TouchableOpacity
-                        onPress={() => this.setState({visibilityQuantity: 90})}
+                        onPress={() => this.setState({ visibilityQuantity: 90 })}
                         style={
                           this.state.visibilityQuantity == 90
                             ? styles.itemQuantitySelected
                             : styles.itemQuantity
                         }>
                         <View
-                          style={{flexDirection: 'row', alignItems: 'center'}}>
+                          style={{ flexDirection: 'row', alignItems: 'center' }}>
                           <Text
                             style={{
                               fontSize: 15,
@@ -237,14 +237,14 @@ export default class ProductDetailDrinks extends Component {
                 backgroundColor: '#fff',
                 height: 200,
                 shadowColor: '#000',
-                shadowOffset: {width: 1, height: 1},
+                shadowOffset: { width: 1, height: 1 },
                 shadowOpacity: 0.4,
                 shadowRadius: 3,
                 elevation: 5,
                 marginTop: 1,
                 //   borderRadius: 20,
               }}>
-              <View style={{margin: 15}}>
+              <View style={{ margin: 15 }}>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -294,7 +294,7 @@ export default class ProductDetailDrinks extends Component {
                           name="card"
                           size={25}
                           color="#fff"
-                          // style={{marginRight: 7}}
+                        // style={{marginRight: 7}}
                         />
                       </TouchableOpacity>
                     </View>
@@ -304,11 +304,11 @@ export default class ProductDetailDrinks extends Component {
                       name="favorite"
                       size={30}
                       color="#FF1405"
-                      style={{marginRight: 7}}
+                      style={{ marginRight: 7 }}
                     />
                   </TouchableOpacity>
                 </View>
-                <View style={{marginTop: 30}}>
+                <View style={{ marginTop: 30 }}>
                   <Text
                     style={{
                       color: '#424242',
@@ -324,8 +324,8 @@ export default class ProductDetailDrinks extends Component {
             </View>
           </View>
 
-          <View style={{margin: 0, marginTop: 20}}>
-            <View style={{margin: 15}}>
+          <View style={{ margin: 0, marginTop: 20 }}>
+            <View style={{ margin: 15 }}>
               <Text
                 style={{
                   fontSize: 15,
@@ -351,13 +351,15 @@ export default class ProductDetailDrinks extends Component {
                 backgroundColor: '#fff',
                 marginTop: 15,
               }}>
-              <View style={{margin: 15}}>
+              <View style={{ margin: 15 }}>
                 <TouchableOpacity
                   style={{
                     flexDirection: 'row',
                   }}
                   onPress={() =>
-                    this.props.navigation.navigate('ProductDetailBars')
+                    // this.props.navigation.navigate('ProductDetailBars')
+                    // this.props.navigation.navigate('ProductDetailBars')
+                    console.log('go to bar details')
                   }>
                   <View>
                     <Image
@@ -371,7 +373,7 @@ export default class ProductDetailDrinks extends Component {
                     />
                   </View>
 
-                  <View style={{margin: 0, marginLeft: 10}}>
+                  <View style={{ margin: 0, marginLeft: 10 }}>
                     <View
                       style={{
                         flexDirection: 'row',
@@ -463,13 +465,14 @@ export default class ProductDetailDrinks extends Component {
               <View style={styles.productUnderline} />
 
 
-              <View style={{margin: 15}}>
+              <View style={{ margin: 15 }}>
                 <TouchableOpacity
                   style={{
                     flexDirection: 'row',
                   }}
                   onPress={() =>
-                    this.props.navigation.navigate('ProductDetailBars')
+                    // this.props.navigation.navigate('ProductDetailBars')
+                    console.log('go to bar details')
                   }>
                   <View>
                     <Image
@@ -483,7 +486,7 @@ export default class ProductDetailDrinks extends Component {
                     />
                   </View>
 
-                  <View style={{margin: 0, marginLeft: 10}}>
+                  <View style={{ margin: 0, marginLeft: 10 }}>
                     <View
                       style={{
                         flexDirection: 'row',
@@ -573,7 +576,7 @@ export default class ProductDetailDrinks extends Component {
                 </TouchableOpacity>
               </View>
               <View style={styles.productUnderline} />
-              
+
             </View>
           </View>
 
@@ -599,7 +602,7 @@ export default class ProductDetailDrinks extends Component {
                 borderTopRightRadius: 20,
                 overflow: 'hidden',
               }}>
-              <View style={{margin: 20}}>
+              <View style={{ margin: 20 }}>
                 <View>
                   <Text
                     style={{
@@ -610,7 +613,7 @@ export default class ProductDetailDrinks extends Component {
                   </Text>
                 </View>
 
-                <View style={{marginTop: 20}}>
+                <View style={{ marginTop: 20 }}>
                   <View
                     style={{
                       flexDirection: 'row',
@@ -625,7 +628,7 @@ export default class ProductDetailDrinks extends Component {
                       }}>
                       Chivas Regal 12
                     </Text>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <TouchableOpacity>
                         <Icon name="remove" size={20} color="#4D4F50" />
                       </TouchableOpacity>
@@ -644,11 +647,11 @@ export default class ProductDetailDrinks extends Component {
                     </View>
                   </View>
 
-                  <View style={{marginTop: '10%', marginBottom: 10}}>
+                  <View style={{ marginTop: '10%', marginBottom: 10 }}>
                     <TouchableOpacity
                       style={styles.save}
                       onPress={() => this.props.navigation.navigate('MyCard')}>
-                      <Text style={{color: '#fff', fontSize: 15}}>
+                      <Text style={{ color: '#fff', fontSize: 15 }}>
                         VIEW CART
                       </Text>
                     </TouchableOpacity>
@@ -658,7 +661,7 @@ export default class ProductDetailDrinks extends Component {
             </View>
           </View>
         </ScrollView>
-      </SafeAreaView>
+      </SafeAreaView >
     );
   }
 }
@@ -673,7 +676,7 @@ const styles = StyleSheet.create({
     height: 100,
     width: 328,
     shadowColor: '#000',
-    shadowOffset: {width: 1, height: 1},
+    shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
     shadowRadius: 12,
     borderRadius: 12,

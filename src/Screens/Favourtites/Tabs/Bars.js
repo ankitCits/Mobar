@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -33,19 +33,21 @@ export default class Bars extends Component {
                   style={styles.productView}
                   onPress={() =>
                     // console.log("++++",`${this.props.route.params.hostUrl+item.ecom_ae_vendor.images}`)
-                    this.props.navigation.navigate('ProductDetailBars',{id:item.ecom_ae_vendor.vendorId})
+                    // this.props.navigation.navigate('ProductDetailBars',{id:item.ecom_ae_vendor.vendorId})
+                    // this.props.navigation.navigate('ProductDetailBars')
+                    console.log('go to bar details')
                   }>
                   <View style={styles.productInnerView}>
                     <Image
                       style={{
-                        width:75,
-                        height:75,
+                        width: 75,
+                        height: 75,
                       }}
                       resizeMode={'cover'}
-                      source={{uri:`${this.props.route.params.hostUrl+item.ecom_ae_vendor.images}`}}
+                      source={{ uri: `${this.props.route.params.hostUrl + item.ecom_ae_vendor.images}` }}
                     />
                   </View>
-                  <View style={{margin: 5, marginLeft: 15}}>
+                  <View style={{ margin: 5, marginLeft: 15 }}>
                     <View
                       style={{
                         flexDirection: 'row',
@@ -64,7 +66,7 @@ export default class Bars extends Component {
                       </Text>
                     </View>
 
-                    <View style={{width: '80%',marginTop:5}}>
+                    <View style={{ width: '80%', marginTop: 5 }}>
                       <Text
                         style={{
                           fontSize: 12,
@@ -83,7 +85,7 @@ export default class Bars extends Component {
                         alignItems: 'flex-end',
                       }}>
                       <View
-                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Icon
                           name="fiber-manual-record"
                           size={18}
@@ -137,7 +139,7 @@ const styles = StyleSheet.create({
     height: 115,
     width: '90%',
     shadowColor: '#000',
-    shadowOffset: {width: 1, height: 1},
+    shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
     shadowRadius: 10,
     borderRadius: 10,
@@ -152,7 +154,7 @@ const styles = StyleSheet.create({
     height: 115,
     width: 121,
     shadowColor: '#000',
-    shadowOffset: {width: 1, height: 1},
+    shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
     shadowRadius: 10,
     borderRadius: 10,

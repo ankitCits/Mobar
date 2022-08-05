@@ -131,7 +131,8 @@ export default class BarList extends Component {
         <ScrollView>
           <TouchableOpacity
             onPress={() =>
-              this.props.navigation.navigate('ProductDetailBars')
+               // this.props.navigation.navigate('ProductDetailBars')
+               console.log('go to bar details')
             }
             style={{
               marginTop: 20,
@@ -261,7 +262,8 @@ export default class BarList extends Component {
 
           <TouchableOpacity
             onPress={() =>
-              this.props.navigation.navigate('ProductDetailBars')
+              // this.props.navigation.navigate('ProductDetailBars')
+              console.log('go to bar details')
             }
             style={{
               marginTop: 20,

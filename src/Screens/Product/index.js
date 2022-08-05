@@ -31,13 +31,16 @@ import LinearGradient from 'react-native-linear-gradient';
 import { connect } from 'react-redux';
 import { A_KEY, BASE_URL } from '../../config';
 import NoContentFound from '../../Component/NoContentFound';
+import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
+
 import { getAccessToken } from '../../localstorage';
 import { addTocard, addToFav, removeToFav } from '../../Redux/actions/product';
+import styles from './styles';
 const numColumns = 2;
-const size = Dimensions.get('window').width / numColumns;
 
 class Product extends Component {
   constructor(props) {
+    console.log('Product')
     super(props);
     this.state = {
       feature: true,
@@ -248,22 +251,13 @@ class Product extends Component {
   };
 
   render() {
-    console.log('=======>>', this.state.categoryList);
     return (
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: '#E5E5E5',
-        }}>
+      <SafeAreaView style={styles.container}>
         <>
+          {/* Header */}
           <View
-            style={{
-              backgroundColor: '#fff',
-            }}>
-            <View
-              style={{
-                height: 70,
-              }}>
+            style={{ backgroundColor: '#fff', }}>
+            <View style={{ height: 70, }}>
               <Header
                 onClick={() => this.props.navigation.pop()}
                 onCard={() => this.props.navigation.navigate('MyCard')}
@@ -303,7 +297,9 @@ class Product extends Component {
               </View>
             </View>
           </View>
+          {/* Header Ends */}
           <>
+            {/* Sort and Filter */}
             <View style={{ flexDirection: 'row' }}>
               <View style={styles.filterView}>
                 <View
@@ -319,7 +315,6 @@ class Product extends Component {
                   </TouchableOpacity>
                 </View>
               </View>
-
               <View style={styles.filterView}>
                 <View
                   style={{
@@ -335,16 +330,12 @@ class Product extends Component {
                 </View>
               </View>
             </View>
+            {/* Sort and Filter Ends */}
+
           </>
+
           {this.state.loader ? (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignSelf: 'center',
-              }}>
-              <ActivityIndicator size="large" color="#741728" />
-            </View>
+            <ThemeFullPageLoader />
           ) : (
             <>
               {this.state.categoryList != null && this.state.feature ? (
@@ -357,7 +348,7 @@ class Product extends Component {
                       height: 140,
                       marginTop: 5,
                     }}
-                    keyExtractor={(item,index) => index.toString()}
+                    keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item, index }) => (
                       <View
                         style={{
@@ -375,10 +366,7 @@ class Product extends Component {
                             elevation: 5,
                             height: 48,
                             width: 48,
-                            backgroundColor:
-                              index == this.state.itemIndex
-                                ? '#B01732'
-                                : '#fff',
+                            backgroundColor: index == this.state.itemIndex ? '#B01732' : '#fff',
                             borderRadius: 10,
                             alignSelf: 'center',
                             alignItems: 'center',
@@ -387,8 +375,7 @@ class Product extends Component {
                           <Image
                             resizeMode={'cover'}
                             source={{
-                              uri: `${this.state.categoryList.hostUrl + item.images
-                                }`,
+                              uri: `${this.state.categoryList.hostUrl + item.images}`,
                             }}
                             defaultSource={item.image}
                             style={{
@@ -403,11 +390,7 @@ class Product extends Component {
                           style={{
                             fontSize: 10,
                             fontWeight: '500',
-                            color:
-                              index != this.state.itemIndex
-                                ? '#7B7B7B'
-                                : '#711323',
-                            // marginLeft:
+                            color: index != this.state.itemIndex ? '#7B7B7B' : '#711323',
                             textAlign: 'center',
                           }}>
                           {item.name}
@@ -423,21 +406,23 @@ class Product extends Component {
                   <>
                     <FlatList
                       data={this.state.categoryData.data}
-                      onScroll={e => {
-                        console.log(e.nativeEvent.contentOffset.y);
-                        this.setState({
-                          featureValue: e.nativeEvent.contentOffset.y,
-                        });
-                        if (e.nativeEvent.contentOffset.y < 50) {
-                          return this.setState({ feature: true });
-                        } else {
-                          this.setState({ feature: false });
-                        }
-                      }}
-                      keyExtractor={(item,index) => index.toString()}
+                      // NOTE: To hide and show the category bar
+
+                      // onScroll={e => {
+                      //   console.log(e.nativeEvent.contentOffset.y);
+                      //   this.setState({
+                      //     featureValue: e.nativeEvent.contentOffset.y,
+                      //   });
+                      //   if (e.nativeEvent.contentOffset.y < 50) {
+                      //     return this.setState({ feature: true });
+                      //   } else {
+                      //     this.setState({ feature: false });
+                      //   }
+                      // }}
+                      keyExtractor={(item, index) => index.toString()}
                       numColumns={numColumns}
                       renderItem={({ item, index }) => (
-                        <View style={styles.itemOuterContailner}>
+                        <View style={styles.itemOuterContainer}>
                           <View style={styles.itemContainer}>
                             <View
                               style={{
@@ -518,7 +503,6 @@ class Product extends Component {
                             </View>
                             <View
                               style={{
-                                // marginTop: 18,
                                 flexDirection: 'row',
                                 justifyContent: 'space-between',
                                 marginBottom: 10,
@@ -538,7 +522,6 @@ class Product extends Component {
                                       fontSize: 12,
                                       fontWeight: '500',
                                       color: '#fff',
-                                      // marginTop:-18,
                                       marginLeft: 5,
                                     }}>
                                     Save $100
@@ -632,76 +615,3 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Product);
-
-const styles = StyleSheet.create({
-  sectionStyle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#EAEAEA',
-    borderWidth: 0,
-    borderColor: '#000',
-    height: 40,
-    width: 360,
-    borderRadius: 5,
-    margin: 10,
-    elevation: 2,
-  },
-  imageStyle: {
-    margin: 5,
-    resizeMode: 'stretch',
-    alignItems: 'center',
-  },
-  Dashboard: {
-    height: 170,
-    width: 375,
-    marginTop: 15,
-    borderWidth: 1,
-    borderRadius: 5,
-  },
-  filterView: {
-    backgroundColor: '#fff',
-    height: 50,
-    width: '50%',
-    shadowColor: '#000',
-    shadowOffset: { width: 1, height: 0 },
-    shadowOpacity: 0.4,
-    shadowRadius: 3,
-    elevation: 5,
-    borderTopWidth: 0,
-  },
-  filterInnerView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  filterInnerText: {
-    marginLeft: 5,
-    fontSize: 18,
-    color: '#4D4F50',
-  },
-  itemContainer: {
-    width: 155,
-    // height: 225,
-    // padding:,
-    marginLeft: 20,
-    shadowColor: '#fff',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.4,
-    shadowRadius: 3,
-    elevation: 1,
-    borderTopWidth: 0,
-    borderRadius: 200,
-    margin: 3,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-  },
-  item: {
-    fontSize: 13,
-    fontWeight: '400',
-    color: '#000',
-  },
-  itemOuterContailner: {
-    width: size,
-    height: size + 50,
-    // marginTop: 10,
-  },
-});
