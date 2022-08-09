@@ -13,11 +13,12 @@ import { connect } from 'react-redux';
 import { BASE_URL, MY_HEADER } from '../../config';
 import { setAccessToken } from '../../localstorage';
 import Util from '../../utils';
-
 import { FontFamily } from '../../Theme/FontFamily';
-
 import TextInputField from '../../Component/TextInputField';
 import ThemeButton from '../../Component/ThemeButton';
+import { colors } from '../../Theme/colors';
+import { Colors } from 'react-native-paper';
+import { FlatList } from 'react-native-gesture-handler';
 class SignIn extends Component {
   constructor(props) {
     super(props);
@@ -93,6 +94,7 @@ class SignIn extends Component {
       deviceInfo: 'vivo S1 pro',
       fcmToken: 'fcm token',
     });
+    console.log("postData data stringy fy",postData)
     const requestOptions = {
       method: 'POST',
       headers: MY_HEADER,
@@ -104,6 +106,7 @@ class SignIn extends Component {
       .then(result => result.json())
       .then(async response => {
         if (response.response) {
+          console.log("response after login",response);
           console.log('getAuthenticateUser Action', response.response.token);
           this.setState({ loader: false });
           await setAccessToken(response.response.token);
@@ -133,13 +136,10 @@ class SignIn extends Component {
   render() {
     return (
       <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: '#E5E5E5',
-        }}>
+        style={styles.container}>
         <StatusBar
           animated={true}
-          backgroundColor="#E5E5E5"
+          backgroundColor={colors.CLR_BG}
           barStyle={'dark-content'}
         />
         {this.state.loggedIn == 0 ? (
@@ -149,10 +149,10 @@ class SignIn extends Component {
               justifyContent: 'center',
               alignSelf: 'center',
             }}>
-            <ActivityIndicator size="large" color="#741728" />
+            <ActivityIndicator size="large" color={colors.CLR_ACTIVITY_INDICATOR} />
           </View>
         ) : (
-          <View style={{ flex: 1 }}>
+          <View style={styles.container}>
             <View style={styles.createView}>
               <Text style={styles.createText}>Sign in</Text>
             </View>
@@ -183,7 +183,7 @@ class SignIn extends Component {
                 onPress={() => this.onProceed()}
               />
 
-              <View style={{ marginTop: '5%' }}>
+              <View style={styles.forgotPasswordContainer}>
                 <TouchableOpacity
                   onPress={() =>
                     this.props.navigation.navigate('ForgetPassword')
@@ -192,14 +192,14 @@ class SignIn extends Component {
                 </TouchableOpacity>
               </View>
 
-              <View style={styles.signin}>
-                <Text style={[{ fontSize: 17, color: '#000000', fontFamily: FontFamily.TAJAWAL_REGULAR }]}>I’m a new user, </Text>
+              <View style={styles.signIn}>
+                <Text style={styles.newUserText}>I’m a new user, </Text>
                 <TouchableOpacity
                   onPress={() =>
                     this.props.navigation.navigate('createAccount')
                   }>
                   <Text
-                    style={{ fontSize: 18, color: '#741728', fontWeight: '700', fontFamily: FontFamily.TAJAWAL_MEDIUM }}>
+                    style={styles.signUp}>
                     Sign up
                   </Text>
                 </TouchableOpacity>
@@ -211,7 +211,7 @@ class SignIn extends Component {
                     this.props.navigation.navigate('Drawer')
                   }>
                   <Text
-                    style={{ fontSize: 17, color: '#741728', fontWeight: '700', textDecorationLine: 'underline' }}>
+                    style={styles.skipText}>
                     Skip
                   </Text>
                 </TouchableOpacity>
@@ -226,33 +226,56 @@ class SignIn extends Component {
 }
 
 const styles = StyleSheet.create({
+  container:{
+    flex: 1,
+    backgroundColor: colors.CLR_BG
+  },
   createView: {
     marginTop: '25%',
     alignItems: 'center',
   },
   createText: {
     fontSize: 32,
-    color: '#000000',
+    color: colors.CLR_SIGN_IN_TEXT_COLOR,
     fontWeight: '500',
     fontFamily: FontFamily.TAJAWAL_REGULAR
   },
   viewInput: {
-    flex: 1,
     alignItems: 'center',
     marginTop: '15%',
   },
-  signin: {
+  signIn: {
     marginTop: '10%',
-    width: '80%',
     height: 44,
-    justifyContent: 'center',
     flexDirection: 'row',
+  },
+  newUserText:{
+    fontSize: 18,
+    color: colors.CLR_SIGN_IN_TEXT_COLOR,
+    fontWeight:'700', 
+    fontFamily: FontFamily.TAJAWAL_REGULAR
   },
   skip: {
     marginTop: '0%',
     width: '80%',
     justifyContent: 'center',
     flexDirection: 'row',
+    color: colors.CLR_ACTIVITY_INDICATOR
+  },
+  skipText:{
+    fontSize: 17, 
+    color: '#741728', 
+    fontWeight: '700', 
+    textDecorationLine: 'underline'
+  },
+  signUp:{
+    fontSize: 18, 
+    color: colors.CLR_ACTIVITY_INDICATOR, 
+    fontWeight: '700', 
+    fontFamily: FontFamily.TAJAWAL_MEDIUM 
+  },
+  forgotPasswordContainer:{
+    marginTop:'5%'
   },
   forgetPass: {
     color: '#3C3C3C',
