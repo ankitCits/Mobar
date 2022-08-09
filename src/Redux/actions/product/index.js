@@ -1,18 +1,12 @@
-import {COUNTER_CHANGE, SUCCESS_USER_DETAIL} from '../../constants/auth';
-import {BASE_URL, A_KEY} from '../../../config';
-import {getAccessToken} from '../../../localstorage';
+import { BASE_URL, A_KEY } from '../../../config';
+import { getAccessToken } from '../../../localstorage';
 
 var myHeaders = new Headers();
 myHeaders.append('Content-Type', 'application/json');
 myHeaders.append('A_Key', A_KEY);
-/**
- * Getting Authentication User
- * @param {"mobile_number","password"}
- * @return JSONObject
- */
 
 export const addTocard = payload => {
-  return async dispatch => {
+  return async () => {
     console.log('ADD_DATA>>', payload);
     let token = await getAccessToken(token);
     let myHeaders = new Headers();
@@ -41,7 +35,7 @@ export const addTocard = payload => {
 };
 
 export const removeTocard = payload => {
-  return async dispatch => {
+  return async () => {
     let token = await getAccessToken(token);
     let myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
@@ -70,7 +64,7 @@ export const removeTocard = payload => {
 
 
 export const addToFav = payload => {
-  return async dispatch => {
+  return async () => {
     let token = await getAccessToken(token);
     let myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
@@ -103,7 +97,7 @@ export const addToFav = payload => {
 
 
 export const removeToFav = payload => {
-  return async dispatch => {
+  return async () => {
     let myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('A_Key', A_KEY);

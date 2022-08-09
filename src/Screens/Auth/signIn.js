@@ -10,13 +10,13 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { BASE_URL, MY_HEADER } from '../../config';
 import { setAccessToken } from '../../localstorage';
-import Util from '../../utils';
 import { FontFamily } from '../../Theme/FontFamily';
+import { colors } from '../../Theme/colors';
+import Util from '../../utils';
 import TextInputField from '../../Component/TextInputField';
 import ThemeButton from '../../Component/ThemeButton';
-import { colors } from '../../Theme/colors';
+import { singIn } from '../../api/auth';
 
 class SignIn extends Component {
   constructor(props) {
@@ -25,8 +25,10 @@ class SignIn extends Component {
       privacyCheck: true,
       legalCheck: true,
       visibility: false,
-      mobileNumber: '88392288',
-      password: "Ds@123456",
+      mobileNumber: null,
+      password: null,
+      // mobileNumber: '88392288',
+      // password: "Ds@123456",
       loader: false,
       loggedIn: -1
     };
@@ -37,7 +39,6 @@ class SignIn extends Component {
 
   async onProceed() {
     this.setState({ loader: true });
-    console.log(this.state.mobileNumber, ':', this.state.password);
     // check Not Blank
     if (this.state.mobileNumber == null) {
       ToastAndroid.showWithGravity(
@@ -83,53 +84,30 @@ class SignIn extends Component {
       return;
     }
 
-    this.fetchLogin();
+    this.processLogin();
   }
 
-  fetchLogin() {
-    const postData = JSON.stringify({
+  async processLogin() {
+    const postData = {
       contact: `${this.state.mobileNumber}`,
       password: `${this.state.password}`,
       deviceInfo: 'vivo S1 pro',
       fcmToken: 'fcm token',
-    });
-    console.log("postData data stringy fy",postData)
-    const requestOptions = {
-      method: 'POST',
-      headers: MY_HEADER,
-      body: postData,
-      redirect: 'follow',
-    };
-
-    fetch(`${BASE_URL}/auth/sign-in`, requestOptions)
-      .then(result => result.json())
-      .then(async response => {
-        if (response.response) {
-          console.log("response after login",response);
-          console.log('getAuthenticateUser Action', response.response.token);
-          this.setState({ loader: false });
-          await setAccessToken(response.response.token);
-          this.props.navigation.navigate('Drawer');
-          return;
-        }
-        if (response.errors) {
-          this.setState({ loader: false });
-          ToastAndroid.showWithGravity(
-            response.errors[0].msg,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
-        }
-      })
-      .catch(error => {
-        this.setState({ loader: false });
-        ToastAndroid.showWithGravity(
-          'Error on SignIn Api',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
-        console.log('error', error);
-      });
+    }
+    try {
+      const resp = await singIn(postData)
+      await setAccessToken(resp);
+      this.setState({ loader: false });
+      this.props.navigation.navigate('Drawer');
+      return;
+    } catch (error) {
+      this.setState({ loader: false });
+      ToastAndroid.showWithGravity(
+        error,
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+      );
+    }
   }
 
   render() {
@@ -143,11 +121,7 @@ class SignIn extends Component {
         />
         {this.state.loggedIn == 0 ? (
           <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignSelf: 'center',
-            }}>
+            style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={colors.CLR_ACTIVITY_INDICATOR} />
           </View>
         ) : (
@@ -194,9 +168,7 @@ class SignIn extends Component {
               <View style={styles.signIn}>
                 <Text style={styles.newUserText}>I’m a new user, </Text>
                 <TouchableOpacity
-                  onPress={() =>
-                    this.props.navigation.navigate('createAccount')
-                  }>
+                  onPress={() => this.props.navigation.navigate('createAccount')}>
                   <Text
                     style={styles.signUp}>
                     Sign up
@@ -206,9 +178,7 @@ class SignIn extends Component {
 
               <View style={styles.skip}>
                 <TouchableOpacity
-                  onPress={() =>
-                    this.props.navigation.navigate('Drawer')
-                  }>
+                  onPress={() => this.props.navigation.navigate('Drawer')}>
                   <Text
                     style={styles.skipText}>
                     Skip
@@ -225,7 +195,12 @@ class SignIn extends Component {
 }
 
 const styles = StyleSheet.create({
-  container:{
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+  container: {
     flex: 1,
     backgroundColor: colors.CLR_BG
   },
@@ -248,10 +223,10 @@ const styles = StyleSheet.create({
     height: 44,
     flexDirection: 'row',
   },
-  newUserText:{
+  newUserText: {
     fontSize: 18,
     color: colors.CLR_SIGN_IN_TEXT_COLOR,
-    fontWeight:'700', 
+    fontWeight: '700',
     fontFamily: FontFamily.TAJAWAL_REGULAR
   },
   skip: {
@@ -261,20 +236,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     color: colors.CLR_ACTIVITY_INDICATOR
   },
-  skipText:{
-    fontSize: 17, 
-    color: '#741728', 
-    fontWeight: '700', 
+  skipText: {
+    fontSize: 17,
+    color: '#741728',
+    fontWeight: '700',
     textDecorationLine: 'underline'
   },
-  signUp:{
-    fontSize: 18, 
-    color: colors.CLR_ACTIVITY_INDICATOR, 
-    fontWeight: '700', 
-    fontFamily: FontFamily.TAJAWAL_MEDIUM 
+  signUp: {
+    fontSize: 18,
+    color: colors.CLR_ACTIVITY_INDICATOR,
+    fontWeight: '700',
+    fontFamily: FontFamily.TAJAWAL_MEDIUM
   },
-  forgotPasswordContainer:{
-    marginTop:'5%'
+  forgotPasswordContainer: {
+    marginTop: '5%'
   },
   forgetPass: {
     color: '#3C3C3C',

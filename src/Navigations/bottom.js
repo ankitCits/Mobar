@@ -1,7 +1,6 @@
-import React, {useEffect} from 'react';
-import {Image} from 'react-native';
-import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import React from 'react';
+import { Image } from 'react-native';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Dashboard from '../Screens/Dashboard';
 import Collections from '../Screens/Collections';
@@ -33,7 +32,7 @@ export default function MyBottomTabs() {
         name="Dashboard"
         component={Dashboard}
         options={{
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <Icon name="home" size={28} color={focused ? '#711323' : '#000'} />
           ),
           tabBarLabel: 'Home',
@@ -44,7 +43,7 @@ export default function MyBottomTabs() {
         component={Collections}
         options={{
           tabBarLabel: 'Collections',
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <Icon
               name="local-bar"
               size={28}
@@ -58,12 +57,12 @@ export default function MyBottomTabs() {
         component={Promotions}
         options={{
           tabBarLabel: 'Promotion',
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <Image
               style={{
-                width:!focused ? 20 : 23,
-                height:!focused ? 18 : 19,
-                marginTop:5
+                width: !focused ? 20 : 23,
+                height: !focused ? 18 : 19,
+                marginTop: 5
               }}
               resizeMode={'cover'}
               source={!focused ? images.promotion : images.promotionFill}
@@ -77,12 +76,12 @@ export default function MyBottomTabs() {
         component={Favourites}
         options={{
           tabBarLabel: 'Favourites',
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <Image
               style={{
-                width:!focused ? 21 : 23,
-                height:!focused ? 19 : 19,
-                marginTop:5
+                width: !focused ? 21 : 23,
+                height: !focused ? 19 : 19,
+                marginTop: 5
               }}
               resizeMode={'cover'}
               source={!focused ? images.heart : images.heartFill}

@@ -11,19 +11,22 @@ export default class ThemeButton extends React.Component {
     render() {
         return (
             <View style={innerStyle.btnContainer}>
-                {this.props.isLoading ?
-                    (<ActivityIndicator size="large" color="#741728" />)
-                    :
-                    (<TouchableOpacity
-                        style={innerStyle.container}
-                        onPress={this.props.onPress}>
-                        <Text
-                            style={innerStyle.title}>
-                            {this.props.title}
-                        </Text>
-                    </TouchableOpacity>)
-                }
-
+                <TouchableOpacity
+                    style={innerStyle.container}
+                    onPress={this.props.onPress}>
+                    {this.props.isLoading ?
+                        (
+                            <ActivityIndicator size="small" color="#ffffff" />
+                        )
+                        :
+                        (
+                            <Text
+                                style={innerStyle.title}>
+                                {this.props.title}
+                            </Text>
+                        )
+                    }
+                </TouchableOpacity>
             </View>
         );
     }

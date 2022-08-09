@@ -1,33 +1,19 @@
-import { COUNTER_CHANGE, SUCCESS_USER_DETAIL } from '../../constants/auth';
-import { BASE_URL, A_KEY } from '../../../config';
-import { getAccessToken } from '../../../localstorage';
+import { SUCCESS_USER_DETAIL } from '../../constants/auth';
 
-var myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
-myHeaders.append("A_Key", A_KEY);
 /**
  * Getting Authentication User
  * @param {"mobile_number","password"}
  * @return JSONObject
  */
-export const setUserDetail = payload => {
+export const setUserDetail = data => {
   return async dispatch => {
-    // console.log("===========XXXXXXXX",payload)
     try {
       dispatch({
         type: SUCCESS_USER_DETAIL,
-        data: payload
+        data
       });
-
-      return payload
+      return data
     } catch (error) {
-      // dispatch({
-      //   type: AUTH_USER_FAIL,
-      //   data: [],
-      //   message: [],
-      //   status: 'Failed',
-      //   user: {},
-      // });
       return error;
     }
   };

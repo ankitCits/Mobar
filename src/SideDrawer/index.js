@@ -17,6 +17,7 @@ import { A_KEY, BASE_URL } from '../config';
 import LoginButton from '../Component/LoginButton';
 import { FontFamily } from '../Theme/FontFamily';
 
+
 class SideDrawer extends Component {
   constructor(props) {
     super(props);
@@ -24,6 +25,7 @@ class SideDrawer extends Component {
       drawerIndex: 0,
     };
   }
+
 
   onPressFun = screen => {
     if (screen == 'MyBottomTabs') {
@@ -84,7 +86,7 @@ class SideDrawer extends Component {
 
   render() {
     var drawerIndex = this.state.drawerIndex;
-    console.log("========>>>>", this.props.redux)
+    // console.log("========>>>>", this.props.redux)
     return (
       <>
         <StatusBar

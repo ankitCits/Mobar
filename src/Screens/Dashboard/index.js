@@ -23,6 +23,7 @@ import ComboOfferCard from '../../Component/ComboOfferCard';
 import BarCard from '../../Component/BarCard';
 import ProductSliderRoute from './ProductSliderRoute';
 import { FontFamily } from '../../Theme/FontFamily';
+
 import { setUserDetail } from '../../Redux/actions/auth';
 
 const LazyPlaceholder = ({ route }) => (
@@ -36,9 +37,18 @@ class Dashboard extends Component {
 
         this.state = {
             loader: false,
+            // data: {
+            //     barDatas: [
+            //         { 'vendorShopName': 'Test', 'address': 'Test', 'distance': 100 }
+            //     ],
+            //     comboDatas: [
+            //         { 'name': 'Test', comboPrice: '1', images: '', }
+            //     ],
+            // },
             data: {},
             drinkObj: {},
             index: 0,
+
             routes: [
                 { key: '1', title: 'Whiskey' },
                 { key: '2', title: 'Beer' },
@@ -147,7 +157,7 @@ class Dashboard extends Component {
     renderScene = ({ route, jumpTo }) => {
         return (<ProductSliderRoute routes={route} />);
     };
-    
+
     render() {
         return (
             <SafeAreaView

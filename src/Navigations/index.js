@@ -1,9 +1,8 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import InitialStack from './initialStack';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 
 import store from '../Redux/store';
-// const store = configureStore();
 
 const Navigation = () => (
   <Provider store={store}>

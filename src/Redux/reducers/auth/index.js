@@ -1,18 +1,11 @@
-import { COUNTER_CHANGE, SUCCESS_USER_DETAIL } from '../../constants/auth'
+import { SUCCESS_USER_DETAIL } from '../../constants/auth'
 
 const initialState = {
-  count: 0,
-  userData:null
+  userData: null
 }
 const authReducer = (state = initialState, action) => {
-  // console.log("=======================>>>>>>>",action)
   switch (action.type) {
-    case COUNTER_CHANGE:
-      return {
-        ...state,
-        count: action.payload
-      }
-      case SUCCESS_USER_DETAIL:
+    case SUCCESS_USER_DETAIL:
       return {
         ...state,
         userData: action.data

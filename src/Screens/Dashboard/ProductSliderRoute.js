@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
     Text,
     View,
-    SafeAreaView,
     Image,
     ImageBackground,
     TouchableOpacity,
@@ -12,7 +11,6 @@ import {
 } from 'react-native';
 import images from '../../assets/images';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colors } from '../../Theme/colors';
 const DATA = [
     {
         id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -29,7 +27,6 @@ const DATA = [
 ];
 export default class ProductSliderRoute extends Component {
     constructor(props) {
-        console.log('ProductSliderRoute', props);
         super(props);
         this.state = {};
     }
