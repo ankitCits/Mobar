@@ -1,4 +1,5 @@
-import { BASE_URL, MY_HEADER } from '../config';
+import { A_KEY, BASE_URL, MY_HEADER } from '../config';
+import { setUserDetail } from '../Redux/actions/auth';
 
 export const singIn = (postData) => {
     return new Promise(async (resolve, reject) => {
@@ -31,5 +32,30 @@ export const singIn = (postData) => {
                     reject(error.message)
                 });
         }
+    });
+};
+
+export const getUserDetails = (postData) => {
+    return new Promise(async (resolve, reject) => {
+        const { token } = postData
+        fetch(`${BASE_URL}/users/profile`, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json, text/plain, */*', // It can be used to overcome cors errors
+                'Content-Type': 'application/json',
+                Token: token,
+                A_Key: A_KEY,
+            },
+            redirect: 'follow',
+        }).then(result => result.json()).then(responseDetail => {
+            if (responseDetail.response) {
+                resolve(responseDetail);
+            }
+            if (responseDetail.errors) {
+                reject(responseDetail.errors[0].msg)
+            }
+        }).catch(error => {
+            reject(error.message);
+        });
     });
 };

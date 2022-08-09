@@ -25,6 +25,7 @@ import ProductSliderRoute from './ProductSliderRoute';
 import { FontFamily } from '../../Theme/FontFamily';
 
 import { setUserDetail } from '../../Redux/actions/auth';
+import { getUserDetails } from '../../api/auth';
 
 const LazyPlaceholder = ({ route }) => (
     <View style={styles.container}>
@@ -48,7 +49,7 @@ class Dashboard extends Component {
             data: {},
             drinkObj: {},
             index: 0,
-
+            hostUrl: null,
             routes: [
                 { key: '1', title: 'Whiskey' },
                 { key: '2', title: 'Beer' },
@@ -67,46 +68,28 @@ class Dashboard extends Component {
     }
 
     getDetail = async () => {
-        let token = await getAccessToken(token);
+        const token = await getAccessToken(token);
         if (!token) {
             return this.setState({ loader: false });
         }
-        fetch(`${BASE_URL}/users/profile`, {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json, text/plain, */*', // It can be used to overcome cors errors
-                'Content-Type': 'application/json',
-                Token: token,
-                A_Key: A_KEY,
-            },
-            redirect: 'follow',
-        })
-            .then(result => result.json())
-            .then(responseDetail => {
-                if (responseDetail.response) {
-                    this.setState({ data: responseDetail });
-                    console.log('DATA', this.state.data)
-                    this.props.dispatch(setUserDetail(responseDetail.response.result.profile));
-                }
-                if (responseDetail.errors) {
-                    this.setState({ loader: false });
-                    ToastAndroid.showWithGravity(
-                        responseDetail.errors[0].msg,
-                        ToastAndroid.LONG,
-                        ToastAndroid.TOP,
-                    );
-                }
-            })
-            .catch(error => {
-                this.setState({ loader: false });
-                ToastAndroid.showWithGravity(
-                    'Error on SignIn',
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                );
-                console.log('Error_On_Data_Fetch getDetail', error);
-            });
-    };
+        const postData = {
+            token
+        }
+        try {
+            const responseDetail = await getUserDetails(postData);
+            this.setState({ data: responseDetail });
+            this.setState({ hostUrl: responseDetail.response.result.hostUrl })
+            this.props.dispatch(setUserDetail(responseDetail.response.result.profile));
+        } catch (error) {
+            this.setState({ loader: false });
+            ToastAndroid.showWithGravity(
+                error,
+                ToastAndroid.LONG,
+                ToastAndroid.TOP,
+            );
+            console.log('Error_On_Data_Fetch getDetail', error);
+        }
+    }
 
     getTabDetail = () => {
         let myHeaders = new Headers();
@@ -261,47 +244,49 @@ class Dashboard extends Component {
                                             nestedScrollEnabled> */}
 
                                             {
-                                                //  hostUrl={this.data.hostUrl}
-                                                this.state.data.comboDatas && this.state.data.comboDatas.length > 0 ?
-                                                    this.state.data.comboDatas.map((item, index) => (
-                                                        <ComboOfferCard navigation={this.props.navigation} item={item} hostUrl={null} />
+                                                this.state.drinkObj.comboDatas && this.state.drinkObj.comboDatas.length > 0 ?
+                                                    this.state.drinkObj.comboDatas.map((item, index) => (
+                                                        <ComboOfferCard navigation={this.props.navigation} item={item} hostUrl={this.state.hostUrl} />
                                                     ))
                                                     : null
                                             }
                                             {/* </ScrollView> */}
                                         </View>
                                         {/* Combo Offer */}
+
                                         {/* Bar List */}
-                                        <View
-                                            style={{
-                                                marginBottom: 10,
-                                            }}>
+                                        {this.state.drinkObj.barDatas && this.state.drinkObj.barDatas.length > 0
+                                            ?
                                             <View
                                                 style={{
-                                                    flexDirection: 'row',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'space-between',
-                                                    marginTop: '8%',
+                                                    marginBottom: 10,
                                                 }}>
-                                                <Text style={styles.sectionTitle}>Bars</Text>
-                                                <TouchableOpacity>
-                                                    <Text style={styles.ViewAll}>View All</Text>
-                                                </TouchableOpacity>
+                                                <View
+                                                    style={{
+                                                        flexDirection: 'row',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between',
+                                                        marginTop: '8%',
+                                                    }}>
+                                                    <Text style={styles.sectionTitle}>Bars</Text>
+                                                    <TouchableOpacity>
+                                                        <Text style={styles.ViewAll}>View All</Text>
+                                                    </TouchableOpacity>
+                                                </View>
+                                                <ScrollView
+                                                    horizontal
+                                                    nestedScrollEnabled>
+                                                    {
+                                                        this.state.drinkObj.barDatas.map((item, index) => (
+                                                            <BarCard navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />
+                                                        ))
+                                                    }
+                                                </ScrollView>
+
                                             </View>
-
-                                            {/* Bar Slider */}
-                                            <ScrollView
-                                                horizontal
-                                                nestedScrollEnabled>
-                                                {this.state.data.barDatas && this.state.data.barDatas.length > 0
-                                                    ? this.state.data.barDatas.map((item, index) => (
-                                                        <BarCard navigation={this.props.navigation} item={item} hostUrl={null} />
-                                                    ))
-                                                    : null}
-                                            </ScrollView>
-                                            {/* Bar Slider */}
-
-                                        </View>
+                                            :
+                                            <ThemeFullPageLoader />
+                                        }
                                         {/* Bar List */}
                                     </View>
                                 </ScrollView>

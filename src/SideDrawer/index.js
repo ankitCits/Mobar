@@ -16,6 +16,7 @@ import { getAccessToken, removeAccessToken } from '../localstorage';
 import { A_KEY, BASE_URL } from '../config';
 import LoginButton from '../Component/LoginButton';
 import { FontFamily } from '../Theme/FontFamily';
+import { setUserDetail } from '../Redux/actions/auth';
 
 
 class SideDrawer extends Component {
@@ -67,6 +68,7 @@ class SideDrawer extends Component {
       .then(result => {
         console.log(result);
         if (result.response) {
+          this.props.dispatch(setUserDetail(null));
           this.reStart();
         } else {
           ToastAndroid.showWithGravity(

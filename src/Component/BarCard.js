@@ -20,17 +20,21 @@ class BarCard extends Component {
         const {
             navigation,
             hostUrl,
-            item
+            item,
+            index
         } = this.props;
         return (
             <View>
                 <TouchableOpacity
+                    key={index}
                     activeOpacity={1}
                     onPress={() => navigation.navigate('BarList')}
                     style={styles.container}>
                     <ImageBackground
                         style={styles.promotionsImg}
-                        source={images.promotions1}
+                        source={{
+                            uri: `${hostUrl + item.images}`,
+                        }}
                         defaultSource={images.promotions1}
                     >
                         <View style={styles.heartContainer}>
@@ -61,7 +65,7 @@ class BarCard extends Component {
                         </View>
                         <View style={styles.footer}>
                             <TouchableOpacity style={styles.details}>
-                                <StarRating isEdit={false} size={4} />
+                                <StarRating isEdit={false} size={item.vendorRating} />
                             </TouchableOpacity>
 
                             <TouchableOpacity
