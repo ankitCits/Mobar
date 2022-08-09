@@ -3,23 +3,20 @@ import {
   Text,
   View,
   SafeAreaView,
-  Image,
   StatusBar,
   TouchableOpacity,
   StyleSheet,
-  TextInput,
   ToastAndroid,
   Linking,
-  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import Util from '../../utils';
-import { A_KEY, BASE_URL, MY_HEADER } from '../../config';
+import { A_KEY, BASE_URL } from '../../config';
 import DatePicker from 'react-native-date-picker';
 import TextInputField from '../../Component/TextInputField';
 import ThemeButton from '../../Component/ThemeButton';
 import { FontFamily } from '../../Theme/FontFamily';
+import { colors } from '../../Theme/colors';
 export default class CreateAccount extends Component {
   constructor(props) {
     super(props);
@@ -72,8 +69,7 @@ export default class CreateAccount extends Component {
   }
 
   async onProceed() {
-    console.log(this.state.mobileNumber, ':', this.state.password);
-
+    console.log(this.state.mobileNumber, ':', this.state.password,':',this.state.emailId);
     // check Not Blank
     if (this.state.mobileNumber == null) {
       ToastAndroid.showWithGravity(
@@ -117,7 +113,6 @@ export default class CreateAccount extends Component {
 
     // Valid Email
     let isEmail = Util.validEmail(this.state.emailId);
-    console.log(isEmail);
     if (!isEmail) {
       ToastAndroid.showWithGravity(
         'Email not valid!',
@@ -152,7 +147,6 @@ export default class CreateAccount extends Component {
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('A_Key', A_KEY);
-
     var raw = JSON.stringify({
       email: `${this.state.emailId}`,
       contact: `${this.state.mobileNumber}`,
@@ -170,7 +164,6 @@ export default class CreateAccount extends Component {
       body: raw,
       redirect: 'follow',
     };
-    this.props.navigation.navigate('VerifyOtp', FinalResponse);
     fetch(`${BASE_URL}/auth/sign-up`, requestOptions)
       .then(result => result.json())
       .then(response => {
@@ -213,21 +206,17 @@ export default class CreateAccount extends Component {
   render() {
     return (
       <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: '#E5E5E5',
-        }}>
+        style={styles.container}>
         <StatusBar
           animated={true}
-          backgroundColor="#E5E5E5"
+          backgroundColor={colors.CLR_BG}
           barStyle={'dark-content'}
         />
-        <View style={{ flex: 1 }}>
+        <View style={styles.container}>
           <View style={styles.createView}>
             <Text style={styles.createText}>Create an account</Text>
           </View>
           <View style={styles.viewInput}>
-
             <TextInputField
               placeholder="Mobile Number"
               iconName={'call'}
@@ -235,12 +224,11 @@ export default class CreateAccount extends Component {
                 this.setState({ mobileNumber: text });
               }}
             />
-
             <TextInputField
               placeholder="Email Address"
               iconName={'mail'}
               onChangeText={text => {
-                this.setState({ password: text });
+                this.setState({ emailId: text });
               }}
             />
 
@@ -303,7 +291,7 @@ export default class CreateAccount extends Component {
                     onPress={async () =>
                       await Linking.openURL('https://www.mobar.sg/p/terms')
                     }
-                    style={{ color: '#751728' }}>
+                    style={styles.termWord}>
                     Terms
                   </Text>{' '}
                   and{' '}
@@ -311,7 +299,7 @@ export default class CreateAccount extends Component {
                     onPress={async () =>
                       await Linking.openURL('https://mobar.sg/')
                     }
-                    style={{ color: '#751728' }}>
+                    style={styles.termWord}>
                     Privacy Policy
                   </Text>
                 </Text>
@@ -341,12 +329,12 @@ export default class CreateAccount extends Component {
 
             <ThemeButton title={'Sign up'} isLoading={this.state.loader} onPress={() => this.onProceed()} />
 
-            <View style={styles.signin}>
+            <View style={styles.signIn}>
               <Text style={styles.textMember}>I’m already a member, </Text>
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate('SignIn')}>
                 <Text
-                  style={{ fontSize: 17, color: '#741728', fontWeight: '700' }}>
+                  style={styles.signText}>
                   Sign in
                 </Text>
               </TouchableOpacity>
@@ -359,6 +347,10 @@ export default class CreateAccount extends Component {
 }
 
 const styles = StyleSheet.create({
+  container:{
+    flex: 1,
+    backgroundColor: colors.CLR_BG
+  },
   createView: {
     marginTop: '15%',
     alignItems: 'center',
@@ -366,33 +358,16 @@ const styles = StyleSheet.create({
   },
   createText: {
     fontSize: 32,
-    color: '#000000',
+    color: colors.CLR_SIGN_IN_TEXT_COLOR,
     fontWeight: '500',
     fontFamily: FontFamily.TAJAWAL_LIGHT,
   },
   viewInput: {
-    flex: 1,
     alignItems: 'center',
     marginTop: '10%',
   },
-
-  sectionStyle: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderWidth: 0,
-    borderColor: '#000',
-    height: 44,
-    width: 320,
-    borderRadius: 5,
-    margin: 10,
-    elevation: 2,
-  },
   imageStyle: {
     margin: 5,
-    resizeMode: 'stretch',
-    alignItems: 'center',
   },
   term: {
     marginTop: '5%',
@@ -404,24 +379,31 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 15,
     color: '#3C3C3C',
-    alignContent: 'flex-start'
+  },
+  termWord:{
+    color: '#751728'
   },
   textMember: {
     fontFamily: FontFamily.TAJAWAL_LIGHT,
     fontWeight: '700',
     fontSize: 18,
-    color: '#000000'
+    color: colors.CLR_SIGN_IN_TEXT_COLOR
   },
   termInner: {
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
   },
-  signin: {
+  signIn: {
     marginTop: '10%',
     width: '80%',
     height: 44,
     justifyContent: 'center',
     flexDirection: 'row',
   },
+  signText:{
+    fontSize: 17, 
+    color: colors.CLR_ACTIVITY_INDICATOR,
+    fontWeight: '700'
+  }
 });

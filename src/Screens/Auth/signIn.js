@@ -17,8 +17,7 @@ import { FontFamily } from '../../Theme/FontFamily';
 import TextInputField from '../../Component/TextInputField';
 import ThemeButton from '../../Component/ThemeButton';
 import { colors } from '../../Theme/colors';
-import { Colors } from 'react-native-paper';
-import { FlatList } from 'react-native-gesture-handler';
+
 class SignIn extends Component {
   constructor(props) {
     super(props);
