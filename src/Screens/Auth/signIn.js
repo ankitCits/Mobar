@@ -11,8 +11,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { BASE_URL, MY_HEADER } from '../../config';
-import { getAccessToken, setAccessToken } from '../../localstorage';
-import { getAuthenticateUser, setUserDetail } from '../../Redux/actions/auth';
+import { setAccessToken } from '../../localstorage';
 import Util from '../../utils';
 
 import { FontFamily } from '../../Theme/FontFamily';
@@ -26,35 +25,19 @@ class SignIn extends Component {
       privacyCheck: true,
       legalCheck: true,
       visibility: false,
-      mobileNumber: null,
-      password: null,
+      mobileNumber: '88392288',
+      password: "Ds@123456",
       loader: false,
-      loggedIn: -1,
+      loggedIn: -1
     };
   }
 
   componentDidMount() {
-    // this.checkCredentials();
   }
 
-  // checkCredentials = async () => {
-  //   let token = await getAccessToken();
-  //   if (token != null || token != undefined) {
-  //     // setLoggedIn(1);
-  //     this.setState({ loggedIn: 1 });
-  //     console.log('=======xxxxxxxxxxxx>>>>>>', token);
-  //   } else {
-  //     this.setState({ loggedIn: -1 });
-  //   }
-  // };
-
   async onProceed() {
-    // this.props.navigation.navigate('Drawer');
-    // return;
     this.setState({ loader: true });
-    // this.props.navigation.navigate('VerifyOtp')
     console.log(this.state.mobileNumber, ':', this.state.password);
-
     // check Not Blank
     if (this.state.mobileNumber == null) {
       ToastAndroid.showWithGravity(
@@ -100,36 +83,32 @@ class SignIn extends Component {
       return;
     }
 
-    let payload = {
-      contact: `${this.state.mobileNumber}`,
-      password: `${this.state.password}`,
-      deviceInfo: 'vivo S1 pro',
-      fcmToken: 'fcm token',
-    };
-    this.fetchLogin(payload);
+    this.fetchLogin();
   }
 
-  fetchLogin(payload) {
-    var raw = JSON.stringify({
+  fetchLogin() {
+    const postData = JSON.stringify({
       contact: `${this.state.mobileNumber}`,
       password: `${this.state.password}`,
       deviceInfo: 'vivo S1 pro',
       fcmToken: 'fcm token',
     });
-    var requestOptions = {
+    const requestOptions = {
       method: 'POST',
       headers: MY_HEADER,
-      body: raw,
+      body: postData,
       redirect: 'follow',
     };
 
     fetch(`${BASE_URL}/auth/sign-in`, requestOptions)
       .then(result => result.json())
-      .then(response => {
+      .then(async response => {
         if (response.response) {
           console.log('getAuthenticateUser Action', response.response.token);
           this.setState({ loader: false });
-          this.forWard(response);
+          await setAccessToken(response.response.token);
+          this.props.navigation.navigate('Drawer');
+          return;
         }
         if (response.errors) {
           this.setState({ loader: false });
@@ -151,17 +130,7 @@ class SignIn extends Component {
       });
   }
 
-  // Check Decision
-  async forWard(response) {
-    await setAccessToken(response.response.token);
-    this.props.navigation.navigate('Drawer');
-    return response;
-  }
-
   render() {
-    // if (this.state.loggedIn == 1) {
-    //   this.props.navigation.navigate('Drawer');
-    // }
     return (
       <SafeAreaView
         style={{
@@ -192,6 +161,7 @@ class SignIn extends Component {
                 placeholder="Mobile Number"
                 keyboardType="numeric"
                 iconName={'call'}
+                value={this.state.mobileNumber}
                 onChangeText={text => {
                   this.setState({ mobileNumber: text });
                 }}
@@ -199,6 +169,7 @@ class SignIn extends Component {
               <TextInputField
                 placeholder="Password"
                 iconName={'lock'}
+                value={this.state.password}
                 onChangeText={text => {
                   this.setState({ password: text });
                 }}
@@ -206,7 +177,11 @@ class SignIn extends Component {
                 visibility={true}
               />
 
-              <ThemeButton title={'Sign in'} isLoading={this.state.loader} onPress={() => this.onProceed()} />
+              <ThemeButton
+                title={'Sign in'}
+                isLoading={this.state.loader}
+                onPress={() => this.onProceed()}
+              />
 
               <View style={{ marginTop: '5%' }}>
                 <TouchableOpacity

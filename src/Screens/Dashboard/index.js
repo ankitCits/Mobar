@@ -23,6 +23,7 @@ import ComboOfferCard from '../../Component/ComboOfferCard';
 import BarCard from '../../Component/BarCard';
 import ProductSliderRoute from './ProductSliderRoute';
 import { FontFamily } from '../../Theme/FontFamily';
+import { setUserDetail } from '../../Redux/actions/auth';
 
 const LazyPlaceholder = ({ route }) => (
     <View style={styles.container}>
@@ -35,16 +36,8 @@ class Dashboard extends Component {
 
         this.state = {
             loader: false,
-            data: null,
-            // data: {
-            // barDatas: [
-            //     { 'vendorShopName': 'Test', 'address': 'Test', 'distance': 100 }
-            // ],
-            // comboDatas: [
-            //     { 'name': 'Test', comboPrice: '1', images: '', }
-            // ],
-            // },
-            drinkObj: null,
+            data: {},
+            drinkObj: {},
             index: 0,
             routes: [
                 { key: '1', title: 'Whiskey' },
@@ -83,7 +76,7 @@ class Dashboard extends Component {
                 if (responseDetail.response) {
                     this.setState({ data: responseDetail });
                     console.log('DATA', this.state.data)
-                    props.dispatch(setUserDetail(responseDetail.response.result.profile));
+                    this.props.dispatch(setUserDetail(responseDetail.response.result.profile));
                 }
                 if (responseDetail.errors) {
                     this.setState({ loader: false });
@@ -101,7 +94,7 @@ class Dashboard extends Component {
                     ToastAndroid.LONG,
                     ToastAndroid.TOP,
                 );
-                console.log('Error_On_Data_Fetch', error);
+                console.log('Error_On_Data_Fetch getDetail', error);
             });
     };
 
@@ -141,7 +134,7 @@ class Dashboard extends Component {
                     ToastAndroid.LONG,
                     ToastAndroid.TOP,
                 );
-                console.log('Error_On_Data_Fetch', error);
+                console.log('Error_On_Data_Fetch getTabDetail', error);
             });
     };
 
@@ -153,8 +146,8 @@ class Dashboard extends Component {
 
     renderScene = ({ route, jumpTo }) => {
         return (<ProductSliderRoute routes={route} />);
-
     };
+    
     render() {
         return (
             <SafeAreaView
@@ -290,7 +283,7 @@ class Dashboard extends Component {
                                             <ScrollView
                                                 horizontal
                                                 nestedScrollEnabled>
-                                                {this.state.data && this.state.data.barDatas.length > 0
+                                                {this.state.data.barDatas && this.state.data.barDatas.length > 0
                                                     ? this.state.data.barDatas.map((item, index) => (
                                                         <BarCard navigation={this.props.navigation} item={item} hostUrl={null} />
                                                     ))

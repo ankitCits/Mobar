@@ -1,5 +1,5 @@
-import {COUNTER_CHANGE, SUCCESS_USER_DETAIL} from '../../constants/auth';
-import { BASE_URL,A_KEY } from '../../../config';
+import { COUNTER_CHANGE, SUCCESS_USER_DETAIL } from '../../constants/auth';
+import { BASE_URL, A_KEY } from '../../../config';
 import { getAccessToken } from '../../../localstorage';
 
 var myHeaders = new Headers();
@@ -10,9 +10,9 @@ myHeaders.append("A_Key", A_KEY);
  * @param {"mobile_number","password"}
  * @return JSONObject
  */
- export const setUserDetail = payload => {
+export const setUserDetail = payload => {
   return async dispatch => {
-    console.log("===========XXXXXXXX",payload)
+    // console.log("===========XXXXXXXX",payload)
     try {
       dispatch({
         type: SUCCESS_USER_DETAIL,
