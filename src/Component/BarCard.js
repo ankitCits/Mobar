@@ -30,9 +30,9 @@ class BarCard extends Component {
                     style={styles.container}>
                     <ImageBackground
                         style={styles.promotionsImg}
-                        source={{
-                            uri: `${hostUrl + item.images}`,
-                        }}>
+                        source={images.promotions1}
+                        defaultSource={images.promotions1}
+                    >
                         <View style={styles.heartContainer}>
                             <TouchableOpacity
                                 style={{
@@ -44,10 +44,8 @@ class BarCard extends Component {
                                     defaultSource={images.heart}
                                 />
                             </TouchableOpacity>
-                            <View
-                                style={styles.off}>
-                                <Text
-                                    style={{ color: '#FFFFFF' }}>
+                            <View style={styles.off}>
+                                <Text style={{ color: '#FFFFFF' }}>
                                     50% Off
                                 </Text>
                             </View>
@@ -55,8 +53,7 @@ class BarCard extends Component {
                     </ImageBackground>
                     <View
                         style={styles.addressContainer}>
-                        <Text
-                            style={styles.textTitle}>
+                        <Text style={styles.textTitle}>
                             {item.vendorShopName}
                         </Text>
                         <View>
@@ -124,7 +121,7 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontWeight: '400',
         fontFamily: FontFamily.ROBOTO_REGULAR,
-        marginBottom: 5
+        // marginBottom: 5
     },
     addressContainer: {
         margin: 12,
@@ -166,6 +163,6 @@ const styles = StyleSheet.create({
     },
     promotionsImg: {
         width: 350,
-        height: 223,
+        height: 220,
     },
 });

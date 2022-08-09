@@ -1,21 +1,15 @@
 import React, { Component } from 'react';
 import {
-  Text,
   View,
   SafeAreaView,
   Image,
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
   Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../../assets/images';
-import Header from '../../Component/Header';
-import { getAccessToken } from '../../../localstorage';
-// import images from '../../assets/images';
-// import MyTabs from './Tabs';
 import { connect } from 'react-redux';
 import Carousel from 'react-native-snap-carousel';
 
@@ -52,9 +46,6 @@ class Dashboard extends Component {
     return (
       <View
         style={{
-          // borderWidth: 1,
-          // padding: 20,
-          // borderRadius: 20,
           alignItems: 'center',
           backgroundColor: 'white',
           marginTop: 10,
@@ -63,6 +54,7 @@ class Dashboard extends Component {
       </View>
     );
   };
+
   render() {
     return (
       <SafeAreaView

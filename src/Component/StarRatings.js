@@ -29,6 +29,7 @@ export default class StarRating extends Component {
                                 }
                             >
                                 <Icon
+                                    key={index}
                                     name="star"
                                     size={16}
                                     color={index < this.state.size ? '#FAB914' : '#DADADA'}
@@ -37,6 +38,7 @@ export default class StarRating extends Component {
                             </TouchableOpacity>
                             :
                             <Icon
+                                key={index}
                                 name="star"
                                 size={16}
                                 color={index < size ? '#FAB914' : '#DADADA'}
@@ -45,7 +47,7 @@ export default class StarRating extends Component {
                     )
                 })
                 }
-            </View >
+            </View>
         );
     }
 }

@@ -1,275 +1,373 @@
-import React, { useEffect, useState } from 'react';
+import React, { Component, useRef } from 'react';
 import {
-  View,
-  StyleSheet,
-  Dimensions,
-  Text,
-  ToastAndroid,
+    View,
+    StyleSheet,
+    Dimensions,
+    ToastAndroid,
+    SafeAreaView,
+    TouchableOpacity,
+    Text,
+    ScrollView,
+    Animated,
 } from 'react-native';
-import { SceneMap, TabBar } from 'react-native-tab-view';
-import { HPageViewHoc, HScrollView } from 'react-native-head-tab-view';
-import { CollapsibleHeaderTabView } from 'react-native-tab-view-collapsible-header';
-import Whiskey from './Tabs/Whiskey';
-import Wine from './Tabs/Wine';
-import Beer from './Tabs/Beer';
-import Cocktail from './Tabs/Cocktails';
-import DashboardHead from './Tabs';
-import MyTabBar from './Tabs/TabBar';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { getAccessToken } from '../../localstorage';
-import { A_KEY, BASE_URL, MY_HEADER } from '../../config';
 import { connect } from 'react-redux';
-import { setUserDetail } from '../../Redux/actions/auth';
 import Header from '../Component/Header';
-import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
-import images from '../../assets/images';
+import { A_KEY, BASE_URL, MY_HEADER } from '../../config';
 import { colors } from '../../Theme/colors';
+import { TabView, TabBar } from 'react-native-tab-view';
+
+import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
+import { getAccessToken } from '../../localstorage';
+import PageHeader from './PageHeader';
+import ComboOfferCard from '../../Component/ComboOfferCard';
+import BarCard from '../../Component/BarCard';
+import ProductSliderRoute from './ProductSliderRoute';
 import { FontFamily } from '../../Theme/FontFamily';
 
-const initialLayout = { width: Dimensions.get('window').width };
+const LazyPlaceholder = ({ route }) => (
+    <View style={styles.container}>
+        <ThemeFullPageLoader />
+    </View>
+);
+class Dashboard extends Component {
+    constructor(props) {
+        super(props);
 
-function Dashboard(props) {
-  const [index, setIndex] = useState(0);
-  const [loader, setLoader] = useState(true);
-  const [data, setData] = useState(null);
-  const [routes] = useState([
-    { key: 'first', title: 'Whiskey' },
-    { key: 'second', title: 'Wine' },
-    { key: 'third', title: 'Beer' },
-    { key: 'fourth', title: 'Cocktail' },
-  ]);
-
-  const [drinkCategory, setdrinkCategory] = useState(null)
-
-  const FirstRoute = () => (
-    <HScrollView index={0}>
-      <Whiskey data={drinkCategory} {...props} />
-    </HScrollView>
-  );
-
-  const SecondRoute = () => (
-    <HScrollView index={1}>
-      <Wine data={drinkCategory} {...props} />
-    </HScrollView>
-  );
-
-  const ThirdRoute = () => (
-    <HScrollView index={2}>
-      <Beer data={drinkCategory} {...props} />
-    </HScrollView>
-  );
-
-  const FourthRoute = () => (
-    <HScrollView index={3}>
-      <Cocktail data={drinkCategory} {...props} />
-    </HScrollView>
-  );
-
-  const renderScene = SceneMap({
-    first: FirstRoute,
-    second: SecondRoute,
-    third: ThirdRoute,
-    fourth: FourthRoute,
-  });
-
-  useEffect(() => {
-    getDetail();
-    getTabDetail();
-  }, [getDetail, getTabDetail]);
-  // Fetch Detail on the Basic of Token
-  const getDetail = async () => {
-    let token = await getAccessToken(token);
-    if (!token) {
-      return setLoader(false);
+        this.state = {
+            loader: false,
+            data: null,
+            // data: {
+            // barDatas: [
+            //     { 'vendorShopName': 'Test', 'address': 'Test', 'distance': 100 }
+            // ],
+            // comboDatas: [
+            //     { 'name': 'Test', comboPrice: '1', images: '', }
+            // ],
+            // },
+            drinkObj: null,
+            index: 0,
+            routes: [
+                { key: '1', title: 'Whiskey' },
+                { key: '2', title: 'Beer' },
+                { key: '3', title: 'Wine' },
+                { key: '4', title: 'Cocktails' },
+            ],
+        };
     }
-    fetch(`${BASE_URL}/users/profile`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json, text/plain, */*', // It can be used to overcome cors errors
-        'Content-Type': 'application/json',
-        Token: token,
-        A_Key: A_KEY,
-      },
-      redirect: 'follow',
-    })
-      .then(result => result.json())
-      .then(responseDetail => {
-        if (responseDetail.response) {
-          setData(responseDetail);
-          props.dispatch(setUserDetail(responseDetail.response.result.profile));
-          // return responseDetail;
+
+    componentDidMount() {
+        this.getTabDetail();
+        this.getDetail();
+    }
+
+    componentDidUpdate() {
+    }
+
+    getDetail = async () => {
+        let token = await getAccessToken(token);
+        if (!token) {
+            return this.setState({ loader: false });
         }
-
-        if (responseDetail.errors) {
-          setLoader(false);
-          ToastAndroid.showWithGravity(
-            responseDetail.errors[0].msg,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
-        }
-      })
-      .catch(error => {
-        setLoader(false);
-        ToastAndroid.showWithGravity(
-          'Error on SignIn',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
-        console.log('Error_On_Data_Fetch', error);
-      });
-  };
-
-  const getTabDetail = () => {
-    let myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append('A_Key', A_KEY);
-
-    let raw = JSON.stringify({
-      vendorId: 4,
-    });
-
-    let requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow',
+        fetch(`${BASE_URL}/users/profile`, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json, text/plain, */*', // It can be used to overcome cors errors
+                'Content-Type': 'application/json',
+                Token: token,
+                A_Key: A_KEY,
+            },
+            redirect: 'follow',
+        })
+            .then(result => result.json())
+            .then(responseDetail => {
+                if (responseDetail.response) {
+                    this.setState({ data: responseDetail });
+                    console.log('DATA', this.state.data)
+                    props.dispatch(setUserDetail(responseDetail.response.result.profile));
+                }
+                if (responseDetail.errors) {
+                    this.setState({ loader: false });
+                    ToastAndroid.showWithGravity(
+                        responseDetail.errors[0].msg,
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                    );
+                }
+            })
+            .catch(error => {
+                this.setState({ loader: false });
+                ToastAndroid.showWithGravity(
+                    'Error on SignIn',
+                    ToastAndroid.LONG,
+                    ToastAndroid.TOP,
+                );
+                console.log('Error_On_Data_Fetch', error);
+            });
     };
 
-    fetch(`${BASE_URL}/home/homelists`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        if (result.response) {
-          console.log("GET_TAB", result.response.result.drinkCategory)
-          setdrinkCategory(result.response.result)
-          setLoader(false);
-        }
-        if (result.errors) {
-          setLoader(false);
-          ToastAndroid.showWithGravity(
-            result.errors[0].msg,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
-        }
-      })
-      .catch(error => {
-        setLoader(false);
-        ToastAndroid.showWithGravity(
-          'Network Error!',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
-        console.log('Error_On_Data_Fetch', error);
-      });
-  };
-  return (
-    <>
-      {loader ? (
-        <ThemeFullPageLoader />
-      ) : (
-        <>
-          <View>
-            <Header
-              onClick={() => props.navigation.openDrawer()}
-              onCard={() => props.navigation.navigate('MyCard')}
-              onNotification={() => props.navigation.navigate('Notification')}
-              IconName="account-circle"
-              IconColor="#711323"
-              Address={'Duxten Road, 338750'}
-            />
-          </View>
+    getTabDetail = () => {
+        let myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+        myHeaders.append('A_Key', A_KEY);
+        let raw = JSON.stringify({
+            vendorId: 4,
+        });
+        let requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow',
+        };
+        fetch(`${BASE_URL}/home/homelists`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                if (result.response) {
+                    this.setState({ drinkObj: result.response.result })
+                    this.setState({ loader: false });
+                }
+                if (result.errors) {
+                    this.setState({ loader: false });
+                    ToastAndroid.showWithGravity(
+                        result.errors[0].msg,
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                    );
+                }
+            })
+            .catch(error => {
+                this.setState({ loader: false });
+                ToastAndroid.showWithGravity(
+                    'Network Error!',
+                    ToastAndroid.LONG,
+                    ToastAndroid.TOP,
+                );
+                console.log('Error_On_Data_Fetch', error);
+            });
+    };
 
-          <CollapsibleHeaderTabView
-            makeHeaderHeight={() => 200}
-            renderScrollHeader={() => <DashboardHead {...props} />}
-            navigationState={{ index, routes }}
-            renderScene={renderScene}
-            onIndexChange={setIndex}
-            initialLayout={initialLayout}
-            renderTabBar={props => (
-              <TabBar
-                {...props}
-                indicatorStyle={{ backgroundColor: colors.CLR_WHITE }}
+
+    _handleIndexChange = index => this.setState({ index });
+
+    _renderLazyPlaceholder = ({ route }) => <LazyPlaceholder route={route} />;
+
+
+    renderScene = ({ route, jumpTo }) => {
+        return (<ProductSliderRoute routes={route} />);
+
+    };
+    render() {
+        return (
+            <SafeAreaView
                 style={{
-                  
-                }}
-                tabStyle={{ backgroundColor: colors.CLR_WHITE, }}
-                renderLabel={({ route }) => (
-                  <>
-                    <Text
-                      style={[styles.label,
-                        route.key === props.navigationState.routes[index].key
-                          ? styles.selectedTabText
-                          : styles.tabText
-                      ]}>
-                      {route.title}
-                    </Text>
-                    {route.key === props.navigationState.routes[index].key ? (
-                      <View
-                        style={styles.selectedTabBorder}
-                      />
-                    ) : null}
-                  </>
-                )}
-                labelStyle={styles.noLabel}
-              />
-            )}
-          />       
-        </>
-      )}
-    </>
-  );
-}
+                    flex: 1,
+                    backgroundColor: '#fff',
+                }}>
+                <View style={styles.container}>
+                    {
+                        this.state.loader ? (
+                            <ThemeFullPageLoader />
+                        ) : (
+                            <>
+                                {/* Header */}
+                                <Header
+                                    onClick={() => this.props.navigation.openDrawer()}
+                                    onCard={() => this.props.navigation.navigate('MyCard')}
+                                    onNotification={() => this.props.navigation.navigate('Notification')}
+                                    IconName="account-circle"
+                                    IconColor="#711323"
+                                    Address={'Duxten Road, 338750'}
+                                />
+                                <ScrollView
+                                    showsVerticalScrollIndicator={false}
+                                    style={{
+                                        flex: 1,
+                                    }}>
+                                    {/* Search & Slider */}
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <PageHeader {...this.props} />
+                                    </View>
 
+                                    <View style={{
+                                        flexDirection: 'column',
+                                        marginHorizontal: 15,
+                                        // marginTop: 0,
+                                    }}>
+                                        {/* Tab Header */}
+                                        <View style={{ flexDirection: 'row', height: 300 }}>
+                                            {/* {
+                                                this.state.drinkObj && this.state.drinkObj.drinkCategory.length > 0 ?
+                                                    this.state.drinkObj.drinkCategory.map((item, index) => (
+                                                        <TouchableOpacity key={index}>
+                                                            <Text style={{ color: 'black' }}>{item.name}</Text>
+                                                        </TouchableOpacity>
+                                                    ))
+                                                    : null
+                                            } */}
+
+                                            <TabView
+                                                lazy
+                                                navigationState={this.state}
+                                                renderScene={this.renderScene}
+                                                renderLazyPlaceholder={this._renderLazyPlaceholder}
+                                                onIndexChange={this._handleIndexChange}
+                                                initialLayout={{ width: Dimensions.get('window').width }}
+                                                renderTabBar={props => (
+                                                    <TabBar
+                                                        {...props}
+                                                        indicatorStyle={{ backgroundColor: colors.CLR_WHITE }}
+                                                        tabStyle={{ backgroundColor: colors.CLR_WHITE, }}
+                                                        style={{ backgroundColor: colors.CLR_WHITE, }}
+                                                        renderLabel={({ route }) => (
+                                                            <>
+                                                                <Text
+                                                                    style={[styles.label,
+                                                                    route.key === props.navigationState.routes[this.state.index].key
+                                                                        ? styles.selectedTabText
+                                                                        : styles.tabText
+                                                                    ]}>
+                                                                    {route.title}
+                                                                </Text>
+                                                                {
+                                                                    route.key === props.navigationState.routes[this.state.index].key &&
+                                                                    <View style={styles.selectedTabBorder} />
+                                                                }
+                                                            </>
+                                                        )}
+                                                        labelStyle={styles.noLabel}
+                                                    />
+                                                )}
+
+                                            />
+                                        </View>
+
+                                        {/* Combo Offer */}
+                                        <View>
+                                            <View
+                                                style={{
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'space-between',
+                                                }}>
+                                                <Text style={styles.sectionTitle}>Combos</Text>
+                                                <TouchableOpacity>
+                                                    <Text style={styles.ViewAll}>View All</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                            {/* <ScrollView
+                                            horizontal
+                                            nestedScrollEnabled> */}
+
+                                            {
+                                                //  hostUrl={this.data.hostUrl}
+                                                this.state.data.comboDatas && this.state.data.comboDatas.length > 0 ?
+                                                    this.state.data.comboDatas.map((item, index) => (
+                                                        <ComboOfferCard navigation={this.props.navigation} item={item} hostUrl={null} />
+                                                    ))
+                                                    : null
+                                            }
+                                            {/* </ScrollView> */}
+                                        </View>
+                                        {/* Combo Offer */}
+                                        {/* Bar List */}
+                                        <View
+                                            style={{
+                                                marginBottom: 10,
+                                            }}>
+                                            <View
+                                                style={{
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'space-between',
+                                                    marginTop: '8%',
+                                                }}>
+                                                <Text style={styles.sectionTitle}>Bars</Text>
+                                                <TouchableOpacity>
+                                                    <Text style={styles.ViewAll}>View All</Text>
+                                                </TouchableOpacity>
+                                            </View>
+
+                                            {/* Bar Slider */}
+                                            <ScrollView
+                                                horizontal
+                                                nestedScrollEnabled>
+                                                {this.state.data && this.state.data.barDatas.length > 0
+                                                    ? this.state.data.barDatas.map((item, index) => (
+                                                        <BarCard navigation={this.props.navigation} item={item} hostUrl={null} />
+                                                    ))
+                                                    : null}
+                                            </ScrollView>
+                                            {/* Bar Slider */}
+
+                                        </View>
+                                        {/* Bar List */}
+                                    </View>
+                                </ScrollView>
+                            </>
+                        )
+                    }
+                </View>
+            </SafeAreaView>
+        )
+    }
+}
 // dispatcher functions
 function mapDispatchToProps(dispatch) {
-  return {
-    dispatch,
-  };
+    return {
+        dispatch,
+    };
 }
 
 //getting props from redux
 function mapStateToProps(state) {
-  let redux = state;
-  return { redux };
+    let redux = state;
+    return { redux };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+// export default Dashboard;
 
 const styles = StyleSheet.create({
-  // tabStyle:{
-  //   // backgroundColor: 'yellow',
-  //   //               shadowColor: 'red',
-  //   //               shadowOffset: {
-  //   //                 width: 0,
-  //   //                 height: 0,
-  //   //               },
-  //   //               elevation: 1,
-  //                 //backgroundColor: 'red',
-  //                 // // borderBottomLeftRadius: 20,
-  //                 // // borderBottomRightRadius: 20,
-  //                 // overflow: 'hidden',
-  //                 // bottom: 1,
-  // },
-  noLabel: {
-    display: 'none',
-    height: 0,
-  },
-  selectedTabText: {
-    color: colors.CLR_TAB,
-  },
-  selectedTabBorder:{
-    backgroundColor: colors.CLR_TAB,
-    height: 3,
-    top: '30%',
-  },
-  tabText:{
-    color: '#000000',
-  },
-  label: {
-    fontSize: 15,
-    fontFamily:FontFamily.ROBOTO_REGULAR,
-    fontWeight: '400',
-  },
-});
+    container: {
+        flex: 1,
+    },
+    whiskeyText: {
+        fontSize: 18,
+        fontWeight: '500',
+        color: colors.THEME_COLOR
+    },
+    ViewAll: {
+        fontSize: 13,
+        fontWeight: '400',
+        color: '#711323',
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: '500',
+        color: colors.THEME_COLOR
+    },
+    ViewAll: {
+        fontSize: 13,
+        fontWeight: '400',
+        color: '#711323',
+    },
+    selectedTabText: {
+        color: colors.CLR_TAB,
+    },
+    selectedTabBorder: {
+        backgroundColor: colors.CLR_TAB,
+        height: 3,
+        top: '30%',
+    },
+    tabText: {
+        color: '#000000',
+    },
+    label: {
+        fontSize: 15,
+        fontFamily: FontFamily.ROBOTO_REGULAR,
+        fontWeight: '400',
+    },
+    noLabel: {
+        display: 'none',
+        height: 0,
+    },
+})

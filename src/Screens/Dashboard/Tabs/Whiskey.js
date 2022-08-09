@@ -3,23 +3,17 @@ import {
   Text,
   View,
   SafeAreaView,
-  Image,
-  ImageBackground,
   TouchableOpacity,
   StyleSheet,
   FlatList,
   ScrollView,
-  Dimensions,
 } from 'react-native';
-import images from '../../../assets/images';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import BarCard from '../../../Component/BarCard';
 import CategoryCard from '../../../Component/CategoryCard';
-import ComboOfferCard from '../../../Component/ComboOfferCard';
 import { colors } from '../../../Theme/colors';
 
 export default class Whiskey extends Component {
   constructor(props) {
+    // console.log('Whiskey', props);
     super(props);
     this.state = {};
   }
@@ -63,70 +57,12 @@ export default class Whiskey extends Component {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item, index }) => (
                   <>
-                    {item.name == 'Whiskey' ? (
+                    {item.name == this.props.title ? (
                       <CategoryCard navigation={this.props.navigation} item={item} hostUrl={this.props.data.hostUrl} />
                     ) : null}
                   </>
                 )}
               />
-              {/* Combo Offer */}
-              <View>
-
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}>
-                  <Text style={styles.whiskeyText}>Combos</Text>
-                  <TouchableOpacity>
-                    <Text style={styles.ViewAll}>View All</Text>
-                  </TouchableOpacity>
-                </View>
-                {/* <ScrollView
-                  horizontal
-                  nestedScrollEnabled> */}
-                {
-                  this.props.data && this.props.data.comboDatas.length > 0 ?
-                    this.props.data.comboDatas.map((item, index) => (
-                      <ComboOfferCard navigation={this.props.navigation} item={item} hostUrl={this.props.data.hostUrl} />
-                    ))
-                    : null
-                }
-                {/* </ScrollView> */}
-              </View>
-              {/* Combo Offer */}
-
-              <View
-                style={{
-                  marginBottom: 10,
-                }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginTop: '8%',
-                  }}>
-                  <Text style={styles.whiskeyText}>Bars</Text>
-                  <TouchableOpacity>
-                    <Text style={styles.ViewAll}>View All</Text>
-                  </TouchableOpacity>
-                </View>
-
-                {/* Bar Slider */}
-                <ScrollView
-                  horizontal
-                  nestedScrollEnabled>
-                  {this.props.data && this.props.data.barDatas.length > 0
-                    ? this.props.data.barDatas.map((item, index) => (
-                      <BarCard navigation={this.props.navigation} item={item} hostUrl={this.props.data.hostUrl} />
-                    ))
-                    : null}
-                </ScrollView>
-                {/* Bar Slider */}
-
-              </View>
 
             </View>
           ) : null}
@@ -140,7 +76,7 @@ const styles = StyleSheet.create({
   whiskeyText: {
     fontSize: 18,
     fontWeight: '500',
-    color:colors.THEME_COLOR
+    color: colors.THEME_COLOR
   },
   ViewAll: {
     fontSize: 13,

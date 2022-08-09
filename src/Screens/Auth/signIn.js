@@ -29,27 +29,28 @@ class SignIn extends Component {
       mobileNumber: null,
       password: null,
       loader: false,
-      loggedIn: 0,
+      loggedIn: -1,
     };
   }
 
   componentDidMount() {
-    this.checkCredentials();
+    // this.checkCredentials();
   }
 
-  checkCredentials = async () => {
-    let token = await getAccessToken();
-    if (token != null || token != undefined) {
-      // setLoggedIn(1);
-      this.setState({ loggedIn: 1 });
-      console.log('=======xxxxxxxxxxxx>>>>>>', token);
-    } else {
-      this.setState({ loggedIn: -1 });
-    }
-  };
+  // checkCredentials = async () => {
+  //   let token = await getAccessToken();
+  //   if (token != null || token != undefined) {
+  //     // setLoggedIn(1);
+  //     this.setState({ loggedIn: 1 });
+  //     console.log('=======xxxxxxxxxxxx>>>>>>', token);
+  //   } else {
+  //     this.setState({ loggedIn: -1 });
+  //   }
+  // };
+
   async onProceed() {
-    this.props.navigation.navigate('Drawer');
-    return;
+    // this.props.navigation.navigate('Drawer');
+    // return;
     this.setState({ loader: true });
     // this.props.navigation.navigate('VerifyOtp')
     console.log(this.state.mobileNumber, ':', this.state.password);
@@ -158,9 +159,9 @@ class SignIn extends Component {
   }
 
   render() {
-    if (this.state.loggedIn == 1) {
-      this.props.navigation.navigate('Drawer');
-    }
+    // if (this.state.loggedIn == 1) {
+    //   this.props.navigation.navigate('Drawer');
+    // }
     return (
       <SafeAreaView
         style={{
