@@ -35,20 +35,19 @@ export default class TextInputField extends React.Component {
                         keyboardType={this.props.keyboardType}
                         onChangeText={this.props.onChangeText}
                         placeholderTextColor={'#A39B9B'}
-                        secureTextEntry={!visibility ? false : true}
+                        secureTextEntry={!this.state.visibility ? false : true}
                         value={this.props.value}
                         editable={editable}
                     />
                     {/* Password icon */}
                     {isPassword
                         && <TouchableOpacity
-                            onPress={() =>
-                                visibility
-                                    ? this.setState({ visibility: false })
-                                    : this.setState({ visibility: true })
-                            }>
+                            onPress={() => {
+                                this.setState({ visibility: !this.state.visibility })
+                            }}
+                        >
                             <Icon
-                                name={!visibility ? 'visibility' : 'visibility-off'}
+                                name={!this.state.visibility ? 'visibility' : 'visibility-off'}
                                 size={22}
                                 color="#A39B9B"
                                 style={[innerStyle.imageStyle, { marginRight: 10 }]}
