@@ -4,6 +4,7 @@ const colors = {
     CLR_TAB:'#711323',
     CLR_BG:'#E5E5E5',
     CLR_ACTIVITY_INDICATOR:'#741728',
-    CLR_SIGN_IN_TEXT_COLOR:'#000000'
+    CLR_SIGN_IN_TEXT_COLOR:'#000000',
+    CLR_DARK_GREY:'#424242'
 }
 export { colors }

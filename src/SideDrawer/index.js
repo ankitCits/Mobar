@@ -4,7 +4,6 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Image,
   StatusBar,
   Platform,
   ToastAndroid,
@@ -16,7 +15,9 @@ import { getAccessToken, removeAccessToken } from '../localstorage';
 import { A_KEY, BASE_URL } from '../config';
 import LoginButton from '../Component/LoginButton';
 import { FontFamily } from '../Theme/FontFamily';
+import { colors } from '../Theme/colors';
 import { setUserDetail } from '../Redux/actions/auth';
+
 
 
 class SideDrawer extends Component {
@@ -27,8 +28,8 @@ class SideDrawer extends Component {
     };
   }
 
-
   onPressFun = screen => {
+    console.log("drawer Index",screen);
     if (screen == 'MyBottomTabs') {
       this.setState({ drawerIndex: 0 });
     }
@@ -62,7 +63,6 @@ class SideDrawer extends Component {
       headers: myHeaders,
       redirect: 'follow',
     };
-
     fetch(`${BASE_URL}/users/signOut`, requestOptions)
       .then(response => response.json())
       .then(result => {
@@ -88,7 +88,7 @@ class SideDrawer extends Component {
 
   render() {
     var drawerIndex = this.state.drawerIndex;
-    // console.log("========>>>>", this.props.redux)
+    console.log("========>>>>", this.props.redux)
     return (
       <>
         <StatusBar
@@ -98,78 +98,46 @@ class SideDrawer extends Component {
             Platform.OS === 'android' ? 'dark-content' : 'light-content'
           }
         />
-        <View style={{ flex: 1, backgroundColor: '#fff' }}>
-          <View
-            style={{
-              width: '90%',
-              alignItems: 'center',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              margin: 10,
-            }}>
+        <View style={styles.container}>
+          <View style={styles.header}>
             <TouchableOpacity
               onPress={() => this.props.navigation.closeDrawer()}>
               <Icon name="arrow-back" size={30} color="#424242" />
             </TouchableOpacity>
-
-            <Text style={{ fontSize: 20, color: '#424242', fontFamily: FontFamily.TAJAWAL_BOLD }}>My Account</Text>
+            <Text style={styles.menuTitle}>My Account</Text>
             <Text></Text>
           </View>
-
           {this.props.redux ? (
-            <View style={{ marginTop: '10%' }}>
+            <View style={styles.profileContainer}>
               <View
-                style={{
-                  width: '90%',
-                  alignSelf: 'center',
-                  flexDirection: 'row',
-                  borderWidth: 1,
-                  borderRadius: 10,
-                  height: 61,
-                  borderColor: '#D41335',
-                  alignItems: 'center',
-                  padding: 5,
-                }}>
+                style={styles.profileDetails}>
                 <View>
-                  <Icon name="account-circle" size={50} color="#711323" />
+                  <Icon name="account-circle" size={50} color={colors.CLR_TAB} />
                 </View>
-                <View style={{ marginLeft: 10 }}>
-                  <Text style={{ fontSize: 17, fontWeight: '700' }}>
+                <View>
+                  <Text style={styles.profileTitle}>
                     {this.props.redux ? this.props.redux.name : 'User'}
                   </Text>
                   <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    }}>
-                    <Icon name="location-on" size={12} color="#711323" />
+                    style={styles.profileSubContainer}>
+                    <Icon name="location-on" size={15} color={colors.CLR_TAB} />
                     <Text
-                      style={{ marginLeft: 5, fontSize: 12, fontWeight: '500' }}>
+                      style={styles.profileSubHeader}>
                       {this.props.redux
                         ? this.props.redux.address
                         : 'Singapore'}
                     </Text>
                     <TouchableOpacity
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        marginLeft: 5,
-                        alignSelf: 'center',
-                      }}>
+                      style={styles.editBtnContainer}>
                       <Text
-                        style={{
-                          fontSize: 10,
-                          color: '#A1172F',
-                          fontWeight: '400',
-                        }}>
+                        style={styles.editBtnText}>
                         Change
                       </Text>
                       <Icon
                         name="edit"
                         size={10}
-                        color="#711323"
-                        style={{ marginTop: 2, marginLeft: 5 }}
+                        color={colors.CLR_TAB}
+                        style={styles.editIcon}
                       />
                     </TouchableOpacity>
                   </View>
@@ -180,198 +148,81 @@ class SideDrawer extends Component {
             <LoginButton title={'Login'} />
           )}
 
-          <View>
-            {drawerIndex == 0 ? (
-              <View style={{ backgroundColor: '#711323', marginTop: 30 }}>
+          <View style={styles.menuItemContainer}>
+              <View style={[drawerIndex == 0 ? styles.selectedItem :'']}>
                 <TouchableOpacity
-                  style={styles.listItemProfile}
+                  style={styles.menuItem}
                   onPress={() => this.onPressFun('MyBottomTabs')}>
-                  <Icon name="home" size={28} color="#fff" />
-                  <Text style={styles.listTextProfile}>Home</Text>
+                  <Icon name="home" size={28} color={drawerIndex == 0 ? colors.CLR_WHITE : colors.CLR_TAB} />
+                  <Text style={[styles.listText,drawerIndex == 0 ? styles.selectedTextColor : '']}>Home</Text>
                 </TouchableOpacity>
               </View>
-            ) : (
-              <View style={{ marginTop: 30, marginLeft: 30 }}>
-                <TouchableOpacity
-                  style={styles.listItem}
-                  onPress={() => this.onPressFun('MyBottomTabs')}>
-                  <Icon name="home" size={28} color="#711323" />
-                  <Text style={styles.listText}>Home</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-
-            {this.props.redux ? (
-              drawerIndex == 1 ? (
-                <View style={{ backgroundColor: '#711323', marginTop: 15 }}>
+            {this.props.redux && 
+            <>
+                <View style={[drawerIndex == 1 ? styles.selectedItem :'']}>
                   <TouchableOpacity
-                    style={styles.listItemProfile}
+                    style={styles.menuItem}
                     onPress={() => this.onPressFun('MyProfile')}>
-                    <Icon name="account-circle" size={28} color="#fff" />
-                    <Text style={styles.listTextProfile}>My Profile</Text>
+                    <Icon name="account-circle" size={28} color={drawerIndex == 1 ? colors.CLR_WHITE : colors.CLR_TAB} />
+                    <Text style={[styles.listText,drawerIndex == 1 ? styles.selectedTextColor : '']}>My Profile</Text>
                   </TouchableOpacity>
                 </View>
-              ) : (
-                <View style={{ marginTop: 2, marginLeft: 30 }}>
+                <View style={[drawerIndex == 2 ? styles.selectedItem : '']}>
                   <TouchableOpacity
-                    style={styles.listItem}
-                    onPress={() => this.onPressFun('MyProfile')}>
-                    <Icon name="account-circle" size={28} color="#711323" />
-                    <Text style={styles.listText}>My Profile</Text>
+                    style={styles.menuItem}
+                    onPress={() => this.onPressFun('ChangePassword')}
+                    >
+                    <Icon name="vpn-key" size={28} color={drawerIndex == 2 ? colors.CLR_WHITE : colors.CLR_TAB} />
+                    <Text style={[styles.listText,drawerIndex == 2 ? styles.selectedTextColor : '']}>Change Password</Text>
                   </TouchableOpacity>
                 </View>
-              )
-            ) : null}
-
-            {this.props.redux ? (
-              drawerIndex == 2 ? (
-                <View style={{ backgroundColor: '#711323', marginTop: 15 }}>
+                <View style={[drawerIndex == 3 ? styles.selectedItem : '']}>
                   <TouchableOpacity
-                    style={styles.listItemProfile}
-                    onPress={() => this.onPressFun('ChangePassword')}>
-                    <Icon name="vpn-key" size={28} color="#fff" />
-                    <Text style={styles.listTextProfile}>Change Password</Text>
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <View style={{ marginTop: 2, marginLeft: 30 }}>
-                  <TouchableOpacity
-                    style={styles.listItem}
-                    onPress={() => {
-                      console.log('cccccc');
-                      this.onPressFun('ChangePassword');
-                    }}>
-                    <Icon name="vpn-key" size={28} color="#711323" />
-                    <Text style={styles.listText}>Change Password</Text>
-                  </TouchableOpacity>
-                </View>
-              )
-            ) : null}
-
-            {this.props.redux ? (
-              drawerIndex == 3 ? (
-                <View style={{ backgroundColor: '#711323', marginTop: 15 }}>
-                  <TouchableOpacity
-                    style={styles.listItemProfile}
+                    style={styles.menuItem}
                     onPress={() => this.onPressFun('OrderHistory')}>
-                    <Icon name="schedule" size={28} color="#fff" />
-                    <Text style={styles.listTextProfile}>Order History</Text>
+                    <Icon name="schedule" size={28} color={drawerIndex == 3 ? colors.CLR_WHITE : colors.CLR_TAB} />
+                    <Text style={[styles.listText,drawerIndex == 3 ? styles.selectedTextColor : '']}>Order History</Text>
                   </TouchableOpacity>
                 </View>
-              ) : (
-                <View style={{ marginTop: 2, marginLeft: 30 }}>
+                <View style={[drawerIndex == 4 ? styles.selectedItem : '']}>
                   <TouchableOpacity
-                    style={styles.listItem}
-                    onPress={() => this.onPressFun('OrderHistory')}>
-                    <Icon name="schedule" size={28} color="#711323" />
-                    <Text style={styles.listText}>Order History</Text>
-                  </TouchableOpacity>
-                </View>
-              )
-            ) : null}
-
-            {this.props.redux ? (
-              drawerIndex == 4 ? (
-                <View style={{ backgroundColor: '#711323', marginTop: 15 }}>
-                  <TouchableOpacity
-                    style={styles.listItemProfile}
-                  // onPress={() => this.onPressFun('share')}
+                    style={styles.menuItem}
+                    onPress={() => this.onPressFun('share')}
                   >
-                    <Icon name="share" size={26} color="#fff" />
-                    <Text style={styles.listTextProfile}>
+                    <Icon name="share" size={26} color={drawerIndex == 4 ? colors.CLR_WHITE : colors.CLR_TAB} />
+                    <Text style={[styles.listText,drawerIndex == 4 ? styles.selectedTextColor : '']}>
                       Invite Your Friends
                     </Text>
                   </TouchableOpacity>
                 </View>
-              ) : (
-                <View style={{ marginTop: 2, marginLeft: 30 }}>
-                  <TouchableOpacity
-                    style={styles.listItem}
-                  // onPress={() => this.onPressFun('share')}
-                  >
-                    <Icon name="share" size={26} color="#711323" />
-                    <Text style={styles.listText}>Invite Your Friends</Text>
-                  </TouchableOpacity>
-                </View>
-              )
-            ) : null}
-
-            {drawerIndex == 5 ? (
-              <View style={{ backgroundColor: '#711323', marginTop: 15 }}>
+                </>
+            }
+             <View style={[ drawerIndex == 5 ? styles.selectedItem : '']}>
                 <TouchableOpacity
-                  style={styles.listItemProfile}
+                  style={styles.menuItem}
                   onPress={() => this.onPressFun('HelpSupport')}>
-                  <Icon name="support-agent" size={28} color="#fff" />
-                  <Text style={styles.listTextProfile}>Help & Support</Text>
+                  <Icon name="support-agent" size={28} color={drawerIndex == 5 ? colors.CLR_WHITE : colors.CLR_TAB} />
+                  <Text style={[styles.listText,drawerIndex == 5 ? styles.selectedTextColor : '']}>Help & Support</Text>
                 </TouchableOpacity>
               </View>
-            ) : (
-              <View style={{ marginTop: 2, marginLeft: 30 }}>
+              <View style={[drawerIndex == 6 ? styles.selectedItem:'']}>
                 <TouchableOpacity
-                  style={styles.listItem}
-                  onPress={() => this.onPressFun('HelpSupport')}>
-                  <Icon name="support-agent" size={28} color="#711323" />
-                  <Text style={styles.listText}>Help & Support</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-
-            {drawerIndex == 6 ? (
-              <View style={{ backgroundColor: '#711323', marginTop: 15 }}>
-                <TouchableOpacity
-                  style={styles.listItemProfile}
+                  style={styles.menuItem}
                   onPress={() => this.onPressFun('About')}>
-                  <Icon name="info" size={28} color="#fff" />
-                  <Text style={styles.listTextProfile}>About</Text>
+                  <Icon name="info" size={28} color={drawerIndex == 6 ? colors.CLR_WHITE : colors.CLR_TAB} />
+                  <Text style={[styles.listText,drawerIndex == 6 ? styles.selectedTextColor:'']}>About</Text>
                 </TouchableOpacity>
               </View>
-            ) : (
-              <View style={{ marginTop: 2, marginLeft: 30 }}>
+               { this.props.redux ? (  <View style={[drawerIndex == 7 ? styles.selectedItem:'']}>
                 <TouchableOpacity
-                  style={styles.listItem}
-                  onPress={() => this.onPressFun('About')}>
-                  <Icon name="info" size={28} color="#711323" />
-                  <Text style={styles.listText}>About</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-
-            {this.props.redux ? (
-              <View style={{ marginLeft: 30 }}>
-                <TouchableOpacity
-                  style={styles.listItem}
+                  style={styles.menuItem}
                   onPress={() => this.loggedOut()}>
-                  <Icon name="phonelink-lock" size={28} color="#711323" />
-                  <Text style={styles.listText}>Sign out</Text>
+                  <Icon name="phonelink-lock" size={28} color={colors.CLR_TAB} />
+                  <Text style={[styles.listText,drawerIndex == 7 ? styles.selectedTextColor:'']}>Sign out</Text>
                 </TouchableOpacity>
-              </View>
-            ) : null}
+              </View>):
+              null}
           </View>
-          {/* <View style={{margin: '20%'}}>
-            <TouchableOpacity
-              style={styles.innerView}
-              onPress={() => this.onPressFun('Dashboard')}>
-              <Icon
-                name="arrow-back"
-                size={30}
-                color="#424242"
-                style={styles.imageStyle}
-              />
-              <Text style={styles.innerText}>Home</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.innerView}
-              onPress={() => this.onPressFun('MyProfile')}>
-              <Icon
-                name="arrow-back"
-                size={30}
-                color="#424242"
-                style={styles.imageStyle}
-              />
-              <Text style={styles.innerText}>My Profile</Text>
-            </TouchableOpacity>
-          </View> */}
         </View>
       </>
     );
@@ -379,28 +230,74 @@ class SideDrawer extends Component {
 }
 
 const styles = StyleSheet.create({
-  innerView: {
-    marginTop: '5%',
+  container:{
+    flex: 1, 
+    backgroundColor: colors.CLR_WHITE,
+  },
+  menuTitle:{
+    fontSize: 18, 
+    color: colors.CLR_DARK_GREY, 
+    fontFamily: FontFamily.TAJAWAL_BOLD
+  },
+  header:{
+    width: '90%',
     flexDirection: 'row',
-    alignContent: 'center',
+    justifyContent: 'space-between',
+    margin: 10,
   },
-  innerText: {
-    fontSize: 20,
-    color: '#164dbd',
-    fontWeight: '800',
-    // fontFamily: 'Roboto-Medium',
-    marginLeft: '5%',
+  profileContainer:{
+    marginTop: '10%',
   },
-  iconImage: {
-    height: 30,
-    width: 30,
+  profileDetails:{
+    alignSelf: 'center',
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderRadius:14,
+    height: 60,
+    borderColor: '#D41335',
+    alignItems: 'center',
+    padding: 5
   },
-  listItem: {
+  profileTitle:{
+    fontSize: 17,
+    fontFamily:FontFamily.TAJAWAL_REGULAR, 
+    fontWeight: '700',
+    color:colors.CLR_DARK_GREY
+  },
+  profileSubHeader:{
+    marginLeft: 2,
+    fontFamily:FontFamily.ROBOTO_REGULAR,
+    fontSize: 12,
+    color:'#3C3C3C',
+    fontWeight: '500'
+  },
+  profileSubContainer:{
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
   },
-  listItemProfile: {
+  editBtnContainer:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 5,
+  },
+  editBtnText:{
+    fontSize: 10,
+    color: '#A1172F',
+    fontWeight: '400',
+    fontFamily:FontFamily.ROBOTO_REGULAR
+  },
+  editIcon:{
+    marginTop: 2, 
+    marginLeft: 5
+  },
+  menuItemContainer:{
+    marginTop:30
+  },
+  selectedItem:{
+    backgroundColor: '#A1172F',
+    color:colors.CLR_WHITE,
+  },
+  menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
@@ -408,15 +305,13 @@ const styles = StyleSheet.create({
   },
   listText: {
     fontSize: 18,
-    fontWeight: '400',
+    fontWeight: '500',
     marginLeft: 10,
-    color: '#424242',
+    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    color:colors.CLR_DARK_GREY
   },
-  listTextProfile: {
-    fontSize: 18,
-    fontWeight: '400',
-    marginLeft: 10,
-    color: '#fff',
+  selectedTextColor:{
+    color: colors.CLR_WHITE,
   },
 });
 
