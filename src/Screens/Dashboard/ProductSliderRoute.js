@@ -2,15 +2,12 @@ import React, { Component } from 'react';
 import {
     Text,
     View,
-    Image,
-    ImageBackground,
     TouchableOpacity,
     StyleSheet,
     FlatList,
     ScrollView,
 } from 'react-native';
-import images from '../../assets/images';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import CategoryCard from '../../Component/CategoryCard';
 const DATA = [
     {
         id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -28,7 +25,14 @@ const DATA = [
 export default class ProductSliderRoute extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+    }
+
+    renderProducts = (item, index) => {
+        return (
+            <>
+                <CategoryCard navigation={this.props.navigation} item={item} index={index} hostUrl={this.props.hostUrl} />
+            </>
+        );
     }
 
     render() {
@@ -61,58 +65,7 @@ export default class ProductSliderRoute extends Component {
                             initialNumToRender={5}
                             maxToRenderPerBatch={10}
                             keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item, index }) => (
-                                <>
-                                    <View
-                                        key={index.toString()}
-                                        style={{ marginTop: 28, marginBottom: 30, marginLeft: 10 }}>
-                                        <ImageBackground
-                                            style={styles.boxInner}
-                                            resizeMode={'cover'}
-                                            source={images.boxOuter}
-                                            defaultSource={images.boxOuter}>
-                                            <View style={styles.innerTop}>
-                                                <TouchableOpacity>
-                                                    <Icon
-                                                        name={'favorite'}
-                                                        size={22}
-                                                        color="#FF1405"
-                                                        style={styles.imageStyle}
-                                                    />
-                                                </TouchableOpacity>
-                                                <Text style={{ color: '#fff', fontSize: 12 }}>300ml</Text>
-                                            </View>
-                                            <Image
-                                                style={styles.productImg}
-                                                resizeMode={'cover'}
-                                                source={images.product1}
-                                                defaultSource={images.product1}
-                                            />
-                                            <Image
-                                                style={styles.boxOuter}
-                                                resizeMode={'cover'}
-                                                source={images.boxInner}
-                                                defaultSource={images.boxInner}
-                                            />
-                                            <View style={styles.innerBottom}>
-                                                <View>
-                                                    <Text style={styles.innerBottomText}>
-                                                        Ballantines Blended
-                                                    </Text>
-                                                </View>
-                                                <View>
-                                                    <Text style={styles.innerBottomText2}>
-                                                        Your Saving: $19
-                                                    </Text>
-                                                </View>
-                                                <View>
-                                                    <Text style={styles.innerBottomText3}>$ 89</Text>
-                                                </View>
-                                            </View>
-                                        </ImageBackground>
-                                    </View>
-                                </>
-                            )}
+                            renderItem={({ item, index }) => this.renderProducts(item, index)}
                         />
                     </View>
                 </ScrollView>

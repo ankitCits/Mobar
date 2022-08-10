@@ -27,10 +27,10 @@ export default class CategoryCard extends React.Component {
         return (
             <>
                 <TouchableOpacity
-                    onPress={() =>
-                        console.log(hostUrl + item.images,)
-                        //navigation.navigate('Product')
-                    }
+                    onPress={() => {
+                        // console.log(hostUrl + item.images);
+                        navigation.navigate('Product');
+                    }}
                     style={{
                         marginTop: 28,
                         marginBottom: 30,
@@ -42,19 +42,6 @@ export default class CategoryCard extends React.Component {
                         resizeMode={'cover'}
                         source={images.boxOuter}
                         defaultSource={images.boxOuter}>
-
-                        {/* <View style={{
-                            position: 'absolute',
-                            top: 0,
-                            backgroundColor: 'red',
-                            height: '55%',
-                            width: '150%',
-                            left: -10,
-                            borderBottomRightRadius: 65,
-                            borderBottomLeftRadius: 120,
-                            
-                        }}>
-                        </View> */}
 
                         <View style={styles.innerTop}>
                             <TouchableOpacity
@@ -74,9 +61,9 @@ export default class CategoryCard extends React.Component {
                         <Image
                             style={styles.productImg}
                             resizeMode={'cover'}
-                            source={{
-                                uri: `${hostUrl + item.images}`,
-                            }}
+                            // source={{ uri: `${hostUrl + item.images}` }}
+                            source={images.product1}
+                            defaultSource={images.product1}
                         />
 
                         <Image
@@ -89,23 +76,26 @@ export default class CategoryCard extends React.Component {
                         <View style={styles.innerBottom}>
                             <View>
                                 <Text style={styles.innerBottomText}>
-                                    {item.ecom_ac_products[0].name}
+                                    {/* {item.ecom_ac_products[0].name} */}
+                                    Ballantines Blended
                                 </Text>
                             </View>
                             <View>
                                 <Text style={styles.innerBottomText2}>
-                                    Your Saving:{' '}
+                                    {/* Your Saving:{' '}
                                     {
                                         item.ecom_ac_products[0].ecom_aca_product_units[0].unitDiscountPrice
-                                    }
+                                    } */}
+                                    Your Saving: $19
                                 </Text>
                             </View>
                             <View>
                                 <Text style={styles.innerBottomText3}>
-                                    ${' '}
+                                    {/* ${' '}
                                     {
                                         item.ecom_ac_products[0].ecom_aca_product_units[0].unitUserPrice
-                                    }
+                                    } */}
+                                    $ 89
                                 </Text>
                             </View>
                         </View>
@@ -116,24 +106,6 @@ export default class CategoryCard extends React.Component {
     }
 }
 const styles = StyleSheet.create({
-    productImg: {
-        marginTop: '-30%',
-        marginRight: 10,
-        height: 70,
-        // height: '100%',
-        width: 70,
-        // width: 70,
-        alignSelf: 'center',
-        // position: 'absolute'
-    },
-    innerTop: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '94%',
-        alignItems: 'center',
-        alignSelf: 'center',
-        marginTop: 5,
-    },
     boxInner: {
         width: 147,
         height: 169,
@@ -142,10 +114,24 @@ const styles = StyleSheet.create({
         bottom: 0,
         position: 'absolute',
     },
-    innerBottom: {
+    productImg: {
+        marginTop: '-40%',
+        marginLeft: 10,
+        position: 'relative',
+    },
+    innerTop: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '94%',
         alignItems: 'center',
-        marginTop: '25%',
-        // marginTop: '45%',
+        alignSelf: 'center',
+        marginTop: 5,
+        position: 'relative',
+    },
+    innerBottom: {
+        // width: '94%',
+        alignItems: 'center',
+        marginTop: '-10%',
     },
     innerBottomText: {
         color: '#fff',

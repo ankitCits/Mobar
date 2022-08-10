@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   ToastAndroid,
-  ActivityIndicator,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { setAccessToken } from '../../localstorage';
@@ -30,7 +29,6 @@ class SignIn extends Component {
       // mobileNumber: '88392288',
       // password: "Ds@123456",
       loader: false,
-      loggedIn: -1
     };
   }
 
@@ -73,7 +71,6 @@ class SignIn extends Component {
 
     // Valid Mobile
     let isMobile = Util.validMobile(this.state.mobileNumber);
-    console.log(isMobile);
     if (!isMobile) {
       ToastAndroid.showWithGravity(
         'Mobile number not valid!',
@@ -98,7 +95,7 @@ class SignIn extends Component {
       const resp = await singIn(postData)
       await setAccessToken(resp);
       this.setState({ loader: false });
-      this.props.navigation.navigate('Drawer');
+      this.props.navigation.replace('Drawer');
       return;
     } catch (error) {
       this.setState({ loader: false });
@@ -119,76 +116,69 @@ class SignIn extends Component {
           backgroundColor={colors.CLR_BG}
           barStyle={'dark-content'}
         />
-        {this.state.loggedIn == 0 ? (
-          <View
-            style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={colors.CLR_ACTIVITY_INDICATOR} />
+
+        <View style={styles.container}>
+          <View style={styles.createView}>
+            <Text style={styles.createText}>Sign in</Text>
           </View>
-        ) : (
-          <View style={styles.container}>
-            <View style={styles.createView}>
-              <Text style={styles.createText}>Sign in</Text>
+          <View style={styles.viewInput}>
+            <TextInputField
+              placeholder="Mobile Number"
+              keyboardType="numeric"
+              iconName={'call'}
+              value={this.state.mobileNumber}
+              onChangeText={text => {
+                this.setState({ mobileNumber: text });
+              }}
+            />
+            <TextInputField
+              placeholder="Password"
+              iconName={'lock'}
+              value={this.state.password}
+              onChangeText={text => {
+                this.setState({ password: text });
+              }}
+              isPassword={true}
+              visibility={true}
+            />
+
+            <ThemeButton
+              title={'Sign in'}
+              isLoading={this.state.loader}
+              onPress={() => this.onProceed()}
+            />
+
+            <View style={styles.forgotPasswordContainer}>
+              <TouchableOpacity
+                onPress={() =>
+                  this.props.navigation.navigate('ForgetPassword')
+                }>
+                <Text style={styles.forgetPass}>Forgot password</Text>
+              </TouchableOpacity>
             </View>
-            <View style={styles.viewInput}>
-              <TextInputField
-                placeholder="Mobile Number"
-                keyboardType="numeric"
-                iconName={'call'}
-                value={this.state.mobileNumber}
-                onChangeText={text => {
-                  this.setState({ mobileNumber: text });
-                }}
-              />
-              <TextInputField
-                placeholder="Password"
-                iconName={'lock'}
-                value={this.state.password}
-                onChangeText={text => {
-                  this.setState({ password: text });
-                }}
-                isPassword={true}
-                visibility={true}
-              />
 
-              <ThemeButton
-                title={'Sign in'}
-                isLoading={this.state.loader}
-                onPress={() => this.onProceed()}
-              />
+            <View style={styles.signIn}>
+              <Text style={styles.newUserText}>I’m a new user, </Text>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate('createAccount')}>
+                <Text
+                  style={styles.signUp}>
+                  Sign up
+                </Text>
+              </TouchableOpacity>
+            </View>
 
-              <View style={styles.forgotPasswordContainer}>
-                <TouchableOpacity
-                  onPress={() =>
-                    this.props.navigation.navigate('ForgetPassword')
-                  }>
-                  <Text style={styles.forgetPass}>Forgot password</Text>
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.signIn}>
-                <Text style={styles.newUserText}>I’m a new user, </Text>
-                <TouchableOpacity
-                  onPress={() => this.props.navigation.navigate('createAccount')}>
-                  <Text
-                    style={styles.signUp}>
-                    Sign up
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.skip}>
-                <TouchableOpacity
-                  onPress={() => this.props.navigation.navigate('Drawer')}>
-                  <Text
-                    style={styles.skipText}>
-                    Skip
-                  </Text>
-                </TouchableOpacity>
-              </View>
+            <View style={styles.skip}>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate('Drawer')}>
+                <Text
+                  style={styles.skipText}>
+                  Skip
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
-        )
-        }
+        </View>
       </SafeAreaView>
     );
   }

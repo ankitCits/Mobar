@@ -138,7 +138,7 @@ class Dashboard extends Component {
 
 
     renderScene = ({ route, jumpTo }) => {
-        return (<ProductSliderRoute routes={route} />);
+        return (<ProductSliderRoute routes={route} hostUrl={this.state.hostUrl} navigation={this.props.navigation} />);
     };
 
     render() {
@@ -227,33 +227,34 @@ class Dashboard extends Component {
                                         </View>
 
                                         {/* Combo Offer */}
-                                        <View>
-                                            <View
-                                                style={{
-                                                    flexDirection: 'row',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'space-between',
-                                                }}>
-                                                <Text style={styles.sectionTitle}>Combos</Text>
-                                                <TouchableOpacity>
-                                                    <Text style={styles.ViewAll}>View All</Text>
-                                                </TouchableOpacity>
+                                        {this.state.drinkObj.comboDatas && this.state.drinkObj.comboDatas.length > 0
+                                            ?
+                                            <View>
+                                                <View
+                                                    style={{
+                                                        flexDirection: 'row',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between',
+                                                    }}>
+                                                    <Text style={styles.sectionTitle}>Combos</Text>
+                                                    <TouchableOpacity>
+                                                        <Text style={styles.ViewAll}>View All</Text>
+                                                    </TouchableOpacity>
+                                                </View>
+                                                <ScrollView
+                                                    horizontal={true}
+                                                    nestedScrollEnabled={true}>
+                                                    {
+                                                        this.state.drinkObj.comboDatas.map((item, index) => (
+                                                            <ComboOfferCard navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />
+                                                        ))
+                                                    }
+                                                </ScrollView>
                                             </View>
-                                            {/* <ScrollView
-                                            horizontal
-                                            nestedScrollEnabled> */}
-
-                                            {
-                                                this.state.drinkObj.comboDatas && this.state.drinkObj.comboDatas.length > 0 ?
-                                                    this.state.drinkObj.comboDatas.map((item, index) => (
-                                                        <ComboOfferCard navigation={this.props.navigation} item={item} hostUrl={this.state.hostUrl} />
-                                                    ))
-                                                    : null
-                                            }
-                                            {/* </ScrollView> */}
-                                        </View>
+                                            :
+                                            <ThemeFullPageLoader />
+                                        }
                                         {/* Combo Offer */}
-
                                         {/* Bar List */}
                                         {this.state.drinkObj.barDatas && this.state.drinkObj.barDatas.length > 0
                                             ?
@@ -274,8 +275,8 @@ class Dashboard extends Component {
                                                     </TouchableOpacity>
                                                 </View>
                                                 <ScrollView
-                                                    horizontal
-                                                    nestedScrollEnabled>
+                                                    horizontal={true}
+                                                    nestedScrollEnabled={true}>
                                                     {
                                                         this.state.drinkObj.barDatas.map((item, index) => (
                                                             <BarCard navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />

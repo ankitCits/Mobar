@@ -2,7 +2,13 @@ import React, { Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import SplashScreen from 'react-native-splash-screen';
+// Auth Redux
+import { getAccessToken } from '../localstorage';
+import { getUserDetails } from '../api/auth';
+import { setUserDetail } from '../Redux/actions/auth';
+import { connect } from 'react-redux';
 // Components
+import ThemeFullPageLoader from '../Component/ThemeFullPageLoader';
 import createAccount from '../Screens/Auth/createAccount';
 import VerifyOtp from '../Screens/Auth/verifyOtp';
 import SignIn from '../Screens/Auth/signIn';
@@ -11,14 +17,11 @@ import forgetPasswordOtp from '../Screens/ForgetPassword/forgetPasswordOtp';
 import ForgetEnterPassword from '../Screens/ForgetPassword/forgetEnterPassword';
 import PasswordSuccessFullyChanged from '../Screens/ForgetPassword/passwordSuccessFullyChanged';
 import Drawer from './drawer';
-import { getAccessToken } from '../localstorage';
-import { getUserDetails } from '../api/auth';
-import { setUserDetail } from '../Redux/actions/auth';
-import { connect } from 'react-redux';
 
 const Stack = createStackNavigator();
 
 const AuthNavigator = (props) => {
+  // console.log('AuthNavigator', props)
   return (
     <Stack.Navigator
       initialRouteName={props.initialRouteName}
@@ -42,34 +45,48 @@ const AuthNavigator = (props) => {
 class InitialStack extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      loading: true
+    }
   }
 
-  // getUserByToken = async () => {
-  //   const token = await getAccessToken(token);
-  //   if (token) {
-  //     const postData = {
-  //       token
-  //     }
-  //     try {
-  //       const resp = await getUserDetails(postData);
-  //       this.props.dispatch(setUserDetail(resp));
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  //   }
-  // }
+  getUserByToken = async () => {
+    const token = await getAccessToken(token);
+    if (token) {
+      const postData = {
+        token
+      }
+      try {
+        const resp = await getUserDetails(postData);
+        await this.props.dispatch(setUserDetail(resp));
+        this.setState({ loading: false });
+      } catch (error) {
+        this.setState({ loading: false });
+        // console.log(error)
+      }
+    } else {
+      this.setState({ loading: false });
+    }
+  }
 
   componentDidMount() {
-    // this.getUserByToken();
+    this.getUserByToken();
     SplashScreen.hide();
   }
 
+  componentDidUpdate() {
+  }
+
   render() {
-    // const initRoute = this.props.redux && this.props.redux.auth.userData != null ? 'Drawer' : 'SignIn';
-    // console.log('initRoute', initRoute, this.props.redux);
+    const initRoute = this.props.redux && this.props.redux.auth.userData != null ? 'Drawer' : 'SignIn';
+    // console.log('initRoute', initRoute, this.props.redux, this.state.loading);
     return (
       <NavigationContainer>
-        <AuthNavigator initialRouteName={'SignIn'} />
+        {this.state.loading ?
+          <ThemeFullPageLoader />
+          :
+          <AuthNavigator initialRouteName={initRoute} />
+        }
       </NavigationContainer >
     );
   }

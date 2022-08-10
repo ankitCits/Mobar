@@ -4,14 +4,13 @@ import {
     StyleSheet,
     Text,
     View,
-    Image
+    Image,
+    TouchableOpacity
 } from 'react-native';
 import images from '../assets/images';
-import { FontFamily } from '../Theme/FontFamily';
 class ComboOfferCard extends Component {
     constructor(props) {
         super(props);
-
     }
 
     render() {
@@ -19,118 +18,135 @@ class ComboOfferCard extends Component {
             item,
             hostUrl,
             navigation,
+            index
         } = this.props
         return (
-            <View >
-                <ImageBackground
-                    style={{
-                        width: 341,
-                        height: 151,
-                        marginTop: '10%',
-                        marginBottom: '5%',
-                        alignSelf: 'center',
+            <>
+                <TouchableOpacity
+                    key={index}
+                    onPress={() => {
+                        navigation.navigate('Product');
                     }}
-                    resizeMode={'cover'}
-                    source={images.combo}
-                    defaultSource={images.combo}
-                />
-                <View
                     style={{
-                        marginTop: '-48%',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        marginLeft: 20,
+                        marginTop: 28,
+                        marginBottom: 30,
+                        marginLeft: 10,
                     }}>
-                    <View
-                        style={{
-                            marginTop: 20,
-                        }}>
+
+
+                    <ImageBackground
+                        key={index}
+                        style={{ alignSelf: 'center', }}
+                        resizeMode={'cover'}
+                        source={images.combo}
+                        defaultSource={images.combo}
+                    >
                         <View
+                            key={index}
                             style={{
                                 flexDirection: 'row',
-                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                marginLeft: 20,
                             }}>
-                            <Image
-                                resizeMode={'cover'}
-                                source={images.king}
-                                defaultSource={images.king}
-                            />
-                            <Text
-                                style={{
-                                    marginLeft: 10,
-                                    fontSize: 14,
-                                    fontWeight: '400',
-                                    color: '#4D4F50',
-                                }}>
-                                Top of the week
-                            </Text>
-                        </View>
+                            <View style={{
+                                marginTop: 20,
+                            }}>
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}>
+                                    <Image
+                                        key={index}
+                                        resizeMode={'cover'}
+                                        source={images.king}
+                                        defaultSource={images.king}
+                                    />
+                                    <Text
+                                        style={{
+                                            marginLeft: 10,
+                                            fontSize: 14,
+                                            fontWeight: '400',
+                                            color: '#4D4F50',
+                                        }}>
+                                        Top of the week
+                                    </Text>
+                                </View>
 
-                        <View
-                            style={{
-                                marginTop: 10,
-                            }}>
-                            <Text
-                                style={{
-                                    fontSize: 20,
-                                    fontWeight: '500',
-                                    color: '#4D4F50',
-                                }}>
-                                {item.name}
-                            </Text>
-                        </View>
+                                <View
+                                    style={{
+                                        marginTop: 10,
+                                    }}>
+                                    <Text
+                                        style={{
+                                            fontSize: 20,
+                                            fontWeight: '500',
+                                            color: '#4D4F50',
+                                        }}>
+                                        {item.name}
+                                    </Text>
+                                </View>
 
-                        <View
-                            style={{
-                                marginTop: 5,
-                            }}>
-                            <Text
-                                style={{
-                                    fontSize: 16,
-                                    fontWeight: '500',
-                                    color: '#4D4F50',
-                                }}>
-                                ${item.comboPrice}
-                            </Text>
+                                <View
+                                    style={{
+                                        marginTop: 5,
+                                    }}>
+                                    <Text
+                                        style={{
+                                            fontSize: 16,
+                                            fontWeight: '500',
+                                            color: '#4D4F50',
+                                        }}>
+                                        ${item.comboPrice}
+                                    </Text>
+                                </View>
+
+                                <View
+                                    style={{
+                                        marginTop: 5,
+                                        right: 5,
+                                    }}>
+                                    <Image
+                                        key={index}
+                                        resizeMode={'cover'}
+                                        source={images.Fivestar}
+                                        defaultSource={images.Fivestar}
+                                    />
+                                </View>
+
+                            </View>
+
+                            <View>
+                                {item.images == '' || item.images == null ? (
+                                    <Image
+                                        key={index}
+                                        resizeMode={'cover'}
+                                        source={images.MixCombo}
+                                        defaultSource={images.MixCombo}
+                                        style={{
+                                            width: 200,
+                                            height: 160,
+                                        }}
+                                    />
+                                ) : (
+                                    <Image
+                                        key={index}
+                                        resizeMode={'cover'}
+                                        source={{
+                                            uri: `${hostUrl + item.images}`,
+                                        }}
+                                        style={{
+                                            width: 180,
+                                            height: 160,
+                                        }}
+                                    />
+                                )}
+                            </View>
                         </View>
-                        <View
-                            style={{
-                                marginTop: 5,
-                                right: 5,
-                            }}>
-                            <Image
-                                resizeMode={'cover'}
-                                source={images.Fivestar}
-                                defaultSource={images.Fivestar}
-                            />
-                        </View>
-                    </View>
-                    <View>
-                        {item.images == '' || item.images == null ? (
-                            <Image
-                                resizeMode={'cover'}
-                                source={images.MixCombo}
-                                defaultSource={images.MixCombo}
-                                style={{
-                                    width: 200,
-                                    height: 160,
-                                }}
-                            />
-                        ) : (
-                            <Image
-                                resizeMode={'cover'}
-                                source={{
-                                    uri: `${hostUrl + item.images}`,
-                                }}
-                                style={{
-                                    width: 180,
-                                    height: 160,
-                                }}
-                            />
-                        )}
-                    </View>
-                </View>
-            </View>
+                    </ImageBackground>
+
+                </TouchableOpacity>
+            </>
         );
     }
 }
