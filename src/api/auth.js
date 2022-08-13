@@ -1,5 +1,4 @@
 import { A_KEY, BASE_URL, MY_HEADER } from '../config';
-import { setUserDetail } from '../Redux/actions/auth';
 
 export const singIn = (postData) => {
     return new Promise(async (resolve, reject) => {

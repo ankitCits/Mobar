@@ -8,20 +8,7 @@ import {
     ScrollView,
 } from 'react-native';
 import CategoryCard from '../../Component/CategoryCard';
-const DATA = [
-    {
-        id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-        title: 'First Item',
-    },
-    {
-        id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-        title: 'Second Item',
-    },
-    {
-        id: '58694a0f-3da1-471f-bd96-145571e29d72',
-        title: 'Third Item',
-    },
-];
+
 export default class ProductSliderRoute extends Component {
     constructor(props) {
         super(props);
@@ -50,8 +37,8 @@ export default class ProductSliderRoute extends Component {
                             alignItems: 'center',
                             justifyContent: 'space-between',
                         }}>
-                        <Text style={styles.whiskeyText}>{this.props.routes.title}</Text>
-                        <TouchableOpacity>
+                        <Text style={styles.whiskeyText}>{this.props.route.name}</Text>
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate('Product', { category: this.props.route })}>
                             <Text style={styles.ViewAll}>View All</Text>
                         </TouchableOpacity>
                     </View>
@@ -61,7 +48,7 @@ export default class ProductSliderRoute extends Component {
                             nestedScrollEnabled={true}
                             showsHorizontalScrollIndicator={false}
                             horizontal={true}
-                            data={DATA}
+                            data={this.props.route.ecom_ac_products}
                             initialNumToRender={5}
                             maxToRenderPerBatch={10}
                             keyExtractor={(item, index) => index.toString()}

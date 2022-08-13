@@ -15,7 +15,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 export default class CategoryCard extends React.Component {
     constructor(props) {
         super(props);
-
     }
 
     render() {
@@ -23,10 +22,12 @@ export default class CategoryCard extends React.Component {
             item,
             hostUrl,
             navigation,
-        } = this.props
+            index
+        } = this.props;
         return (
             <>
                 <TouchableOpacity
+                    key={index}
                     onPress={() => {
                         // console.log(hostUrl + item.images);
                         navigation.navigate('Product');
@@ -38,32 +39,32 @@ export default class CategoryCard extends React.Component {
                     }}>
 
                     <ImageBackground
+                        key={index}
                         style={styles.boxInner}
                         resizeMode={'cover'}
                         source={images.boxOuter}
                         defaultSource={images.boxOuter}>
 
                         <View style={styles.innerTop}>
-                            <TouchableOpacity
-                                onPress={() => console.log('nothing')}>
+                            <TouchableOpacity onPress={() => console.log('nothing')}>
                                 <Icon
                                     name={'favorite'}
                                     size={22}
                                     color="#FF1405"
-                                    style={styles.imageStyle}
+                                    style={[styles.imageStyle]}
                                 />
                             </TouchableOpacity>
                             <Text style={{ color: '#fff', fontSize: 12 }}>
-                                300ml
+                                {item.ecom_aca_product_units[0].unitQty + item.ecom_aca_product_units[0].unitType}
                             </Text>
                         </View>
 
                         <Image
                             style={styles.productImg}
                             resizeMode={'cover'}
-                            // source={{ uri: `${hostUrl + item.images}` }}
-                            source={images.product1}
                             defaultSource={images.product1}
+                            source={{ uri: hostUrl + item.images }}
+                        // source={images.product1}
                         />
 
                         <Image
@@ -76,26 +77,26 @@ export default class CategoryCard extends React.Component {
                         <View style={styles.innerBottom}>
                             <View>
                                 <Text style={styles.innerBottomText}>
-                                    {/* {item.ecom_ac_products[0].name} */}
-                                    Ballantines Blended
+                                    {item.name}
+                                    {/* Ballantines Blended */}
                                 </Text>
                             </View>
                             <View>
                                 <Text style={styles.innerBottomText2}>
-                                    {/* Your Saving:{' '}
+                                    Your Saving:{' '}
                                     {
-                                        item.ecom_ac_products[0].ecom_aca_product_units[0].unitDiscountPrice
-                                    } */}
-                                    Your Saving: $19
+                                        item.ecom_aca_product_units[0].unitDiscountPrice
+                                    }
+                                    {/* Your Saving: $19 */}
                                 </Text>
                             </View>
                             <View>
                                 <Text style={styles.innerBottomText3}>
-                                    {/* ${' '}
+                                    ${' '}
                                     {
-                                        item.ecom_ac_products[0].ecom_aca_product_units[0].unitUserPrice
-                                    } */}
-                                    $ 89
+                                        item.ecom_aca_product_units[0].unitUserPrice
+                                    }
+                                    {/* $ 89 */}
                                 </Text>
                             </View>
                         </View>
@@ -118,6 +119,11 @@ const styles = StyleSheet.create({
         marginTop: '-40%',
         marginLeft: 10,
         position: 'relative',
+        // backgroundColor: 'red',
+        width: 60,
+        height: 145,
+        zIndex: 0,
+        alignSelf: 'center'
     },
     innerTop: {
         flexDirection: 'row',
@@ -137,6 +143,8 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 15,
         fontWeight: '400',
+        height:20,
+        
     },
     innerBottomText2: {
         color: '#fff',

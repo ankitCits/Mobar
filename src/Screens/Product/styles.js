@@ -1,7 +1,5 @@
 
-import { Dimensions, StyleSheet } from 'react-native';
-const numColumns = 2;
-const size = Dimensions.get('window').width / numColumns;
+import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -50,29 +48,6 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         fontSize: 18,
         color: '#4D4F50',
-    },
-    itemContainer: {
-        width: 155,
-        marginLeft: 20,
-        shadowColor: '#fff',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.4,
-        shadowRadius: 3,
-        elevation: 1,
-        borderTopWidth: 0,
-        borderRadius: 200,
-        margin: 3,
-        backgroundColor: '#fff',
-        borderRadius: 10,
-    },
-    item: {
-        fontSize: 13,
-        fontWeight: '400',
-        color: '#000',
-    },
-    itemOuterContainer: {
-        width: size,
-        height: size + 50,
     },
     categoryFlatList: {
         height: 140,

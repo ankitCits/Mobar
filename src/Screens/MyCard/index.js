@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -8,18 +8,21 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  ToastAndroid,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { fetchCart } from '../../api/product';
 import images from '../../assets/images';
-import { A_KEY, BASE_URL } from '../../config';
-import { getAccessToken } from '../../localstorage';
 import HeaderSide from '../Component/HeaderSide';
 export default class MyCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      visibility: false,
-      loader:true
+      cart: [],
+      hostUrl: '',
+      totalQty: 0,
+      // subTotal: 0,
+      payableTotal: 0
     };
   }
 
@@ -27,27 +30,28 @@ export default class MyCard extends Component {
     this.fetchData();
   }
 
-  fetchData = async() => {
-    let token = await getAccessToken(token);
-    var myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append('A_Key', A_KEY);
-    myHeaders.append(
-      'Token',
-      `${token}`
-    );
-
-    var requestOptions = {
-      method: 'GET',
-      headers: myHeaders,
-      redirect: 'follow',
-    };
-
-    fetch(`${BASE_URL}/cart/viewCart`, requestOptions)
-      .then(response => response.json())
-      .then(result => console.log(result))
-      .catch(error => console.log('error', error));
+  fetchData = async () => {
+    try {
+      const resp = await fetchCart();
+      this.setState({
+        cart: resp.response.result.data,
+        hostUrl: resp.response.result.hostUrl,
+      });
+      if (this.state.cart.length > 0) {
+        this.setState({ totalQty: this.state.cart.reduce((x, c) => x + parseInt(c.qty), 0) });
+        this.setState({ payableTotal: this.state.cart.reduce((x, c) => x + parseInt(c.productAmount), 0) });
+        // this.setState({ payableTotal: this.state.cart.reduce((x, c) => x + parseInt(c.productAmount), 0) });
+      }
+      console.log(this.state);
+    } catch (error) {
+      ToastAndroid.showWithGravity(
+        error,
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+      );
+    }
   };
+
   render() {
     return (
       <SafeAreaView
@@ -60,7 +64,7 @@ export default class MyCard extends Component {
           onClick={() => this.props.navigation.pop()}
         />
         <>
-          <View style={{margin: 15}}>
+          <View style={{ margin: 15 }}>
             <Text
               style={{
                 fontSize: 16,
@@ -83,7 +87,7 @@ export default class MyCard extends Component {
                 />
               </View>
 
-              <View style={{margin: 5, marginLeft: 0}}>
+              <View style={{ margin: 5, marginLeft: 0 }}>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -92,14 +96,14 @@ export default class MyCard extends Component {
                     marginTop: 5,
                   }}>
                   <Text
-                    style={{fontSize: 18, fontWeight: '700', color: '#4D4F50'}}>
+                    style={{ fontSize: 18, fontWeight: '700', color: '#4D4F50' }}>
                     Chivas Regal 12
                   </Text>
                 </View>
 
-                <View style={{flexDirection: 'row'}}>
+                <View style={{ flexDirection: 'row' }}>
                   <Text
-                    style={{fontSize: 14, color: '#4D4F50', fontWeight: '400'}}>
+                    style={{ fontSize: 14, color: '#4D4F50', fontWeight: '400' }}>
                     Blended
                   </Text>
                   <Text
@@ -149,7 +153,7 @@ export default class MyCard extends Component {
                   alignItems: 'center',
                 }}>
                 <TouchableOpacity
-                  onPress={() => this.setState({modalVisible: true})}
+                  onPress={() => this.setState({ modalVisible: true })}
                   style={{
                     alignSelf: 'center',
                     backgroundColor: '#A1172F',
@@ -170,7 +174,7 @@ export default class MyCard extends Component {
                   3
                 </Text>
                 <TouchableOpacity
-                  onPress={() => this.setState({modalVisible: true})}
+                  onPress={() => this.setState({ modalVisible: true })}
                   style={{
                     alignSelf: 'center',
                     backgroundColor: '#A1172F',
@@ -184,7 +188,7 @@ export default class MyCard extends Component {
           </View>
         </>
 
-        <View style={{marginTop: '10%', flex: 1, justifyContent: 'flex-end'}}>
+        <View style={{ marginTop: '10%', flex: 1, justifyContent: 'flex-end' }}>
           <View
             style={{
               shadowColor: '#000',
@@ -354,11 +358,11 @@ export default class MyCard extends Component {
               </Text>
             </View>
 
-            <View style={{marginTop: '10%', marginBottom: 10}}>
+            <View style={{ marginTop: '10%', marginBottom: 10 }}>
               <TouchableOpacity
                 style={styles.save}
                 onPress={() => this.props.navigation.navigate('Checkout')}>
-                <Text style={{color: '#fff', fontSize: 18}}>CHECKOUT</Text>
+                <Text style={{ color: '#fff', fontSize: 18 }}>CHECKOUT</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -374,7 +378,7 @@ const styles = StyleSheet.create({
     height: 100,
     width: '100%',
     shadowColor: '#000',
-    shadowOffset: {width: 1, height: 1},
+    shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
     shadowRadius: 12,
     borderRadius: 12,

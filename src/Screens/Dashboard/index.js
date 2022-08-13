@@ -38,24 +38,16 @@ class Dashboard extends Component {
 
         this.state = {
             loader: false,
-            // data: {
-            //     barDatas: [
-            //         { 'vendorShopName': 'Test', 'address': 'Test', 'distance': 100 }
-            //     ],
-            //     comboDatas: [
-            //         { 'name': 'Test', comboPrice: '1', images: '', }
-            //     ],
-            // },
-            data: {},
             drinkObj: {},
-            index: 0,
             hostUrl: null,
-            routes: [
-                { key: '1', title: 'Whiskey' },
-                { key: '2', title: 'Beer' },
-                { key: '3', title: 'Wine' },
-                { key: '4', title: 'Cocktails' },
-            ],
+            index: 0,
+            routes: []
+            // routes: [
+            //     { key: '1', name: 'Whiskey' },
+            //     { key: '2', name: 'Beer' },
+            //     { key: '3', name: 'Wine' },
+            //     { key: '4', name: 'Cocktails' },
+            // ],
         };
     }
 
@@ -108,6 +100,11 @@ class Dashboard extends Component {
             .then(response => response.json())
             .then(result => {
                 if (result.response) {
+                    const categories = result.response.result.drinkCategory;
+                    categories.forEach((element, index) => {
+                        categories[index].key = index;
+                    });
+                    this.setState({ routes: categories });
                     this.setState({ drinkObj: result.response.result })
                     this.setState({ loader: false });
                 }
@@ -136,9 +133,8 @@ class Dashboard extends Component {
 
     _renderLazyPlaceholder = ({ route }) => <LazyPlaceholder route={route} />;
 
-
-    renderScene = ({ route, jumpTo }) => {
-        return (<ProductSliderRoute routes={route} hostUrl={this.state.hostUrl} navigation={this.props.navigation} />);
+    _renderScene = ({ route, jumpTo }) => {
+        return (<ProductSliderRoute route={route} hostUrl={this.state.hostUrl} navigation={this.props.navigation} />);
     };
 
     render() {
@@ -161,7 +157,11 @@ class Dashboard extends Component {
                                     onNotification={() => this.props.navigation.navigate('Notification')}
                                     IconName="account-circle"
                                     IconColor="#711323"
-                                    Address={'Duxten Road, 338750'}
+                                    Address={
+                                        this.props.redux.auth.userData
+                                            ? this.props.redux.auth.userData.address
+                                            : 'Duxten Road, 338750'
+                                    }
                                 />
                                 <ScrollView
                                     showsVerticalScrollIndicator={false}
@@ -176,55 +176,45 @@ class Dashboard extends Component {
                                     <View style={{
                                         flexDirection: 'column',
                                         marginHorizontal: 15,
-                                        // marginTop: 0,
                                     }}>
                                         {/* Tab Header */}
-                                        <View style={{ flexDirection: 'row', height: 300 }}>
-                                            {/* {
-                                                this.state.drinkObj && this.state.drinkObj.drinkCategory.length > 0 ?
-                                                    this.state.drinkObj.drinkCategory.map((item, index) => (
-                                                        <TouchableOpacity key={index}>
-                                                            <Text style={{ color: 'black' }}>{item.name}</Text>
-                                                        </TouchableOpacity>
-                                                    ))
-                                                    : null
-                                            } */}
-
-                                            <TabView
-                                                lazy
-                                                navigationState={this.state}
-                                                renderScene={this.renderScene}
-                                                renderLazyPlaceholder={this._renderLazyPlaceholder}
-                                                onIndexChange={this._handleIndexChange}
-                                                initialLayout={{ width: Dimensions.get('window').width }}
-                                                renderTabBar={props => (
-                                                    <TabBar
-                                                        {...props}
-                                                        indicatorStyle={{ backgroundColor: colors.CLR_WHITE }}
-                                                        tabStyle={{ backgroundColor: colors.CLR_WHITE, }}
-                                                        style={{ backgroundColor: colors.CLR_WHITE, }}
-                                                        renderLabel={({ route }) => (
-                                                            <>
-                                                                <Text
-                                                                    style={[styles.label,
-                                                                    route.key === props.navigationState.routes[this.state.index].key
-                                                                        ? styles.selectedTabText
-                                                                        : styles.tabText
-                                                                    ]}>
-                                                                    {route.title}
-                                                                </Text>
-                                                                {
-                                                                    route.key === props.navigationState.routes[this.state.index].key &&
-                                                                    <View style={styles.selectedTabBorder} />
-                                                                }
-                                                            </>
-                                                        )}
-                                                        labelStyle={styles.noLabel}
-                                                    />
-                                                )}
-
-                                            />
-                                        </View>
+                                        {this.state.drinkObj.drinkCategory && this.state.drinkObj.drinkCategory.length > 0 ?
+                                            <View style={{ flexDirection: 'row', height: 330 }}>
+                                                <TabView
+                                                    lazy
+                                                    navigationState={this.state}
+                                                    renderScene={this._renderScene}
+                                                    renderLazyPlaceholder={this._renderLazyPlaceholder}
+                                                    onIndexChange={this._handleIndexChange}
+                                                    initialLayout={{ width: Dimensions.get('window').width }}
+                                                    renderTabBar={props => (
+                                                        <TabBar
+                                                            {...props}
+                                                            indicatorStyle={{ backgroundColor: colors.CLR_WHITE }}
+                                                            tabStyle={{ backgroundColor: colors.CLR_WHITE, }}
+                                                            style={{ backgroundColor: colors.CLR_WHITE, }}
+                                                            renderLabel={({ route }) => (
+                                                                <>
+                                                                    <Text
+                                                                        style={[styles.label,
+                                                                        route.key === props.navigationState.routes[this.state.index].key
+                                                                            ? styles.selectedTabText : styles.tabText
+                                                                        ]}>
+                                                                        {route.name}
+                                                                    </Text>
+                                                                    {route.key === props.navigationState.routes[this.state.index].key &&
+                                                                        <View style={styles.selectedTabBorder} />
+                                                                    }
+                                                                </>
+                                                            )}
+                                                            labelStyle={styles.noLabel}
+                                                        />
+                                                    )}
+                                                />
+                                            </View>
+                                            :
+                                            <ThemeFullPageLoader />
+                                        }
 
                                         {/* Combo Offer */}
                                         {this.state.drinkObj.comboDatas && this.state.drinkObj.comboDatas.length > 0
@@ -252,7 +242,8 @@ class Dashboard extends Component {
                                                 </ScrollView>
                                             </View>
                                             :
-                                            <ThemeFullPageLoader />
+                                            // <ThemeFullPageLoader />
+                                            null
                                         }
                                         {/* Combo Offer */}
                                         {/* Bar List */}
@@ -286,7 +277,8 @@ class Dashboard extends Component {
 
                                             </View>
                                             :
-                                            <ThemeFullPageLoader />
+                                            // <ThemeFullPageLoader />
+                                            null
                                         }
                                         {/* Bar List */}
                                     </View>
@@ -295,7 +287,7 @@ class Dashboard extends Component {
                         )
                     }
                 </View>
-            </SafeAreaView>
+            </SafeAreaView >
         )
     }
 }
@@ -351,7 +343,6 @@ const styles = StyleSheet.create({
         color: '#000000',
     },
     label: {
-        fontSize: 15,
         fontFamily: FontFamily.ROBOTO_REGULAR,
         fontWeight: '400',
     },

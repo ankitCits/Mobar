@@ -6,36 +6,19 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Dimensions,
   FlatList,
-  ImageBackground,
   ToastAndroid,
-  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import images from '../../assets/images';
 import Header from '../Component/Header';
 
-const data = [
-  { id: 'a', value: 'Whisky', image: images.productFilter1 },
-  { id: 'b', value: 'Wine', image: images.productFilter2 },
-  { id: 'c', value: 'Beer', image: images.productFilter3 },
-  { id: 'd', value: 'Cocktail', image: images.productFilter4 },
-  { id: 'e', value: 'Vodka', image: images.productFilter5 },
-  { id: 'f', value: 'Rum', image: images.productFilter6 },
-  { id: 'g', value: 'Gin', image: images.productFilter7 },
-];
-import LinearGradient from 'react-native-linear-gradient';
 import { connect } from 'react-redux';
 import { A_KEY, BASE_URL } from '../../config';
 import NoContentFound from '../../Component/NoContentFound';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 
-import { getAccessToken } from '../../localstorage';
-import { addTocard, addToFav, removeToFav } from '../../Redux/actions/product';
 import styles from './styles';
+import ProductCard from '../../Component/ProductCard';
 const numColumns = 2;
 
 class Product extends Component {
@@ -118,7 +101,7 @@ class Product extends Component {
         if (result.response) {
           let data = [];
           for (let i = 0; i < result.response.result.data.length; i++) {
-            data.push({ ...result.response.result.data[i], card: 0, fav: 0 });
+            data.push({ ...result.response.result.data[i], cart: 0, fav: 0 });
           }
           this.setState({
             categoryData: {
@@ -146,108 +129,6 @@ class Product extends Component {
         );
         console.log('error', error);
       });
-  };
-
-  addTocard = async sendData => {
-    console.log('ADD_DATA', sendData);
-    this.props.dispatch(addTocard(sendData));
-  };
-
-  addToFav = async sendData => {
-    console.log('ADD_DATA', sendData);
-    this.props.dispatch(addToFav(sendData));
-  };
-
-  removeToFav = async sendData => {
-    console.log('ADD_DATA', sendData);
-    this.props.dispatch(removeToFav(sendData));
-  };
-
-  addCardToState = (item, index) => {
-    this.setState({ innerLoader: true });
-
-    let data = this.state.categoryData.data;
-    data[index].card = data[index].card + 1;
-
-    this.setState({
-      categoryData: {
-        data,
-        hostUrl: this.state.categoryData.hostUrl,
-      },
-    });
-    this.setState({ innerLoader: false });
-    let sendData = {
-      productUnitId: 57,
-      comboId: 0,
-      qty: item.card + 1,
-    };
-
-    return this.addTocard(sendData);
-  };
-
-  removeCardToState = (item, index) => {
-    this.setState({ innerLoader: true });
-
-    let data = this.state.categoryData.data;
-    data[index].card = data[index].card - 1;
-
-    this.setState({
-      categoryData: {
-        data,
-        hostUrl: this.state.categoryData.hostUrl,
-      },
-    });
-    this.setState({ innerLoader: false });
-
-    let sendData = {
-      productUnitId: 57,
-      comboId: 0,
-      qty: item.card - 1,
-    };
-
-    this.addTocard(sendData);
-  };
-
-  addFavToState = (item, index) => {
-    this.setState({ innerLoader: true });
-
-    let data = this.state.categoryData.data;
-    data[index].fav = 1;
-
-    this.setState({
-      categoryData: {
-        data,
-        hostUrl: this.state.categoryData.hostUrl,
-      },
-    });
-    this.setState({ innerLoader: false });
-    let sendData = {
-      productId: 0,
-      comboId: 4,
-      vendorId: 0,
-    };
-
-    return this.addToFav(sendData);
-  };
-
-  removeFavToState = (item, index) => {
-    this.setState({ innerLoader: true });
-
-    let data = this.state.categoryData.data;
-    data[index].fav = 0;
-
-    this.setState({
-      categoryData: {
-        data,
-        hostUrl: this.state.categoryData.hostUrl,
-      },
-    });
-    this.setState({ innerLoader: false });
-
-    let sendData = {
-      wishlistId: 11,
-    };
-    this.removeToFav(sendData);
   };
 
   renderCategories = (item, index) =>
@@ -298,167 +179,11 @@ class Product extends Component {
       </Text>
     </View>
 
-  renderProducts = (item, index) =>
-    <View style={styles.itemOuterContainer}>
-      <View style={styles.itemContainer}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            padding: 10,
-          }}>
-          <Text style={styles.item}>
-            {item.ecom_aca_product_units[0].unitQty}{' '}
-            {item.ecom_aca_product_units[0].unitType}
-          </Text>
-          <TouchableOpacity
-            onPress={() => {
-              item.fav
-                ? this.removeFavToState(item, index)
-                : this.addFavToState(item, index);
-            }}>
-            <Image
-              resizeMode={'cover'}
-              source={
-                item.fav ? images.heartFill : images.heart
-              }
-              defaultSource={
-                item.fav ? images.heartFill : images.heart
-              }
-              style={{
-                width: 20.57,
-                height: 18,
-              }}
-            />
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            alignItems: 'center',
-            marginTop: -5,
-          }}>
-          <Image
-            resizeMode={'cover'}
-            source={{
-              uri: item.images
-                ? `${this.state.categoryData.hostUrl +
-                item.images
-                }`
-                : images.wine,
-            }}
-            defaultSource={images.wine}
-            style={{
-              height: 80,
-              width: 40,
-            }}
-          />
-          <Text
-            style={{
-              fontSize: 14,
-              fontWeight: '500',
-              color: '#050505',
-              marginTop: 10,
-            }}>
-            {item.name}
-          </Text>
-          <Text
-            style={{
-              fontSize: 12,
-              fontWeight: '400',
-              color: '#000',
-            }}>
-            {item.shortDescription}
-          </Text>
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: '700',
-              color: '#000',
-            }}>
-            ${item.ecom_aca_product_units[0].unitUserPrice}
-          </Text>
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: 10,
-          }}>
-          {item.ecom_aca_product_units.savedPrices ? (
-            <ImageBackground
-              resizeMode={'cover'}
-              source={images.saveTemplate}
-              defaultSource={images.saveTemplate}
-              style={{
-                width: 76,
-                height: 19,
-                marginTop: 5,
-              }}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: '500',
-                  color: '#fff',
-                  marginLeft: 5,
-                }}>
-                Save $100
-              </Text>
-            </ImageBackground>
-          ) : (
-            <View />
-          )}
-          <View
-            style={{
-              flexDirection: 'row',
-            }}>
-            {item.card ? (
-              <>
-                <TouchableOpacity
-                  onPress={() =>
-                    this.removeCardToState(item, index)
-                  }
-                  style={{
-                    alignSelf: 'center',
-                    backgroundColor: '#BABABA',
-                    borderRadius: 20,
-                    marginTop: -5,
-                    marginRight: 5,
-                  }}>
-                  <Icon
-                    name="remove"
-                    size={18}
-                    color="#fff"
-                  />
-                </TouchableOpacity>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: '700',
-                    alignItems: 'center',
-                    marginTop: -5,
-                    marginRight: 5,
-                  }}>
-                  {item.card}
-                </Text>
-              </>
-            ) : null}
-            <TouchableOpacity
-              onPress={() =>
-                this.addCardToState(item, index)
-              }
-              style={{
-                alignSelf: 'center',
-                backgroundColor: '#BABABA',
-                borderRadius: 20,
-                marginTop: -5,
-                marginRight: 5,
-              }}>
-              <Icon name="add" size={18} color="#fff" />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </View>
+  renderProducts = (item, index) => {
+    return (
+      <ProductCard item={item} index={index} categoryData={this.state.categoryData} hostUrl={this.state.categoryData.hostUrl} />
+    );
+  }
 
   render() {
     return (
