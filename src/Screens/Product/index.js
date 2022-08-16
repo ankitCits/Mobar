@@ -181,7 +181,7 @@ class Product extends Component {
 
   renderProducts = (item, index) => {
     return (
-      <ProductCard item={item} index={index} categoryData={this.state.categoryData} hostUrl={this.state.categoryData.hostUrl} />
+      <ProductCard navigation={this.props.navigation} item={item} index={index} categoryData={this.state.categoryData} hostUrl={this.state.categoryData.hostUrl} />
     );
   }
 

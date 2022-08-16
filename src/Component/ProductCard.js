@@ -14,7 +14,7 @@ import {
 import images from '../assets/images';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { connect } from 'react-redux';
-import { addToCart, addToFav, removeToFav } from '../api/product';
+import { addToCart, removeFromCart, addToFav, removeToFav } from '../api/product';
 
 class ProductCard extends Component {
     constructor(props) {
@@ -99,7 +99,7 @@ class ProductCard extends Component {
         }
     };
 
-    removeFavToState = async (item, index) => {
+    removeFavorite = async (item, index) => {
         // let data = this.state.categoryData.data;
         // data[index].fav = 0;
         // this.setState({
@@ -154,7 +154,7 @@ class ProductCard extends Component {
                         <TouchableOpacity
                             onPress={() => {
                                 item.fav
-                                    ? this.removeFavToState(item, index)
+                                    ? this.removeFavorite(item, index)
                                     : this.addFavorite(item, index);
                             }}>
                             <Image
@@ -168,21 +168,23 @@ class ProductCard extends Component {
                     <View
                         style={{
                             alignItems: 'center',
-                            marginTop: -5,
+                            // marginTop: -5,
                         }}>
-                        <Image
-                            resizeMode={'cover'}
-                            source={{
-                                uri: item.images
-                                    ? `${hostUrl + item.images}`
-                                    : images.wine,
-                            }}
-                            defaultSource={images.wine}
-                            style={{
-                                height: 80,
-                                width: 40,
-                            }}
-                        />
+                        <TouchableOpacity onPress={() => navigation.navigate('ProductDetailDrinks', { id: item.productId })}>
+                            <Image
+                                resizeMode={'cover'}
+                                source={{
+                                    uri: item.images
+                                        ? `${hostUrl + item.images}`
+                                        : images.wine,
+                                }}
+                                defaultSource={images.wine}
+                                style={{
+                                    height: 80,
+                                    width: 40,
+                                }}
+                            />
+                        </TouchableOpacity>
                         <Text
                             style={{
                                 fontSize: 14,
@@ -238,6 +240,7 @@ class ProductCard extends Component {
                         ) : (
                             <View />
                         )}
+
                         <View
                             style={{
                                 flexDirection: 'row',
@@ -246,7 +249,7 @@ class ProductCard extends Component {
                                 <>
                                     <TouchableOpacity
                                         onPress={() => this.removeFromCart(item, index)}
-                                        style={styles.carActionIcon}>
+                                        style={styles.cartActionIcon}>
                                         <Icon
                                             name="remove"
                                             size={18}
@@ -261,7 +264,7 @@ class ProductCard extends Component {
                             ) : null}
                             <TouchableOpacity
                                 onPress={() => this.addToCart(item, index)}
-                                style={styles.carActionIcon}>
+                                style={styles.cartActionIcon}>
                                 <Icon name="add" size={18} color="#fff" />
                             </TouchableOpacity>
                         </View>
@@ -304,14 +307,14 @@ const styles = StyleSheet.create({
     },
     favIcon: {
         width: 20.57,
-        height: 18,
+        height: 19,
     },
-    carActionIcon: {
+    cartActionIcon: {
         alignSelf: 'center',
         backgroundColor: '#BABABA',
         borderRadius: 20,
         marginTop: -5,
-        marginRight: 5,
+        marginRight: 8,
     },
     cartQty: {
         fontSize: 16,
