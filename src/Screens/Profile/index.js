@@ -18,7 +18,7 @@ import {connect} from 'react-redux';
 import {Picker} from '@react-native-picker/picker';
 import {getAccessToken} from '../../localstorage';
 import {A_KEY, BASE_URL} from '../../config';
-import { colors } from '../../Theme/colors';
+import { ThemeColors } from '../../Theme/ThemeColors';
 import { FontFamily } from '../../Theme/FontFamily';
 import { cos } from 'react-native-reanimated';
 import { updateProfile } from '../../Redux/actions/product';
@@ -180,7 +180,7 @@ class MyProfile extends Component {
         {this.state.loading && this.state.data == null ? (
           <View
             style={styles.loaderContainer}>
-            <ActivityIndicator size="large" color={colors.CLR_ACTIVITY_INDICATOR} />
+            <ActivityIndicator size="large" color={ThemeColors.CLR_ACTIVITY_INDICATOR} />
           </View>
         ) : (
           <ScrollView>
@@ -189,7 +189,7 @@ class MyProfile extends Component {
               <View style={styles.arrowBack}>
                 <TouchableOpacity
                   onPress={() => this.props.navigation.openDrawer()}>
-                  <Icon name="arrow-back" size={30} color={colors.CLR_WHITE} />
+                  <Icon name="arrow-back" size={30} color={ThemeColors.CLR_WHITE} />
                 </TouchableOpacity>
               </View>
               <View style={styles.userView}>
@@ -360,7 +360,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(MyProfile);
 const styles = StyleSheet.create({
   container:{
     flex: 1,
-    backgroundColor: colors.CLR_WHITE,
+    backgroundColor: ThemeColors.CLR_WHITE,
   },
   arrowBack:{
     margin: 10
@@ -390,13 +390,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     fontFamily:FontFamily.TAJAWAL_REGULAR,
-    color: colors.CLR_WHITE
+    color: ThemeColors.CLR_WHITE
   },
   userMail: {
     fontSize: 20,
     fontWeight: '500',
     fontFamily:FontFamily.TAJAWAL_REGULAR,
-    color:colors.CLR_WHITE
+    color:ThemeColors.CLR_WHITE
   },
   inputContainer:{
     margin: 10, 
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
     fontFamily:FontFamily.TAJAWAL_REGULAR,
     fontSize:18,
     fontWeight:'500',
-    color:colors.CLR_SIGN_IN_TEXT_COLOR,
+    color:ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
   },
   labelText:{
     marginLeft: 15,
@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:colors.CLR_WHITE,
+    backgroundColor:ThemeColors.CLR_WHITE,
     height: 44,
     margin: 10,
   },
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
     marginTop: -5
   },
   saveText:{
-    color: colors.CLR_WHITE,
+    color: ThemeColors.CLR_WHITE,
     fontFamily:FontFamily.TAJAWAL_REGULAR,
     fontSize: 18,
     fontWeight:'700',
