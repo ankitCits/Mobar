@@ -267,7 +267,7 @@ export default class Collections extends Component {
           </View>
         </>
 
-        <View style={{marginTop: '10%', flex: 1, justifyContent: 'flex-end'}}>
+        {/* <View style={{marginTop: '10%', flex: 1, justifyContent: 'flex-end'}}>
           <View
             style={{
               shadowColor: '#000',
@@ -284,6 +284,7 @@ export default class Collections extends Component {
               borderTopRightRadius: 20,
               overflow: 'hidden',
             }}>
+              
             <View style={{margin: 20}}>
               <View>
                 <Text
@@ -372,7 +373,7 @@ export default class Collections extends Component {
               </View>
             </View>
           </View>
-        </View>
+        </View> */}
 
         <Modal
           animationType="slide"

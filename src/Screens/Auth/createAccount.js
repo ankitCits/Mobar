@@ -16,7 +16,7 @@ import DatePicker from 'react-native-date-picker';
 import TextInputField from '../../Component/TextInputField';
 import ThemeButton from '../../Component/ThemeButton';
 import { FontFamily } from '../../Theme/FontFamily';
-import { colors } from '../../Theme/colors';
+import { ThemeColors } from '../../Theme/ThemeColors';
 export default class CreateAccount extends Component {
   constructor(props) {
     super(props);
@@ -209,7 +209,7 @@ export default class CreateAccount extends Component {
         style={styles.container}>
         <StatusBar
           animated={true}
-          backgroundColor={colors.CLR_BG}
+          backgroundColor={ThemeColors.CLR_BG}
           barStyle={'dark-content'}
         />
         <View style={styles.container}>
@@ -349,7 +349,7 @@ export default class CreateAccount extends Component {
 const styles = StyleSheet.create({
   container:{
     flex: 1,
-    backgroundColor: colors.CLR_BG
+    backgroundColor: ThemeColors.CLR_BG
   },
   createView: {
     marginTop: '15%',
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
   },
   createText: {
     fontSize: 32,
-    color: colors.CLR_SIGN_IN_TEXT_COLOR,
+    color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     fontWeight: '500',
     fontFamily: FontFamily.TAJAWAL_LIGHT,
   },
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.TAJAWAL_LIGHT,
     fontWeight: '700',
     fontSize: 18,
-    color: colors.CLR_SIGN_IN_TEXT_COLOR
+    color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR
   },
   termInner: {
     flexDirection: 'row',
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
   },
   signText:{
     fontSize: 17, 
-    color: colors.CLR_ACTIVITY_INDICATOR,
+    color: ThemeColors.CLR_ACTIVITY_INDICATOR,
     fontWeight: '700'
   }
 });

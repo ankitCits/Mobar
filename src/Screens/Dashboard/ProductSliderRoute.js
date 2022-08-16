@@ -32,13 +32,9 @@ export default class ProductSliderRoute extends Component {
                         marginVertical: 15,
                     }}>
                     <View
-                        style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                        }}>
-                        <Text style={styles.whiskeyText}>{this.props.route.name}</Text>
-                        <TouchableOpacity onPress={() => this.props.navigation.navigate('Product', { category: this.props.route })}>
+                        style={styles.headerSection}>
+                        <Text style={styles.categoryTitle}>{this.props.route.name}</Text>
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate('Product', { categoryIdx: this.props.route })}>
                             <Text style={styles.ViewAll}>View All</Text>
                         </TouchableOpacity>
                     </View>
@@ -62,7 +58,13 @@ export default class ProductSliderRoute extends Component {
 }
 
 const styles = StyleSheet.create({
-    whiskeyText: {
+    headerSection: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 10
+    },
+    categoryTitle: {
         fontSize: 18,
         fontWeight: '500',
     },

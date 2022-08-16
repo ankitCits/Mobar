@@ -15,7 +15,7 @@ import { getAccessToken, removeAccessToken } from '../localstorage';
 import { A_KEY, BASE_URL } from '../config';
 import LoginButton from '../Component/LoginButton';
 import { FontFamily } from '../Theme/FontFamily';
-import { colors } from '../Theme/colors';
+import { ThemeColors } from '../Theme/ThemeColors';
 import { setUserDetail } from '../Redux/actions/auth';
 
 
@@ -112,7 +112,7 @@ class SideDrawer extends Component {
               <View
                 style={styles.profileDetails}>
                 <View>
-                  <Icon name="account-circle" size={50} color={colors.CLR_TAB} />
+                  <Icon name="account-circle" size={50} color={ThemeColors.CLR_TAB} />
                 </View>
                 <View>
                   <Text style={styles.profileTitle}>
@@ -120,7 +120,7 @@ class SideDrawer extends Component {
                   </Text>
                   <View
                     style={styles.profileSubContainer}>
-                    <Icon name="location-on" size={15} color={colors.CLR_TAB} />
+                    <Icon name="location-on" size={15} color={ThemeColors.CLR_TAB} />
                     <Text
                       style={styles.profileSubHeader}>
                       {this.props.redux
@@ -136,7 +136,7 @@ class SideDrawer extends Component {
                       <Icon
                         name="edit"
                         size={10}
-                        color={colors.CLR_TAB}
+                        color={ThemeColors.CLR_TAB}
                         style={styles.editIcon}
                       />
                     </TouchableOpacity>
@@ -153,7 +153,7 @@ class SideDrawer extends Component {
                 <TouchableOpacity
                   style={styles.menuItem}
                   onPress={() => this.onPressFun('MyBottomTabs')}>
-                  <Icon name="home" size={28} color={drawerIndex == 0 ? colors.CLR_WHITE : colors.CLR_TAB} />
+                  <Icon name="home" size={28} color={drawerIndex == 0 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
                   <Text style={[styles.listText,drawerIndex == 0 ? styles.selectedTextColor : '']}>Home</Text>
                 </TouchableOpacity>
               </View>
@@ -163,7 +163,7 @@ class SideDrawer extends Component {
                   <TouchableOpacity
                     style={styles.menuItem}
                     onPress={() => this.onPressFun('MyProfile')}>
-                    <Icon name="account-circle" size={28} color={drawerIndex == 1 ? colors.CLR_WHITE : colors.CLR_TAB} />
+                    <Icon name="account-circle" size={28} color={drawerIndex == 1 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
                     <Text style={[styles.listText,drawerIndex == 1 ? styles.selectedTextColor : '']}>My Profile</Text>
                   </TouchableOpacity>
                 </View>
@@ -172,7 +172,7 @@ class SideDrawer extends Component {
                     style={styles.menuItem}
                     onPress={() => this.onPressFun('ChangePassword')}
                     >
-                    <Icon name="vpn-key" size={28} color={drawerIndex == 2 ? colors.CLR_WHITE : colors.CLR_TAB} />
+                    <Icon name="vpn-key" size={28} color={drawerIndex == 2 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
                     <Text style={[styles.listText,drawerIndex == 2 ? styles.selectedTextColor : '']}>Change Password</Text>
                   </TouchableOpacity>
                 </View>
@@ -180,7 +180,7 @@ class SideDrawer extends Component {
                   <TouchableOpacity
                     style={styles.menuItem}
                     onPress={() => this.onPressFun('OrderHistory')}>
-                    <Icon name="schedule" size={28} color={drawerIndex == 3 ? colors.CLR_WHITE : colors.CLR_TAB} />
+                    <Icon name="schedule" size={28} color={drawerIndex == 3 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
                     <Text style={[styles.listText,drawerIndex == 3 ? styles.selectedTextColor : '']}>Order History</Text>
                   </TouchableOpacity>
                 </View>
@@ -189,7 +189,7 @@ class SideDrawer extends Component {
                     style={styles.menuItem}
                     onPress={() => this.onPressFun('share')}
                   >
-                    <Icon name="share" size={26} color={drawerIndex == 4 ? colors.CLR_WHITE : colors.CLR_TAB} />
+                    <Icon name="share" size={26} color={drawerIndex == 4 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
                     <Text style={[styles.listText,drawerIndex == 4 ? styles.selectedTextColor : '']}>
                       Invite Your Friends
                     </Text>
@@ -201,7 +201,7 @@ class SideDrawer extends Component {
                 <TouchableOpacity
                   style={styles.menuItem}
                   onPress={() => this.onPressFun('HelpSupport')}>
-                  <Icon name="support-agent" size={28} color={drawerIndex == 5 ? colors.CLR_WHITE : colors.CLR_TAB} />
+                  <Icon name="support-agent" size={28} color={drawerIndex == 5 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
                   <Text style={[styles.listText,drawerIndex == 5 ? styles.selectedTextColor : '']}>Help & Support</Text>
                 </TouchableOpacity>
               </View>
@@ -209,7 +209,7 @@ class SideDrawer extends Component {
                 <TouchableOpacity
                   style={styles.menuItem}
                   onPress={() => this.onPressFun('About')}>
-                  <Icon name="info" size={28} color={drawerIndex == 6 ? colors.CLR_WHITE : colors.CLR_TAB} />
+                  <Icon name="info" size={28} color={drawerIndex == 6 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
                   <Text style={[styles.listText,drawerIndex == 6 ? styles.selectedTextColor:'']}>About</Text>
                 </TouchableOpacity>
               </View>
@@ -217,7 +217,7 @@ class SideDrawer extends Component {
                 <TouchableOpacity
                   style={styles.menuItem}
                   onPress={() => this.loggedOut()}>
-                  <Icon name="phonelink-lock" size={28} color={colors.CLR_TAB} />
+                  <Icon name="phonelink-lock" size={28} color={ThemeColors.CLR_TAB} />
                   <Text style={[styles.listText,drawerIndex == 7 ? styles.selectedTextColor:'']}>Sign out</Text>
                 </TouchableOpacity>
               </View>):
@@ -232,11 +232,11 @@ class SideDrawer extends Component {
 const styles = StyleSheet.create({
   container:{
     flex: 1, 
-    backgroundColor: colors.CLR_WHITE,
+    backgroundColor: ThemeColors.CLR_WHITE,
   },
   menuTitle:{
     fontSize: 18, 
-    color: colors.CLR_DARK_GREY, 
+    color: ThemeColors.CLR_DARK_GREY, 
     fontFamily: FontFamily.TAJAWAL_BOLD
   },
   header:{
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontFamily:FontFamily.TAJAWAL_REGULAR, 
     fontWeight: '700',
-    color:colors.CLR_DARK_GREY
+    color:ThemeColors.CLR_DARK_GREY
   },
   profileSubHeader:{
     marginLeft: 2,
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
   },
   selectedItem:{
     backgroundColor: '#A1172F',
-    color:colors.CLR_WHITE,
+    color:ThemeColors.CLR_WHITE,
   },
   menuItem: {
     flexDirection: 'row',
@@ -308,10 +308,10 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginLeft: 10,
     fontFamily:FontFamily.TAJAWAL_REGULAR,
-    color:colors.CLR_DARK_GREY
+    color:ThemeColors.CLR_DARK_GREY
   },
   selectedTextColor:{
-    color: colors.CLR_WHITE,
+    color: ThemeColors.CLR_WHITE,
   },
 });
 

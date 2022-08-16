@@ -9,11 +9,12 @@ import {
     Text,
     ScrollView,
     Animated,
+    ImageBackground,
 } from 'react-native';
 import { connect } from 'react-redux';
 import Header from '../Component/Header';
 import { A_KEY, BASE_URL, MY_HEADER } from '../../config';
-import { colors } from '../../Theme/colors';
+import { ThemeColors } from '../../Theme/ThemeColors';
 import { TabView, TabBar } from 'react-native-tab-view';
 
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
@@ -26,6 +27,9 @@ import { FontFamily } from '../../Theme/FontFamily';
 
 import { setUserDetail } from '../../Redux/actions/auth';
 import { getUserDetails } from '../../api/auth';
+import images from '../../assets/images';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 
 const LazyPlaceholder = ({ route }) => (
     <View style={styles.container}>
@@ -190,9 +194,9 @@ class Dashboard extends Component {
                                                     renderTabBar={props => (
                                                         <TabBar
                                                             {...props}
-                                                            indicatorStyle={{ backgroundColor: colors.CLR_WHITE }}
-                                                            tabStyle={{ backgroundColor: colors.CLR_WHITE, }}
-                                                            style={{ backgroundColor: colors.CLR_WHITE, }}
+                                                            indicatorStyle={{ backgroundColor: ThemeColors.CLR_WHITE }}
+                                                            tabStyle={{ backgroundColor: ThemeColors.CLR_WHITE, }}
+                                                            style={{ backgroundColor: ThemeColors.CLR_WHITE, }}
                                                             renderLabel={({ route }) => (
                                                                 <>
                                                                     <Text
@@ -246,6 +250,60 @@ class Dashboard extends Component {
                                             null
                                         }
                                         {/* Combo Offer */}
+
+                                        {/* Promotion Banner */}
+                                        <View
+                                            style={{
+                                                marginTop: 10,
+                                                backgroundColor: '#fff',
+                                                shadowColor: '#000',
+                                                shadowOffset: { width: 1, height: 1 },
+                                                shadowOpacity: 0.4,
+                                                shadowRadius: 15,
+                                                borderRadius: 15,
+                                                elevation: 5,
+                                                alignSelf: 'center',
+                                            }}>
+                                            <ImageBackground
+                                                style={styles.promotionsImg}
+                                                resizeMode={'cover'}
+                                                source={images.promotions2}
+                                                defaultSource={images.promotions2}>
+                                                <View style={{ marginTop: '10%', marginLeft: '65%' }}>
+                                                    <TouchableOpacity
+                                                        style={{
+                                                            alignItems: 'center',
+                                                            borderWidth: 1,
+                                                            borderColor: '#fff',
+                                                            borderRadius: 10,
+                                                            width: 100,
+                                                            alignSelf: 'center',
+                                                            paddingHorizontal: 10
+                                                        }}>
+                                                        <Text
+                                                            style={{
+                                                                color: '#fff',
+                                                                fontSize: 13,
+                                                                fontWeight: '400',
+                                                            }}>
+                                                            Redeem Now
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity
+                                                        style={{ alignItems: 'center', marginTop: 7 }}>
+                                                        <Text
+                                                            style={{
+                                                                color: '#fff',
+                                                            }}>
+                                                            VIRGIN MOJITO
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </ImageBackground>
+                                        </View>
+                                        {/* Promotion End */}
+
+
                                         {/* Bar List */}
                                         {this.state.drinkObj.barDatas && this.state.drinkObj.barDatas.length > 0
                                             ?
@@ -265,22 +323,22 @@ class Dashboard extends Component {
                                                         <Text style={styles.ViewAll}>View All</Text>
                                                     </TouchableOpacity>
                                                 </View>
-                                                <ScrollView
+                                                {/* <ScrollView
                                                     horizontal={true}
-                                                    nestedScrollEnabled={true}>
-                                                    {
-                                                        this.state.drinkObj.barDatas.map((item, index) => (
-                                                            <BarCard navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />
-                                                        ))
-                                                    }
-                                                </ScrollView>
+                                                    nestedScrollEnabled={true}> */}
+                                                {
+                                                    this.state.drinkObj.barDatas.map((item, index) => (
+                                                        <BarCard navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />
+                                                    ))
+                                                }
+                                                {/* </ScrollView> */}
 
                                             </View>
                                             :
                                             // <ThemeFullPageLoader />
                                             null
                                         }
-                                        {/* Bar List */}
+                                        {/* Bar List End */}
                                     </View>
                                 </ScrollView>
                             </>
@@ -314,28 +372,23 @@ const styles = StyleSheet.create({
     whiskeyText: {
         fontSize: 18,
         fontWeight: '500',
-        color: colors.THEME_COLOR
+        color: ThemeColors.THEME_COLOR
     },
     ViewAll: {
         fontSize: 13,
         fontWeight: '400',
-        color: '#711323',
+        color: ThemeColors.THEME_COLOR,
     },
     sectionTitle: {
         fontSize: 18,
         fontWeight: '500',
-        color: colors.THEME_COLOR
-    },
-    ViewAll: {
-        fontSize: 13,
-        fontWeight: '400',
-        color: '#711323',
+        color: ThemeColors.THEME_COLOR
     },
     selectedTabText: {
-        color: colors.CLR_TAB,
+        color: ThemeColors.CLR_TAB,
     },
     selectedTabBorder: {
-        backgroundColor: colors.CLR_TAB,
+        backgroundColor: ThemeColors.CLR_TAB,
         height: 3,
         top: '30%',
     },
@@ -349,5 +402,11 @@ const styles = StyleSheet.create({
     noLabel: {
         display: 'none',
         height: 0,
+    },
+    promotionsImg: {
+        borderBottomLeftRadius: 15,
+        borderBottomRightRadius: 15,
+        width: 350,
+        height: 181,
     },
 })

@@ -23,15 +23,15 @@ const numColumns = 2;
 
 class Product extends Component {
   constructor(props) {
-    console.log('Product')
     super(props);
+    console.log('Product')
     this.state = {
       feature: true,
       featureValue: 0,
       loader: true,
       categoryList: null,
       categoryData: null,
-      itemIndex: 0,
+      itemIndex: (this.props.route.params && this.props.route.params.categoryIdx.key) ? this.props.route.params.categoryIdx.key : 0,
       innerLoader: false,
     };
   }
@@ -56,7 +56,7 @@ class Product extends Component {
       .then(result => {
         if (result.response) {
           this.setState({ categoryList: result.response.result });
-          return this.getProductList(0);
+          return this.getProductList(this.state.itemIndex);
         }
         if (result.errors) {
           this.setState({ loader: false });
@@ -85,7 +85,7 @@ class Product extends Component {
     myHeaders.append('A_Key', A_KEY);
     let raw = JSON.stringify({
       Keyword: this.state.categoryList.data[cat].name,
-      categorys: [1, 2],
+      // categorys: [1, 2],
     });
 
     let requestOptions = {

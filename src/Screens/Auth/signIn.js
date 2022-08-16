@@ -11,7 +11,7 @@ import {
 import { connect } from 'react-redux';
 import { setAccessToken } from '../../localstorage';
 import { FontFamily } from '../../Theme/FontFamily';
-import { colors } from '../../Theme/colors';
+import { ThemeColors } from '../../Theme/ThemeColors';
 import Util from '../../utils';
 import TextInputField from '../../Component/TextInputField';
 import ThemeButton from '../../Component/ThemeButton';
@@ -113,7 +113,7 @@ class SignIn extends Component {
         style={styles.container}>
         <StatusBar
           animated={true}
-          backgroundColor={colors.CLR_BG}
+          backgroundColor={ThemeColors.CLR_BG}
           barStyle={'dark-content'}
         />
 
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: colors.CLR_BG
+    backgroundColor: ThemeColors.CLR_BG
   },
   createView: {
     marginTop: '25%',
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
   },
   createText: {
     fontSize: 32,
-    color: colors.CLR_SIGN_IN_TEXT_COLOR,
+    color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     fontWeight: '500',
     fontFamily: FontFamily.TAJAWAL_REGULAR
   },
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   },
   newUserText: {
     fontSize: 18,
-    color: colors.CLR_SIGN_IN_TEXT_COLOR,
+    color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     fontWeight: '700',
     fontFamily: FontFamily.TAJAWAL_REGULAR
   },
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     width: '80%',
     justifyContent: 'center',
     flexDirection: 'row',
-    color: colors.CLR_ACTIVITY_INDICATOR
+    color: ThemeColors.CLR_ACTIVITY_INDICATOR
   },
   skipText: {
     fontSize: 17,
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
   },
   signUp: {
     fontSize: 18,
-    color: colors.CLR_ACTIVITY_INDICATOR,
+    color: ThemeColors.CLR_ACTIVITY_INDICATOR,
     fontWeight: '700',
     fontFamily: FontFamily.TAJAWAL_MEDIUM
   },

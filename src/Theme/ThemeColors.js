@@ -1,4 +1,4 @@
-const colors = {
+const ThemeColors = {
     CLR_THEME_COLOR: '#66D4F1',
     CLR_WHITE:'#FFFFFF',
     CLR_TAB:'#711323',
@@ -7,4 +7,4 @@ const colors = {
     CLR_SIGN_IN_TEXT_COLOR:'#000000',
     CLR_DARK_GREY:'#424242'
 }
-export { colors }
+export { ThemeColors }
