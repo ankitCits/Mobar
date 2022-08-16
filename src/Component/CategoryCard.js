@@ -30,7 +30,7 @@ export default class CategoryCard extends React.Component {
                     key={index}
                     onPress={() => {
                         // console.log(hostUrl + item.images);
-                        navigation.navigate('ProductDetailDrinks');
+                        navigation.navigate('ProductDetailDrinks',{id:item.productId});
                     }}
                     style={{
                         marginTop: 28,

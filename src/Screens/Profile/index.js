@@ -15,11 +15,13 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
 import {connect} from 'react-redux';
-import RNPickerSelect from 'react-native-picker-select';
 import {Picker} from '@react-native-picker/picker';
 import {getAccessToken} from '../../localstorage';
 import {A_KEY, BASE_URL} from '../../config';
-import {setUserDetail} from '../../Redux/actions/auth';
+import { colors } from '../../Theme/colors';
+import { FontFamily } from '../../Theme/FontFamily';
+import { cos } from 'react-native-reanimated';
+import { updateProfile } from '../../Redux/actions/product';
 class MyProfile extends Component {
   constructor(props) {
     super(props);
@@ -31,8 +33,11 @@ class MyProfile extends Component {
       email: '',
       contact: '',
       gender: '',
+      lblEmail:'',
+      lblName:''
     };
-    this.getDetail = this.getDetail.bind(this);
+
+    //this.getDetail = this.getDetail.bind(this);
   }
 
   componentDidMount() {
@@ -58,13 +63,14 @@ class MyProfile extends Component {
       .then(responseDetail => {
         if (responseDetail.response) {
           this.setState({loading: false});
-          console.log('=========>>>', responseDetail.response.result);
-
           this.setState({
             data: responseDetail.response.result.profile,
             name: responseDetail.response.result.profile.name,
             email: responseDetail.response.result.profile.email,
+            lblName: responseDetail.response.result.profile.name,
+            lblEmail: responseDetail.response.result.profile.email,
             contact: responseDetail.response.result.profile.contact,
+            address:responseDetail.response.result.profile.address,
             gender: responseDetail.response.result.profile.gender,
           });
         }
@@ -90,7 +96,8 @@ class MyProfile extends Component {
   };
 
   onProceed = async () => {
-    if ((this.state.name = '')) {
+    this.setState({loader: true});
+    if ((this.state.name == '')) {
       ToastAndroid.showWithGravity(
         'Name Required!',
         ToastAndroid.LONG,
@@ -100,7 +107,7 @@ class MyProfile extends Component {
       return;
     }
 
-    if ((this.state.email = '')) {
+    if ((this.state.email == '')) {
       ToastAndroid.showWithGravity(
         'Email Required!',
         ToastAndroid.LONG,
@@ -110,7 +117,7 @@ class MyProfile extends Component {
       return;
     }
 
-    if ((this.state.contact = '')) {
+    if ((this.state.contact == '')) {
       ToastAndroid.showWithGravity(
         'Contact Required!',
         ToastAndroid.LONG,
@@ -119,36 +126,31 @@ class MyProfile extends Component {
       this.setState({loader: false});
       return;
     }
-    let token = await getAccessToken(token);
-    let myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append('A_Key', A_KEY);
-    myHeaders.append('Token', `${token}`);
-
-    let raw = JSON.stringify({
+    const raw ={
       name: `${this.state.name}`,
       email: `${this.state.email}`,
       contact: this.state.contact,
       dateofbirth: `${this.state.data.dateofbirth}`,
       gender: `${this.state.gender}`,
-      address: 'singapore merlion park fv',
+      address: `${this.state.address}`,
       latitude: 1.28668,
       longitude: 103.853607,
-    });
-
-    let requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow',
     };
-
-    fetch(`${BASE_URL}/users/updateProfile`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        console.log('+++++++++', result);
-      })
-      .catch(error => console.log('error', error));
+    try {
+      const response = await updateProfile(raw);
+      if (response.status == 'SUCCESS') {
+        this.setState({lblName:this.state.name,lblEmail:this.state.email});
+        ToastAndroid.showWithGravity(
+          'Profile updated successfully..!',
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
+        );
+      }
+      this.setState({ loader: false });
+    } catch (error) {
+      console.log("Profile > Update Profile > error",error);
+      this.setState({ loader: false });
+    }
   };
 
 
@@ -166,43 +168,28 @@ class MyProfile extends Component {
 }
 
   render() {
-    console.log('======PROFILE>>>>', this.state.data);
-    let viewData = this.state.data;
+    const viewData = this.state.data;
     return (
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: '#fff',
-        }}>
+      <SafeAreaView style={styles.container}>
         <StatusBar
           animated={true}
           backgroundColor="#84182B"
           barStyle={'light-content'}
         />
-
+        
         {this.state.loading && this.state.data == null ? (
           <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignSelf: 'center',
-            }}>
-            <ActivityIndicator size="large" color="#741728" />
+            style={styles.loaderContainer}>
+            <ActivityIndicator size="large" color={colors.CLR_ACTIVITY_INDICATOR} />
           </View>
         ) : (
           <ScrollView>
             <View
-              style={{
-                height: 220,
-                backgroundColor: '#84182B',
-                borderBottomLeftRadius: 25,
-                borderBottomRightRadius: 25,
-                elevation: 5,
-              }}>
-              <View style={{margin: 10}}>
+              style={styles.profileContainer}>
+              <View style={styles.arrowBack}>
                 <TouchableOpacity
                   onPress={() => this.props.navigation.openDrawer()}>
-                  <Icon name="arrow-back" size={30} color="#fff" />
+                  <Icon name="arrow-back" size={30} color={colors.CLR_WHITE} />
                 </TouchableOpacity>
               </View>
               <View style={styles.userView}>
@@ -212,102 +199,90 @@ class MyProfile extends Component {
                   source={images.user}
                   defaultSource={images.user}
                 />
-                <View style={styles.userDetail}>
+                <View>
                   <Text style={styles.userName}>
-                    {viewData ? this.state.name : ''}
+                    {viewData ? this.state.lblName : ''}
                   </Text>
                 </View>
-                <View style={styles.userDetail}>
+                <View>
                   <Text style={styles.userMail}>
-                    {viewData ? this.state.email : ''}
+                    {viewData ? this.state.lblEmail : ''}
                   </Text>
                 </View>
               </View>
             </View>
-            <View style={{margin: 10, alignItems: 'center'}}>
-              <View style={{marginTop: '15%'}}>
-                <View style={{marginLeft: 10}}>
-                  <Text>Name</Text>
-                </View>
+            <View style={styles.inputContainer}>
+              <View>
+                <Text style={styles.labelText}>Name</Text>
                 <View style={styles.sectionStyle}>
                   <Icon
                     name="person"
                     size={20}
-                    color="#A39B9B"
+                    color="#AEAEAF"
                     style={styles.imageStyle}
                   />
                   <TextInput
-                    style={{flex: 1}}
-                    value={viewData ? this.state.name : ''}
+                    style={styles.inputText}
+                    value={this.state.name}
                     underlineColorAndroid="transparent"
                     placeholderTextColor="#000"
                     onChangeText={text => {
-                      this.setState({name: text});
+                      this.setState({...this.state,name: text});
                     }}
                   />
                 </View>
               </View>
 
-              <View style={{marginTop: 0}}>
-                <View style={{marginLeft: 10}}>
-                  <Text>Email</Text>
+                <View>
+                  <Text style={styles.labelText}>Email</Text>
+                  <View style={styles.sectionStyle}>
+                    <Icon
+                      name="mail"
+                      size={20}
+                      color="#969696"
+                      style={styles.imageStyle}
+                    />
+                    <TextInput
+                      value={this.state.email}
+                      underlineColorAndroid="transparent"
+                      placeholderTextColor="#000"
+                      onChangeText={text => {
+                        this.setState({...this.state,email: text });
+                      }}
+                    />
+                  </View>
                 </View>
-                <View style={styles.sectionStyle}>
-                  <Icon
-                    name="mail"
-                    size={20}
-                    color="#A39B9B"
-                    style={styles.imageStyle}
-                  />
-                  <TextInput
-                    style={{flex: 1}}
-                    value={viewData ? this.state.email : ''}
-                    underlineColorAndroid="transparent"
-                    placeholderTextColor="#000"
-                    onChangeText={text => {
-                      this.setState({email: text});
-                    }}
-                  />
-                </View>
-              </View>
-
-              <View style={{marginTop: 0}}>
-                <View style={{marginLeft: 10}}>
-                  <Text>Phone No</Text>
-                </View>
+              <View>
+                <Text style={styles.labelText}>Phone No</Text>
                 <View style={styles.sectionStyle}>
                   <Icon
                     name="call"
                     size={20}
-                    color="#A39B9B"
+                    color="#969696"
                     style={styles.imageStyle}
                   />
                   <TextInput
-                    style={{flex: 1}}
-                    value={viewData ? this.state.contact : ''}
+                    value={this.state.contact}
                     underlineColorAndroid="transparent"
                     placeholderTextColor="#000"
                     onChangeText={text => {
-                      this.setState({contact: text});
+                      this.setState({...this.state,contact: text});
                     }}
                   />
                 </View>
               </View>
 
-              <View style={{flexDirection: 'row'}}>
-                <View style={{marginTop: 0}}>
-                  <View style={{marginLeft: 15}}>
-                    <Text>Date of Birth</Text>
-                  </View>
+              <View style={styles.row}>
+                <View>
+                  <Text style={styles.labelText}>Date of Birth</Text>
                   <View style={styles.sectionStyleNext}>
                     <Icon
                       name="event-note"
                       size={20}
-                      color="#A39B9B"
+                      color="#969696"
                       style={styles.imageStyle}
                     />
                     <TextInput
-                      style={{flex: 1, opacity: 0.5}}
                       placeholder={viewData ? this.changeDateFormat(viewData.dateofbirth) : ''}
                       underlineColorAndroid="transparent"
                       placeholderTextColor="#000"
@@ -317,33 +292,15 @@ class MyProfile extends Component {
                   </View>
                 </View>
 
-                <View style={{marginTop: 0}}>
-                  <View style={{marginLeft: 10}}>
-                    <Text>Gender</Text>
-                  </View>
+                <View>
+                  <Text style={styles.labelText}>Gender</Text>
                   <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      backgroundColor: '#fff',
-                      height: 44,
-                      width: 155,
-                      margin: 10,
-                    }}></View>
+                    style={styles.selectContainer}></View>
 
                   <View
-                    style={{
-                      borderWidth: 1,
-                      borderRadius: 5,
-                      height: 44,
-                      width: 155,
-                      marginLeft: 10,
-                      borderColor: '#7B7B7B',
-                      bottom: 55,
-                    }}>
+                    style={styles.genderDropDown}>
                     <Picker
-                      style={{marginTop: -5}}
+                      style={styles.picker}
                       selectedValue={viewData ? this.state.gender : ''}
                       onValueChange={(itemValue, itemIndex) =>
                         this.setState({gender: itemValue})
@@ -354,46 +311,24 @@ class MyProfile extends Component {
                   </View>
                 </View>
               </View>
-
-              {/* <View style={{marginTop: 0}}>
-            <View style={{marginLeft: 10}}>
-              <Text>Address</Text>
-            </View>
-            <View style={styles.sectionStyle}>
-              <Icon
-                name="location-on"
-                size={20}
-                color="#A39B9B"
-                style={styles.imageStyle}
-              />
-              <TextInput
-                style={{flex: 1}}
-                placeholder={this.props.redux ? this.props.redux.address : 'Singapore'}
-                underlineColorAndroid="transparent"
-                placeholderTextColor="#000"
-              />
-            </View>
-          </View> */}
               {viewData ? (
                 this.state.name != this.state.data.name ||
                 this.state.email != this.state.data.email ||
                 this.state.contact != this.state.data.contact ||
                 this.state.gender != this.state.data.gender ? (
-                  <View style={{marginTop: 10, marginBottom: 10}}>
+                  <View>
                     <TouchableOpacity
                       style={styles.save}
                       onPress={() =>
                         // this.props.navigation.navigate('MyBottomTabs')
                         {
-                          console.log('EMAIL>>>>>', this.state.email);
-                          this.setState({loader: true});
                           this.onProceed();
                         }
                       }>
                       {this.state.loader ? (
                         <ActivityIndicator size="small" color="#fff" />
                       ) : (
-                        <Text style={{color: '#fff', fontSize: 15}}>Save</Text>
+                        <Text style={styles.saveText}>Save</Text>
                       )}
                     </TouchableOpacity>
                   </View>
@@ -423,57 +358,115 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, mapDispatchToProps)(MyProfile);
 
 const styles = StyleSheet.create({
+  container:{
+    flex: 1,
+    backgroundColor: colors.CLR_WHITE,
+  },
+  arrowBack:{
+    margin: 10
+  },
+  loaderContainer:{
+    flex: 1,
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+  profileContainer:{
+    height: 220,
+    backgroundColor: '#84182B',
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    elevation: 5,
+  },
   userImg: {
     height: 80,
     width: 80,
   },
   userView: {
-    alignSelf: 'center',
+    flex:1,
     alignItems: 'center',
-  },
-  userDetail: {
-    marginTop: 5,
+    alignContent:'center'
   },
   userName: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
-    color: '#fff',
+    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    color: colors.CLR_WHITE
   },
   userMail: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '500',
-    color: '#fff',
+    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    color:colors.CLR_WHITE
+  },
+  inputContainer:{
+    margin: 10, 
+    marginTop:'15%',
+    alignItems: 'center'
+  },
+  inputText:{
+    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    fontSize:18,
+    fontWeight:'500',
+    color:colors.CLR_SIGN_IN_TEXT_COLOR,
+  },
+  labelText:{
+    marginLeft: 15,
+    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    fontSize:16,
+    fontWeight:'500',
+    color:'#828282'
   },
   sectionStyle: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#7B7B7B',
-    height: 44,
+    height: 50,
     width: 320,
-    borderRadius: 5,
+    borderRadius: 10,
     margin: 10,
-    // elevation: 5,
   },
   sectionStyleNext: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#7B7B7B',
     height: 44,
     width: 155,
     borderRadius: 5,
     margin: 10,
-    // elevation: 5,
+  },
+  selectContainer:{
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:colors.CLR_WHITE,
+    height: 44,
+    margin: 10,
   },
   imageStyle: {
-    margin: 5,
+    margin: 7,
     resizeMode: 'stretch',
-    alignItems: 'center',
+  },
+  genderDropDown:{
+    borderWidth: 1,
+    borderRadius: 5,
+    height: 44,
+    width: 155,
+    borderColor: '#7B7B7B',
+    bottom: 55,
+  },
+  row:{
+    flexDirection: 'row'
+  },
+  picker:{
+    marginTop: -5
+  },
+  saveText:{
+    color: colors.CLR_WHITE,
+    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    fontSize: 18,
+    fontWeight:'700',
   },
   save: {
     backgroundColor: '#851729',

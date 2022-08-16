@@ -17,6 +17,7 @@ import LoginButton from '../Component/LoginButton';
 import { FontFamily } from '../Theme/FontFamily';
 import { ThemeColors } from '../Theme/ThemeColors';
 import { setUserDetail } from '../Redux/actions/auth';
+import { loggedOut } from '../Redux/actions/product';
 
 
 
@@ -52,33 +53,20 @@ class SideDrawer extends Component {
   };
 
   loggedOut = async () => {
-    let token = await getAccessToken(token);
-    var myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append('A_Key', A_KEY);
-    myHeaders.append('Token', token);
-
-    var requestOptions = {
-      method: 'GET',
-      headers: myHeaders,
-      redirect: 'follow',
-    };
-    fetch(`${BASE_URL}/users/signOut`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        console.log(result);
-        if (result.response) {
-          this.props.dispatch(setUserDetail(null));
-          this.reStart();
-        } else {
-          ToastAndroid.showWithGravity(
-            'Internet Issue',
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
-        }
-      })
-      .catch(error => console.log('error', error));
+    try {
+      const response = await loggedOut();
+      if (response.status == 'SUCCESS') {
+        this.props.dispatch(setUserDetail(null));
+        this.reStart();
+      }
+    } catch (error) {
+      console.log("Password > Update PAssword > error",error);
+      ToastAndroid.showWithGravity(
+        'Internet Issue!',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+    );
+    }
   };
 
   reStart = async () => {

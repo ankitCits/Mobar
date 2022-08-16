@@ -9,10 +9,12 @@ import {
   StyleSheet,
   ScrollView,
   Modal,
+  ToastAndroid,
+  FlatList
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { fetchProductDetails } from '../../api/product';
 import images from '../../assets/images';
-import HeaderSide from '../Component/HeaderSide';
 
 export default class ProductDetailDrinks extends Component {
   constructor(props) {
@@ -20,10 +22,162 @@ export default class ProductDetailDrinks extends Component {
     this.state = {
       modalVisible: true,
       visibilityQuantity: 30,
+      details: [],
+      hostUrl: '',
+      id: props.route.params.id,
+      vendors: []
     };
+    console.log("Params > ProductDetails Drinks", props.route.params.id);
+  }
+
+  componentDidMount() {
+    this.productDetails();
+  }
+
+  productDetails = async () => {
+    try {
+      const data = {
+        productId: this.state.id,
+        latitude: 1.28668,
+        longitude: 103.853607,
+      }
+      const resp = await fetchProductDetails(data);
+      if (resp.response.result && resp.response.result.data) {
+        this.setState({ details: resp.response.result.data });
+        this.setState({ vendors: resp.response.result.data.ecom_ae_vendors });
+        this.setState({ hostUrl: resp.response.result.hostUrl })
+      }
+      console.log("response this.state.details", this.state.details);
+      // this.setState({
+      //   cart: resp.response.result.data,
+      //   hostUrl: resp.response.result.hostUrl,
+      // });
+
+      //console.log("state cart details",this.state.cart);
+    } catch (error) {
+      ToastAndroid.showWithGravity(
+        error,
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+      );
+    }
+  }
+
+
+  renderItem = (item) => {
+    return (
+      <View style={{ margin: 15 }}>
+        <TouchableOpacity
+          style={{
+            flexDirection: 'row',
+          }}
+          onPress={() =>
+            // this.props.navigation.navigate('ProductDetailBars')
+            // this.props.navigation.navigate('ProductDetailBars')
+            console.log('go to bar details')
+          }>
+          <View>
+            <Image
+              style={{
+                width: 96,
+                height: 96,
+              }}
+              resizeMode={'cover'}
+              source={{ uri: this.state.hostUrl + item.images }}
+              defaultSource={images.barProduct}
+            />
+          </View>
+
+          <View style={{ margin: 0, marginLeft: 5 }}>
+            <View
+              style={{
+                flexDirection: 'row',
+              }}>
+              <Icon name="wine-bar" size={20} color="#711323" />
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: '700',
+                  color: '#4D4F50',
+                  marginLeft: 5,
+                }}>
+                {item.name.trim()}
+              </Text>
+            </View>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                marginTop: 5,
+              }}>
+              <Icon name="place" size={20} color="#711323" />
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: '500',
+                  color: '#4D4F50',
+                  marginLeft: 5,
+                  width: 200,
+                }}>
+                {item.address}
+              </Text>
+            </View>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                // justifyContent: 'space-between',
+                alignItems: 'center',
+                marginTop: 5,
+              }}>
+              <Icon name="directions-run" size={20} color="#711323" />
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: '500',
+                  color: '#4D4F50',
+                  marginLeft: 5,
+                }}>
+                {item.distance}
+              </Text>
+            </View>
+          </View>
+          <View
+            style={{
+              // margin: 10,
+              marginLeft: 30,
+              flex: 1,
+              justifyContent: 'center',
+            }}>
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'row',
+              }}>
+              <Icon
+                name="fiber-manual-record"
+                size={18}
+                color="#38C720"
+              />
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: '#38C720',
+                  fontWeight: '500',
+                  marginLeft: 5,
+                }}>
+                {item.ecom_acc_vendor_productOpen && item.ecom_acc_vendor_productOpen.vendorProductStatus == 'Available' ? 'Open' : 'Close'}
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
   }
 
   render() {
+    const data = this.state.details && this.state.details.ecom_aca_product_units ? this.state.details.ecom_aca_product_units : [];
     return (
       <SafeAreaView
         style={{
@@ -75,7 +229,7 @@ export default class ProductDetailDrinks extends Component {
                       color: '#000',
                       fontWeight: '700',
                     }}>
-                    Chivas Regal 12
+                    {this.state.details.name}
                   </Text>
 
                   <Text
@@ -95,46 +249,49 @@ export default class ProductDetailDrinks extends Component {
                       fontWeight: '400',
                       marginTop: 10,
                     }}>
-                    100 glass of 30 ml
+                    {this.state.details.ecom_aca_product_units ? this.state.details.ecom_aca_product_units[0].unitDescription : ''}
+                    {/* 100 glass of 30 ml */}
                   </Text>
-
-                  <ImageBackground
-                    style={{
-                      width: 161,
-                      height: 26,
-                      marginTop: 20,
-                      right: 15,
-                    }}
-                    resizeMode={'cover'}
-                    source={images.savedTag}
-                    defaultSource={images.savedTag}>
-                    <View
+                  {this.state.details.ecom_aca_product_units && this.state.details.ecom_aca_product_units[0].savedPrices != null ?
+                    <ImageBackground
                       style={{
-                        marginLeft: 15,
-                        marginTop: 2,
-                        flexDirection: 'row',
-                      }}>
-                      <Text
+                        width: 161,
+                        height: 26,
+                        marginTop: 20,
+                        right: 15,
+                      }}
+                      resizeMode={'cover'}
+                      source={images.savedTag}
+                      defaultSource={images.savedTag}>
+
+                      <View
                         style={{
-                          fontSize: 15,
-                          fontWeight: '700',
-                          color: '#fff',
-                          fontStyle: 'italic',
+                          marginLeft: 15,
+                          marginTop: 2,
+                          flexDirection: 'row',
                         }}>
-                        You Save:
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: 15,
-                          fontWeight: '700',
-                          color: '#fff',
-                          fontStyle: 'italic',
-                        }}>
-                        {' '}
-                        $100.00
-                      </Text>
-                    </View>
-                  </ImageBackground>
+                        <Text
+                          style={{
+                            fontSize: 15,
+                            fontWeight: '700',
+                            color: '#fff',
+                            fontStyle: 'italic',
+                          }}>
+                          You Save:
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 15,
+                            fontWeight: '700',
+                            color: '#fff',
+                            fontStyle: 'italic',
+                          }}>
+                          {' '}
+                          {/* $100.00 */}
+                          {this.state.details.ecom_aca_product_units[0].savedPrices}
+                        </Text>
+                      </View>
+                    </ImageBackground> : null}
 
                   <View
                     style={{
@@ -146,7 +303,7 @@ export default class ProductDetailDrinks extends Component {
                         fontSize: 15,
                         fontWeight: '500',
                       }}>
-                      Quantity:
+                      Quantity:{this.state.details.ecom_aca_product_units ? this.state.details.ecom_aca_product_units[0].unitQty + this.state.details.ecom_aca_product_units[0].unitType : 0}
                     </Text>
 
                     <View
@@ -225,7 +382,7 @@ export default class ProductDetailDrinks extends Component {
                   <Image
                     style={styles.mainProductImg}
                     resizeMode={'cover'}
-                    source={images.product2}
+                    source={{ uri: this.state.hostUrl + this.state.details.images }}
                     defaultSource={images.product2}
                   />
                 </View>
@@ -315,9 +472,10 @@ export default class ProductDetailDrinks extends Component {
                       fontWeight: '400',
                       fontSize: 15,
                     }}>
-                    Chivas Regal 12 years is a full-flavoured, rich and
+                    {this.state.details.description}
+                    {/* Chivas Regal 12 years is a full-flavoured, rich and
                     sophisticated Cuban rum with a high degree of class.
-                    deservedly popular rum.
+                    deservedly popular rum. */}
                   </Text>
                 </View>
               </View>
@@ -346,12 +504,22 @@ export default class ProductDetailDrinks extends Component {
               </Text>
             </View>
 
-            <View
-              style={{
-                backgroundColor: '#fff',
-                marginTop: 15,
-              }}>
-              <View style={{ margin: 15 }}>
+            {this.state.vendors && this.state.vendors.length > 0 &&
+              <View
+                style={{
+                  backgroundColor: '#fff',
+                  marginTop: 15,
+                }}>
+
+                <FlatList
+                  data={this.state.vendors}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  style={styles.categoryFlatList}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item, index }) => this.renderItem(item, index)}
+                />
+                {/* <View style={{ margin: 15 }}>
                 <TouchableOpacity
                   style={{
                     flexDirection: 'row',
@@ -462,10 +630,10 @@ export default class ProductDetailDrinks extends Component {
                   </View>
                 </TouchableOpacity>
               </View>
-              <View style={styles.productUnderline} />
+              <View style={styles.productUnderline} /> */}
 
 
-              <View style={{ margin: 15 }}>
+                {/* <View style={{ margin: 15 }}>
                 <TouchableOpacity
                   style={{
                     flexDirection: 'row',
@@ -575,9 +743,10 @@ export default class ProductDetailDrinks extends Component {
                   </View>
                 </TouchableOpacity>
               </View>
-              <View style={styles.productUnderline} />
+              <View style={styles.productUnderline} /> */}
 
-            </View>
+              </View>
+            }
           </View>
 
           <View

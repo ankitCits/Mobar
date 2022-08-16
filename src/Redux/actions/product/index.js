@@ -1,3 +1,4 @@
+import { ToastAndroid } from 'react-native';
 import { BASE_URL, A_KEY } from '../../../config';
 import { getAccessToken } from '../../../localstorage';
 
@@ -124,3 +125,145 @@ myHeaders.append('A_Key', A_KEY);
 //     return payload;
 //   };
 // };
+
+export const helpSupport = async (postData) => {
+    const params = await getParams(postData);
+    return new Promise(async (resolve, reject) => {
+        fetch(`${BASE_URL}/common/helpSupport`, params)
+            .then(response => response.json())
+            .then(result => {
+                console.log("Product > response", result);
+                if (result.response && result.response.status == 'SUCCESS') {
+                    resolve(result.response)
+                }
+                if (result.errors) {
+                    console.log("Product > 400 Errors >Response", result.errors)
+                    ToastAndroid.showWithGravity(
+                        result.errors.find(x => x.msg).msg,
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                    );
+                    reject(result.errors)
+                }
+            })
+            .catch(error => {
+                console.log("Product > catch > error", error);
+                reject(error.message)
+            });
+    });
+};
+
+export const updateProfile = async (postData) => {
+    const params = await getParams(postData);
+    return new Promise(async (resolve, reject) => {
+        fetch(`${BASE_URL}/users/updateProfile`, params)
+            .then(response => response.json())
+            .then(result => {
+                //console.log("Product > Update Profile > response", result);
+                if (result.response && result.response.status == 'SUCCESS') {
+                    resolve(result.response)
+                }
+                if (result.errors) {
+                    console.log("Product > 400 Errors >Response", result.errors)
+                    ToastAndroid.showWithGravity(
+                        result.errors.find(x => x.msg).msg,
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                    );
+                    reject(result.errors)
+                }
+            })
+            .catch(error => {
+                console.log("Product > catch > error", error);
+                reject(error.message)
+            });
+    });
+};
+
+export const changePassword = async (postData) => {
+    const params = await getParams(postData);
+    return new Promise(async (resolve, reject) => {
+        fetch(`${BASE_URL}/users/changePassword`, params)
+            .then(response => response.json())
+            .then(result => {
+                //console.log("Product > Change Password > response", result);
+                if (result.response && result.response.status == 'SUCCESS') {
+                    resolve(result.response)
+                }
+                if (result.errors) {
+                    console.log("Product > Change Password > 400 Errors >Response", result.errors)
+                    ToastAndroid.showWithGravity(
+                        result.errors.find(x => x.msg).msg,
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                    );
+                    reject(result.errors)
+                }
+            })
+            .catch(error => {
+                console.log("Product > Change Password > catch > error", error);
+                reject(error.message)
+            });
+    });
+};
+
+export const loggedOut = async (postData) => {
+    let token = await getAccessToken(token);
+    var myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append('A_Key', A_KEY);
+    myHeaders.append('Token', `${token}`);
+    const requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+    };
+    return new Promise(async (resolve, reject) => {
+        fetch(`${BASE_URL}/users/signOut`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                console.log("Product > sign out > response", result);
+                if (result.response && result.response.status == 'SUCCESS') {
+                    resolve(result.response)
+                }
+                if (result.errors) {
+                    console.log("Product > sign out > 400 Errors >Response", result.errors)
+                    ToastAndroid.showWithGravity(
+                        'Internet Issue!',
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                    );
+                    reject(result.errors)
+                }
+            })
+            .catch(error => {
+                console.log("Product > sign out > catch > error", error);
+                reject(error.message)
+            });
+    });
+};
+
+export const getParams = async (data) => {
+    let token = await getAccessToken(token);
+    var myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append('A_Key', A_KEY);
+    myHeaders.append('Token', `${token}`);
+    const postDataStr = JSON.stringify(data);
+    return new Promise(async (resolve, reject) => {
+        if (data) {
+            const requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: postDataStr,
+            };
+            resolve(requestOptions)
+        } else {
+            const requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+            };
+            resolve(requestOptions)
+        }
+        
+    });
+}
