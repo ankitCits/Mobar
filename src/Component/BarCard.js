@@ -16,6 +16,11 @@ class BarCard extends Component {
         super(props);
     }
 
+    goToDetails = (item) => {
+        console.log(item)
+        this.props.navigation.navigate('ProductDetailBars', { 'id': item.vendorId });
+    }
+
     render() {
         const {
             navigation,
@@ -28,7 +33,7 @@ class BarCard extends Component {
                 <TouchableOpacity
                     key={index}
                     activeOpacity={1}
-                    onPress={() => navigation.navigate('BarList')}
+                    onPress={() => this.goToDetails(item)}
                     style={styles.container}>
                     <ImageBackground
                         style={styles.promotionsImg}

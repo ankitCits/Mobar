@@ -8,15 +8,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Modal,
-  ActivityIndicator,
   ToastAndroid,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
 import { A_KEY, BASE_URL } from '../../config';
 import { getAccessToken } from '../../localstorage';
-import HeaderSide from '../Component/HeaderSide';
 import ThemeFullPagerLoader from '../../Component/ThemeFullPageLoader';
 export default class ProductDetailBars extends Component {
   constructor(props) {
@@ -157,7 +154,7 @@ export default class ProductDetailBars extends Component {
                     this.state.data.hostUrl +
                     this.state.data.vendorDetail[0].images,
                 }}
-              // defaultSource={images.promotions1}
+                defaultSource={images.promotions1}
               >
                 <View
                   style={{
@@ -383,7 +380,7 @@ export default class ProductDetailBars extends Component {
                 Redeemable Products
               </Text>
 
-              {this.state.data.vendorDetail[0].ecom_ac_products
+              {this.state.data && this.state.data.vendorDetail.length && this.state.data.vendorDetail[0].ecom_ac_products
                 ? this.state.data.vendorDetail[0].ecom_ac_products.map(item => (
                   <View
                     style={styles.productView}
