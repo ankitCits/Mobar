@@ -16,6 +16,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { fetchProductDetails } from '../../api/product';
 import images from '../../assets/images';
 import { FontFamily } from '../../Theme/FontFamily';
+import HTMLView from 'react-native-htmlview';
 //import RenderHtml from 'react-native-render-html';
 //const { width } = useWindowDimensions();
 // const source = {
@@ -271,12 +272,10 @@ export default class ProductDetailDrinks extends Component {
                   </TouchableOpacity>
                 </View>
                 <View style={styles.descriptionContainer}>
-                  <Text
-                    style={styles.descriptionText}>
-                    {this.state.details.description}
-
-                  </Text>
-                  {/* <RenderHtml contentWidth={width} source={source} /> */}
+                  <HTMLView
+                    value={this.state.details.description}
+                    stylesheet={styles.descriptionText}
+                  />
                 </View>
               </View>
             </View>
