@@ -8,6 +8,7 @@ const FontFamily = {
     TAJAWAL_LIGHT: `${fontName}-Light`,
     TAJAWAL_MEDIUM: `${fontName}-Medium`,
     TAJAWAL_REGULAR: `${fontName}-Regular`,
-    ROBOTO_REGULAR:`${Roboto}-Regular`
+    ROBOTO_REGULAR:`${Roboto}-Regular`,
+    ROBOTO_SLAB:`${Roboto}-Slab`
 };
 export { FontFamily };

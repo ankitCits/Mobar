@@ -8,14 +8,22 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Modal,
   ToastAndroid,
-  FlatList
+  FlatList,
 } from 'react-native';
+import { ThemeColors } from '../../Theme/ThemeColors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { fetchProductDetails } from '../../api/product';
 import images from '../../assets/images';
-
+import { FontFamily } from '../../Theme/FontFamily';
+//import RenderHtml from 'react-native-render-html';
+//const { width } = useWindowDimensions();
+// const source = {
+//   html: `
+// <p style='text-align:center;'>
+//   Hello World!
+// </p>`
+// };
 export default class ProductDetailDrinks extends Component {
   constructor(props) {
     super(props);
@@ -25,9 +33,9 @@ export default class ProductDetailDrinks extends Component {
       details: [],
       hostUrl: '',
       id: props.route.params.id,
-      vendors: []
+      vendors: [],
+      renderText: {},
     };
-    console.log("Params > ProductDetails Drinks", props.route.params.id);
   }
 
   componentDidMount() {
@@ -47,13 +55,6 @@ export default class ProductDetailDrinks extends Component {
         this.setState({ vendors: resp.response.result.data.ecom_ae_vendors });
         this.setState({ hostUrl: resp.response.result.hostUrl })
       }
-      console.log("response this.state.details", this.state.details);
-      // this.setState({
-      //   cart: resp.response.result.data,
-      //   hostUrl: resp.response.result.hostUrl,
-      // });
-
-      //console.log("state cart details",this.state.cart);
     } catch (error) {
       ToastAndroid.showWithGravity(
         error,
@@ -66,109 +67,60 @@ export default class ProductDetailDrinks extends Component {
 
   renderItem = (item) => {
     return (
-      <View style={{ margin: 15 }}>
+      <View style={styles.vendorContainer}>
         <TouchableOpacity
-          style={{
-            flexDirection: 'row',
-          }}
+          style={styles.vendorItem}
           onPress={() =>
-            // this.props.navigation.navigate('ProductDetailBars')
             // this.props.navigation.navigate('ProductDetailBars')
             console.log('go to bar details')
           }>
           <View>
             <Image
-              style={{
-                width: 96,
-                height: 96,
-              }}
+              style={styles.vendorImage}
               resizeMode={'cover'}
               source={{ uri: this.state.hostUrl + item.images }}
               defaultSource={images.barProduct}
             />
           </View>
 
-          <View style={{ margin: 0, marginLeft: 5 }}>
+          <View style={styles.vendorDetails}>
             <View
-              style={{
-                flexDirection: 'row',
-              }}>
+              style={styles.vendorRow}>
               <Icon name="wine-bar" size={20} color="#711323" />
               <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: '700',
-                  color: '#4D4F50',
-                  marginLeft: 5,
-                }}>
-                {item.name.trim()}
+                style={styles.vendorTitle}>
+                {item.name}
               </Text>
             </View>
 
             <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 5,
-              }}>
+              style={styles.vendorRow}>
               <Icon name="place" size={20} color="#711323" />
               <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: '500',
-                  color: '#4D4F50',
-                  marginLeft: 5,
-                  width: 200,
-                }}>
+                style={styles.vendorText}>
                 {item.address}
               </Text>
             </View>
 
             <View
-              style={{
-                flexDirection: 'row',
-                // justifyContent: 'space-between',
-                alignItems: 'center',
-                marginTop: 5,
-              }}>
+              style={styles.vendorRow}>
               <Icon name="directions-run" size={20} color="#711323" />
               <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: '500',
-                  color: '#4D4F50',
-                  marginLeft: 5,
-                }}>
+                style={styles.vendorText}>
                 {item.distance}
               </Text>
             </View>
           </View>
           <View
-            style={{
-              // margin: 10,
-              marginLeft: 30,
-              flex: 1,
-              justifyContent: 'center',
-            }}>
+            style={styles.vendorProductStatus}>
             <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'row',
-              }}>
+              style={styles.vendorRow}>
               <Icon
                 name="fiber-manual-record"
                 size={18}
                 color="#38C720"
               />
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: '#38C720',
-                  fontWeight: '500',
-                  marginLeft: 5,
-                }}>
-                {item.ecom_acc_vendor_productOpen && item.ecom_acc_vendor_productOpen.vendorProductStatus == 'Available' ? 'Open' : 'Close'}
-              </Text>
+              {item.ecom_acc_vendor_product && item.ecom_acc_vendor_product.vendorProductStatus == 'Available' ? <Text style={[styles.productStatusText, styles.open]}>Open</Text> : <Text style={[styles.productStatusText, styles.close]}>Close</Text>}
             </View>
           </View>
         </TouchableOpacity>
@@ -176,35 +128,37 @@ export default class ProductDetailDrinks extends Component {
     );
   }
 
-  render() {
-    const data = this.state.details && this.state.details.ecom_aca_product_units ? this.state.details.ecom_aca_product_units : [];
+  renderQuantity = (item) => {
     return (
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: '#E5E5E5',
-        }}>
+      <TouchableOpacity
+        onPress={() => this.setState({ visibilityQuantity: item.unitQty })}
+        style={
+          item.unitQty == item.unitQty
+            ? styles.itemQuantitySelected
+            : styles.itemQuantity
+        }
+      >
+        <View
+          style={styles.qtyText}>
+          <Text
+            style={styles.qtyColor}>
+            {item.unitQty + ' ' + item.unitType}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+
+
+  render() {
+    return (
+      <SafeAreaView>
         <ScrollView>
-          <View style={{ backgroundColor: '#fff' }}>
+          <View>
             <View
-              style={{
-                backgroundColor: '#fff',
-                height: 390,
-                shadowColor: '#000',
-                shadowOffset: { width: 1, height: 1 },
-                shadowOpacity: 0.4,
-                shadowRadius: 3,
-                elevation: 5,
-                borderBottomLeftRadius: 20,
-                borderBottomRightRadius: 20,
-              }}>
+              style={styles.productDetailsContainer}>
               <View
-                style={{
-                  margin: 12,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}>
+                style={styles.backArrowContainer}>
                 <TouchableOpacity onPress={() => this.props.navigation.pop()}>
                   <Icon name="arrow-back" size={28} color="#424242" />
                 </TouchableOpacity>
@@ -215,170 +169,64 @@ export default class ProductDetailDrinks extends Component {
               </View>
 
               <View
-                style={{
-                  flexDirection: 'row',
-                  margin: 15,
-                }}>
+                style={styles.productDetails}>
                 <View
-                  style={{
-                    width: '70%',
-                  }}>
+                  style={styles.headerContainer}>
                   <Text
-                    style={{
-                      fontSize: 25,
-                      color: '#000',
-                      fontWeight: '700',
-                    }}>
+                    style={styles.headerText}>
                     {this.state.details.name}
                   </Text>
 
                   <Text
-                    style={{
-                      fontSize: 25,
-                      color: '#741929',
-                      fontWeight: '700',
-                      marginTop: 20,
-                    }}>
+                    style={styles.priceText}>
                     $122
                   </Text>
 
                   <Text
-                    style={{
-                      fontSize: 15,
-                      color: '#000000',
-                      fontWeight: '400',
-                      marginTop: 10,
-                    }}>
+                    style={styles.detailsText}>
                     {this.state.details.ecom_aca_product_units ? this.state.details.ecom_aca_product_units[0].unitDescription : ''}
-                    {/* 100 glass of 30 ml */}
                   </Text>
                   {this.state.details.ecom_aca_product_units && this.state.details.ecom_aca_product_units[0].savedPrices != null ?
                     <ImageBackground
-                      style={{
-                        width: 161,
-                        height: 26,
-                        marginTop: 20,
-                        right: 15,
-                      }}
+                      style={styles.discountContainer}
                       resizeMode={'cover'}
                       source={images.savedTag}
                       defaultSource={images.savedTag}>
-
                       <View
-                        style={{
-                          marginLeft: 15,
-                          marginTop: 2,
-                          flexDirection: 'row',
-                        }}>
+                        style={styles.discountContent}>
                         <Text
-                          style={{
-                            fontSize: 15,
-                            fontWeight: '700',
-                            color: '#fff',
-                            fontStyle: 'italic',
-                          }}>
+                          style={styles.discountText}>
                           You Save:
                         </Text>
                         <Text
-                          style={{
-                            fontSize: 15,
-                            fontWeight: '700',
-                            color: '#fff',
-                            fontStyle: 'italic',
-                          }}>
+                          style={styles.discountText}>
                           {' '}
-                          {/* $100.00 */}
                           {this.state.details.ecom_aca_product_units[0].savedPrices}
                         </Text>
                       </View>
-                    </ImageBackground> : null}
+                    </ImageBackground>
+                    : null}
 
                   <View
-                    style={{
-                      marginTop: '30%',
-                    }}>
+                    style={styles.quantity}>
                     <Text
-                      style={{
-                        color: '#000',
-                        fontSize: 15,
-                        fontWeight: '500',
-                      }}>
-                      Quantity:{this.state.details.ecom_aca_product_units ? this.state.details.ecom_aca_product_units[0].unitQty + this.state.details.ecom_aca_product_units[0].unitType : 0}
+                      style={styles.qtyText}>
+                      Quantity:
                     </Text>
-
                     <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-around',
-                      }}>
-                      <TouchableOpacity
-                        onPress={() => this.setState({ visibilityQuantity: 30 })}
-                        style={
-                          this.state.visibilityQuantity == 30
-                            ? styles.itemQuantitySelected
-                            : styles.itemQuantity
-                        }>
-                        <View
-                          style={{ flexDirection: 'row', alignItems: 'center' }}>
-                          <Text
-                            style={{
-                              fontSize: 15,
-                              color: '#99182E',
-                              fontWeight: '500',
-                            }}>
-                            30ml
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity
-                        onPress={() => this.setState({ visibilityQuantity: 60 })}
-                        style={
-                          this.state.visibilityQuantity == 60
-                            ? styles.itemQuantitySelected
-                            : styles.itemQuantity
-                        }>
-                        <View
-                          style={{ flexDirection: 'row', alignItems: 'center' }}>
-                          <Text
-                            style={{
-                              fontSize: 15,
-                              color: '#99182E',
-                              fontWeight: '500',
-                            }}>
-                            60ml
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity
-                        onPress={() => this.setState({ visibilityQuantity: 90 })}
-                        style={
-                          this.state.visibilityQuantity == 90
-                            ? styles.itemQuantitySelected
-                            : styles.itemQuantity
-                        }>
-                        <View
-                          style={{ flexDirection: 'row', alignItems: 'center' }}>
-                          <Text
-                            style={{
-                              fontSize: 15,
-                              color: '#99182E',
-                              fontWeight: '500',
-                            }}>
-                            90ml
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
+                      style={styles.unitTabContainer}>
+                      <FlatList
+                        data={this.state.details.ecom_aca_product_units ? this.state.details.ecom_aca_product_units : []}
+                        horizontal
+                        showsHorizontalScrollIndicator={true}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item, index }) => this.renderQuantity(item)}
+                      />
                     </View>
                   </View>
                 </View>
                 <View
-                  style={{
-                    width: '30%',
-                    alignItems: 'center',
-                    marginTop: '5%',
-                  }}>
+                  style={styles.prodImage}>
                   <Image
                     style={styles.mainProductImg}
                     resizeMode={'cover'}
@@ -390,126 +238,66 @@ export default class ProductDetailDrinks extends Component {
             </View>
 
             <View
-              style={{
-                backgroundColor: '#fff',
-                height: 200,
-                shadowColor: '#000',
-                shadowOffset: { width: 1, height: 1 },
-                shadowOpacity: 0.4,
-                shadowRadius: 3,
-                elevation: 5,
-                marginTop: 1,
-                //   borderRadius: 20,
-              }}>
-              <View style={{ margin: 15 }}>
+              style={styles.cart}>
+              <View style={styles.cartMargin}>
                 <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginTop: 10,
-                  }}>
+                  style={styles.cartBtnContainer}>
                   <View />
-                  <View
-                    style={{
-                      // marginTop: 20,
-                      // marginLeft: 20
-                      alignSelf: 'center',
-                    }}>
+                  <View>
                     <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        backgroundColor: '#AD1832',
-                        width: 192,
-                        height: 44,
-                        borderRadius: 20,
-                      }}>
+                      style={styles.cartContainer}>
                       <Text
-                        style={{
-                          flex: 1,
-                          fontSize: 15,
-                          alignItems: 'center',
-                          alignSelf: 'center',
-                          justifyContent: 'center',
-                          paddingLeft: 15,
-                          color: '#fff',
-                          fontWeight: '700',
-                        }}>
+                        style={styles.cartText}>
                         ADD TO CART
                       </Text>
                       <TouchableOpacity
-                        style={{
-                          backgroundColor: '#D46679',
-                          width: 61,
-                          height: 44,
-                          borderRadius: 20,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          alignSelf: 'center',
-                        }}>
+                        style={styles.cartIcon}>
                         <Icon
-                          name="card"
+                          name="add-cart"
                           size={25}
                           color="#fff"
-                        // style={{marginRight: 7}}
+                          style={{ marginRight: 7, alignSelf: 'center' }}
                         />
                       </TouchableOpacity>
                     </View>
                   </View>
-                  <TouchableOpacity style={{}}>
+                  <TouchableOpacity>
                     <Icon
                       name="favorite"
                       size={30}
                       color="#FF1405"
-                      style={{ marginRight: 7 }}
+                      style={styles.favorite}
                     />
                   </TouchableOpacity>
                 </View>
-                <View style={{ marginTop: 30 }}>
+                <View style={styles.descriptionContainer}>
                   <Text
-                    style={{
-                      color: '#424242',
-                      fontWeight: '400',
-                      fontSize: 15,
-                    }}>
+                    style={styles.descriptionText}>
                     {this.state.details.description}
-                    {/* Chivas Regal 12 years is a full-flavoured, rich and
-                    sophisticated Cuban rum with a high degree of class.
-                    deservedly popular rum. */}
+
                   </Text>
+                  {/* <RenderHtml contentWidth={width} source={source} /> */}
                 </View>
               </View>
             </View>
           </View>
 
-          <View style={{ margin: 0, marginTop: 20 }}>
-            <View style={{ margin: 15 }}>
+          <View style={styles.redeem}>
+            <View style={styles.redeemContainer}>
               <Text
-                style={{
-                  fontSize: 15,
-                  fontWeight: '500',
-                  color: '#4D4F50',
-                }}>
+                style={styles.redeemHeader}>
                 Redeemable in Bars
               </Text>
 
               <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: '400',
-                  color: '#ACACAC',
-                  marginTop: 5,
-                }}>
+                style={styles.redeemText}>
                 Select your nearest bar and redeem your drink
               </Text>
             </View>
 
             {this.state.vendors && this.state.vendors.length > 0 &&
               <View
-                style={{
-                  backgroundColor: '#fff',
-                  marginTop: 15,
-                }}>
+                style={styles.vendor}>
 
                 <FlatList
                   data={this.state.vendors}
@@ -519,294 +307,35 @@ export default class ProductDetailDrinks extends Component {
                   keyExtractor={(item, index) => index.toString()}
                   renderItem={({ item, index }) => this.renderItem(item, index)}
                 />
-                {/* <View style={{ margin: 15 }}>
-                <TouchableOpacity
-                  style={{
-                    flexDirection: 'row',
-                  }}
-                  onPress={() =>
-                    // this.props.navigation.navigate('ProductDetailBars')
-                    // this.props.navigation.navigate('ProductDetailBars')
-                    console.log('go to bar details')
-                  }>
-                  <View>
-                    <Image
-                      style={{
-                        width: 96,
-                        height: 65,
-                      }}
-                      resizeMode={'cover'}
-                      source={images.barProduct}
-                      defaultSource={images.barProduct}
-                    />
-                  </View>
-
-                  <View style={{ margin: 0, marginLeft: 10 }}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        // alignItems: 'center',
-                        // marginTop: 5,
-                      }}>
-                      <Icon name="wine-bar" size={20} color="#711323" />
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          fontWeight: '700',
-                          color: '#4D4F50',
-                          marginLeft: 5,
-                        }}>
-                        Charlie’s Bar
-                      </Text>
-                    </View>
-
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        // justifyContent: 'space-between',
-                        // alignItems: 'center',
-                        marginTop: 5,
-                      }}>
-                      <Icon name="place" size={20} color="#711323" />
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          fontWeight: '500',
-                          color: '#4D4F50',
-                          marginLeft: 5,
-                        }}>
-                        St 07, Buliding
-                      </Text>
-                    </View>
-
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        // justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginTop: 5,
-                      }}>
-                      <Icon name="directions-run" size={20} color="#711323" />
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          fontWeight: '500',
-                          color: '#4D4F50',
-                          marginLeft: 5,
-                        }}>
-                        2.8Km
-                      </Text>
-                    </View>
-                  </View>
-                  <View
-                    style={{
-                      // margin: 10,
-                      marginLeft: 30,
-                      flex: 1,
-                      justifyContent: 'center',
-                    }}>
-                    <View
-                      style={{
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexDirection: 'row',
-                      }}>
-                      <Icon
-                        name="fiber-manual-record"
-                        size={18}
-                        color="#38C720"
-                      />
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: '#38C720',
-                          fontWeight: '500',
-                          marginLeft: 5,
-                        }}>
-                        Open
-                      </Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.productUnderline} /> */}
-
-
-                {/* <View style={{ margin: 15 }}>
-                <TouchableOpacity
-                  style={{
-                    flexDirection: 'row',
-                  }}
-                  onPress={() =>
-                    // this.props.navigation.navigate('ProductDetailBars')
-                    console.log('go to bar details')
-                  }>
-                  <View>
-                    <Image
-                      style={{
-                        width: 96,
-                        height: 65,
-                      }}
-                      resizeMode={'cover'}
-                      source={images.barProduct}
-                      defaultSource={images.barProduct}
-                    />
-                  </View>
-
-                  <View style={{ margin: 0, marginLeft: 10 }}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        // alignItems: 'center',
-                        // marginTop: 5,
-                      }}>
-                      <Icon name="wine-bar" size={20} color="#711323" />
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          fontWeight: '700',
-                          color: '#4D4F50',
-                          marginLeft: 5,
-                        }}>
-                        Charlie’s Bar
-                      </Text>
-                    </View>
-
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        // justifyContent: 'space-between',
-                        // alignItems: 'center',
-                        marginTop: 5,
-                      }}>
-                      <Icon name="place" size={20} color="#711323" />
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          fontWeight: '500',
-                          color: '#4D4F50',
-                          marginLeft: 5,
-                        }}>
-                        St 07, Buliding
-                      </Text>
-                    </View>
-
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        // justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginTop: 5,
-                      }}>
-                      <Icon name="directions-run" size={20} color="#711323" />
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          fontWeight: '500',
-                          color: '#4D4F50',
-                          marginLeft: 5,
-                        }}>
-                        2.8Km
-                      </Text>
-                    </View>
-                  </View>
-                  <View
-                    style={{
-                      // margin: 10,
-                      marginLeft: 30,
-                      flex: 1,
-                      justifyContent: 'center',
-                    }}>
-                    <View
-                      style={{
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexDirection: 'row',
-                      }}>
-                      <Icon
-                        name="fiber-manual-record"
-                        size={18}
-                        color="#FF2121"
-                      />
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: '#FF2121',
-                          fontWeight: '500',
-                          marginLeft: 5,
-                        }}>
-                        Closed
-                      </Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.productUnderline} /> */}
-
               </View>
             }
           </View>
 
           <View
-            style={{
-              marginTop: '10%',
-              flex: 1,
-              justifyContent: 'flex-end',
-            }}>
+            style={styles.bottomContainer}>
             <View
-              style={{
-                shadowColor: '#000',
-                shadowOffset: {
-                  width: 0,
-                  height: 5,
-                },
-                shadowOpacity: 1,
-                shadowRadius: 10,
-
-                elevation: 5,
-                backgroundColor: '#fff',
-                borderTopLeftRadius: 20,
-                borderTopRightRadius: 20,
-                overflow: 'hidden',
-              }}>
-              <View style={{ margin: 20 }}>
+              style={styles.bottomSubContainer}>
+              <View style={styles.textMsg}>
                 <View>
                   <Text
-                    style={{
-                      color: '#ACACAC',
-                      fontWeight: '500',
-                    }}>
+                    style={styles.textDetails}>
                     Item added to cart successfully
                   </Text>
                 </View>
 
-                <View style={{ marginTop: 20 }}>
+                <View style={styles.textMsg}>
                   <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      marginTop: 5,
-                    }}>
+                    style={styles.header}>
                     <Text
-                      style={{
-                        fontSize: 15,
-                        fontWeight: '500',
-                        color: '#000',
-                      }}>
-                      Chivas Regal 12
+                      style={styles.productText}>
+                      {this.state.details.name}
                     </Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={styles.cartQuantity}>
                       <TouchableOpacity>
                         <Icon name="remove" size={20} color="#4D4F50" />
                       </TouchableOpacity>
                       <Text
-                        style={{
-                          fontSize: 15,
-                          fontWeight: '500',
-                          color: '#000',
-                        }}>
+                        style={styles.qty}>
                         {' '}
                         1{' '}
                       </Text>
@@ -816,11 +345,11 @@ export default class ProductDetailDrinks extends Component {
                     </View>
                   </View>
 
-                  <View style={{ marginTop: '10%', marginBottom: 10 }}>
+                  <View style={styles.cartButton}>
                     <TouchableOpacity
                       style={styles.save}
                       onPress={() => this.props.navigation.navigate('MyCard')}>
-                      <Text style={{ color: '#fff', fontSize: 15 }}>
+                      <Text style={styles.cartBtnText}>
                         VIEW CART
                       </Text>
                     </TouchableOpacity>
@@ -836,8 +365,203 @@ export default class ProductDetailDrinks extends Component {
 }
 
 const styles = StyleSheet.create({
+  productDetailsContainer: {
+    backgroundColor: ThemeColors.CLR_WHITE,
+    shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    elevation: 5,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  backArrowContainer: {
+    margin: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  headerContainer: {
+    width: '70%',
+  },
+  headerText: {
+    fontFamily: FontFamily.ROBOTO_REGULAR,
+    fontSize: 25,
+    color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+    fontWeight: '700',
+  },
+  productDetails: {
+    flexDirection: 'row',
+    margin: 15,
+  },
+  priceText: {
+    fontSize: 25,
+    color: '#741929',
+    fontWeight: '700',
+    fontFamily: FontFamily.ROBOTO_REGULAR,
+    marginTop: 20,
+  },
+  detailsText: {
+    fontSize: 15,
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+    fontWeight: '400',
+    marginTop: 10,
+  },
+  discountContainer: {
+    width: 180,
+    height: 30,
+    marginTop: 20,
+    right: 15,
+  },
+  discountContent: {
+    marginLeft: 15,
+    marginTop: 2,
+    flexDirection: 'row',
+  },
+  discountText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: ThemeColors.CLR_WHITE,
+    fontStyle: 'italic',
+  },
+  quantity: {
+    marginTop: '30%',
+  },
+  qtyText: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+    fontWeight: "500",
+    fontSize: 15
+  },
+  qtyColor: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    color: '#99182E',
+    fontWeight: "500",
+    fontSize: 15
+  },
+  unitTabContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  prodImage: {
+    width: '30%',
+    alignItems: 'center',
+    marginTop: '5%',
+  },
+  cart: {
+    backgroundColor: '#fff',
+    height: 200,
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    elevation: 5,
+    marginTop: 1,
+  },
+  cartContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#AD1832',
+    width: 192,
+    borderRadius: 20,
+  },
+  cartMargin: { margin: 15 },
+  cartBtnContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  cartText: {
+    fontSize: 15,
+    alignSelf: 'center',
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    paddingLeft: 10,
+    color: ThemeColors.CLR_WHITE,
+    fontWeight: '700',
+  },
+  cartIcon: {
+    backgroundColor: '#D46679',
+    width: 61,
+    height: 44,
+    borderRadius: 20,
+    justifyContent: 'center',
+  },
+  favorite: {
+    marginVertical: 12
+  },
+  redeem: {
+    margin: 0,
+    marginTop: 20
+  },
+  redeemContainer: {
+    margin: 15
+  },
+  redeemHeader: {
+    fontFamily: FontFamily.ROBOTO_REGULAR,
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#4D4F50',
+  },
+  redeemText: {
+    fontFamily: FontFamily.ROBOTO_REGULAR,
+    fontSize: 12,
+    fontWeight: '400',
+    color: '#ACACAC',
+    marginTop: 5,
+  },
+  vendor: {
+    backgroundColor: ThemeColors.CLR_WHITE,
+    marginTop: 15,
+  },
+  vendorContainer: {
+    margin: 14
+  },
+  vendorImage: {
+    width: 65,
+    height: 50,
+  },
+  vendorDetails:
+  {
+    margin: 0,
+    marginLeft: 5
+  },
+  vendorRow: {
+    flexDirection: 'row',
+  },
+  vendorTitle: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#030303',
+  },
+  vendorText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#4D4F50',
+    fontFamily: FontFamily.TAJAWAL_REGULAR
+  },
+  vendorProductStatus: {
+    margin: 10,
+    flex: 1,
+    justifyContent: 'center',
+  },
+  productStatusText: {
+    fontSize: 14,
+    fontFamily: FontFamily.ROBOTO_REGULAR,
+    fontWeight: '500',
+    marginLeft: 5,
+  },
+  open: {
+    color: '#38C720',
+  },
+  close: {
+    color: '#FF2121',
+  },
   productImg: {
-    //   width:361,
     height: 241,
   },
   productView: {
@@ -876,20 +600,76 @@ const styles = StyleSheet.create({
   itemQuantity: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 10,
+    marginTop: 15,
+    margin: 5,
     padding: 10,
   },
   itemQuantitySelected: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
+    marginTop: 15,
+    margin: 5,
     borderWidth: 2,
-    borderRadius: 10,
+    borderRadius: 20,
     borderColor: '#A1172F',
     width: 87,
-    height: 25,
     alignSelf: 'center',
     justifyContent: 'center',
+  },
+  vendorItem: {
+    flexDirection: 'row',
+  },
+  bottomContainer: {
+    marginTop: '10%',
+  },
+  bottomSubContainer: {
+    shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 10,
+    elevation: 4,
+    backgroundColor: ThemeColors.CLR_WHITE,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    overflow: 'hidden',
+  },
+  textMsg: {
+    margin: 20
+  },
+  textDetails: {
+    color: '#ACACAC',
+    fontWeight: '500',
+    fontSize: 14,
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+  },
+  productText: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    fontSize: 15,
+    fontWeight: '500',
+    color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+  },
+  cartQuantity: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  qty: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    fontSize: 15,
+    fontWeight: '500',
+    color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+  },
+  cartButton: {
+    marginTop: 30,
+    marginBottom: 10
+  },
+  descriptionContainer: { marginTop: 30 },
+  cartBtnText: {
+    color: ThemeColors.CLR_WHITE,
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    fontWeight: '700',
+    fontSize: 18
   },
   productUnderline: {
     height: 0.7,
