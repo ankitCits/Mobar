@@ -235,7 +235,7 @@ class Product extends Component {
           {/* Header Ends */}
           <>
             {/* Sort and Filter */}
-            <View style={{ flexDirection: 'row' }}>
+            {/* <View style={{ flexDirection: 'row' }}>
               <View style={styles.filterView}>
                 <View
                   style={{
@@ -264,7 +264,7 @@ class Product extends Component {
                   </TouchableOpacity>
                 </View>
               </View>
-            </View>
+            </View> */}
             {/* Sort and Filter Ends */}
 
           </>
