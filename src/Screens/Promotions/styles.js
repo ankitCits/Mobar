@@ -1,17 +1,38 @@
 import { StyleSheet } from "react-native";
+import { FontFamily } from "../../Theme/FontFamily";
+import { ThemeColors } from "../../Theme/ThemeColors";
 
 const styles = StyleSheet.create({
-    promotions2Img: {
-        borderBottomLeftRadius: 15,
-        borderBottomRightRadius: 15,
-        width: 350,
-        height: 181,
+    container: {
+        flex: 1,
+        backgroundColor: ThemeColors.CLR_WHITE,
     },
-    promotions1Img: {
-        borderBottomLeftRadius: 15,
-        borderBottomRightRadius: 15,
-        width: 350,
-        height: 223,
+    headerContainer: {
+        backgroundColor: ThemeColors.CLR_WHITE,
+        height: 60,
+        shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+        shadowOffset: { width: 1, height: 1 },
+        shadowOpacity: 0.4,
+        shadowRadius: 3,
+        elevation: 5,
+    },
+    header: {
+        margin: 12,
+        flexDirection: 'row',
+    },
+    headerLeft: { marginLeft: 10 },
+    title: {
+        fontFamily: FontFamily.ROBOTO_REGULAR,
+        fontSize: 20,
+        color: '#4D4F50',
+        fontWeight: '500'
+    },
+    cardContainer: {
+        margin: 5,
+    },
+    banner: {
+        marginTop: 15,
+        alignItems: 'center',
     },
 });
 export default styles;

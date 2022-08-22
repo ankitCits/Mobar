@@ -15,12 +15,15 @@ export default class Drinks extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: props.data
+      data: props.data,
+      hostUrl:props.hostUrl
     };
   }
 
   render() {
-    console.log('=========>>>', this.state.data);
+    this.state.data.map(x=>{
+      console.log("Images",this.state.hostUrl+x.ecom_ac_product.images); 
+    })
     return (
       <SafeAreaView
         style={{
@@ -31,6 +34,7 @@ export default class Drinks extends Component {
           {this.state.data &&
             this.state.data.length > 0 ? (
             this.state.data.map(item => (
+              
               <View>
                 <TouchableOpacity
                   key={item.productId}
@@ -52,7 +56,8 @@ export default class Drinks extends Component {
                           fontWeight: '700',
                           color: '#4D4F50',
                         }}>
-                        Chivas Regal 12
+                          {item.ecom_ac_product.name}
+                        
                       </Text>
                     </View>
 
@@ -136,10 +141,9 @@ export default class Drinks extends Component {
 
                   <View style={styles.productInnerView}>
                     <Image
-                      style={styles.productImg}
                       resizeMode={'cover'}
-                      source={images.product2}
-                      defaultSource={images.product2}
+                      source={{ uri: `${this.state.hostUrl+item.ecom_ac_product.images}`}}
+                      //defaultSource={images.product2}
                     />
                     <TouchableOpacity style={styles.favIcon}>
                       {/* <Icon name="favorite" size={25} color="#FF1405" /> */}
