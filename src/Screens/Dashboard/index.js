@@ -28,7 +28,6 @@ import { FontFamily } from '../../Theme/FontFamily';
 import { setUserDetail } from '../../Redux/actions/auth';
 import { getUserDetails } from '../../api/auth';
 import images from '../../assets/images';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
 const LazyPlaceholder = ({ route }) => (
@@ -409,4 +408,5 @@ const styles = StyleSheet.create({
         width: 350,
         height: 181,
     },
+    
 })

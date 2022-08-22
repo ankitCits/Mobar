@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -14,11 +14,13 @@ import NoContentFound from '../../../Component/NoContentFound';
 export default class Drinks extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      data: props.data
+    };
   }
 
   render() {
-    console.log('=========>>>', this.props.route);
+    console.log('=========>>>', this.state.data);
     return (
       <SafeAreaView
         style={{
@@ -26,16 +28,17 @@ export default class Drinks extends Component {
           backgroundColor: '#fff',
         }}>
         <>
-          {this.props.route.params.drinks &&
-          this.props.route.params.drinks.length > 0 ? (
-            this.props.route.params.drinks.map(item => (
+          {this.state.data &&
+            this.state.data.length > 0 ? (
+            this.state.data.map(item => (
               <View>
                 <TouchableOpacity
+                  key={item.productId}
                   style={styles.productView}
                   onPress={() =>
                     this.props.navigation.navigate('ProductDetailDrinks')
                   }>
-                  <View style={{margin: 5, marginLeft: 10}}>
+                  <View style={{ margin: 5, marginLeft: 10 }}>
                     <View
                       style={{
                         flexDirection: 'row',
@@ -53,7 +56,7 @@ export default class Drinks extends Component {
                       </Text>
                     </View>
 
-                    <View style={{flexDirection: 'row'}}>
+                    <View style={{ flexDirection: 'row' }}>
                       <Text
                         style={{
                           fontSize: 12,
@@ -165,7 +168,7 @@ const styles = StyleSheet.create({
     height: 115,
     width: '90%',
     shadowColor: '#000',
-    shadowOffset: {width: 1, height: 1},
+    shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
     shadowRadius: 10,
     borderRadius: 10,
@@ -180,7 +183,7 @@ const styles = StyleSheet.create({
     height: 115,
     width: 121,
     shadowColor: '#000',
-    shadowOffset: {width: 1, height: 1},
+    shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
     shadowRadius: 10,
     borderRadius: 10,

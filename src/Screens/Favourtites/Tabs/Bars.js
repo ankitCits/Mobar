@@ -4,7 +4,6 @@ import {
   View,
   SafeAreaView,
   Image,
-  Linking,
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
@@ -14,11 +13,15 @@ import NoContentFound from '../../../Component/NoContentFound';
 export default class Bars extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      data: props.data,
+      hostUrl: props.hostUrl
+    };
   }
 
   render() {
-    console.log('=========>>>', this.props.route.params);
+    console.log('=========>>>', this.state.data);
+
     return (
       <SafeAreaView
         style={{
@@ -26,10 +29,11 @@ export default class Bars extends Component {
           backgroundColor: '#fff',
         }}>
         <>
-          {this.props.route.params.bars && this.props.route.params.bars.length > 0 ? (
-            this.props.route.params.bars.map(item => (
+          {this.state.data && this.state.data.length > 0 ? (
+            this.state.data.map(item => (
               <View>
                 <TouchableOpacity
+                  key={item.vendorId}
                   style={styles.productView}
                   onPress={() =>
                     // console.log("++++",`${this.props.route.params.hostUrl+item.ecom_ae_vendor.images}`)
@@ -44,7 +48,7 @@ export default class Bars extends Component {
                         height: 75,
                       }}
                       resizeMode={'cover'}
-                      source={{ uri: `${this.props.route.params.hostUrl + item.ecom_ae_vendor.images}` }}
+                      source={{ uri: `${this.state.hostUrl + item.ecom_ae_vendor.images}` }}
                     />
                   </View>
                   <View style={{ margin: 5, marginLeft: 15 }}>
