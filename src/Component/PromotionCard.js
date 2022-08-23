@@ -21,6 +21,7 @@ export default class PromotionCard extends React.Component {
       index,
       productUnit = this.props.item.ecom_ac_product.ecom_aca_product_units,
     } = this.props;
+    console.log("PromotionCard > Item",item);
     return (
       <>
         <View style={styles.container}>
@@ -64,28 +65,10 @@ export default class PromotionCard extends React.Component {
                     style={styles.discountPrice}>
                     {productUnit[0].unitDiscountPrice + ' ' + productUnit[0].unitDiscountType}
                   </Text> :
-                  <Text></Text>
+                  <Text style={styles.discountPrice}></Text>
                 }
               </View>
             </View>
-            {/* <View
-                style={styles.qtyContainer}>
-                <TouchableOpacity
-                  //onPress={() => this.setState({ modalVisible: true })}
-                  style={styles.icon}>
-                  <Icon name="remove" size={18} color="#fff" />
-                </TouchableOpacity>
-
-                <Text
-                  style={styles.inputQty}>
-                  3
-                </Text>
-                <TouchableOpacity
-                  //onPress={() => this.setState({ modalVisible: true })}
-                  style={styles.icon}>
-                  <Icon name="add" size={18} color="#fff" />
-                </TouchableOpacity>
-              </View> */}
           </View>
         </View>
       </>
@@ -154,20 +137,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#969696',
     fontWeight: '400',
-    marginTop: 5,
+    margin: 5,
     textDecorationLine: 'line-through',
-  },
-  icon: {
-    backgroundColor: '#A1172F',
-    padding: 2,
-    borderRadius: 20,
-  },
-  inputQty: {
-    fontFamily: FontFamily.TAJAWAL_REGULAR,
-    fontSize: 19,
-    fontWeight: '500',
-    color: '#A1172F',
-    marginLeft: 10,
-    marginRight: 10,
   },
 });

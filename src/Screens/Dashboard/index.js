@@ -86,10 +86,14 @@ class Dashboard extends Component {
         }
     }
 
-    getTabDetail = () => {
+    getTabDetail = async () => {
         let myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
         myHeaders.append('A_Key', A_KEY);
+        const token = await getAccessToken();
+        if (token) {
+            myHeaders.append('Token', token);
+        }
         let raw = JSON.stringify({
             vendorId: 4,
         });
@@ -104,12 +108,14 @@ class Dashboard extends Component {
             .then(result => {
                 if (result.response) {
                     const categories = result.response.result.drinkCategory;
+                    console.log("Dashboard > Category",categories);
                     categories.forEach((element, index) => {
                         categories[index].key = index;
                     });
                     this.setState({ routes: categories });
                     this.setState({ drinkObj: result.response.result })
                     this.setState({ loader: false });
+                    // console.log("Dash board > Drink Obj",this.state.drinkObj.drinkCategory);
                 }
                 if (result.errors) {
                     this.setState({ loader: false });
