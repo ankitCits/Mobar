@@ -108,7 +108,7 @@ class Dashboard extends Component {
             .then(result => {
                 if (result.response) {
                     const categories = result.response.result.drinkCategory;
-                    console.log("Dashboard > Category",categories);
+                    console.log("Dashboard > Category", categories);
                     categories.forEach((element, index) => {
                         categories[index].key = index;
                     });
@@ -414,5 +414,5 @@ const styles = StyleSheet.create({
         width: 350,
         height: 181,
     },
-    
+
 })

@@ -7,6 +7,7 @@ import {
   Linking,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import images from '../../../assets/images';
 import NoContentFound from '../../../Component/NoContentFound';
@@ -17,16 +18,26 @@ export default class Drinks extends Component {
     super(props);
     this.state = {
       data: props.data,
-      hostUrl:props.hostUrl
     };
   }
 
-  removeFavorite=(id)=>{
-    console.log("Id",id);
+  removeFavorite = (id) => {
+    console.log("Id", id);
+  }
+
+  handleRedirect = (item) => {
+    if (item.ecom_ac_product && item.ecom_ac_product.productId) {
+      this.props.navigation.navigate('ProductDetailDrinks', { id: item.ecom_ac_product.productId });
+    }
   }
 
   render() {
-   console.log("Favorites > Drinks > Data",this.state.data);
+    const {
+      hostUrl,
+      navigation,
+      index
+    } = this.props;
+    console.log("Favorites > Drinks > Data", this.state.data);
     return (
       <SafeAreaView
         style={{
@@ -34,17 +45,15 @@ export default class Drinks extends Component {
           backgroundColor: '#fff',
         }}>
         <>
-          {this.state.data &&
-            this.state.data.length > 0 ? (
+          {this.state.data && this.state.data.length > 0 ? (
             this.state.data.map(item => (
-              
               <View>
                 <TouchableOpacity
-                  key={item.productId}
+                  key={index}
                   style={styles.productView}
-                  onPress={() =>
-                    this.props.navigation.navigate('ProductDetailDrinks')
-                  }>
+                  onPress={() => {
+                    this.handleRedirect(item);
+                  }}>
                   <View style={styles.itemContainer}>
                     <View
                       style={styles.header}>
@@ -52,7 +61,8 @@ export default class Drinks extends Component {
                         <Text
                           style={styles.title}>
                           {item.ecom_ac_product.name}
-                        </Text> : <Text></Text>
+                        </Text> :
+                        <Text></Text>
                       }
                     </View>
 
@@ -67,6 +77,8 @@ export default class Drinks extends Component {
                           color: '#4D4F50',
                           fontWeight: '400',
                           marginLeft: 10,
+                          flexDirection: 'row',
+                          alignItems: 'center',
                         }}>
                         350ml
                       </Text>
@@ -135,23 +147,23 @@ export default class Drinks extends Component {
                       <Image
                         style={{ width: 85, height: 85 }}
                         resizeMode={'cover'}
-                        source={{ uri: `${this.state.hostUrl + item.ecom_ac_product.images}` }}
+                        source={{ uri: `${hostUrl + item.ecom_ac_product.images}` }}
                       //defaultSource={images.product2}
-                      /> : 
+                      /> :
                       <Image
-                      style={{ width: 85, height: 85 }}
-                      resizeMode={'cover'}
-                      source={images.product2}
-                      defaultSource={images.product2}
-                    />
+                        style={{ width: 85, height: 85 }}
+                        resizeMode={'cover'}
+                        source={images.product2}
+                        defaultSource={images.product2}
+                      />
                     }
-                    
+
                     <TouchableOpacity
-                     style={styles.favIcon}
-                     onPress={() => {
-                      this.removeFavorite(item.wishlistId);
-                  }}
-                     >
+                      style={styles.favIcon}
+                      onPress={() => {
+                        this.removeFavorite(item.wishlistId);
+                      }}
+                    >
                       {/* <Icon name="favorite" size={25} color="#FF1405" /> */}
                       <Image
                         resizeMode={'cover'}
@@ -167,7 +179,7 @@ export default class Drinks extends Component {
             <NoContentFound title="No Data Found" />
           )}
         </>
-      </SafeAreaView>
+      </SafeAreaView >
     );
   }
 }
@@ -175,7 +187,7 @@ export default class Drinks extends Component {
 const styles = StyleSheet.create({
   productView: {
     backgroundColor: ThemeColors.CLR_WHITE,
-    height: 115,
+    height: 130,
     width: '90%',
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 1 },
@@ -188,45 +200,36 @@ const styles = StyleSheet.create({
     marginTop: 15,
     justifyContent: 'space-between',
   },
-  itemContainer:{ 
-    margin: 5, 
-    marginLeft: 10 
+  itemContainer: {
+    margin: 5,
+    marginLeft: 10
   },
-  header:{
+  header: {
     flexDirection: 'row',
     marginTop: 5,
   },
-  title:{
-    fontFamily:FontFamily.TAJAWAL_REGULAR,
+  title: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
     fontSize: 15,
     fontWeight: '700',
     color: '#4D4F50',
   },
-  qtyContainer:{ flexDirection: 'row' },
-  detailText:{
-    fontFamily:FontFamily.TAJAWAL_REGULAR,
+  qtyContainer: {
+    flexDirection: 'row'
+  },
+  detailText: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
     fontSize: 14,
     color: ThemeColors.CLR_DARK_GREY,
     fontWeight: '400',
   },
   productInnerView: {
-    backgroundColor: ThemeColors.CLR_WHITE,
-    height: 115,
-    width: 121,
-    shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-    borderRadius: 10,
-    elevation: 5,
-    alignItems: 'center',
-    //justifyContent: 'center',
-    //alignSelf: 'flex-end',
     flexDirection: 'row',
+    alignItems: 'center',
+    width: 125,
   },
   favIcon: {
     alignSelf: 'flex-start',
-    //marginLeft: '20%',
     marginTop: 8,
   },
 });

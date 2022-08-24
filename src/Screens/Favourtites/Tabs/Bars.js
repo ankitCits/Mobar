@@ -1,3 +1,4 @@
+import { style } from 'deprecated-react-native-prop-types/DeprecatedImagePropType';
 import React, { Component } from 'react';
 import {
   Text,
@@ -20,8 +21,6 @@ export default class Bars extends Component {
   }
 
   render() {
-    console.log('=========>>>', this.state.data);
-
     return (
       <SafeAreaView
         style={{
@@ -36,11 +35,9 @@ export default class Bars extends Component {
                   key={item.vendorId}
                   style={styles.productView}
                   onPress={() =>
-                    // console.log("++++",`${this.props.route.params.hostUrl+item.ecom_ae_vendor.images}`)
-                    // this.props.navigation.navigate('ProductDetailBars',{id:item.ecom_ae_vendor.vendorId})
-                    // this.props.navigation.navigate('ProductDetailBars')
-                    console.log('go to bar details')
+                    this.props.navigation.navigate('ProductDetailBars', { id: item.ecom_ae_vendor.vendorId })
                   }>
+
                   <View style={styles.productInnerView}>
                     <Image
                       style={{
@@ -51,26 +48,16 @@ export default class Bars extends Component {
                       source={{ uri: `${this.state.hostUrl + item.ecom_ae_vendor.images}` }}
                     />
                   </View>
-                  <View style={{ margin: 5, marginLeft: 15 }}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        // marginTop: 5,
-                      }}>
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          fontWeight: '700',
-                          color: '#424242',
-                          fontFamily: 'Roboto-Regular',
-                        }}>
+
+                  <View style={{ margin: 5, marginLeft: 15, flexDirection: 'column', flex: 1 }}>
+                    {/* Name */}
+                    <View style={{ flexDirection: 'row' }}>
+                      <Text style={styles.vendorName}>
                         {item.ecom_ae_vendor.vendorShopName}
                       </Text>
                     </View>
 
-                    <View style={{ width: '80%', marginTop: 5 }}>
+                    <View style={{ width: '80%', marginTop: 5, flexDirection: 'row' }}>
                       <Text
                         style={{
                           fontSize: 12,
@@ -84,12 +71,12 @@ export default class Bars extends Component {
                     <View
                       style={{
                         flex: 1,
-                        justifyContent: 'space-between',
                         flexDirection: 'row',
-                        alignItems: 'flex-end',
+                        justifyContent: 'space-evenly',
+                        alignItems: 'flex-end'
                       }}>
                       <View
-                        style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        style={{ flexDirection: 'row', alignItems: 'center', }}>
                         <Icon
                           name="fiber-manual-record"
                           size={18}
@@ -102,27 +89,17 @@ export default class Bars extends Component {
                             fontWeight: '500',
                             marginLeft: 5,
                           }}>
-                          open
+                          Open
                         </Text>
                       </View>
 
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          left: '50%',
-                        }}>
+                      <View style={styles.distanceContainer}>
                         <Icon name="directions-run" size={20} color="#A1172F" />
-                        <Text
-                          style={{
-                            color: '#424242',
-                            fontSize: 14,
-                            fontWeight: '500',
-                            marginLeft: 5,
-                          }}>
+                        <Text style={styles.distanceText}>
                           {(item.ecom_ae_vendor.distance).toFixed(2)}Km
                         </Text>
                       </View>
+
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -138,9 +115,14 @@ export default class Bars extends Component {
 }
 
 const styles = StyleSheet.create({
+  vendorName: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#424242',
+    fontFamily: 'Roboto-Regular',
+  },
   productView: {
     backgroundColor: '#fff',
-    height: 115,
     width: '90%',
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 1 },
@@ -155,8 +137,8 @@ const styles = StyleSheet.create({
   },
   productInnerView: {
     backgroundColor: '#fff',
-    height: 115,
-    width: 121,
+    height: 120,
+    width: 120,
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
@@ -173,4 +155,14 @@ const styles = StyleSheet.create({
     marginLeft: '20%',
     marginTop: 5,
   },
+  distanceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  distanceText: {
+    color: '#424242',
+    fontSize: 14,
+    fontWeight: '500',
+    marginLeft: 5,
+  }
 });

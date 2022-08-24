@@ -43,11 +43,13 @@ export default class Favourites extends Component {
   }
 
   fetchData = async () => {
-    let token = await getAccessToken(token);
-    var myHeaders = new Headers();
+    const myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('A_Key', A_KEY);
-    myHeaders.append('Token', `${token}`);
+    const token = await getAccessToken();
+    if (token) {
+        myHeaders.append('Token', token);
+    }
 
     var raw = JSON.stringify({
       latitude: 1.28668,

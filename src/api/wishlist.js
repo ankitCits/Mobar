@@ -42,7 +42,6 @@ export const addToWishlist = (postData) => {
             body: JSON.stringify(postData),
             redirect: 'follow',
         }).then(result => result.json()).then(responseDetail => {
-            console.log("Wishlist > addToWishList > response ",responseDetail);
             if (responseDetail.response && responseDetail.response.status == 'SUCCESS') {
                 resolve(responseDetail.response);
             }

@@ -16,31 +16,42 @@ import { addToWishlist, removeToWishlist } from '../api/wishlist';
 export default class CategoryCard extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            isFavorite: (this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId)
+        }
     }
 
-    removeFavorite = async (id, index) => {
-        //console.log("CategoryCard > WishlistID", id);
-        const data ={
-            wishlistId:id
+    removeFavorite = async (id, item) => {
+        try {
+            const data = {
+                wishlistId: id
+            }
+            const response = await removeToWishlist(data);
+            // item.ecom_ba_wishlist = null;
+            this.setState({ isFavorite: false })
+            console.log("removeFavorite response", response);
+        } catch (error) {
+            console.log("CategoryCard > removeFavorite > Catch", error);
         }
-        const response = await removeToWishlist(data);
-        console.log("response",response);
     }
 
     addFavorite = async (id) => {
-        try{
-        console.log("CategoryCard > addFav > ItemID", id, index);
-        const data = {
-            productId:id,
-            comboId:0,
-            vendorId:0
-        };
-        const response = await addToWishlist(data);
-        if(response){
-            console.log("CategoryCard > addFavorite > response",response);
-        }
-        }catch(error){
-            console.log("CategoryCard > addFavorite > Catch",error);
+        try {
+            const data = {
+                productId: id,
+                comboId: 0,
+                vendorId: 0
+            };
+            const response = await addToWishlist(data);
+            console.log(response);
+            // item.ecom_ba_wishlist = {
+            //     "wishlistId": id,
+            //     "wishlistFor": "Drinks"
+            // }
+            this.setState({ isFavorite: true })
+
+        } catch (error) {
+            console.log("CategoryCard > addFavorite > Catch", error);
         }
     }
 
@@ -50,9 +61,8 @@ export default class CategoryCard extends React.Component {
             hostUrl,
             navigation,
             index,
-            
         } = this.props;
-        console.log("CCard > Item",item);
+        // console.log("CCard > Item", item);
         return (
             <>
                 <TouchableOpacity
@@ -85,14 +95,14 @@ export default class CategoryCard extends React.Component {
                             </TouchableOpacity> */}
                             <TouchableOpacity
                                 onPress={() => {
-                                    item.ecom_ba_wishlist && item.ecom_ba_wishlist.wishlistId
-                                        ? this.removeFavorite(item.ecom_ba_wishlist.wishlistId, index)
+                                    this.state.isFavorite
+                                        ? this.removeFavorite(item.ecom_ba_wishlist.wishlistId, item)
                                         : this.addFavorite(item.productId, index);
                                 }}>
                                 <Image
                                     resizeMode={'cover'}
-                                    source={item.ecom_ba_wishlist && item.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
-                                    defaultSource={item.ecom_ba_wishlist && item.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
+                                    source={this.state.isFavorite ? images.heartFill : images.heart}
+                                    defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
                                     style={styles.favIcon}
                                 />
                             </TouchableOpacity>

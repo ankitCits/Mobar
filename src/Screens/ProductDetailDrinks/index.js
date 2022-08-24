@@ -17,17 +17,11 @@ import { fetchProductDetails } from '../../api/product';
 import images from '../../assets/images';
 import { FontFamily } from '../../Theme/FontFamily';
 import HTMLView from 'react-native-htmlview';
-//import RenderHtml from 'react-native-render-html';
-//const { width } = useWindowDimensions();
-// const source = {
-//   html: `
-// <p style='text-align:center;'>
-//   Hello World!
-// </p>`
-// };
+
 export default class ProductDetailDrinks extends Component {
   constructor(props) {
     super(props);
+    console.log(props.route.params.id);
     this.state = {
       modalVisible: true,
       visibilityQuantity: 30,
