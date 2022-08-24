@@ -16,6 +16,10 @@ import StarRating from './StarRatings';
 class BarCard extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            data:this.props.item,
+            isFavorite: (this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId)
+        }
     }
 
     goToDetails = (item) => {
@@ -23,35 +27,37 @@ class BarCard extends Component {
         this.props.navigation.navigate('ProductDetailBars', { 'id': item.vendorId });
     }
 
-    removeFavorite = async (id,)=>{
+    removeFavorite = async (id)=>{
         console.log("BarCard > removeFavorite > WId",id);
         const data ={
             wishlistId:id
         }
         try{
         const response = await removeToWishlist(data);
-        console.log("response",response);
+        this.setState({ isFavorite: false });
+        this.setState(data.ecom_ba_wishlist = null);
+        console.log("BarCard > removeFavorite > Response",response);
         }catch(error){
-            console.log("error",error);
+            console.log("BarCard > removeFavorite > Error",error);
         }
     }
 
-    addFavorite =async (id)=>{
+    addFavorite = async (id,prodId=0,comboId=0)=>{
         console.log("BarCard > addFav > ItemID",id);
         const data = {
-            productId:id,
-            comboId:0,
-            vendorId:0
+            productId:prodId,
+            comboId:comboId,
+            vendorId:id
         };
         try{
         const response = await addToWishlist(data);
-        console.log("BarCard > addFavorite > response",response);
-        if(response){
-            // useEffect(() => {
-            //     this.setState({refresh:true});
-            //     this.wait(1000).then(() => this.setState({refresh:false}));
-            //   }, []);
-        }
+        console.log("BarCard > addFavorite > response",response.result.data.wishlistId);
+        this.setState({ isFavorite: true });
+        this.setState(data.ecom_ba_wishlist={wishlistId : response.result.data.wishlistId,data,wishlistFor : response.result.data.ecom_ba_wishlist.wishlistFor});
+        // this.state.data.ecom_ba_wishlist = {
+        //     "wishlistId": response.result.data.wishlistId,
+        //     "wishlistFor": "Bars"
+        // }
         }catch(error){
             console.log("BarCard > addFavorite > Catch",error);
         }
@@ -64,7 +70,6 @@ class BarCard extends Component {
             item,
             index
         } = this.props;
-        console.log("BarCard > Item >",item);
         return (
             <View>
                 <TouchableOpacity
@@ -90,15 +95,15 @@ class BarCard extends Component {
                             </TouchableOpacity> */}
                                <TouchableOpacity
                                 onPress={() => {
-                                    item.ecom_ba_wishlist && item.ecom_ba_wishlist.wishlistId
-                                        ? this.removeFavorite(item.ecom_ba_wishlist.wishlistId, index)
-                                        : this.addFavorite(item.productId,0,item.vendorId, index);
+                                    this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId
+                                        ? this.removeFavorite(this.state.data.ecom_ba_wishlist.wishlistId)
+                                        : this.addFavorite(this.state.data.vendorId); // pass vendor id 
                                 }}
                                 >
                                 <Image
                                     resizeMode={'cover'}
-                                    source={item.ecom_ba_wishlist ? images.heartFill : images.heart}
-                                    defaultSource={item.ecom_ba_wishlist ? images.heartFill : images.heart}
+                                    source={this.state.data.ecom_ba_wishlist ? images.heartFill : images.heart}
+                                    defaultSource={this.state.data.ecom_ba_wishlist ? images.heartFill : images.heart}
                                     style={styles.flexEnd}
                                 />
                             </TouchableOpacity>
