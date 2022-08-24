@@ -5,11 +5,13 @@ import {
     Text,
     TouchableOpacity,
     View,
-    Image
+    Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { addToWishlist, removeToWishlist } from '../api/wishlist';
 import images from '../assets/images';
 import { FontFamily } from '../Theme/FontFamily';
+import { ThemeColors } from '../Theme/ThemeColors';
 import StarRating from './StarRatings';
 class BarCard extends Component {
     constructor(props) {
@@ -21,6 +23,40 @@ class BarCard extends Component {
         this.props.navigation.navigate('ProductDetailBars', { 'id': item.vendorId });
     }
 
+    removeFavorite = async (id,)=>{
+        console.log("BarCard > removeFavorite > WId",id);
+        const data ={
+            wishlistId:id
+        }
+        try{
+        const response = await removeToWishlist(data);
+        console.log("response",response);
+        }catch(error){
+            console.log("error",error);
+        }
+    }
+
+    addFavorite =async (id)=>{
+        console.log("BarCard > addFav > ItemID",id);
+        const data = {
+            productId:id,
+            comboId:0,
+            vendorId:0
+        };
+        try{
+        const response = await addToWishlist(data);
+        console.log("BarCard > addFavorite > response",response);
+        if(response){
+            // useEffect(() => {
+            //     this.setState({refresh:true});
+            //     this.wait(1000).then(() => this.setState({refresh:false}));
+            //   }, []);
+        }
+        }catch(error){
+            console.log("BarCard > addFavorite > Catch",error);
+        }
+    }
+
     render() {
         const {
             navigation,
@@ -28,6 +64,7 @@ class BarCard extends Component {
             item,
             index
         } = this.props;
+        console.log("BarCard > Item >",item);
         return (
             <View>
                 <TouchableOpacity
@@ -43,18 +80,30 @@ class BarCard extends Component {
                         defaultSource={images.promotions1}
                     >
                         <View style={styles.heartContainer}>
-                            <TouchableOpacity
-                                style={{
-                                    alignItems: 'flex-end',
-                                }}>
+                            {/* <TouchableOpacity
+                                style={styles.flexEnd}>
                                 <Image
                                     resizeMode={'cover'}
                                     source={images.heart}
                                     defaultSource={images.heart}
                                 />
+                            </TouchableOpacity> */}
+                               <TouchableOpacity
+                                onPress={() => {
+                                    item.ecom_ba_wishlist && item.ecom_ba_wishlist.wishlistId
+                                        ? this.removeFavorite(item.ecom_ba_wishlist.wishlistId, index)
+                                        : this.addFavorite(item.productId,0,item.vendorId, index);
+                                }}
+                                >
+                                <Image
+                                    resizeMode={'cover'}
+                                    source={item.ecom_ba_wishlist ? images.heartFill : images.heart}
+                                    defaultSource={item.ecom_ba_wishlist ? images.heartFill : images.heart}
+                                    style={styles.flexEnd}
+                                />
                             </TouchableOpacity>
                             <View style={styles.off}>
-                                <Text style={{ color: '#FFFFFF' }}>
+                                <Text style={styles.offText}>
                                     50% Off
                                 </Text>
                             </View>
@@ -78,11 +127,11 @@ class BarCard extends Component {
                                 <Icon
                                     name="directions-run"
                                     size={16}
-                                    color="#FFFFFF"
-                                    style={{ marginTop: 2 }}
+                                    color={ThemeColors.CLR_WHITE}
+                                    style={styles.bottomIcon}
                                 />
                                 <Text style={styles.textAddress}>
-                                    {item.distance.toFixed(2)}Km
+                                    {item.distance.toFixed(2)}
                                 </Text>
                             </TouchableOpacity>
 
@@ -92,7 +141,7 @@ class BarCard extends Component {
                                     name="fiber-manual-record"
                                     size={15}
                                     color="#26B90E"
-                                    style={{ marginTop: 2 }}
+                                    style={styles.bottomIcon}
                                 />
                                 <Text style={styles.openText}>
                                     Open
@@ -125,6 +174,9 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 10,
         borderBottomRightRadius: 10
     },
+    offText:{ 
+        color: ThemeColors.CLR_WHITE 
+    },
     textTitle: {
         fontSize: 20,
         color: '#FFFFFF',
@@ -137,8 +189,13 @@ const styles = StyleSheet.create({
     },
     heartContainer: {
         marginTop: '3%',
-        marginRight: '7%',
+        //marginRight: '5%',
         fontSize: 15
+    },
+    flexEnd:{
+        alignItems: 'flex-end',
+        //alignContent:'flex-end',
+        alignSelf:'flex-end'
     },
     textAddress: {
         flexDirection: 'row',
@@ -155,6 +212,9 @@ const styles = StyleSheet.create({
     distanceContainer: {
         marginTop: 10,
         flexDirection: 'row',
+    },
+    bottomIcon:{ 
+        marginTop: 2 
     },
     details: {
         marginTop: 10,

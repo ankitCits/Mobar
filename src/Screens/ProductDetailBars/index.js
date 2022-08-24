@@ -15,6 +15,7 @@ import images from '../../assets/images';
 import { A_KEY, BASE_URL } from '../../config';
 import { getAccessToken } from '../../localstorage';
 import ThemeFullPagerLoader from '../../Component/ThemeFullPageLoader';
+import { addToWishlist, removeToWishlist } from '../../api/wishlist';
 export default class ProductDetailBars extends Component {
   constructor(props) {
     super(props);
@@ -30,12 +31,13 @@ export default class ProductDetailBars extends Component {
     this.fetchData();
   }
 
-  fetchData = () => {
+  fetchData = async () => {
     this.setState({ loader: true });
+    const token = await getAccessToken();
     let myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('A_Key', A_KEY);
-
+    myHeaders.append('Token', token);
     let raw = JSON.stringify({
       vendorId: this.props.route.params && this.props.route.params.id ? this.props.route.params.id : 1,
       latitude: 1.28668,
@@ -52,7 +54,8 @@ export default class ProductDetailBars extends Component {
     fetch(`${BASE_URL}/vendor/details`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(JSON.stringify(result));
+        //JSON.stringify(result);
+        console.log("BarDetails > Api > res",result.response);
         if (result.response) {
           this.setState({ data: result.response.result, loader: false });
         }
@@ -76,61 +79,90 @@ export default class ProductDetailBars extends Component {
       });
   };
 
-  wishListAdd = async id => {
-    console.log(id);
-    let token = await getAccessToken(token);
-    let myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append('A_Key', A_KEY);
-    myHeaders.append('Token', `${token}`);
-
-    let raw = JSON.stringify({
-      productId: 0,
-      comboId: 0,
-      vendorId: id,
-    });
-
-    let requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow',
+  wishListAdd = async (id) => {
+    console.log("BarCard > addFav > ItemID",id);
+    const data = {
+        productId:0,
+        comboId:0,
+        vendorId:id
     };
+    try{
+    const response = await addToWishlist(data);
+    console.log("BarCard > addFavorite > response",response);
+    if(response){
+        // useEffect(() => {
+        //     this.setState({refresh:true});
+        //     this.wait(1000).then(() => this.setState({refresh:false}));
+        //   }, []);
+    }
+    }catch(error){
+        console.log("BarCard > addFavorite > Catch",error);
+    }
+  //   console.log(id);
+  //   let token = await getAccessToken(token);
+  //   let myHeaders = new Headers();
+  //   myHeaders.append('Content-Type', 'application/json');
+  //   myHeaders.append('A_Key', A_KEY);
+  //   myHeaders.append('Token', `${token}`);
 
-    fetch(`${BASE_URL}/wishlist/addToWishlist`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        console.log('ADD_IN_WISHLIST', result);
-      })
-      .catch(error => console.log('error', error));
+  //   let raw = JSON.stringify({
+  //     productId: 0,
+  //     comboId: 0,
+  //     vendorId: id,
+  //   });
+
+  //   let requestOptions = {
+  //     method: 'POST',
+  //     headers: myHeaders,
+  //     body: raw,
+  //     redirect: 'follow',
+  //   };
+
+  //   fetch(`${BASE_URL}/wishlist/addToWishlist`, requestOptions)
+  //     .then(response => response.json())
+  //     .then(result => {
+  //       console.log('ADD_IN_WISHLIST', result);
+  //     })
+  //     .catch(error => console.log('error', error));
   };
 
-  wishListRemove = () => {
-    let myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append('A_Key', A_KEY);
-    myHeaders.append('Token', `${BASE_URL}`);
+  wishListRemove = async (id) => {
+    console.log("BarCard > removeFavorite > WId",id);
+    const data ={
+        wishlistId:id
+    }
+    try{
+    const response = await removeToWishlist(data);
+    console.log("response",response);
+    }catch(error){
+        console.log("error",error);
+    }
+    // let myHeaders = new Headers();
+    // myHeaders.append('Content-Type', 'application/json');
+    // myHeaders.append('A_Key', A_KEY);
+    // myHeaders.append('Token', `${BASE_URL}`);
 
-    let raw = JSON.stringify({
-      wishlistId: 11,
-    });
+    // let raw = JSON.stringify({
+    //   wishlistId: 11,
+    // });
 
-    let requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow',
-    };
+    // let requestOptions = {
+    //   method: 'POST',
+    //   headers: myHeaders,
+    //   body: raw,
+    //   redirect: 'follow',
+    // };
 
-    fetch(`${BASE_URL}/wishlist/removeToWishlist`, requestOptions)
-      .then(response => response.jsom())
-      .then(result => {
-        console.log('REMOVE_IN_WHISLIST', result);
-      })
-      .catch(error => console.log('error', error));
+    // fetch(`${BASE_URL}/wishlist/removeToWishlist`, requestOptions)
+    //   .then(response => response.jsom())
+    //   .then(result => {
+    //     console.log('REMOVE_IN_WHISLIST', result);
+    //   })
+    //   .catch(error => console.log('error', error));
   };
 
   render() {
+    console.log("DetailsBar > StateData",this.state.data);
     return (
       <SafeAreaView
         style={{
@@ -169,13 +201,16 @@ export default class ProductDetailBars extends Component {
 
                   <TouchableOpacity
                     onPress={() => {
-                      // this.wishList(this.state.data.vendorDetail[0].vendorId);
+                      this.state.data.vendorDetail[0].ecom_ba_wishlist && this.state.data.vendorDetail[0].ecom_ba_wishlist.wishlistId
+                            ? this.wishListRemove(this.state.data.vendorDetail[0].ecom_ba_wishlist.wishlistId)
+                            : this.wishListAdd(this.state.data.vendorDetail[0].vendorId);
                     }}>
-                    <Image
-                      resizeMode={'cover'}
-                      source={images.heart}
-                      defaultSource={images.promotions1}
-                    />
+                      <Image
+                        resizeMode={'cover'}
+                        source={this.state.data.vendorDetail[0].ecom_ba_wishlist ? images.heartFill : images.heart}
+                        defaultSource={this.state.data.vendorDetail[0].ecom_ba_wishlist ? images.heartFill : images.heart}
+                        //style={styles.flexEnd}
+                      />
                   </TouchableOpacity>
                 </View>
 

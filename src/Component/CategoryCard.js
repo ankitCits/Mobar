@@ -11,10 +11,37 @@ import {
 import images from '../assets/images';
 import { FontFamily } from '../Theme/FontFamily';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { addToWishlist, removeToWishlist } from '../api/wishlist';
 
 export default class CategoryCard extends React.Component {
     constructor(props) {
         super(props);
+    }
+
+    removeFavorite = async (id, index) => {
+        //console.log("CategoryCard > WishlistID", id);
+        const data ={
+            wishlistId:id
+        }
+        const response = await removeToWishlist(data);
+        console.log("response",response);
+    }
+
+    addFavorite = async (id) => {
+        try{
+        console.log("CategoryCard > addFav > ItemID", id, index);
+        const data = {
+            productId:id,
+            comboId:0,
+            vendorId:0
+        };
+        const response = await addToWishlist(data);
+        if(response){
+            console.log("CategoryCard > addFavorite > response",response);
+        }
+        }catch(error){
+            console.log("CategoryCard > addFavorite > Catch",error);
+        }
     }
 
     render() {
@@ -22,15 +49,17 @@ export default class CategoryCard extends React.Component {
             item,
             hostUrl,
             navigation,
-            index
+            index,
+            
         } = this.props;
+        console.log("CCard > Item",item);
         return (
             <>
                 <TouchableOpacity
                     key={index}
                     onPress={() => {
                         // console.log(hostUrl + item.images);
-                        navigation.navigate('ProductDetailDrinks',{id:item.productId});
+                        navigation.navigate('ProductDetailDrinks', { id: item.productId });
                     }}
                     style={{
                         marginTop: 28,
@@ -46,12 +75,25 @@ export default class CategoryCard extends React.Component {
                         defaultSource={images.boxOuter}>
 
                         <View style={styles.innerTop}>
-                            <TouchableOpacity onPress={() => console.log('nothing')}>
+                            {/* <TouchableOpacity onPress={() => console.log('nothing')}>
                                 <Icon
                                     name={'favorite'}
                                     size={22}
                                     color="#FF1405"
                                     style={[styles.imageStyle]}
+                                />
+                            </TouchableOpacity> */}
+                            <TouchableOpacity
+                                onPress={() => {
+                                    item.ecom_ba_wishlist && item.ecom_ba_wishlist.wishlistId
+                                        ? this.removeFavorite(item.ecom_ba_wishlist.wishlistId, index)
+                                        : this.addFavorite(item.productId, index);
+                                }}>
+                                <Image
+                                    resizeMode={'cover'}
+                                    source={item.ecom_ba_wishlist && item.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
+                                    defaultSource={item.ecom_ba_wishlist && item.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
+                                    style={styles.favIcon}
                                 />
                             </TouchableOpacity>
                             <Text style={{ color: '#fff', fontSize: 12 }}>
@@ -143,8 +185,8 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 15,
         fontWeight: '400',
-        height:20,
-        
+        height: 20,
+
     },
     innerBottomText2: {
         color: '#fff',
