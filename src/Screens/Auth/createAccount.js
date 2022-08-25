@@ -69,7 +69,7 @@ export default class CreateAccount extends Component {
   }
 
   async onProceed() {
-    console.log(this.state.mobileNumber, ':', this.state.password,':',this.state.emailId);
+    console.log(this.state.mobileNumber, ':', this.state.password, ':', this.state.emailId);
     let FinalResponse = {
       mobileNumber: this.state.mobileNumber,
     };
@@ -252,6 +252,7 @@ export default class CreateAccount extends Component {
               mode={'date'}
               open={this.state.showDatePicker}
               date={new Date()}
+              textColor={'#000'}
               onConfirm={date => {
                 this.setDateInState(date);
               }}
@@ -352,7 +353,7 @@ export default class CreateAccount extends Component {
 }
 
 const styles = StyleSheet.create({
-  container:{
+  container: {
     flex: 1,
     backgroundColor: ThemeColors.CLR_BG,
   },
@@ -385,7 +386,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#3C3C3C',
   },
-  termWord:{
+  termWord: {
     color: '#751728'
   },
   textMember: {
@@ -406,8 +407,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
   },
-  signText:{
-    fontSize: 17, 
+  signText: {
+    fontSize: 17,
     color: ThemeColors.CLR_ACTIVITY_INDICATOR,
     fontWeight: '700'
   }

@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     },
     heartContainer: {
         marginTop: '3%',
-        //marginRight: '5%',
+        marginRight: '5%',
         fontSize: 15
     },
     flexEnd:{

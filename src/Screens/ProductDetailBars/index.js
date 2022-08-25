@@ -501,7 +501,7 @@ export default class ProductDetailBars extends Component {
                           flex: 1,
                           justifyContent: 'flex-end',
                         }}>
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                           onPress={
                             () =>
                               this.props.navigation.navigate('Redeem', {
@@ -529,7 +529,7 @@ export default class ProductDetailBars extends Component {
                             }}>
                             Redeem
                           </Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                       </View>
                     </View>
                   </View>
@@ -537,7 +537,7 @@ export default class ProductDetailBars extends Component {
                 : null}
             </View>
 
-            <View
+            {/* <View
               style={{
                 marginTop: '10%',
                 flex: 1,
@@ -619,7 +619,7 @@ export default class ProductDetailBars extends Component {
                   </View>
                 </View>
               </View>
-            </View>
+            </View> */}
           </ScrollView>
         )}
       </SafeAreaView>

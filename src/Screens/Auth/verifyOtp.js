@@ -24,7 +24,7 @@ export default class VerifyOtp extends Component {
     this.state = {
       password: '',
       loader: false,
-      timer:0,
+      timer: 0,
     };
   }
 
@@ -97,16 +97,16 @@ export default class VerifyOtp extends Component {
     return result;
   }
 
-  componentDidUpdate(){
-    if(this.state.timer === 0){
+  componentDidUpdate() {
+    if (this.state.timer === 0) {
       clearInterval(this.interval);
     }
   }
 
   resendOtp = () => {
-    this.setState({timer : 30});
+    this.setState({ timer: 30 });
     this.interval = setInterval(
-      () => this.setState((prevState)=> ({ timer: this.state.timer - 1 })),
+      () => this.setState((prevState) => ({ timer: this.state.timer - 1 })),
       1000
     );
     let myHeaders = new Headers();
@@ -127,7 +127,7 @@ export default class VerifyOtp extends Component {
     fetch(`${BASE_URL}/auth/resendOtp`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log("varify Otp > ResendOtp > response",result);
+        console.log("varify Otp > ResendOtp > response", result);
         if (result.response) {
           ToastAndroid.showWithGravity(
             'OTP Resend Successfully !',
@@ -183,12 +183,12 @@ export default class VerifyOtp extends Component {
           </View>
           <View style={styles.emailView}>
             <Text style={styles.textDetail}>
-              An OTP has been sent to your mobile
+              An OTP has been sent to your mobile number
             </Text>
             <Text style={styles.textDetail}>
-              number ending in{' '}
+              ending in {' '}
               <Text style={{ fontSize: 17, fontWeight: '700', color: '#969696' }}>
-                xxxxx-{String(this.props.route.params.mobileNumber).slice(-4)}
+                XXXX-{String(this.props.route.params.mobileNumber).slice(-4)}
               </Text>
             </Text>
           </View>
@@ -213,13 +213,13 @@ export default class VerifyOtp extends Component {
             <ThemeButton title={'Confirm'} isLoading={this.state.loader} isDisabled={this.state.timer != 0 ? true : false} onPress={() => this.VerifyOtp()} />
 
             <View style={styles.signin}>
-              <TouchableOpacity onPress={() => this.state.timer == 0 ? this.resendOTP():'' }>
+              <TouchableOpacity onPress={() => this.state.timer == 0 ? this.resendOTP() : ''}>
                 <Text
                   style={styles.textDetail}>
                   {' '}
-                   {this.state.timer != 0 ?  `Otp resent in ${this.state.timer} secs`:'Request New OTP'}
+                  {this.state.timer != 0 ? `Otp resent in ${this.state.timer} secs` : 'Request New OTP'}
                 </Text>
-                
+
               </TouchableOpacity>
             </View>
           </View>

@@ -185,11 +185,12 @@ export default class ForgetPasswordOtp extends Component {
             />
           </View>
           <View style={styles.createView}>
-            <Text style={styles.createText}>An OTP has sent to your mobile ending in XXXX-{String(this.props.route.params.mobileNo).slice(-4)}</Text>
+            <Text style={styles.createText}>An OTP has sent to your mobile number ending in XXXX-{String(this.props.route.params.mobileNo).slice(-4)}</Text>
           </View>
           <View style={styles.emailView}>
             <Text style={{ fontSize: 15, fontWeight: '500', color: '#969696' }}>
-              We have send OTP in your mobile number
+              {/* We have send OTP in your mobile number */}
+              Enter OTP
             </Text>
           </View>
           <View style={styles.viewInput}>
