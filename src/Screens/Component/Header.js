@@ -35,16 +35,16 @@ export default class Header extends Component {
           <TouchableOpacity onPress={() => this.props.onCard()}>
             <Image
               resizeMode={'cover'}
-              source={images.cardBlank}
-              defaultSource={images.cardBlank}
+              source={images.cart}
+              defaultSource={images.cart}
             />
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => this.props.onNotification()}>
             <Image
               resizeMode={'cover'}
-              source={images.notifiction}
-              defaultSource={images.notifiction}
+              source={images.notification}
+              defaultSource={images.notification}
             />
           </TouchableOpacity>
         </View>

@@ -56,6 +56,9 @@ const images = {
   location: require('./location.png'),
   menu: require('./menu.png'),
   noContentFound: require('./no-record.png'),
+  cart: require('./cart.png'),
+  notification: require('./notification.png'),
+
 };
 
 export default images;

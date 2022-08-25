@@ -155,14 +155,14 @@ class Product extends Component {
           justifyContent: 'center',
         }}>
         <Image
-          resizeMode={'cover'}
+          resizeMode={'stretch'}
           source={{
             uri: `${this.state.categoryList.hostUrl + item.images}`,
           }}
           defaultSource={item.image}
           style={{
             alignSelf: 'center',
-            marginTop: index == this.state.itemIndex ? 5 : 10,
+            // marginTop: index == this.state.itemIndex ? 5 : 10,
             height: 35,
             width: 35,
           }}

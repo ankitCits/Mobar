@@ -14,7 +14,8 @@ import images from '../../assets/images';
 import Carousel from 'react-native-snap-carousel';
 import { connect } from 'react-redux';
 
-const { width: screenWidth } = Dimensions.get('window')
+// const { width: screenWidth } = Dimensions.get('window')
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
 const data2 = [
     {
@@ -33,11 +34,11 @@ const data2 = [
         url: 'https://upload.wikimedia.org/wikipedia/commons/6/67/NodeJS.png',
     },
 ];
-
 class PageHeader extends Component {
     constructor(props) {
         super(props);
     }
+
 
     renderSliderImage = ({ item }) => {
         return (
@@ -97,9 +98,10 @@ class PageHeader extends Component {
                             ref={(c) => { this._carousel = c; }}
                             data={data2}
                             renderItem={this.renderSliderImage}
-                            sliderWidth={screenWidth}
-                            sliderHeight={screenWidth}
-                            itemWidth={screenWidth - 60}
+                            sliderWidth={viewportWidth}
+                            sliderHeight={viewportWidth}
+                            itemWidth={viewportWidth}
+                            inactiveSlideOpacity={0}
                         />
                     </View>
                 </View>

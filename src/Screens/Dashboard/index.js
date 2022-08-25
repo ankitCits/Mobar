@@ -28,6 +28,7 @@ import { FontFamily } from '../../Theme/FontFamily';
 import { setUserDetail } from '../../Redux/actions/auth';
 import { getUserDetails } from '../../api/auth';
 import images from '../../assets/images';
+import { screenWidth } from '../../Theme/Matrices';
 
 
 const LazyPlaceholder = ({ route }) => (
@@ -200,8 +201,9 @@ class Dashboard extends Component {
                                                         <TabBar
                                                             {...props}
                                                             indicatorStyle={{ backgroundColor: ThemeColors.CLR_WHITE }}
-                                                            tabStyle={{ backgroundColor: ThemeColors.CLR_WHITE, }}
+                                                            tabStyle={{ backgroundColor: ThemeColors.CLR_WHITE, width: 'auto' }}
                                                             style={{ backgroundColor: ThemeColors.CLR_WHITE, }}
+                                                            scrollEnabled={true}
                                                             renderLabel={({ route }) => (
                                                                 <>
                                                                     <Text
@@ -394,8 +396,8 @@ const styles = StyleSheet.create({
     },
     selectedTabBorder: {
         backgroundColor: ThemeColors.CLR_TAB,
-        height: 3,
-        top: '30%',
+        height: 4,
+        top: '60%',
     },
     tabText: {
         color: '#000000',
@@ -403,6 +405,7 @@ const styles = StyleSheet.create({
     label: {
         fontFamily: FontFamily.ROBOTO_REGULAR,
         fontWeight: '400',
+        marginHorizontal: 20
     },
     noLabel: {
         display: 'none',
