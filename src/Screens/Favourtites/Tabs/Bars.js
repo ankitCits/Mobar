@@ -1,4 +1,3 @@
-import { style } from 'deprecated-react-native-prop-types/DeprecatedImagePropType';
 import React, { Component } from 'react';
 import {
   Text,
@@ -11,6 +10,8 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../../assets/images';
 import NoContentFound from '../../../Component/NoContentFound';
+import { FontFamily } from '../../../Theme/FontFamily';
+import { ThemeColors } from '../../../Theme/ThemeColors';
 export default class Bars extends Component {
   constructor(props) {
     super(props);
@@ -20,13 +21,13 @@ export default class Bars extends Component {
     };
   }
 
+  removeFavorite = async (id,comboId=0,productId=0) =>{
+    console.log("Favorites > Drinks > removeFavorite > Id",id);
+  }
+
   render() {
     return (
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: '#fff',
-        }}>
+      <SafeAreaView>
         <>
           {this.state.data && this.state.data.length > 0 ? (
             this.state.data.map(item => (
@@ -37,58 +38,53 @@ export default class Bars extends Component {
                   onPress={() =>
                     this.props.navigation.navigate('ProductDetailBars', { id: item.ecom_ae_vendor.vendorId })
                   }>
-
                   <View style={styles.productInnerView}>
-                    <Image
-                      style={{
-                        width: 75,
-                        height: 75,
+                    <TouchableOpacity
+                      style={styles.favIcon}
+                      onPress={() => {
+                        this.removeFavorite(item.wishlistId);
                       }}
+                    >
+                      <Image
+                        resizeMode={'cover'}
+                        source={images.heartFill}
+                        defaultSource={images.heartFill}
+                      />
+                    </TouchableOpacity>
+                    <Image
+                      style={styles.prodImage}
                       resizeMode={'cover'}
+                      //source={images.product1}
                       source={{ uri: `${this.state.hostUrl + item.ecom_ae_vendor.images}` }}
                     />
                   </View>
 
-                  <View style={{ margin: 5, marginLeft: 15, flexDirection: 'column', flex: 1 }}>
+                  <View style={styles.itemContainer}>
                     {/* Name */}
-                    <View style={{ flexDirection: 'row' }}>
+                    <View>
                       <Text style={styles.vendorName}>
                         {item.ecom_ae_vendor.vendorShopName}
                       </Text>
                     </View>
 
-                    <View style={{ width: '80%', marginTop: 5, flexDirection: 'row' }}>
+                    <View style={styles.address}>
                       <Text
-                        style={{
-                          fontSize: 12,
-                          color: '#4D4F50',
-                          fontWeight: '400',
-                        }}>
+                        style={styles.addressText}>
                         {item.ecom_ae_vendor.address}
                       </Text>
                     </View>
 
                     <View
-                      style={{
-                        flex: 1,
-                        flexDirection: 'row',
-                        justifyContent: 'space-evenly',
-                        alignItems: 'flex-end'
-                      }}>
+                      style={styles.bottomContainer}>
                       <View
-                        style={{ flexDirection: 'row', alignItems: 'center', }}>
+                        style={styles.statusContainer}>
                         <Icon
                           name="fiber-manual-record"
                           size={18}
                           color="#26B90E"
                         />
                         <Text
-                          style={{
-                            color: '#424242',
-                            fontSize: 15,
-                            fontWeight: '500',
-                            marginLeft: 5,
-                          }}>
+                          style={styles.statusText}>
                           Open
                         </Text>
                       </View>
@@ -99,7 +95,6 @@ export default class Bars extends Component {
                           {(item.ecom_ae_vendor.distance).toFixed(2)}Km
                         </Text>
                       </View>
-
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -115,16 +110,10 @@ export default class Bars extends Component {
 }
 
 const styles = StyleSheet.create({
-  vendorName: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#424242',
-    fontFamily: 'Roboto-Regular',
-  },
   productView: {
-    backgroundColor: '#fff',
+    backgroundColor: ThemeColors.CLR_WHITE,
     width: '90%',
-    shadowColor: '#000',
+    shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
     shadowRadius: 10,
@@ -133,13 +122,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     marginTop: 15,
-    // justifyContent: 'space-between',
   },
   productInnerView: {
-    backgroundColor: '#fff',
+    backgroundColor: ThemeColors.CLR_WHITE,
     height: 120,
     width: 120,
-    shadowColor: '#000',
+    shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
     shadowRadius: 10,
@@ -151,18 +139,55 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   favIcon: {
+    flex: 1,
     alignSelf: 'flex-start',
-    marginLeft: '20%',
-    marginTop: 5,
+    textAlign: 'flex-start',
+    margin: 10,
+  },
+  prodImage: { width: 75, height: 75 },
+  itemContainer: {
+    margin: 5,
+    marginLeft: 15,
+    flexDirection: 'column',
+    flex: 1
+  },
+  vendorName: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#4D4F50',
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+  },
+  address: { width: '80%', marginTop: 5 },
+  addressText: {
+    fontFamily: FontFamily.ROBOTO_REGULAR,
+    fontSize: 13,
+    color: ThemeColors.CLR_DARK_GREY,
+    fontWeight: '400',
+  },
+  bottomContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    width: '92%',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end'
+  },
+  statusContainer: { flexDirection: 'row', alignItems: 'center', },
+  statusText: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    color: ThemeColors.CLR_DARK_GREY,
+    fontSize: 15,
+    fontWeight: '500',
+    marginLeft: 5,
   },
   distanceContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   distanceText: {
-    color: '#424242',
+    fontFamily: FontFamily.ROBOTO_REGULAR,
+    color: ThemeColors.CLR_DARK_GREY,
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '400',
     marginLeft: 5,
   }
 });

@@ -1,6 +1,9 @@
 import React from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { FontFamily } from '../Theme/FontFamily';
+import { ThemeColors } from '../Theme/ThemeColors';
+import ThemeButton from './ThemeButton';
 
 export default class TextInputField extends React.Component {
     constructor(props) {
@@ -62,6 +65,10 @@ export default class TextInputField extends React.Component {
 const innerStyle = StyleSheet.create({
     container: {
         flex: 1,
+        color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+        fontFamily: FontFamily.TAJAWAL_REGULAR,
+        fontWeight: '500',
+        size: 17,
     },
     imageStyle: {
         margin: 5,
@@ -70,14 +77,14 @@ const innerStyle = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: ThemeColors.CLR_WHITE,
         borderWidth: 0,
-        borderColor: '#000',
+        borderColor: ThemeColors.CLR_WHITE,
         height: 44,
         width: 320,
         borderRadius: 10,
         margin: 10,
-        elevation: 3,
+        elevation: 5,
     },
     shadowProp: {
         shadowColor: '#171717',

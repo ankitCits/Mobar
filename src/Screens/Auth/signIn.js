@@ -24,10 +24,10 @@ class SignIn extends Component {
       privacyCheck: true,
       legalCheck: true,
       visibility: false,
-      mobileNumber: null,
-      password: null,
-      // mobileNumber: '88392288',
-      // password: "Ds@123456",
+      // mobileNumber: null,
+      // password: null,
+      mobileNumber: '88392288',
+      password: "As@123456",
       loader: false,
     };
   }
@@ -113,11 +113,11 @@ class SignIn extends Component {
         style={styles.container}>
         <StatusBar
           animated={true}
-          backgroundColor={ThemeColors.CLR_BG}
+          backgroundColor='#F4F4F4'
           barStyle={'dark-content'}
         />
 
-        <View style={styles.container}>
+        <View>
           <View style={styles.createView}>
             <Text style={styles.createText}>Sign in</Text>
           </View>
@@ -152,6 +152,7 @@ class SignIn extends Component {
               <TouchableOpacity
                 onPress={() =>
                   this.props.navigation.navigate('ForgetPassword')
+                  //this.props.navigation.navigate('ForgetEnterPassword')
                 }>
                 <Text style={styles.forgetPass}>Forgot password</Text>
               </TouchableOpacity>
@@ -192,17 +193,18 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: ThemeColors.CLR_BG
+    backgroundColor:'#F4F4F4',// ThemeColors.CLR_BG
   },
   createView: {
     marginTop: '25%',
     alignItems: 'center',
   },
   createText: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
     fontSize: 32,
-    color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+    color:ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     fontWeight: '500',
-    fontFamily: FontFamily.TAJAWAL_REGULAR
+    
   },
   viewInput: {
     alignItems: 'center',
@@ -236,7 +238,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: ThemeColors.CLR_ACTIVITY_INDICATOR,
     fontWeight: '700',
-    fontFamily: FontFamily.TAJAWAL_MEDIUM
+    fontFamily: FontFamily.TAJAWAL_REGULAR
   },
   forgotPasswordContainer: {
     marginTop: '5%'
@@ -245,7 +247,7 @@ const styles = StyleSheet.create({
     color: '#3C3C3C',
     fontSize: 17,
     fontWeight: '500',
-    fontFamily: FontFamily.TAJAWAL_MEDIUM
+    fontFamily: FontFamily.TAJAWAL_REGULAR
   },
 });
 

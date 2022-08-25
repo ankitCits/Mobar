@@ -37,13 +37,10 @@ export default class Drinks extends Component {
       navigation,
       index
     } = this.props;
-    console.log("Favorites > Drinks > Data", this.state.data);
+    //console.log("Favorites > Drinks > Data", this.state.data);
     return (
       <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: '#fff',
-        }}>
+        style={styles.container}>
         <>
           {this.state.data && this.state.data.length > 0 ? (
             this.state.data.map(item => (
@@ -69,74 +66,34 @@ export default class Drinks extends Component {
                     <View style={styles.qtyContainer}>
                       <Text
                         style={styles.detailText}>
-                        Blended
+                        {/* Blended */}
                       </Text>
                       <Text
-                        style={{
-                          fontSize: 12,
-                          color: '#4D4F50',
-                          fontWeight: '400',
-                          marginLeft: 10,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                        }}>
-                        350ml
+                        style={styles.qtyText}>
+                        {/* 350ml */}
                       </Text>
                     </View>
 
                     <View
-                      style={{
-                        marginTop: 7,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                      }}>
+                      style={styles.priceContainer}>
                       <Text
-                        style={{
-                          marginLeft: 5,
-                          fontSize: 21,
-                          color: '#424242',
-                          fontWeight: '700',
-                        }}>
-                        $99
+                        style={styles.priceText}>
+                        {/* $99 */}
                       </Text>
-
                       <Text
-                        style={{
-                          marginLeft: 10,
-                          fontSize: 15,
-                          color: '#969696',
-                          textDecorationLine: 'line-through',
-                        }}>
-                        $100
+                        style={styles.discountPrice}>
+                        {/* $100 */}
                       </Text>
-
                       <Text
-                        style={{
-                          marginLeft: 10,
-                          fontSize: 11,
-                          color: '#B51D36',
-                        }}>
-                        Save $100..
+                        style={styles.savePrice}>
+                        {/* Save $100.. */}
                       </Text>
                     </View>
 
                     <TouchableOpacity
-                      style={{
-                        marginTop: 7,
-                        alignItems: 'center',
-                        width: 94,
-                        height: 24,
-                        backgroundColor: '#B51D36',
-                        justifyContent: 'center',
-                        borderRadius: 12,
-                      }}>
+                      style={styles.cartButton}>
                       <Text
-                        style={{
-                          fontSize: 12,
-                          color: '#424242',
-                          fontWeight: '500',
-                          color: '#fff',
-                        }}>
+                        style={styles.cartText}>
                         Add to Cart
                       </Text>
                     </TouchableOpacity>
@@ -145,19 +102,18 @@ export default class Drinks extends Component {
                   <View style={styles.productInnerView}>
                     {item.ecom_ac_product ?
                       <Image
-                        style={{ width: 85, height: 85 }}
+                        style={styles.prodImage}
                         resizeMode={'cover'}
                         source={{ uri: `${hostUrl + item.ecom_ac_product.images}` }}
                       //defaultSource={images.product2}
                       /> :
-                      <Image
-                        style={{ width: 85, height: 85 }}
+                      <View
+                        style={styles.prodImage}
                         resizeMode={'cover'}
                         source={images.product2}
                         defaultSource={images.product2}
                       />
                     }
-
                     <TouchableOpacity
                       style={styles.favIcon}
                       onPress={() => {
@@ -185,6 +141,10 @@ export default class Drinks extends Component {
 }
 
 const styles = StyleSheet.create({
+  container:{
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   productView: {
     backgroundColor: ThemeColors.CLR_WHITE,
     height: 130,
@@ -223,11 +183,72 @@ const styles = StyleSheet.create({
     color: ThemeColors.CLR_DARK_GREY,
     fontWeight: '400',
   },
-  productInnerView: {
+  qtyText:{
+    fontStyle:FontFamily.TAJAWAL_REGULAR,
+    fontSize: 14,
+    color: ThemeColors.CLR_DARK_GREY,
+    fontWeight: '400',
+    marginLeft: 4,
     flexDirection: 'row',
     alignItems: 'center',
-    width: 125,
   },
+  priceContainer:{
+    marginTop: 7,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  priceText:{
+    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    marginLeft: 5,
+    fontSize: 21,
+    color: ThemeColors.CLR_DARK_GREY,
+    fontWeight: '700',
+  },
+  discountPrice:{
+    marginLeft: 10,
+    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    fontSize: 13,
+    alignSelf:'center',
+    fontWeight:'400',
+    color: '#969696',
+    textDecorationLine: 'line-through',
+  },
+  savePrice:{
+    marginLeft: 10,
+    fontFamily:FontFamily.ROBOTO_REGULAR,
+    fontSize: 11,
+    fontWeight:'400',
+    fontStyle:'italic',
+    color: '#B51D36',
+  },
+  cartButton:{
+    marginTop: 7,
+    alignItems: 'center',
+    width: 94,
+    height: 24,
+    backgroundColor: '#B51D36',
+    justifyContent: 'center',
+    borderRadius: 12,
+  },
+  cartText:{
+    fontSize: 12,
+    fontFamily:FontFamily.CLR_WHITE,
+    fontWeight: '500',
+    color: ThemeColors.CLR_WHITE,
+  },
+  productInnerView: {
+    flexDirection: 'row',
+    backgroundColor:ThemeColors.CLR_WHITE,
+    alignItems: 'center',
+    width: 125,
+    shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    borderRadius: 10,
+    elevation: 5,  
+  },
+prodImage:{ width: 85, height: 85 },
   favIcon: {
     alignSelf: 'flex-start',
     marginTop: 8,

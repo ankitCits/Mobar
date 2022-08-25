@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -9,46 +9,100 @@ import {
   StyleSheet,
   TextInput,
   ScrollView,
+  ToastAndroid,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import images from '../../assets/images';
+import { newPasswordChange } from '../../api/auth';
+import { ThemeColors } from '../../Theme/ThemeColors';
+import { FontFamily } from '../../Theme/FontFamily';
+import TextInputField from '../../Component/TextInputField';
+import { ActivityIndicator } from 'react-native-paper';
 export default class ForgetEnterPassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      password: '',
+      newPassword: '',
+      confirmPassword: '',
+      p_c_token: this.props.route.params.response['password-create-token'],
+      loader: false,
     };
+  }
+
+  onPasswordChange = async () => {
+    this.setState({ loader: true });
+    if (this.state.newPassword == '') {
+      ToastAndroid.showWithGravity(
+        'Password mandatory!',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+      );
+      return;
+    }
+    if (this.state.confirmPassword == '') {
+      ToastAndroid.showWithGravity(
+        'Confirm Password mandatory!',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+      );
+      return;
+    }
+
+    if (this.state.newPassword != this.state.confirmPassword) {
+      ToastAndroid.showWithGravity(
+        'Password and Confirm Password should be same!',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+      );
+      return;
+    }
+
+    const data = {
+      newPassword: this.state.newPassword,
+      confirmPassword: this.state.confirmPassword,
+      p_c_token: this.state.p_c_token
+    }
+    console.log("ForgotEnterPassword > onPasswordChange > PostData", data);
+    try {
+      const result = await newPasswordChange(data);
+      this.setState({ loader: false });
+      console.log("ForgotEnterPassword > onPasswordChange > response", result);
+      this.props.navigation.navigate('PasswordSuccessFullyChanged');
+    }
+    catch (error) {
+      console.log("ForgotEnterPassword > onPasswordChange > Catch", error);
+      this.props.navigation.navigate('PasswordSuccessFullyChanged');
+      this.setState({ loader: false });
+      ToastAndroid.showWithGravity(
+        'Network Error!',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+      );
+    }
   }
 
   render() {
     return (
       <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: '#E5E5E5',
-        }}>
+        style={styles.container}>
         <StatusBar
           animated={true}
-          backgroundColor="#E5E5E5"
+          backgroundColor={ThemeColors.CLR_BG}
           barStyle={'dark-content'}
         />
         <ScrollView>
-          <View style={{marginLeft: 10}}>
+          <View style={styles.back}>
             <TouchableOpacity onPress={() => this.props.navigation.pop()}>
               <Icon
                 name="arrow-back"
                 size={30}
-                color="#424242"
+                color={ThemeColors.CLR_DARK_GREY}
                 style={styles.imageStyle}
               />
             </TouchableOpacity>
           </View>
           <View
-            style={{
-              alignSelf: 'center',
-              marginTop: '10%',
-            }}>
+            style={styles.logo}>
             <Image
               resizeMode={'cover'}
               source={images.forgot3}
@@ -60,40 +114,56 @@ export default class ForgetEnterPassword extends Component {
           </View>
           <View style={styles.viewInput}>
             <View style={styles.sectionStyle}>
-              <TextInput
-                style={{flex: 1,padding:10}}
+              {/* <TextInput
+                style={styles.input}
                 placeholder="New Password"
                 underlineColorAndroid="transparent"
                 placeholderTextColor="#828282"
+              /> */}
+              <TextInputField
+                placeholder="Password"
+                iconName={'lock'}
+                value={this.state.newPassword}
+                onChangeText={text => {
+                  this.setState({ newPassword: text });
+                }}
+                isPassword={true}
+                visibility={true}
               />
             </View>
-
             <View style={styles.sectionStyle}>
-              <TextInput
-                style={{flex: 1,padding:10}}
+              <TextInputField
                 placeholder="Confirm Password"
-                underlineColorAndroid="transparent"
-                placeholderTextColor="#828282"
+                iconName={'lock'}
+                value={this.state.confirmPassword}
+                onChangeText={text => {
+                  this.setState({ confirmPassword: text });
+                }}
+                isPassword={true}
+                visibility={true}
               />
             </View>
 
             <View style={styles.signup}>
               <TouchableOpacity
                 style={styles.signupInner}
-                onPress={() =>
-                  this.props.navigation.navigate('PasswordSuccessFullyChanged')
-                }>
-                <Text
-                  style={{color: '#BE212F', fontSize: 18, fontWeight: '700'}}>
-                  CREATE
-                </Text>
+                onPress={() => this.onPasswordChange()}>
+                {this.state.loader ?
+                  (
+                    <ActivityIndicator size="small" color='#C11331' />
+                  ) :
+                  (<Text
+                    style={styles.btnText}>
+                    CREATE
+                  </Text>)
+                }
               </TouchableOpacity>
             </View>
 
-            <View style={styles.signin}>
+            <View style={styles.cancel}>
               <TouchableOpacity onPress={() => this.props.navigation.pop()}>
                 <Text
-                  style={{fontSize: 17, color: '#969696', fontWeight: '400'}}>
+                  style={styles.cancelText}>
                   {' '}
                   Cancel
                 </Text>
@@ -107,21 +177,23 @@ export default class ForgetEnterPassword extends Component {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F6F6F6',
+  },
+  back: { margin: 10 },
+  logo: {
+    alignSelf: 'center',
+    marginTop: '14%',
+  },
   createView: {
     marginTop: '10%',
     alignItems: 'center',
   },
-  emailView: {
-    marginTop: '2%',
-    alignItems: 'center',
-  },
-  otpView: {
-    marginTop: '5%',
-    alignItems: 'center',
-  },
   createText: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
     fontSize: 25,
-    color: '#424242',
+    color: ThemeColors.CLR_DARK_GREY,
     fontWeight: '700',
   },
   viewInput: {
@@ -130,52 +202,35 @@ const styles = StyleSheet.create({
     marginTop: '10%',
   },
   input: {
-    height: 50,
-    width: '80%',
-    margin: 12,
-    borderRadius: 10,
-    padding: 10,
-    shadowColor: '#470000',
-    shadowOpacity: 1,
-    // elevation: 1,
-    borderWidth: 1,
     flex: 1,
+    padding: 10,
+    backgroundColor: '#E5E5E5',
+    borderRadius: 7,
+    height: 55,
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    fontSize: 15,
+    fontWeight: '500',
   },
-  inputView: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  btnText: {
+    color: '#BE212F',
+    fontSize: 18,
+    fontWeight: '700',
+    fontFamily: FontFamily.TAJAWAL_REGULAR
   },
-  inputIcon: {
-    left: '70%',
+  cancelText: {
+    fontSize: 17,
+    color: '#4D4F50',
+    fontWeight: '500',
+    fontFamily: FontFamily.TAJAWAL_REGULAR
   },
   sectionStyle: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderWidth: 0,
-    borderColor: '#000',
-    height: 44,
-    width: 320,
-    borderRadius: 5,
-    margin: 10,
-    elevation: 2,
+    //flexDirection: 'row',
+    alignContent: 'center',
+    height: 75,
+    //width: 320,
   },
   imageStyle: {
     margin: 5,
-    resizeMode: 'stretch',
-    alignItems: 'center',
-  },
-  term: {
-    //   flexDirection:'row',
-    // alignItems: 'center',
-    marginTop: '5%',
-    // alignSelf:'flex-start',
-  },
-  termInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
   },
   signup: {
     marginTop: '5%',
@@ -184,31 +239,17 @@ const styles = StyleSheet.create({
   },
   signupInner: {
     backgroundColor: 'transparent',
-    height: 38,
+    height: 48,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
+    borderRadius: 50,
     borderWidth: 1,
     borderColor: '#C11331',
-    width: 180,
+    width: 200,
     alignSelf: 'center',
     borderRadius: 20,
   },
-
-  signin: {
-    marginTop: '5%',
-    width: '80%',
-    height: 44,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  otpCell: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    elevation: 2,
-  },
-  otpCellFocus: {
-    borderColor: '#741728',
-    borderWidth: 1,
+  cancel: {
+    marginTop: '7%',
   },
 });

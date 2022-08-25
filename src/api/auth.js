@@ -36,7 +36,12 @@ export const singIn = (postData) => {
 
 export const getUserDetails = (postData) => {
     return new Promise(async (resolve, reject) => {
-        const { token } = postData
+        const data = JSON.stringify({
+            contact: contact,
+            password: password,
+            deviceInfo: deviceInfo,
+            fcmToken: fcmToken,
+        });
         fetch(`${BASE_URL}/users/profile`, {
             method: 'GET',
             headers: {
@@ -58,3 +63,58 @@ export const getUserDetails = (postData) => {
         });
     });
 };
+
+
+export const newPasswordChange = (postData) => {
+    return new Promise(async (resolve, reject) => {
+        const data = JSON.stringify(postData);
+        const headers = {
+            Accept: 'application/json, text/plain, */*', // It can be used to overcome cors errors
+            'Content-Type': 'application/json',
+            A_Key: A_KEY,
+            body:data
+        };
+
+        fetch(`${BASE_URL}/password/newPasswordChange`, {
+            method: 'GET',
+            headers: headers,
+            redirect: 'follow',
+        }).then(result => result.json()).then(responseDetail => {
+            console.log("Auth > newPasswordChange > response",responseDetail);
+            if (responseDetail.response) {
+                resolve(responseDetail.response);
+            }
+            if (responseDetail.errors) {
+                reject(responseDetail.errors[0].msg)
+            }
+        }).catch(error => {
+            reject(error.message);
+        });
+    });
+};
+
+export const retrieveAccount = (postData) => {
+    return new Promise(async (resolve, reject) => {
+        const data = JSON.stringify(postData);
+        console.log("Auth > postData",data);
+        const headers = {
+            method: 'POST',
+            headers: myHeaders,
+            body: data,
+            redirect: 'follow',
+          };
+          console.log("Auth > headers",headers);
+        fetch(`${BASE_URL}/password/retrieveAccount`,headers).then(result => result.json()).then(responseDetail => {
+            console.log("Auth > retrieveAccount > response",responseDetail);
+            if (responseDetail.response) {
+                resolve(responseDetail.response);
+            }
+            if (responseDetail.errors) {
+                reject(responseDetail.errors[0].msg)
+            }
+        }).catch(error => {
+            reject(error.message);
+        });
+    });
+};
+

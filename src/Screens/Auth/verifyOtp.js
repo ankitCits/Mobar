@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import {
   Text,
   View,
@@ -24,6 +24,7 @@ export default class VerifyOtp extends Component {
     this.state = {
       password: '',
       loader: false,
+      timer:0,
     };
   }
 
@@ -96,7 +97,18 @@ export default class VerifyOtp extends Component {
     return result;
   }
 
+  componentDidUpdate(){
+    if(this.state.timer === 0){
+      clearInterval(this.interval);
+    }
+  }
+
   resendOtp = () => {
+    this.setState({timer : 30});
+    this.interval = setInterval(
+      () => this.setState((prevState)=> ({ timer: this.state.timer - 1 })),
+      1000
+    );
     let myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('A_Key', A_KEY);
@@ -115,7 +127,7 @@ export default class VerifyOtp extends Component {
     fetch(`${BASE_URL}/auth/resendOtp`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result);
+        console.log("varify Otp > ResendOtp > response",result);
         if (result.response) {
           ToastAndroid.showWithGravity(
             'OTP Resend Successfully !',
@@ -143,7 +155,7 @@ export default class VerifyOtp extends Component {
   };
 
   render() {
-    console.log('===>>Verify,', this.props.route.params);
+    //console.log('===>>Verify,', this.props.route.params);
     return (
       <SafeAreaView
         style={{
@@ -180,9 +192,9 @@ export default class VerifyOtp extends Component {
               </Text>
             </Text>
           </View>
-          <View style={styles.otpView}>
+          {/* <View style={styles.otpView}>
             <Text style={styles.textDetail}>Enter OTP</Text>
-          </View>
+          </View> */}
           <View style={styles.viewInput}>
             <View>
               <SmoothPinCodeInput
@@ -198,15 +210,16 @@ export default class VerifyOtp extends Component {
               />
             </View>
 
-            <ThemeButton title={'Confirm'} isLoading={this.state.loader} onPress={() => this.VerifyOtp()} />
+            <ThemeButton title={'Confirm'} isLoading={this.state.loader} isDisabled={this.state.timer != 0 ? true : false} onPress={() => this.VerifyOtp()} />
 
             <View style={styles.signin}>
-              <TouchableOpacity onPress={() => this.resendOtp()}>
+              <TouchableOpacity onPress={() => this.state.timer == 0 ? this.resendOTP():'' }>
                 <Text
                   style={styles.textDetail}>
                   {' '}
-                  Request New OTP
+                   {this.state.timer != 0 ?  `Otp resent in ${this.state.timer} secs`:'Request New OTP'}
                 </Text>
+                
               </TouchableOpacity>
             </View>
           </View>

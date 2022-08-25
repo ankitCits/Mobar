@@ -25,10 +25,10 @@ export default class CreateAccount extends Component {
       legalCheck: true,
       visibility: false,
       showDatePicker: false,
-      mobileNumber: null,
-      emailId: null,
+      mobileNumber: '90333401',
+      emailId: 'ravi@mehtawebsolution.com',
       dateOfBirth: null,
-      password: null,
+      password: 'Ravi@12345',
       loader: false,
     };
     this.setDateInState = this.setDateInState.bind(this);
@@ -70,6 +70,11 @@ export default class CreateAccount extends Component {
 
   async onProceed() {
     console.log(this.state.mobileNumber, ':', this.state.password,':',this.state.emailId);
+    let FinalResponse = {
+      mobileNumber: this.state.mobileNumber,
+    };
+    //this.props.navigation.navigate('VerifyOtp',FinalResponse);
+    //return;
     // check Not Blank
     if (this.state.mobileNumber == null) {
       ToastAndroid.showWithGravity(
@@ -349,7 +354,7 @@ export default class CreateAccount extends Component {
 const styles = StyleSheet.create({
   container:{
     flex: 1,
-    backgroundColor: ThemeColors.CLR_BG
+    backgroundColor: ThemeColors.CLR_BG,
   },
   createView: {
     marginTop: '15%',

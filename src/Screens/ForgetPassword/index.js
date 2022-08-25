@@ -13,19 +13,21 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
+import { retrieveAccount } from '../../api/auth';
 import images from '../../assets/images';
 import {A_KEY, BASE_URL} from '../../config';
 export default class ForgetPassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      contact: null,
+      contact: '90333401',
       loader: false,
     };
   }
 
-  onProceed = () => {
+  onProceed = async () => {
+    //this.props.navigation.navigate('forgetPasswordOtp');
+    //return;
     if (this.state.contact == null || this.state.contact == '') {
       ToastAndroid.showWithGravity(
         'Mobile Number mandatory !',
@@ -40,6 +42,21 @@ export default class ForgetPassword extends Component {
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('A_Key', A_KEY);
 
+    // try {
+    //   const result = await retrieveAccount({
+    //     contact: Number(this.state.contact),
+    //   });
+    //   console.log("ForgotPassword > OnProceed > response", result);
+    //   this.setState({loader: false});
+    //   const FinalResponse = {
+    //     response: result.response,
+    //   };
+    //   console.log("ForgotPassword > Final Response",FinalResponse);
+    //   this.props.navigation.navigate('forgetPasswordOtp', {response:FinalResponse,mobileNo:this.state.contact});
+    // } catch (error) {
+    //   this.setState({loader: false});
+    //   console.log("ForgotPassword > OnProceed > Catch", error);
+    // }
     var raw = JSON.stringify({
       contact: Number(this.state.contact),
     });
@@ -50,7 +67,6 @@ export default class ForgetPassword extends Component {
       body: raw,
       redirect: 'follow',
     };
-
     fetch(`${BASE_URL}/password/retrieveAccount`, requestOptions)
       .then(response => response.json())
       .then(result => {
@@ -62,7 +78,8 @@ export default class ForgetPassword extends Component {
           let FinalResponse = {
             response: result.response,
           };
-          this.props.navigation.navigate('forgetPasswordOtp', FinalResponse);
+          console.log("Forgot Password > Final Response",FinalResponse);
+          this.props.navigation.navigate('forgetPasswordOtp', {response:FinalResponse,mobileNo:this.state.contact});
           return result;
         }
 
@@ -126,7 +143,7 @@ export default class ForgetPassword extends Component {
           </View>
           <View style={styles.emailView}>
             <Text style={{fontSize: 15, fontWeight: '500', color: '#969696'}}>
-              Enter your registered mobile number to recive OTP
+              Enter your registered mobile number to receive OTP
             </Text>
           </View>
           <View style={styles.viewInput}>
@@ -137,6 +154,7 @@ export default class ForgetPassword extends Component {
                 underlineColorAndroid="transparent"
                 placeholderTextColor="#A39B9B"
                 keyboardType="numeric"
+                value={this.state.contact}
                 onChangeText={text => {
                   this.setState({contact: text});
                 }}
@@ -182,8 +200,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emailView: {
-    marginTop: '2%',
+    marginTop: '5%',
+    marginLeft: '5%',
     alignItems: 'center',
+    width:'90%',
   },
   otpView: {
     marginTop: '5%',

@@ -29,6 +29,7 @@ class BarCard extends Component {
 
     removeFavorite = async (id)=>{
         console.log("BarCard > removeFavorite > WId",id);
+        console.log("object before remove fav",this.state.data.ecom_ba_wishlist); 
         const data ={
             wishlistId:id
         }
@@ -37,12 +38,14 @@ class BarCard extends Component {
         this.setState({ isFavorite: false });
         this.setState(data.ecom_ba_wishlist = null);
         console.log("BarCard > removeFavorite > Response",response);
+        console.log("object after remove fav",this.state.data.ecom_ba_wishlist); 
         }catch(error){
             console.log("BarCard > removeFavorite > Error",error);
         }
     }
 
     addFavorite = async (id,prodId=0,comboId=0)=>{
+        console.log("object before add fav",this.state.data.ecom_ba_wishlist); 
         console.log("BarCard > addFav > ItemID",id);
         const data = {
             productId:prodId,
@@ -53,11 +56,13 @@ class BarCard extends Component {
         const response = await addToWishlist(data);
         console.log("BarCard > addFavorite > response",response.result.data.wishlistId);
         this.setState({ isFavorite: true });
-        this.setState(data.ecom_ba_wishlist={wishlistId : response.result.data.wishlistId,data,wishlistFor : response.result.data.ecom_ba_wishlist.wishlistFor});
-        // this.state.data.ecom_ba_wishlist = {
-        //     "wishlistId": response.result.data.wishlistId,
-        //     "wishlistFor": "Bars"
-        // }
+        //this.setState(data.ecom_ba_wishlist={wishlistId : response.result.data.wishlistId,data,wishlistFor : response.result.data.ecom_ba_wishlist.wishlistFor});
+        this.state.data.ecom_ba_wishlist = {
+             "wishlistId": response.result.data.wishlistId,
+             "wishlistFor": "Bars"
+        };
+        console.log("object after add fav",this.state.data.ecom_ba_wishlist); 
+
         }catch(error){
             console.log("BarCard > addFavorite > Catch",error);
         }

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -15,13 +15,14 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import images from '../../assets/images';
-import {A_KEY, BASE_URL} from '../../config';
+import { A_KEY, BASE_URL } from '../../config';
 export default class ForgetPasswordOtp extends Component {
   constructor(props) {
     super(props);
     this.state = {
       password: '',
       loader: false,
+      timer: 0,
     };
   }
 
@@ -34,40 +35,40 @@ export default class ForgetPasswordOtp extends Component {
       );
       return;
     }
-
-    this.setState({loader: true});
+    //console.log("ForgotPWd > onProceed > P_Token",this.props.route.params.response.response['password-token']);
+    //console.log("ForgotPWd > onProceed > Pwd",this.state.password);
+    this.setState({ loader: true });
     let myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('A_Key', A_KEY);
     myHeaders.append(
       'P_Token',
-      this.props.route.params.response['password-token'],
+      this.props.route.params.response.response['password-token']
     );
     var raw = JSON.stringify({
       code: Number(this.state.password),
     });
 
-    var requestOptions = {
+    const requestOptions = {
       method: 'POST',
       headers: myHeaders,
       body: raw,
       redirect: 'follow',
     };
-
+    //console.log("OnProceed > Verify Otp > RequestOption", requestOptions);
     fetch(`${BASE_URL}/password/verifyCode`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result);
-        this.setState({loader: false});
-
+        //console.log("OnProceed > Verify Otp > Response", result);
+        this.setState({ loader: false });
         if (result.response) {
-          this.setState({loader: false});
-          this.props.navigation.navigate('SignIn');
-          return result;
+          this.setState({ loader: false });
+          this.props.navigation.navigate('ForgetEnterPassword', result);
+          return;
         }
-
         if (result.errors) {
-          this.setState({loader: false});
+          console.log("OnProceed > Verify Otp > If Error", result.errors[0]);
+          this.setState({ loader: false });
           ToastAndroid.showWithGravity(
             result.errors[0].msg,
             ToastAndroid.LONG,
@@ -76,8 +77,8 @@ export default class ForgetPasswordOtp extends Component {
         }
       })
       .catch(error => {
-        console.log('error', error);
-        this.setState({loader: false});
+        console.log("OnProceed > Verify Otp > If Error", error);
+        this.setState({ loader: false });
         ToastAndroid.showWithGravity(
           error,
           ToastAndroid.LONG,
@@ -86,17 +87,27 @@ export default class ForgetPasswordOtp extends Component {
       });
   };
 
+  componentDidUpdate() {
+    if (this.state.timer === 0) {
+      clearInterval(this.interval);
+    }
+  }
+
   resendOTP = () => {
+    this.setState({ timer: 30 });
+    this.interval = setInterval(
+      () => this.setState((prevState) => ({ timer: this.state.timer - 1 })),
+      1000
+    );
     let myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('A_Key', A_KEY);
     myHeaders.append(
       'P_Token',
-      this.props.route.params.response['password-token'],
+      this.props.route.params.response.response['password-token'],
     );
 
     var raw = '';
-
     var requestOptions = {
       method: 'PUT',
       headers: myHeaders,
@@ -139,7 +150,7 @@ export default class ForgetPasswordOtp extends Component {
   };
 
   render() {
-    console.log('PROPS________', this.props.route.params);
+    //console.log('PROPS________', this.props.route.params);
     return (
       <SafeAreaView
         style={{
@@ -152,7 +163,7 @@ export default class ForgetPasswordOtp extends Component {
           barStyle={'dark-content'}
         />
         <ScrollView>
-          <View style={{marginLeft: 10}}>
+          <View style={{ marginLeft: 10 }}>
             <TouchableOpacity onPress={() => this.props.navigation.pop()}>
               <Icon
                 name="arrow-back"
@@ -174,10 +185,10 @@ export default class ForgetPasswordOtp extends Component {
             />
           </View>
           <View style={styles.createView}>
-            <Text style={styles.createText}>Enter OTP</Text>
+            <Text style={styles.createText}>An OTP has sent to your mobile ending in XXXX-{String(this.props.route.params.mobileNo).slice(-4)}</Text>
           </View>
           <View style={styles.emailView}>
-            <Text style={{fontSize: 15, fontWeight: '500', color: '#969696'}}>
+            <Text style={{ fontSize: 15, fontWeight: '500', color: '#969696' }}>
               We have send OTP in your mobile number
             </Text>
           </View>
@@ -192,19 +203,20 @@ export default class ForgetPasswordOtp extends Component {
                 cellStyle={styles.otpCell}
                 cellStyleFocused={styles.otpCellFocus}
                 value={this.state.password}
-                onTextChange={password => this.setState({password})}
+                onTextChange={password => this.setState({ password })}
               />
             </View>
 
             <View style={styles.signup}>
               <TouchableOpacity
-                style={styles.signupInner}
+                style={[styles.signupInner, this.state.timer != 0 ? styles.disabled : styles.enable]}
+                disabled={this.state.timer == 0 ? false : true}
                 onPress={() => this.onProceed()}>
                 {this.state.loader ? (
                   <ActivityIndicator size="small" color="#BE212F" />
                 ) : (
                   <Text
-                    style={{color: '#BE212F', fontSize: 18, fontWeight: '700'}}>
+                    style={[styles.confirmText, this.state.timer != 0 ? styles.disabledText : styles.enableText]}>
                     CONFIRM
                   </Text>
                 )}
@@ -212,11 +224,11 @@ export default class ForgetPasswordOtp extends Component {
             </View>
 
             <View style={styles.signin}>
-              <TouchableOpacity onPress={() => this.resendOTP()}>
+              <TouchableOpacity onPress={() => this.state.timer == 0 ? this.resendOTP() : ''}>
                 <Text
-                  style={{fontSize: 17, color: '#969696', fontWeight: '400'}}>
+                  style={{ fontSize: 17, color: '#969696', fontWeight: '400' }}>
                   {' '}
-                  Resent OTP
+                  {this.state.timer != 0 ? `Otp resent in ${this.state.timer} secs` : 'Resent OTP'}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -310,12 +322,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#C11331',
     width: 180,
     alignSelf: 'center',
     borderRadius: 20,
   },
-
+  confirmText: {
+    fontSize: 18, fontWeight: '700'
+  },
+  disabledText: {
+    color: '#969696'
+  },
+  enableText: { color: '#BE212F' },
+  disabled: {
+    borderColor: '#969696',
+  },
+  enable: {
+    borderColor: '#C11331',
+  },
   signin: {
     marginTop: '5%',
     width: '80%',

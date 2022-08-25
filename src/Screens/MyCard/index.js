@@ -1,3 +1,4 @@
+import { loadPartialConfig } from '@babel/core';
 import React, { Component } from 'react';
 import {
   Text,
@@ -7,12 +8,15 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
+  FlatList,
   ToastAndroid,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { fetchCart } from '../../api/product';
 import images from '../../assets/images';
+import CartProduct from '../../Component/CartProduct';
+import { FontFamily } from '../../Theme/FontFamily';
+import { ThemeColors } from '../../Theme/ThemeColors';
 import HeaderSide from '../Component/HeaderSide';
 export default class MyCard extends Component {
   constructor(props) {
@@ -42,7 +46,7 @@ export default class MyCard extends Component {
         this.setState({ payableTotal: this.state.cart.reduce((x, c) => x + parseInt(c.productAmount), 0) });
         // this.setState({ payableTotal: this.state.cart.reduce((x, c) => x + parseInt(c.productAmount), 0) });
       }
-      console.log(this.state);
+      //console.log("state cart details",this.state.cart);
     } catch (error) {
       ToastAndroid.showWithGravity(
         error,
@@ -52,180 +56,44 @@ export default class MyCard extends Component {
     }
   };
 
+  renderCartItems = (item,index) => {
+    return (
+      <>
+          <CartProduct navigation={this.props.navigation} index={index} item={item} hostUrl={this.props.hostUrl} />
+      </>
+    );
+  };
+
   render() {
     return (
       <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: '#E5E5E5',
-        }}>
+        style={styles.container}>
         <HeaderSide
           name={'My Cart'}
           onClick={() => this.props.navigation.pop()}
         />
         <>
-          <View style={{ margin: 15 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: '400',
-                color: '#000',
-              }}>
-              3 items in your cart
-            </Text>
+        <View style={styles.cartCount}>
+          <Text
+            style={styles.itemCountText}>
+            {this.state.totalQty} items in your cart
+          </Text>
+        </View>
 
-            <View
-              style={styles.productView}
-              onPress={() =>
-                this.props.navigation.navigate('OrderHistoryDetail')
-              }>
-              <View style={styles.productInnerView}>
-                <Image
-                  resizeMode={'cover'}
-                  source={images.product2}
-                  defaultSource={images.product2}
-                />
-              </View>
-
-              <View style={{ margin: 5, marginLeft: 0 }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginTop: 5,
-                  }}>
-                  <Text
-                    style={{ fontSize: 18, fontWeight: '700', color: '#4D4F50' }}>
-                    Chivas Regal 12
-                  </Text>
-                </View>
-
-                <View style={{ flexDirection: 'row' }}>
-                  <Text
-                    style={{ fontSize: 14, color: '#4D4F50', fontWeight: '400' }}>
-                    Blended
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: '#4D4F50',
-                      fontWeight: '400',
-                      marginLeft: 10,
-                    }}>
-                    350ml
-                  </Text>
-                </View>
-
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    marginTop: 5,
-                    alignItems: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 21,
-                      color: '#4D4F50',
-                      fontWeight: '700',
-                      alignItems: 'center',
-                    }}>
-                    $99
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 15,
-                      color: '#969696',
-                      fontWeight: '400',
-                      marginLeft: 10,
-                      textDecorationLine: 'line-through',
-                    }}>
-                    $100
-                  </Text>
-                </View>
-              </View>
-              <View
-                style={{
-                  margin: 10,
-                  marginLeft: 20,
-                  justifyContent: 'space-between',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <TouchableOpacity
-                  onPress={() => this.setState({ modalVisible: true })}
-                  style={{
-                    alignSelf: 'center',
-                    backgroundColor: '#A1172F',
-                    padding: 2,
-                    borderRadius: 20,
-                  }}>
-                  <Icon name="remove" size={18} color="#fff" />
-                </TouchableOpacity>
-
-                <Text
-                  style={{
-                    fontSize: 19,
-                    fontWeight: '500',
-                    color: '#A1172F',
-                    marginLeft: 10,
-                    marginRight: 10,
-                  }}>
-                  3
-                </Text>
-                <TouchableOpacity
-                  onPress={() => this.setState({ modalVisible: true })}
-                  style={{
-                    alignSelf: 'center',
-                    backgroundColor: '#A1172F',
-                    padding: 2,
-                    borderRadius: 20,
-                  }}>
-                  <Icon name="add" size={18} color="#fff" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </>
-
-        <View style={{ marginTop: '10%', flex: 1, justifyContent: 'flex-end' }}>
+        <FlatList
+            data={this.state.cart}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item, index }) => this.renderCartItems(item, index)}
+        />
+        <View style={styles.bottomContainer}>
           <View
-            style={{
-              shadowColor: '#000',
-              shadowOffset: {
-                width: 0,
-                height: 5,
-              },
-              shadowOpacity: 1,
-              shadowRadius: 10,
-              elevation: 5,
-              backgroundColor: '#fff',
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-              overflow: 'hidden',
-            }}>
+            style={styles.subContainer}>
             <View
-              style={{
-                marginTop: 20,
-                // marginLeft: 20
-                alignSelf: 'center',
-              }}>
+              style={styles.containerAlign}>
               <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  backgroundColor: '#DADADA',
-                  width: 306,
-                  height: 44,
-                  borderRadius: 20,
-                }}>
+                style={styles.promoContainer}>
                 <TextInput
-                  style={{
-                    flex: 1,
-                    fontSize: 20,
-                    alignSelf: 'center',
-                    paddingLeft: 15,
-                  }}
+                  style={styles.promoText}
                   placeholder="Promocode"
                   underlineColorAndroid="transparent"
                 />
@@ -241,8 +109,10 @@ export default class MyCard extends Component {
                   }}>
                   <Text
                     style={{
+                      fontFamily:FontFamily.TAJAWAL_REGULAR,
+                      fontWeight:'700',
                       fontSize: 20,
-                      color: '#fff',
+                      color: ThemeColors.CLR_WHITE,
                     }}>
                     Apply
                   </Text>
@@ -367,12 +237,66 @@ export default class MyCard extends Component {
             </View>
           </View>
         </View>
+        </>
       </SafeAreaView>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  container:{
+    flex: 1,
+    backgroundColor: ThemeColors.CLR_BG,
+  },
+  cartCount:{ 
+    margin: 15,
+    marginBottom:0, 
+  },
+  itemCountText:{
+    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    fontSize: 16,
+    fontWeight: '400',
+    color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+  },
+  bottomContainer:{ 
+    marginTop:0, 
+    justifyContent: 'flex-end' 
+  },
+  subContainer:{
+    shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 10,
+    elevation: 5,
+    backgroundColor: ThemeColors.CLR_WHITE,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    overflow: 'hidden',
+  },
+  containerAlign:{
+    marginTop: 20,
+    alignSelf: 'center',
+  },
+  promoContainer:{
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#DADADA',
+    width: 306,
+    height: 44,
+    borderRadius: 20,
+  },
+  promoText:{
+    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    fontSize: 20,
+    fontWeight:'400',
+    color:ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+    alignItems: 'center',
+    alignSelf:'center',
+    paddingLeft: '13%',
+  },
   productView: {
     backgroundColor: '#fff',
     height: 100,

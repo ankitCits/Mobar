@@ -3,7 +3,6 @@ import {
   Text,
   View,
   SafeAreaView,
-  Image,
   TextInput,
   TouchableOpacity,
   StyleSheet,
@@ -13,17 +12,19 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {connect} from 'react-redux';
-import {A_KEY, BASE_URL} from '../../config';
-import {getAccessToken} from '../../localstorage';
+import { changePassword } from '../../Redux/actions/product';
+import { ThemeColors } from '../../Theme/ThemeColors';
+import { FontFamily } from '../../Theme/FontFamily';
 import HeaderSide from '../Component/HeaderSide';
+
 class ChangePassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
       visibility: false,
-      currentPassword: null,
-      password: null,
-      confirmPassword: null,
+      currentPassword: 'Ds@123456',
+      password: 'As@123456',
+      confirmPassword: 'As@123456',
       loader: false,
     };
   }
@@ -75,74 +76,44 @@ class ChangePassword extends Component {
       this.setState({loader: false});
       return;
     }
-
-    let token = await getAccessToken(token);
-    console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>>,', token);
-    var myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append('A_Key', A_KEY);
-    myHeaders.append('Token', `${token}`);
-
-    var raw = JSON.stringify({
+    
+    var raw = {
       currentPassword: this.state.currentPassword,
       newPassword: this.state.password,
       confirmNewPassword: this.state.confirmPassword,
-    });
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow',
     };
 
-    fetch(`${BASE_URL}/users/changePassword`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        console.log(result);
-        if (result.response) {
-          ToastAndroid.showWithGravity(
-            'Password Successfully Changed.',
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
-
-          this.setState({
-            loader: false,
-            currentPassword: null,
-            password: null,
-            confirmPassword: null,
-          });
-        }
-        if (result.errors) {
-          this.setState({loader: false});
-          ToastAndroid.showWithGravity(
-            result.errors[0].msg,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
-        }
-      })
-      .catch(error => {
-        console.log('error', error);
-        this.setState({
-          loader: false,
-        });
+    try {
+      const response = await changePassword(raw);
+      console.log("response",response);
+      if (response.status == 'SUCCESS') {
         ToastAndroid.showWithGravity(
-          'Network Error!',
+          'Password updated successfully..!',
           ToastAndroid.LONG,
           ToastAndroid.TOP,
         );
+      }
+      this.setState({
+          loader: false,
+          currentPassword: null,
+          password: null,
+          confirmPassword: null,
       });
+    } catch (error) {
+      console.log("Password > Update PAssword > error",error);
+      this.setState({
+        loader: false,
+        currentPassword: null,
+        password: null,
+        confirmPassword: null,
+    });
+    }
   };
 
   render() {
     return (
       <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: '#fff',
-        }}>
+        style={styles.container}>
         <StatusBar
           animated={true}
           backgroundColor="#fff"
@@ -154,16 +125,17 @@ class ChangePassword extends Component {
         />
 
         <View style={styles.ChangePasswordView}>
-          <View style={{marginTop: 10}}>
-            <View style={{marginLeft: 15}}>
+          <View style={styles.passwordContainer}>
+            <View style={styles.passwordSubContainer}>
               <Text style={styles.InputHeader}>Current Password</Text>
             </View>
             <View style={styles.sectionStyle}>
               <TextInput
-                style={{flex: 1}}
+                style={styles.textInput}
                 placeholder=""
                 underlineColorAndroid="transparent"
                 placeholderTextColor="#707273"
+                value={this.state.currentPassword}
                 onChangeText={text => {
                   this.setState({currentPassword: text});
                 }}
@@ -172,17 +144,18 @@ class ChangePassword extends Component {
             </View>
           </View>
 
-          <View style={{marginTop: 10}}>
-            <View style={{marginLeft: 15}}>
+          <View>
+            <View style={styles.passwordSubContainer}>
               <Text style={styles.InputHeader}>New Password</Text>
             </View>
             <View style={styles.sectionStyle}>
               <TextInput
-                style={{flex: 1}}
+                style={styles.textInput}
                 placeholder=""
                 underlineColorAndroid="transparent"
                 placeholderTextColor="#707273"
                 secureTextEntry={true}
+                value={this.state.password}
                 onChangeText={text => {
                   this.setState({password: text});
                 }}
@@ -190,46 +163,43 @@ class ChangePassword extends Component {
             </View>
           </View>
 
-          <View style={{marginTop: 10}}>
-            <View style={{marginLeft: 15}}>
+          <View>
+            <View style={styles.passwordSubContainer}>
               <Text style={styles.InputHeader}>Confirm New Password</Text>
             </View>
             <View style={styles.sectionStyle}>
               <TextInput
-                style={{flex: 1}}
+                style={[styles.textInput,styles.container]}
                 placeholder=""
                 underlineColorAndroid="transparent"
                 placeholderTextColor="#707273"
                 secureTextEntry={this.state.visibility ? false : true}
-                onChangeText={text => {
-                  this.setState({confirmPassword: text});
-                }}
+                value={this.state.confirmPassword}
+                onChangeText={text => { this.setState({confirmPassword: text});}}
               />
               <TouchableOpacity
-                onPress={() =>
-                  this.state.visibility
+                onPress={() => this.state.visibility
                     ? this.setState({visibility: false})
                     : this.setState({visibility: true})
                 }>
                 <Icon
                   name={this.state.visibility ? 'visibility' : 'visibility-off'}
                   size={20}
-                  color="#A39B9B"
+                  color="#707203"
                   style={styles.imageStyle}
                 />
               </TouchableOpacity>
             </View>
           </View>
 
-          <View style={{marginTop: '10%', marginBottom: 10}}>
+          <View style={styles.btnContainer}>
             <TouchableOpacity
               style={styles.save}
-              // onPress={()=>this.props.navigation.navigate('MyBottomTabs')}
               onPress={() => this.onProceed()}>
               {this.state.loader ? (
-                <ActivityIndicator size="small" color="#fff" />
+                <ActivityIndicator size="small" color={ThemeColors.CLR_WHITE} />
               ) : (
-                <Text style={{color: '#fff', fontSize: 15}}>
+                <Text style={styles.btnText}>
                   CHANGE PASSWORD
                 </Text>
               )}
@@ -257,19 +227,29 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, mapDispatchToProps)(ChangePassword);
 
 const styles = StyleSheet.create({
+  container:{
+    flex: 1,
+    backgroundColor: ThemeColors.CLR_WHITE
+  },
   ChangePasswordView: {
-    height: 300,
     width: '94%',
-    marginTop: '10%',
-    // alignItems:'center',
+    marginTop: '13%',
     alignSelf: 'center',
-    backgroundColor: '#fff',
-    height: 300,
-    shadowColor: '#000',
+    backgroundColor: ThemeColors.CLR_WHITE,
+    height: 345,
+    borderRadius:10,
+    shadowColor:  ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     shadowOffset: {width: 1, height: 1},
-    shadowOpacity: 0.4,
+    shadowOpacity: 0.7,
     shadowRadius: 3,
-    elevation: 5,
+    elevation: 7,
+  },
+  passwordContainer:{
+    marginTop: 20
+  },
+  
+  passwordSubContainer:{
+    marginLeft: 15
   },
   sectionStyle: {
     flexDirection: 'row',
@@ -277,13 +257,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderColor: '#7B7B7B',
-    height: 44,
+    borderColor: '#BCBCBC',
+    height: 40,
     width: 320,
     borderRadius: 5,
     margin: 10,
-    // marginTop:5,
-    // elevation: 5,
   },
   imageStyle: {
     margin: 5,
@@ -291,13 +269,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   InputHeader: {
+    fontSize: 20,
+    fontWeight: '400',
+    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    color:'#B3B3B3'
+  },
+  textInput:{
+    fontSize: 15,
+    fontWeight: '400',
+    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    color:'#707273',
+    width:"95%"
+  },
+  btnContainer:{
+    marginTop: '35%'
+  },
+  btnText:{
     fontSize: 18,
-    fontWeight: '500',
+    fontWeight: '700',
+    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    color:ThemeColors.CLR_WHITE
   },
   save: {
     backgroundColor: '#851729',
     padding: 12,
-    borderRadius: 20,
+    borderRadius: 30,
     alignItems: 'center',
     alignSelf: 'center',
     width: 300,

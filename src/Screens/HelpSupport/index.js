@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -13,32 +13,37 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
-import {A_KEY, BASE_URL} from '../../config';
-import {getAccessToken} from '../../localstorage';
+import { ThemeColors } from '../../Theme/ThemeColors';
+import { FontFamily } from '../../Theme/FontFamily';
 import HeaderSide from '../Component/HeaderSide';
+import Util from '../../utils'
+import { helpSupport } from '../../Redux/actions/product';
 export default class HelpSupport extends Component {
   constructor(props) {
     super(props);
     this.state = {
       visibility: false,
       loader: false,
-      name: null,
-      email: null,
-      contact: null,
-      category: null,
-      description: null,
+      name: 'Ravi',
+      email: 'Rv_5690@gmail.com',
+      contact: '9033340196',
+      category: '',
+      isToggle: false,
+      description: 'Test',
     };
+
   }
 
   onProceed = async () => {
-    this.setState({loader: true});
+    this.setState({ loader: true });
     if (this.state.name == null || this.state.name == '') {
       ToastAndroid.showWithGravity(
         'Name Required!',
         ToastAndroid.LONG,
         ToastAndroid.TOP,
       );
-      this.setState({loader: false});
+      this.setState({ loader: false });
+      return;
     }
     if (this.state.email == null || this.state.email == '') {
       ToastAndroid.showWithGravity(
@@ -46,7 +51,18 @@ export default class HelpSupport extends Component {
         ToastAndroid.LONG,
         ToastAndroid.TOP,
       );
-      this.setState({loader: false});
+      this.setState({ loader: false });
+      return;
+    }
+    let isEmail = Util.validEmail(this.state.email);
+    if (!isEmail) {
+      ToastAndroid.showWithGravity(
+        'Invalid Email Address!',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+      );
+      this.setState({ loader: false });
+      return;
     }
     if (this.state.contact == null || this.state.contact == '') {
       ToastAndroid.showWithGravity(
@@ -54,82 +70,87 @@ export default class HelpSupport extends Component {
         ToastAndroid.LONG,
         ToastAndroid.TOP,
       );
-      this.setState({loader: false});
+      this.setState({ loader: false });
+      return;
     }
+    const isValidateMobile = Util.validMobile(this.state.contact);
+    if (!isValidateMobile) {
+      ToastAndroid.showWithGravity(
+        'Invalid Mobile No.!',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+      );
+      this.setState({ loader: false });
+      return;
+    }
+
     if (this.state.category == null || this.state.category == '') {
       ToastAndroid.showWithGravity(
         'Category Required!',
         ToastAndroid.LONG,
         ToastAndroid.TOP,
       );
-      this.setState({loader: false});
+      this.setState({ loader: false });
+      return;
     }
     if (this.state.description == null || this.state.description == '') {
       ToastAndroid.showWithGravity(
-        'Description Password Required!',
+        'Description Issue Required!',
         ToastAndroid.LONG,
         ToastAndroid.TOP,
       );
-      this.setState({loader: false});
+      this.setState({ loader: false });
+      return;
     }
-    let token = await getAccessToken(token);
-    var myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append('A_Key', A_KEY);
-    myHeaders.append('Token', `${token}`);
 
-    var raw = JSON.stringify({
+    var raw = {
       name: this.state.name,
       contact: this.state.contact,
       email: this.state.email,
       issue: this.state.description,
-      category: 'Account',
-    });
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow',
+      category: this.state.category,
     };
 
-    fetch(`${BASE_URL}/common/helpSupport`, requestOptions)
-      .then(response => response.text())
-      .then(result => {
-        console.log('===>>>', result);
+    console.log("Param with Category",raw);
+
+    try {
+      const response = await helpSupport(raw);
+      if (response && response.status == 'SUCCESS') {
         ToastAndroid.showWithGravity(
-          'Issue has successfully submited..!',
+          response.mag,
           ToastAndroid.LONG,
           ToastAndroid.TOP,
         );
-        this.setState({loader: false});
-      })
-      .catch(error => {
-        console.log('error', error);
-        ToastAndroid.showWithGravity(
-          'Network Error!',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
-        this.setState({loader: false});
-      });
+      }
+      this.setState({ loader: false });
+    } catch (error) {
+      console.log("error", error);
+      this.setState({ loader: false });
+    }
   };
+
+  toggle = () => {
+    this.setState({ isToggle: !this.state.isToggle });
+  };
+
+  onSelected = (value) => {
+    console.log("selected value", value);
+    this.setState({ category: value })
+  };
+
 
   render() {
     console.log('====>', this.state.name);
     return (
       <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: '#fff',
-        }}>
+        style={styles.container}>
         <HeaderSide
           name={'Help & Support'}
           onClick={() => this.props.navigation.openDrawer()}
         />
         <ScrollView>
           <View style={styles.FirstText}>
-            <Text style={{fontSize: 20, color: '#ADADAD', fontWeight: '400'}}>
+            <Text style={styles.FirstText}>
               Need Some Help?
             </Text>
           </View>
@@ -173,15 +194,13 @@ export default class HelpSupport extends Component {
           </View>
           <View style={styles.FirstText}>
             <Image
-              style={styles.userImg}
               resizeMode={'cover'}
               source={images.support}
               defaultSource={images.support}
             />
           </View>
-
-          <View style={styles.FirstText}>
-            <Text style={{color: '#4D4F50', fontSize: 16, fontWeight: '500'}}>
+          <View>
+            <Text style={styles.submitRequest}>
               Submit Request
             </Text>
           </View>
@@ -189,49 +208,46 @@ export default class HelpSupport extends Component {
           <View style={styles.FirstText}>
             <View style={styles.sectionStyle}>
               <TextInput
-                style={{flex: 1, padding: 10}}
+                style={styles.inputText}
                 placeholder="Name"
                 underlineColorAndroid="transparent"
-                placeholderTextColor="#424242"
+                placeholderTextColor={ThemeColors.CLR_DARK_GREY}
+                value={this.state.name}
                 onChangeText={text => {
-                  this.setState({name: text});
+                  this.setState({ name: text });
                 }}
               />
             </View>
 
             <View style={styles.sectionStyle}>
               <TextInput
-                style={{flex: 1, padding: 10}}
+                style={styles.inputText}
                 placeholder="Email"
                 underlineColorAndroid="transparent"
-                placeholderTextColor="#424242"
+                placeholderTextColor={ThemeColors.CLR_DARK_GREY}
+                value={this.state.email}
                 onChangeText={text => {
-                  this.setState({email: text});
+                  this.setState({ email: text });
                 }}
               />
             </View>
 
             <View style={styles.sectionStyle}>
               <TextInput
-                style={{flex: 1, padding: 10}}
+                style={styles.inputText}
                 placeholder="Mobile Number"
                 underlineColorAndroid="transparent"
-                placeholderTextColor="#424242"
+                placeholderTextColor={ThemeColors.CLR_DARK_GREY}
+                value={this.state.contact}
                 onChangeText={text => {
-                  this.setState({contact: text});
+                  this.setState({ contact: text });
                 }}
               />
             </View>
-            <View style={styles.sectionStyle}>
-              <TextInput
-                style={{flex: 1, padding: 10}}
-                placeholder="Select Category"
-                underlineColorAndroid="transparent"
-                placeholderTextColor="#424242"
-                onChangeText={text => {
-                  this.setState({category: text});
-                }}
-              />
+            <View style={styles.sectionStyle} >
+              <Text onPress={() => this.toggle()}
+                style={styles.inputText}
+              >Select Category</Text>
               <Icon
                 name="expand-more"
                 size={28}
@@ -239,39 +255,63 @@ export default class HelpSupport extends Component {
                 style={styles.imageStyle}
               />
             </View>
+            <TouchableOpacity onPress={() => this.onSelected('Account')}>
+              <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == 'Account' ? styles.selected : '']}>
+                <Text
+                  style={styles.inputText}
+                >Account</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.onSelected('Payment')}>
+              <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == 'Payment' ? styles.selected : '']}>
+                <Text
+                  style={styles.inputText}
+                >Payment</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.onSelected('Order')}>
+              <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == 'Order' ? styles.selected : '']}
+
+              >
+                <Text
+                  style={styles.inputText}
+                >Order</Text>
+              </View>
+            </TouchableOpacity>
             <View style={styles.sectionStyleDes}>
               <TextInput
-                style={{flex: 1, paddingLeft: 10}}
+                style={styles.inputText}
                 placeholder="Describe your issue...."
                 underlineColorAndroid="transparent"
-                placeholderTextColor="#424242"
+                placeholderTextColor={ThemeColors.CLR_DARK_GREY}
                 multiline={true}
                 numberOfLines={1}
+                value={this.state.description}
                 onChangeText={text => {
-                  this.setState({description: text});
+                  this.setState({ description: text });
                 }}
               />
             </View>
           </View>
           <View>
-            <View style={{marginTop: '10%', marginBottom: 10}}>
+            <View style={styles.btnContainer}>
               <TouchableOpacity
                 style={styles.save}
                 onPress={() => this.onProceed()}>
                 {this.state.loader ? (
-                  <ActivityIndicator size="small" color="#fff" />
+                  <ActivityIndicator size="small" color={ThemeColors.CLR_WHITE} />
                 ) : (
-                  <Text style={{color: '#fff', fontSize: 15}}>SEND</Text>
+                  <Text style={styles.btnText}>SEND</Text>
                 )}
               </TouchableOpacity>
             </View>
 
-            <View style={{margin: 10, marginLeft: '10%', flexDirection: 'row'}}>
+            <View style={styles.faqContainer}>
               <Text style={styles.faqs}>FAQs</Text>
               <Icon
                 name="help-outline"
                 size={20}
-                color="#424242"
+                color={ThemeColors.CLR_DARK_GREY}
                 style={styles.imageStyle}
               />
             </View>
@@ -282,19 +322,17 @@ export default class HelpSupport extends Component {
                 <Icon
                   name="navigate-next"
                   size={30}
-                  color="#424242"
+                  color={ThemeColors.CLR_DARK_GREY}
                   style={styles.imageStyle}
                 />
               </View>
-
               <View style={styles.underLine} />
-
               <View style={styles.helpBottomList}>
                 <Text style={styles.helpBottomListText}>Order</Text>
                 <Icon
                   name="navigate-next"
                   size={30}
-                  color="#424242"
+                  color={ThemeColors.CLR_DARK_GREY}
                   style={styles.imageStyle}
                 />
               </View>
@@ -306,19 +344,17 @@ export default class HelpSupport extends Component {
                 <Icon
                   name="navigate-next"
                   size={30}
-                  color="#424242"
+                  color={ThemeColors.CLR_DARK_GREY}
                   style={styles.imageStyle}
                 />
               </View>
-
               <View style={styles.underLine} />
-
               <View style={styles.helpBottomList}>
                 <Text style={styles.helpBottomListText}>Bars</Text>
                 <Icon
                   name="navigate-next"
                   size={30}
-                  color="#424242"
+                  color={ThemeColors.CLR_DARK_GREY}
                   style={styles.imageStyle}
                 />
               </View>
@@ -333,9 +369,16 @@ export default class HelpSupport extends Component {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#E5E5E5'
+  },
   FirstText: {
     alignSelf: 'center',
-    marginTop: '5%',
+    marginTop: '3%',
+    fontSize: 21,
+    color: '#ADADAD',
+    fontWeight: '500',
+    fontFamily: FontFamily.TAJAWAL_REGULAR
   },
   ThirdText: {
     alignSelf: 'center',
@@ -343,7 +386,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   phone: {
-    // left: '8.33%',
     right: 30,
     top: '12.53%',
     bottom: '8.33%',
@@ -352,7 +394,6 @@ const styles = StyleSheet.create({
     width: 29,
     height: 29,
     right: 10,
-    // top: 339,
   },
   whatsApp: {
     left: 20,
@@ -361,61 +402,107 @@ const styles = StyleSheet.create({
     bottom: '0.35%',
     backgroundColor: '#10e87e',
   },
+  submitRequest: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    fontSize: 20,
+    fontWeight: '500',
+    color: '#4D4F50',
+    textAlign: 'center'
+  },
   sectionStyle: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: ThemeColors.CLR_WHITE,
     borderWidth: 0,
-    borderColor: '#000',
-    height: 44,
-    width: 320,
+    borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+    height: 48,
+    width: 324,
     borderRadius: 5,
     margin: 10,
-    elevation: 2,
+    elevation: 4,
+  },
+  collapsed: {
+    flexDirection: 'row',
+    backgroundColor: ThemeColors.CLR_WHITE,
+    borderWidth: 0,
+    borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+    height: 48,
+    width: 324,
+    marginTop: -9,
+    margin: 10,
+    marginLeft: 10,
+    paddingHorizontal: 10,
+    elevation: 4,
+  },
+  hide: {
+    height: 0
+  },
+  selected: {
+    borderColor: "#AB1731",
+    borderLeftWidth: 5,
+  },
+  inputText: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    fontWeight: '400',
+    fontSize: 15,
+    flex: 1,
+    padding: 10,
+    color: ThemeColors.CLR_DARK_GREY
   },
   sectionStyleDes: {
     flexDirection: 'row',
-    // justifyContent: 'center',
-    alignSelf: 'flex-start',
-    backgroundColor: '#fff',
+    alignItems: 'flex-start',
+    backgroundColor: ThemeColors.CLR_WHITE,
     borderWidth: 0,
-    borderColor: '#000',
-    height: 100,
-    width: 320,
+    borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+    height: 112,
+    width: 324,
     borderRadius: 5,
     margin: 10,
-    elevation: 2,
+    elevation: 4,
   },
   imageStyle: {
-    // margin: 5,
     resizeMode: 'stretch',
     alignSelf: 'center',
     marginLeft: 5,
+    marginTop: 5
+  },
+  btnContainer: {
+    marginTop: '7%',
+    marginBottom: '6%'
   },
   save: {
     backgroundColor: '#851729',
     padding: 12,
-    borderRadius: 20,
+    borderRadius: 30,
     alignItems: 'center',
     alignSelf: 'center',
     width: 300,
   },
+  btnText: {
+    color: ThemeColors.CLR_WHITE,
+    fontSize: 17,
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    fontWeight: '700',
+  },
+  faqContainer: {
+    marginLeft: '7%',
+    marginBottom: 0,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
   faqs: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
     color: '#4D4F50',
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '500',
   },
   helpBottom: {
-    // height: 300,
-    width: '94%',
-    marginTop: '10%',
-    // alignItems:'center',
+    width: 324,
+    marginTop: '5%',
     alignSelf: 'center',
-    backgroundColor: '#fff',
-    // height: 300,
-    shadowColor: '#000',
-    shadowOffset: {width: 1, height: 1},
+    backgroundColor: ThemeColors.CLR_WHITE,
+    shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+    shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
     shadowRadius: 10,
     elevation: 5,
@@ -423,17 +510,48 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   helpBottomList: {
-    margin: 16,
+    margin: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   helpBottomListText: {
-    fontSize: 16,
-    alignSelf: 'center',
+    fontSize: 18,
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    fontWeight: '500',
+    padding: 5,
     color: '#4D4F50',
   },
   underLine: {
     backgroundColor: '#DADADA',
     height: 1,
   },
+
+  // accoridian
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+  },
+  listItemTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#0F0F0F',
+    marginLeft: 10,
+    fontFamily: FontFamily.AVENIR_HEAVY
+  },
+
+  subItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 6,
+    marginLeft: 46,
+  },
+  subItemTitle: {
+    color: '#0F0F0F',
+    fontFamily: FontFamily.AVENIR_BOOK
+  },
+
 });
+
+
+{/*  */ }

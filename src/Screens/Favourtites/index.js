@@ -18,8 +18,9 @@ import { ThemeColors } from '../../Theme/ThemeColors';
 import { FontFamily } from '../../Theme/FontFamily';
 import Drinks from './Tabs/Drinks';
 import Bars from './Tabs/Bars';
+import { wishlist } from '../../api/wishlist';
 const LazyPlaceholder = ({ route }) => (
-  <View style={styles.container}>
+  <View>
     <ThemeFullPageLoader />
   </View>
 );
@@ -43,55 +44,23 @@ export default class Favourites extends Component {
   }
 
   fetchData = async () => {
-    const myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append('A_Key', A_KEY);
-    const token = await getAccessToken();
-    if (token) {
-        myHeaders.append('Token', token);
-    }
-
-    var raw = JSON.stringify({
-      latitude: 1.28668,
-      longitude: 103.853607,
-    });
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow',
-    };
-
-    fetch(`${BASE_URL}/wishlist/viewWishlist`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        console.log(result.response);
-        if (result.response) {
-          this.setState({
-            data: result.response.result,
-            loader: false,
-            hostUrl: result.response.result.hostUrl
-          });
-        }
-        if (result.errors) {
-          this.setState({ loader: false });
-          ToastAndroid.showWithGravity(
-            result.errors[0].msg,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
-        }
-      })
-      .catch(error => {
-        console.log('error', error);
-        this.setState({ loader: false });
+    try {
+      const response = await wishlist();
+      //console.log("Wishlist > fetchData > response", response);
+      this.setState({
+        data: response.result,
+        loader: false,
+        hostUrl: response.result.hostUrl
+      });
+    } catch (error) {
+      this.setState({loader: false});
+        console.log("Wishlist > fetchData > Catch",error);
         ToastAndroid.showWithGravity(
           'Network Error!',
           ToastAndroid.LONG,
           ToastAndroid.TOP,
         );
-      });
+    }
   };
 
   _handleIndexChange = index => this.setState({ index });
@@ -111,31 +80,20 @@ export default class Favourites extends Component {
   render() {
     return (
       <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: '#fff',
-        }}>
-        <View
-          style={{
-            backgroundColor: '#fff',
-            height: 60,
-          }}>
+        style={styles.container}>
+        <View>
           <View
-            style={{ margin: 12, flexDirection: 'row', alignItems: 'center' }}>
-            {/* <TouchableOpacity
-              onPress={() => this.props.navigation.navigate('MyBottomTabs')}>
-              <Icon name="arrow-back" size={28} color="#4D4F50" />
-            </TouchableOpacity> */}
+            style={styles.headerContainer}>
 
-            <View style={{ marginLeft: 10 }}>
-              <Text style={{ fontSize: 20, color: '#4D4F50', fontWeight: '500' }}>
+            <View style={styles.header}>
+              <Text style={styles.titleText}>
                 Favourites
               </Text>
             </View>
           </View>
         </View>
 
-        <View style={{ alignSelf: 'center', marginTop: -5 }}>
+        <View style={styles.searchContainer}>
           <View style={styles.sectionStyle}>
             <Icon
               name="search"
@@ -144,7 +102,7 @@ export default class Favourites extends Component {
               style={styles.imageStyle}
             />
             <TextInput
-              style={{ flex: 1 }}
+              style={styles.searchInput}
               placeholder="Search for Drinks..."
               underlineColorAndroid="transparent"
             />
@@ -158,9 +116,9 @@ export default class Favourites extends Component {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={{ flex: 1, marginTop: 10 }}>
+        <View style={styles.tabContainer}>
           {!this.state.loader ?
-            <View style={{ flexDirection: 'row', height: '100%' }}>
+            <View style={styles.tabView}>
               <TabView
                 lazy
                 navigationState={this.state}
@@ -176,7 +134,7 @@ export default class Favourites extends Component {
                     style={{ backgroundColor: ThemeColors.CLR_WHITE, }}
                     renderLabel={({ route }) => (
                       <>
-                        <View style={{ flexDirection: 'row' }}>
+                        <View style={styles.tabRow}>
                           {route.name == 'Drinks' &&
                             <Icon
                               name={'liquor'}
@@ -221,18 +179,34 @@ export default class Favourites extends Component {
 }
 
 const styles = StyleSheet.create({
+  container:{
+      flex: 1,
+      backgroundColor: '#fff',
+  },
+  headerContainer:{ 
+    margin: 12, 
+    flexDirection: 'row', 
+    alignItems: 'center' 
+  },
+  header:{ marginLeft: 10 },
+  titleText:{ fontStyle:FontFamily.ROBOTO_REGULAR,fontSize: 20, color: '#4D4F50', fontWeight: '500' },
+  searchContainer:{ alignSelf: 'center', marginTop: -5 },
   sectionStyle: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#EAEAEA',
     borderWidth: 0,
-    borderColor: '#000',
+    borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     height: 40,
     width: 360,
     borderRadius: 5,
     margin: 10,
     elevation: 2,
   },
+  searchInput:{flex: 1},
+  tabContainer:{ flex: 1, marginTop: 10 },
+  tabView:{ flexDirection: 'row', height: '100%' },
+  tabRow:{ flexDirection: 'row' },
   imageStyle: {
     margin: 5,
     resizeMode: 'stretch',
@@ -242,8 +216,9 @@ const styles = StyleSheet.create({
     color: ThemeColors.CLR_TAB,
   },
   selectedTabBorder: {
-    backgroundColor: ThemeColors.CLR_TAB,
+    backgroundColor: '#C11331',
     height: 3,
+    width:100,
     top: '30%',
   },
   tabText: {
@@ -251,7 +226,9 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: FontFamily.ROBOTO_REGULAR,
+    fontSize:18,
     fontWeight: '400',
+    color:'#4D4F50'
   },
   iconStyle: {
     alignSelf: 'center',
