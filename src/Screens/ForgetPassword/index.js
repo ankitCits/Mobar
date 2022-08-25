@@ -20,7 +20,7 @@ export default class ForgetPassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      contact: '90333401',
+      contact: '',
       loader: false,
     };
   }

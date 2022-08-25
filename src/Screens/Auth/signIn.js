@@ -24,10 +24,10 @@ class SignIn extends Component {
       privacyCheck: true,
       legalCheck: true,
       visibility: false,
-      // mobileNumber: null,
-      // password: null,
-      mobileNumber: '88392288',
-      password: "As@123456",
+      mobileNumber: null,
+      password: null,
+      // mobileNumber: '88392288',
+      // password: "As@123456",
       loader: false,
     };
   }
