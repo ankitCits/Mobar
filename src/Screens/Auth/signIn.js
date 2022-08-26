@@ -26,8 +26,10 @@ class SignIn extends Component {
       visibility: false,
       mobileNumber: null,
       password: null,
-      // mobileNumber: '88392288',
-      // password: "As@123456",
+      mobileError: null,
+      passwordError: null,
+      // mobileNumber: '99887766',
+      // password: "Ankit@2261",
       loader: false,
     };
   }
@@ -38,47 +40,36 @@ class SignIn extends Component {
   async onProceed() {
     this.setState({ loader: true });
     // check Not Blank
-    if (this.state.mobileNumber == null) {
-      ToastAndroid.showWithGravity(
-        'Mobile number mandatory',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      this.setState({ loader: false });
+    if (this.state.mobileNumber == null || this.state.mobileNumber.trim() == '') {
+      this.setState({ mobileError: 'Mobile number mandatory', loader: false });
       return;
+    } else {
+      this.setState({ mobileError: null });
     }
-    if (this.state.password == null) {
-      ToastAndroid.showWithGravity(
-        'Password mandatory',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      this.setState({ loader: false });
+
+    if (this.state.password == null || this.state.password.trim() == '') {
+      this.setState({ passwordError: 'Password mandatory', loader: false });
       return;
+    } else {
+      this.setState({ passwordError: null });
     }
 
     // Not Start With Zero
     let zero = this.state.mobileNumber.startsWith('0');
     if (zero) {
-      ToastAndroid.showWithGravity(
-        'Mobile number should not start with a zero',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      this.setState({ loader: false });
+      this.setState({ mobileError: 'Mobile number should not start with a zero', loader: false });
       return;
+    } else {
+      this.setState({ mobileError: null });
     }
 
     // Valid Mobile
     let isMobile = Util.validMobile(this.state.mobileNumber);
     if (!isMobile) {
-      ToastAndroid.showWithGravity(
-        'Mobile number not valid!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      this.setState({ loader: false });
+      this.setState({ mobileError: 'Mobile number not valid!', loader: false });
       return;
+    } else {
+      this.setState({ mobileError: null });
     }
 
     this.processLogin();
@@ -107,6 +98,37 @@ class SignIn extends Component {
     }
   }
 
+
+  handleUserInput = (name, value) => {
+    this.setState({ [name]: value }, () => { this.validateField(name, value) });
+  }
+
+  validateField = (fieldName, value) => {
+    switch (fieldName) {
+      case 'mobileNumber':
+        let zero = this.state.mobileNumber.startsWith('0');
+        if (this.state.mobileNumber == null || this.state.mobileNumber.trim() == '') {
+          this.setState({ mobileError: 'Mobile number mandatory' });
+        } else if (zero) {
+          this.setState({ mobileError: 'Mobile number should not start with a zero' });
+        } else if (!Util.validMobile(this.state.mobileNumber)) {
+          this.setState({ mobileError: 'Mobile number not valid!' });
+        } else {
+          this.setState({ mobileError: null });
+        }
+        break;
+      case 'password':
+        if (this.state.password == null || this.state.password.trim() == '') {
+          this.setState({ passwordError: 'Password mandatory' });
+        } else {
+          this.setState({ passwordError: null });
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
   render() {
     return (
       <SafeAreaView
@@ -127,19 +149,17 @@ class SignIn extends Component {
               keyboardType="numeric"
               iconName={'call'}
               value={this.state.mobileNumber}
-              onChangeText={text => {
-                this.setState({ mobileNumber: text });
-              }}
+              onChangeText={text => this.handleUserInput('mobileNumber', text)}
+              error={this.state.mobileError}
             />
             <TextInputField
               placeholder="Password"
               iconName={'lock'}
               value={this.state.password}
-              onChangeText={text => {
-                this.setState({ password: text });
-              }}
+              onChangeText={text => this.handleUserInput('password', text)}
               isPassword={true}
               visibility={true}
+              error={this.state.passwordError}
             />
 
             <ThemeButton
@@ -193,7 +213,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor:'#F4F4F4',// ThemeColors.CLR_BG
+    backgroundColor: '#F4F4F4',// ThemeColors.CLR_BG
   },
   createView: {
     marginTop: '25%',
@@ -202,9 +222,9 @@ const styles = StyleSheet.create({
   createText: {
     fontFamily: FontFamily.TAJAWAL_REGULAR,
     fontSize: 32,
-    color:ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+    color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     fontWeight: '500',
-    
+
   },
   viewInput: {
     alignItems: 'center',

@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { FontFamily } from '../Theme/FontFamily';
+import { screenWidth } from '../Theme/Matrices';
 import { ThemeColors } from '../Theme/ThemeColors';
 import ThemeButton from './ThemeButton';
 
@@ -17,7 +18,7 @@ export default class TextInputField extends React.Component {
         const {
             editable = true,
             isPassword = false,
-            visibility = false
+            error
         } = this.props
         return (
             <>
@@ -37,18 +38,18 @@ export default class TextInputField extends React.Component {
                         underlineColorAndroid="transparent"
                         keyboardType={this.props.keyboardType}
                         onChangeText={this.props.onChangeText}
+                        onChange={this.props.onChange}
                         placeholderTextColor={'#A39B9B'}
                         secureTextEntry={!this.state.visibility ? false : true}
                         value={this.props.value}
                         editable={editable}
                     />
                     {/* Password icon */}
-                    {isPassword
-                        && <TouchableOpacity
+                    {isPassword &&
+                        <TouchableOpacity
                             onPress={() => {
                                 this.setState({ visibility: !this.state.visibility })
-                            }}
-                        >
+                            }}>
                             <Icon
                                 name={!this.state.visibility ? 'visibility' : 'visibility-off'}
                                 size={22}
@@ -57,7 +58,13 @@ export default class TextInputField extends React.Component {
                             />
                         </TouchableOpacity>
                     }
+
                 </View>
+                {error &&
+                    <View style={innerStyle.errorContainer}>
+                        <Text style={innerStyle.errorText}>{error}</Text>
+                    </View>
+                }
             </>
         );
     }
@@ -75,7 +82,7 @@ const innerStyle = StyleSheet.create({
     },
     sectionStyle: {
         flexDirection: 'row',
-        justifyContent: 'center',
+        // justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: ThemeColors.CLR_WHITE,
         borderWidth: 0,
@@ -84,6 +91,7 @@ const innerStyle = StyleSheet.create({
         width: 320,
         borderRadius: 10,
         margin: 10,
+        // marginBottom: 0,
         elevation: 5,
     },
     shadowProp: {
@@ -92,4 +100,11 @@ const innerStyle = StyleSheet.create({
         shadowOpacity: 0.15,
         shadowRadius: 4,
     },
+    errorContainer: {
+        // padding: 5,
+        width: screenWidth(80),
+    },
+    errorText: {
+        color: 'red'
+    }
 });

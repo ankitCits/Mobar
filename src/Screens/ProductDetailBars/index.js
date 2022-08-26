@@ -36,24 +36,26 @@ export default class ProductDetailBars extends Component {
 
   fetchData = async () => {
     this.setState({ loader: true });
-    try{
-    const postData = {
-      vendorId: this.props.route.params && this.props.route.params.id ? this.props.route.params.id : 1,
-      latitude: 1.28668,
-      longitude: 103.853607,
-    };
-    const data = await fetchVendorDetails(postData);
-    this.setState({ data: data.response.result, loader: false });
-    this.setState({isFavorite : this.state.data.vendorDetail[0].ecom_ba_wishlist && 
-      this.state.data.vendorDetail[0].ecom_ba_wishlist.wishlistId ? 
-      true : false });
-  }catch(error){
-    ToastAndroid.showWithGravity(
-      error,
-      ToastAndroid.LONG,
-      ToastAndroid.TOP,
-    );
-  }
+    try {
+      const postData = {
+        vendorId: this.props.route.params && this.props.route.params.id ? this.props.route.params.id : 1,
+        latitude: 1.28668,
+        longitude: 103.853607,
+      };
+      const data = await fetchVendorDetails(postData);
+      this.setState({ data: data.response.result, loader: false });
+      this.setState({
+        isFavorite: this.state.data.vendorDetail[0].ecom_ba_wishlist &&
+          this.state.data.vendorDetail[0].ecom_ba_wishlist.wishlistId ?
+          true : false
+      });
+    } catch (error) {
+      ToastAndroid.showWithGravity(
+        error,
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+      );
+    }
   };
 
   wishListAdd = async (id) => {
@@ -76,25 +78,25 @@ export default class ProductDetailBars extends Component {
   };
 
   wishListRemove = async (id) => {
-    console.log("Bar > wishlist remove",id);
+    console.log("Bar > wishlist remove", id);
     //return;
     try {
       const data = {
-          wishlistId: id,
+        wishlistId: id,
       };
       const response = await removeToWishlist(data);
-      console.log("Wishlist Remove > Bar",response);
-      console.log("Wishlist Remove > w object",this.state.data.vendorDetail[0].ecom_ba_wishlist);
+      console.log("Wishlist Remove > Bar", response);
+      console.log("Wishlist Remove > w object", this.state.data.vendorDetail[0].ecom_ba_wishlist);
       this.state.data.vendorDetail[0].ecom_ba_wishlist = null;
       this.setState({ isFavorite: false })
-  } catch (error) {
+    } catch (error) {
       console.log("Product Details Bar > removeFavorite > Catch", error);
       ToastAndroid.showWithGravity(
         error,
         ToastAndroid.LONG,
         ToastAndroid.BOTTOM,
       );
-  }
+    }
   };
 
   render() {
@@ -137,15 +139,15 @@ export default class ProductDetailBars extends Component {
                   <TouchableOpacity
                     onPress={() => {
                       this.state.isFavorite
-                            ? this.wishListRemove(this.state.data.vendorDetail[0].ecom_ba_wishlist.wishlistId)
-                            : this.wishListAdd(this.state.data.vendorDetail[0].vendorId);
+                        ? this.wishListRemove(this.state.data.vendorDetail[0].ecom_ba_wishlist.wishlistId)
+                        : this.wishListAdd(this.state.data.vendorDetail[0].vendorId);
                     }}>
-                      <Image
-                        resizeMode={'cover'}
-                        source={this.state.isFavorite ? images.heartFill : images.heart}
-                        defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
-                        //style={styles.flexEnd}
-                      />
+                    <Image
+                      resizeMode={'cover'}
+                      source={this.state.isFavorite ? images.heartFill : images.heart}
+                      defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
+                    //style={styles.flexEnd}
+                    />
                   </TouchableOpacity>
                 </View>
 
@@ -351,7 +353,7 @@ export default class ProductDetailBars extends Component {
               </Text>
 
               {this.state.data && this.state.data.vendorDetail.length && this.state.data.vendorDetail[0].ecom_ac_products
-                ? this.state.data.vendorDetail[0].ecom_ac_products.map(item => (
+                ? this.state.data.vendorDetail[0].ecom_ac_products.map((item, index) => (
                   <View
                     style={styles.productView}
                     onPress={() =>
@@ -370,7 +372,7 @@ export default class ProductDetailBars extends Component {
                         defaultSource={images.product2}
                       />
                     </View>
-                    <View style={{ margin: 5, marginLeft: 10,width:'60%' }}>
+                    <View style={{ margin: 5, marginLeft: 10, width: '60%' }}>
                       <View
                         style={{
                           flexDirection: 'row',
@@ -382,9 +384,9 @@ export default class ProductDetailBars extends Component {
                           style={{
                             fontSize: 16,
                             fontWeight: '500',
-                            width:'75%',
+                            width: '75%',
                             color: '#4D4F50',
-                            paddingHorizontal:5,
+                            paddingHorizontal: 5,
                           }}>
                           {item.name}
                         </Text>
@@ -467,15 +469,16 @@ export default class ProductDetailBars extends Component {
                         </TouchableOpacity> */}
                       </View>
                     </View>
-                    <View style={{marginTop:17,marginRight:12,}}>
-                    <TouchableOpacity
+                    <View style={{ marginTop: 17, marginRight: 12, }}>
+                      <TouchableOpacity
+                        key={index}
                         style={{
                           backgroundColor: '#BABABA',
                           padding: 2,
                           borderRadius: 20,
                         }}>
                         <Icon name="add" size={18} color="#fff" />
-                      </TouchableOpacity>    
+                      </TouchableOpacity>
                     </View>
                   </View>
                 ))
