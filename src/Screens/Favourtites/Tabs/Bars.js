@@ -6,8 +6,10 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
+  ImageBackground,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { removeToWishlist } from '../../../api/wishlist';
 import images from '../../../assets/images';
 import NoContentFound from '../../../Component/NoContentFound';
 import { FontFamily } from '../../../Theme/FontFamily';
@@ -23,6 +25,24 @@ export default class Bars extends Component {
 
   removeFavorite = async (id,comboId=0,productId=0) =>{
     console.log("Favorites > Drinks > removeFavorite > Id",id);
+    console.log("Id", id);
+    const index = this.state.data.indexOf(x=>x.wishlistId == id);
+    console.log("Index",index);
+    try {
+      const data = {
+          wishlistId: id
+      }
+      const response = await removeToWishlist(data);
+      console.log("RemoveFavortie > response",response);
+      this.setState({data:this.state.data.filter(x=>x.wishlistId != id)});
+  } catch (error) {
+      console.log("CategoryCard > removeFavorite > Catch", error);
+      ToastAndroid.showWithGravity(
+        error,
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+      );
+  }
   }
 
   render() {
@@ -39,6 +59,14 @@ export default class Bars extends Component {
                     this.props.navigation.navigate('ProductDetailBars', { id: item.ecom_ae_vendor.vendorId })
                   }>
                   <View style={styles.productInnerView}>
+                  {/* <ImageBackground
+                      resizeMode=''
+                        style={styles.productInnerView}
+                        source={{
+                            uri: `${this.state.hostUrl + item.ecom_ae_vendor.images}`,
+                        }}
+                        
+                    > */}
                     <TouchableOpacity
                       style={styles.favIcon}
                       onPress={() => {
@@ -57,6 +85,7 @@ export default class Bars extends Component {
                       //source={images.product1}
                       source={{ uri: `${this.state.hostUrl + item.ecom_ae_vendor.images}` }}
                     />
+                    {/* </ImageBackground> */}
                   </View>
 
                   <View style={styles.itemContainer}>
@@ -112,7 +141,8 @@ export default class Bars extends Component {
 const styles = StyleSheet.create({
   productView: {
     backgroundColor: ThemeColors.CLR_WHITE,
-    width: '90%',
+    //width: '90%',
+    margin:15,
     shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
@@ -121,30 +151,36 @@ const styles = StyleSheet.create({
     elevation: 5,
     alignSelf: 'center',
     flexDirection: 'row',
-    marginTop: 15,
+    //marginTop: 15,
   },
   productInnerView: {
     backgroundColor: ThemeColors.CLR_WHITE,
-    height: 120,
+    height: '100%',
     width: 120,
     shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     shadowOffset: { width: 1, height: 1 },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    //borderWidth:1,
     borderRadius: 10,
     elevation: 5,
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'flex-end',
+    alignSelf: 'center',
     flexDirection: 'row',
   },
+
   favIcon: {
     flex: 1,
     alignSelf: 'flex-start',
     textAlign: 'flex-start',
     margin: 10,
   },
-  prodImage: { width: 75, height: 75 },
+  prodImage: { 
+    width: 75,
+    height:75, 
+    margin:5
+  },
   itemContainer: {
     margin: 5,
     marginLeft: 15,
@@ -157,7 +193,7 @@ const styles = StyleSheet.create({
     color: '#4D4F50',
     fontFamily: FontFamily.TAJAWAL_REGULAR,
   },
-  address: { width: '80%', marginTop: 5 },
+  address: { width: '90%', marginTop: 5 },
   addressText: {
     fontFamily: FontFamily.ROBOTO_REGULAR,
     fontSize: 13,
