@@ -17,8 +17,8 @@ class BarCard extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data:this.props.item,
-            isFavorite: (this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId)
+            data: this.props.item,
+            isFavorite: (this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId) ? true : false
         }
     }
 
@@ -27,44 +27,43 @@ class BarCard extends Component {
         this.props.navigation.navigate('ProductDetailBars', { 'id': item.vendorId });
     }
 
-    removeFavorite = async (id)=>{
-        console.log("BarCard > removeFavorite > WId",id);
-        console.log("object before remove fav",this.state.data.ecom_ba_wishlist); 
-        const data ={
-            wishlistId:id
+    removeFavorite = async (id) => {
+        console.log("BarCard > removeFavorite > WId", id);
+        console.log("object before remove fav", this.state.data.ecom_ba_wishlist);
+        const data = {
+            wishlistId: id
         }
-        try{
-        const response = await removeToWishlist(data);
-        this.setState({ isFavorite: false });
-        this.setState(data.ecom_ba_wishlist = null);
-        console.log("BarCard > removeFavorite > Response",response);
-        console.log("object after remove fav",this.state.data.ecom_ba_wishlist); 
-        }catch(error){
-            console.log("BarCard > removeFavorite > Error",error);
+        try {
+            const response = await removeToWishlist(data);
+            this.setState({ isFavorite: false });
+            this.state.data.ecom_ba_wishlist = null,
+                console.log("BarCard > removeFavorite > Response", response);
+            console.log("object after remove fav", this.state.data.ecom_ba_wishlist);
+        } catch (error) {
+            console.log("BarCard > removeFavorite > Error", error);
         }
     }
 
-    addFavorite = async (id,prodId=0,comboId=0)=>{
-        console.log("object before add fav",this.state.data.ecom_ba_wishlist); 
-        console.log("BarCard > addFav > ItemID",id);
-        const data = {
-            productId:prodId,
-            comboId:comboId,
-            vendorId:id
-        };
-        try{
-        const response = await addToWishlist(data);
-        console.log("BarCard > addFavorite > response",response.result.data.wishlistId);
-        this.setState({ isFavorite: true });
-        //this.setState(data.ecom_ba_wishlist={wishlistId : response.result.data.wishlistId,data,wishlistFor : response.result.data.ecom_ba_wishlist.wishlistFor});
-        this.state.data.ecom_ba_wishlist = {
-             "wishlistId": response.result.data.wishlistId,
-             "wishlistFor": "Bars"
-        };
-        console.log("object after add fav",this.state.data.ecom_ba_wishlist); 
+    addFavorite = async (id, index) => {
+        console.log("BarCard > addFav > ItemID", id);
+        console.log("BarCard > addFav > this.state.data.ecom_ba_wishlist", this.state.data.ecom_ba_wishlist);
 
-        }catch(error){
-            console.log("BarCard > addFavorite > Catch",error);
+        const data = {
+            productId: 0,
+            comboId: 0,
+            vendorId: id
+        };
+        try {
+            const response = await addToWishlist(data);
+            console.log("BarCard > addFavorite > response", response.result.data.wishlistId);
+            this.state.data.ecom_ba_wishlist = {
+                "wishlistId": response.result.data.wishlistId,
+                "wishlistFor": "Bars"
+            };
+            this.setState({ isFavorite: true });
+            console.log("object after add fav", this.state.data.ecom_ba_wishlist);
+        } catch (error) {
+            console.log("BarCard > addFavorite > Catch", error);
         }
     }
 
@@ -80,12 +79,12 @@ class BarCard extends Component {
                 <TouchableOpacity
                     key={index}
                     activeOpacity={1}
-                    onPress={() => this.goToDetails(item)}
+                    onPress={() => this.goToDetails(this.state.data)}
                     style={styles.container}>
                     <ImageBackground
                         style={styles.promotionsImg}
                         source={{
-                            uri: `${hostUrl + item.images}`,
+                            uri: `${hostUrl + this.state.data.images}`,
                         }}
                         defaultSource={images.promotions1}
                     >
@@ -98,17 +97,19 @@ class BarCard extends Component {
                                     defaultSource={images.heart}
                                 />
                             </TouchableOpacity> */}
-                               <TouchableOpacity
+                            <TouchableOpacity
                                 onPress={() => {
                                     this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId
                                         ? this.removeFavorite(this.state.data.ecom_ba_wishlist.wishlistId)
-                                        : this.addFavorite(this.state.data.vendorId); // pass vendor id 
+                                        : this.addFavorite(this.state.data.vendorId, index); // pass vendor id 
                                 }}
-                                >
+                            >
                                 <Image
                                     resizeMode={'cover'}
-                                    source={this.state.data.ecom_ba_wishlist ? images.heartFill : images.heart}
-                                    defaultSource={this.state.data.ecom_ba_wishlist ? images.heartFill : images.heart}
+                                    source={this.state.isFavorite ? images.heartFill : images.heart}
+                                    defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
+                                    // source={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
+                                    // defaultSource={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
                                     style={styles.flexEnd}
                                 />
                             </TouchableOpacity>
@@ -122,14 +123,14 @@ class BarCard extends Component {
                     <View
                         style={styles.addressContainer}>
                         <Text style={styles.textTitle}>
-                            {item.vendorShopName}
+                            {this.state.data.vendorShopName}
                         </Text>
                         <View>
-                            <Text style={styles.textAddress}>{item.address}</Text>
+                            <Text style={styles.textAddress}>{this.state.data.address}</Text>
                         </View>
                         <View style={styles.footer}>
                             <TouchableOpacity style={styles.details}>
-                                <StarRating isEdit={false} size={item.vendorRating} />
+                                <StarRating isEdit={false} size={this.state.data.vendorRating} />
                             </TouchableOpacity>
 
                             <TouchableOpacity
@@ -141,7 +142,7 @@ class BarCard extends Component {
                                     style={styles.bottomIcon}
                                 />
                                 <Text style={styles.textAddress}>
-                                    {item.distance.toFixed(2)}
+                                    {this.state.data.distance.toFixed(2)}
                                 </Text>
                             </TouchableOpacity>
 
@@ -171,7 +172,7 @@ const styles = StyleSheet.create({
     container: {
         marginTop: 20,
         backgroundColor: '#8A87AC',
-        margin: 10,
+        //margin: 10,
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20
     },
@@ -184,8 +185,8 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 10,
         borderBottomRightRadius: 10
     },
-    offText:{ 
-        color: ThemeColors.CLR_WHITE 
+    offText: {
+        color: ThemeColors.CLR_WHITE
     },
     textTitle: {
         fontSize: 20,
@@ -199,13 +200,14 @@ const styles = StyleSheet.create({
     },
     heartContainer: {
         marginTop: '3%',
-        marginRight: '5%',
-        fontSize: 15
+        marginRight: 15,
+        //marginRight: '5%',
+        fontSize: 15,
+        //backgroundColor:'red',
+        //width:'95%'
     },
-    flexEnd:{
-        alignItems: 'flex-end',
-        //alignContent:'flex-end',
-        alignSelf:'flex-end'
+    flexEnd: {
+        alignSelf: 'flex-end',
     },
     textAddress: {
         flexDirection: 'row',
@@ -223,8 +225,8 @@ const styles = StyleSheet.create({
         marginTop: 10,
         flexDirection: 'row',
     },
-    bottomIcon:{ 
-        marginTop: 2 
+    bottomIcon: {
+        marginTop: 2
     },
     details: {
         marginTop: 10,
@@ -241,7 +243,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     promotionsImg: {
-        width: 350,
+        //width: '100%',
         height: 220,
     },
 });

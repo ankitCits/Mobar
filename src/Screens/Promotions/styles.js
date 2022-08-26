@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     },
     banner: {
         marginTop: 15,
+        marginBottom: 65,
         alignItems: 'center',
     },
 });

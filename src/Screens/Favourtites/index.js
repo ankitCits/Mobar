@@ -8,6 +8,8 @@ import {
   StyleSheet,
   Dimensions,
   ToastAndroid,
+  ScrollView,
+  RefreshControl
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
@@ -32,6 +34,7 @@ export default class Favourites extends Component {
       data: [],
       hostUrl: null,
       index: 0,
+      refreshing: false,
       routes: [
         { key: '1', name: 'Drinks' },
         { key: '2', name: 'Bars' },
@@ -43,10 +46,17 @@ export default class Favourites extends Component {
     this.fetchData();
   }
 
+  onRefresh = async () => {
+    this.setState({ refreshing: true });
+    console.log("Favorites > onRefresh >", this.state.refreshing);
+    this.setState({ refreshing: false });
+    await this.fetchData();
+  }
+
   fetchData = async () => {
     try {
       const response = await wishlist();
-      //console.log("Wishlist > fetchData > response", response);
+      console.log("Wishlist > Pull refresh > fetchData > response", response);
       this.setState({
         data: response.result,
         loader: false,
@@ -56,7 +66,7 @@ export default class Favourites extends Component {
       this.setState({ loader: false });
       console.log("Wishlist > fetchData > Catch", error);
       ToastAndroid.showWithGravity(
-        'Network Error!',
+        'Unauthorized user',
         ToastAndroid.LONG,
         ToastAndroid.TOP,
       );
@@ -66,114 +76,138 @@ export default class Favourites extends Component {
   _handleIndexChange = index => this.setState({ index });
   _renderLazyPlaceholder = ({ route }) => <LazyPlaceholder route={route} />;
   _renderScene = ({ route, jumpTo }) => {
+    console.log("Favorite > PullRefresh > Drinks render", this.state.data.drinks);
     if (route.name == 'Drinks') {
       return (
-        <Drinks data={this.state.data.drinks} hostUrl={this.state.hostUrl} navigation={this.props.navigation} />
+        <ScrollView refreshControl={
+          <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+        }>
+          <Drinks data={this.state.data.drinks} hostUrl={this.state.hostUrl} navigation={this.props.navigation} />
+        </ScrollView>
       );
     } else {
       return (
-        <Bars data={this.state.data.bars} hostUrl={this.state.hostUrl} navigation={this.props.navigation} />
+        <ScrollView refreshControl={
+          <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+        }>
+          <Bars data={this.state.data.bars} hostUrl={this.state.hostUrl} navigation={this.props.navigation} />
+        </ScrollView>
       );
     }
   };
 
   render() {
     return (
-      <SafeAreaView
-        style={styles.container}>
-        <View>
-          <View
-            style={styles.headerContainer}>
+      <>
+        <SafeAreaView
+          style={styles.container}
+        >
+          {/* <ScrollView refreshControl={
+            <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+          }> */}
+          <View>
+            <View
+              style={styles.headerContainer}>
 
-            <View style={styles.header}>
-              <Text style={styles.titleText}>
-                Favourites
-              </Text>
+              <View style={styles.header}>
+                <Text style={styles.titleText}>
+                  Favourites
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
 
-        <View style={styles.searchContainer}>
-          <View style={styles.sectionStyle}>
-            <Icon
-              name="search"
-              size={28}
-              color="#A39B9B"
-              style={styles.imageStyle}
-            />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search for Drinks..."
-              underlineColorAndroid="transparent"
-            />
-            <TouchableOpacity>
+          <View style={styles.searchContainer}>
+            <View style={styles.sectionStyle}>
               <Icon
-                name={'filter-list'}
-                size={22}
+                name="search"
+                size={28}
                 color="#A39B9B"
                 style={styles.imageStyle}
               />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.tabContainer}>
-          {!this.state.loader ?
-            <View style={styles.tabView}>
-              <TabView
-                lazy
-                navigationState={this.state}
-                renderScene={this._renderScene}
-                renderLazyPlaceholder={this._renderLazyPlaceholder}
-                onIndexChange={this._handleIndexChange}
-                initialLayout={{ width: Dimensions.get('window').width }}
-                renderTabBar={props => (
-                  <TabBar
-                    {...props}
-                    indicatorStyle={{ backgroundColor: ThemeColors.CLR_WHITE }}
-                    tabStyle={{ backgroundColor: ThemeColors.CLR_WHITE, }}
-                    style={{ backgroundColor: ThemeColors.CLR_WHITE, }}
-                    renderLabel={({ route }) => (
-                      <>
-                        <View style={styles.tabRow}>
-                          {route.name == 'Drinks' &&
-                            <Icon
-                              name={'liquor'}
-                              size={22}
-                              color="#AC3449"
-                              style={styles.iconStyle}
-                            />
-                          }
-                          {route.name == 'Bars' &&
-                            <Icon
-                              name={'wine-bar'}
-                              size={22}
-                              color="#AC3449"
-                              style={styles.iconStyle}
-                            />
-                          }
-                          <Text
-                            style={[styles.label,
-                            route.key === props.navigationState.routes[this.state.index].key
-                              ? styles.selectedTabText : styles.tabText
-                            ]}>
-                            {route.name}
-                          </Text>
-                        </View>
-                        {route.key === props.navigationState.routes[this.state.index].key &&
-                          <View style={styles.selectedTabBorder} />
-                        }
-                      </>
-                    )}
-                    labelStyle={styles.noLabel}
-                  />
-                )}
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search for Drinks..."
+                underlineColorAndroid="transparent"
               />
+              <TouchableOpacity>
+                <Icon
+                  name={'filter-list'}
+                  size={22}
+                  color="#A39B9B"
+                  style={styles.imageStyle}
+                />
+              </TouchableOpacity>
             </View>
-            :
-            <ThemeFullPageLoader />
-          }
-        </View>
-      </SafeAreaView>
+          </View>
+          {/* 
+          <ScrollView refreshControl={
+            <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+          }> */}
+          <View style={styles.tabContainer}>
+
+            {!this.state.loader ?
+
+              <View style={styles.tabView}>
+
+                <TabView
+                  lazy
+                  navigationState={this.state}
+                  renderScene={this._renderScene}
+                  renderLazyPlaceholder={this._renderLazyPlaceholder}
+                  onIndexChange={this._handleIndexChange}
+                  initialLayout={{ width: Dimensions.get('window').width }}
+                  renderTabBar={props => (
+                    <TabBar
+                      {...props}
+                      indicatorStyle={{ backgroundColor: ThemeColors.CLR_WHITE }}
+                      tabStyle={{ backgroundColor: ThemeColors.CLR_WHITE, }}
+                      style={{ backgroundColor: ThemeColors.CLR_WHITE, }}
+                      renderLabel={({ route }) => (
+                        <>
+
+                          <View style={styles.tabRow}>
+                            {route.name == 'Drinks' &&
+                              <Icon
+                                name={'liquor'}
+                                size={22}
+                                color="#AC3449"
+                                style={styles.iconStyle}
+                              />
+                            }
+                            {route.name == 'Bars' &&
+                              <Icon
+                                name={'wine-bar'}
+                                size={22}
+                                color="#AC3449"
+                                style={styles.iconStyle}
+                              />
+                            }
+                            <Text
+                              style={[styles.label,
+                              route.key === props.navigationState.routes[this.state.index].key
+                                ? styles.selectedTabText : styles.tabText
+                              ]}>
+                              {route.name}
+                            </Text>
+                          </View>
+                          {route.key === props.navigationState.routes[this.state.index].key &&
+                            <View style={styles.selectedTabBorder} />
+                          }
+                        </>
+                      )}
+                      labelStyle={styles.noLabel}
+                    />
+                  )}
+                />
+              </View>
+              :
+              <ThemeFullPageLoader />
+            }
+          </View>
+          {/* </ScrollView> */}
+        </SafeAreaView>
+      </>
     );
   }
 }

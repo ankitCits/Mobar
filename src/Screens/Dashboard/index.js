@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
     selectedTabBorder: {
         backgroundColor: ThemeColors.CLR_TAB,
         height: 4,
-        top: '60%',
+        top: '50%',
     },
     tabText: {
         color: '#000000',

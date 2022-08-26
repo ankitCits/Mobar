@@ -16,6 +16,9 @@ import { A_KEY, BASE_URL } from '../../config';
 import { getAccessToken } from '../../localstorage';
 import ThemeFullPagerLoader from '../../Component/ThemeFullPageLoader';
 import { addToWishlist, removeToWishlist } from '../../api/wishlist';
+import { set } from 'immer/dist/internal';
+import { fetchVendorDetails } from '../../api/vendor';
+import { ThemeColors } from '../../Theme/ThemeColors';
 export default class ProductDetailBars extends Component {
   constructor(props) {
     super(props);
@@ -23,7 +26,7 @@ export default class ProductDetailBars extends Component {
       modalVisible: true,
       loader: false,
       data: null,
-      fav: false,
+      isFavorite: false,
     };
   }
 
@@ -33,136 +36,68 @@ export default class ProductDetailBars extends Component {
 
   fetchData = async () => {
     this.setState({ loader: true });
-    const token = await getAccessToken();
-    let myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append('A_Key', A_KEY);
-    myHeaders.append('Token', token);
-    let raw = JSON.stringify({
+    try{
+    const postData = {
       vendorId: this.props.route.params && this.props.route.params.id ? this.props.route.params.id : 1,
       latitude: 1.28668,
       longitude: 103.853607,
-    });
-
-    let requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow',
     };
-
-    fetch(`${BASE_URL}/vendor/details`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        //JSON.stringify(result);
-        console.log("BarDetails > Api > res",result.response);
-        if (result.response) {
-          this.setState({ data: result.response.result, loader: false });
-        }
-        if (result.errors) {
-          this.setState({ loader: false });
-          ToastAndroid.showWithGravity(
-            result.errors[0].msg,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
-        }
-      })
-      .catch(error => {
-        console.log('error', error);
-        this.setState({ loader: false });
-        ToastAndroid.showWithGravity(
-          'Network Error!',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
-      });
+    const data = await fetchVendorDetails(postData);
+    this.setState({ data: data.response.result, loader: false });
+    this.setState({isFavorite : this.state.data.vendorDetail[0].ecom_ba_wishlist && 
+      this.state.data.vendorDetail[0].ecom_ba_wishlist.wishlistId ? 
+      true : false });
+  }catch(error){
+    ToastAndroid.showWithGravity(
+      error,
+      ToastAndroid.LONG,
+      ToastAndroid.TOP,
+    );
+  }
   };
 
   wishListAdd = async (id) => {
-    console.log("BarCard > addFav > ItemID",id);
+    console.log("Product Details Bar > addFav > ItemID", id);
     const data = {
-        productId:0,
-        comboId:0,
-        vendorId:id
+      productId: 0,
+      comboId: 0,
+      vendorId: id
     };
-    try{
-    const response = await addToWishlist(data);
-    console.log("BarCard > addFavorite > response",response);
-    if(response){
-        // useEffect(() => {
-        //     this.setState({refresh:true});
-        //     this.wait(1000).then(() => this.setState({refresh:false}));
-        //   }, []);
+    try {
+      const response = await addToWishlist(data);
+      this.state.data.vendorDetail[0].ecom_ba_wishlist = {
+        "wishlistId": response.result.data.wishlistId,
+        "wishlistFor": "Drinks"
+      };
+      this.setState({ isFavorite: true })
+    } catch (error) {
+      console.log("Product Details Bar > addFavorite > Catch", error);
     }
-    }catch(error){
-        console.log("BarCard > addFavorite > Catch",error);
-    }
-  //   console.log(id);
-  //   let token = await getAccessToken(token);
-  //   let myHeaders = new Headers();
-  //   myHeaders.append('Content-Type', 'application/json');
-  //   myHeaders.append('A_Key', A_KEY);
-  //   myHeaders.append('Token', `${token}`);
-
-  //   let raw = JSON.stringify({
-  //     productId: 0,
-  //     comboId: 0,
-  //     vendorId: id,
-  //   });
-
-  //   let requestOptions = {
-  //     method: 'POST',
-  //     headers: myHeaders,
-  //     body: raw,
-  //     redirect: 'follow',
-  //   };
-
-  //   fetch(`${BASE_URL}/wishlist/addToWishlist`, requestOptions)
-  //     .then(response => response.json())
-  //     .then(result => {
-  //       console.log('ADD_IN_WISHLIST', result);
-  //     })
-  //     .catch(error => console.log('error', error));
   };
 
   wishListRemove = async (id) => {
-    console.log("BarCard > removeFavorite > WId",id);
-    const data ={
-        wishlistId:id
-    }
-    try{
-    const response = await removeToWishlist(data);
-    console.log("response",response);
-    }catch(error){
-        console.log("error",error);
-    }
-    // let myHeaders = new Headers();
-    // myHeaders.append('Content-Type', 'application/json');
-    // myHeaders.append('A_Key', A_KEY);
-    // myHeaders.append('Token', `${BASE_URL}`);
-
-    // let raw = JSON.stringify({
-    //   wishlistId: 11,
-    // });
-
-    // let requestOptions = {
-    //   method: 'POST',
-    //   headers: myHeaders,
-    //   body: raw,
-    //   redirect: 'follow',
-    // };
-
-    // fetch(`${BASE_URL}/wishlist/removeToWishlist`, requestOptions)
-    //   .then(response => response.jsom())
-    //   .then(result => {
-    //     console.log('REMOVE_IN_WHISLIST', result);
-    //   })
-    //   .catch(error => console.log('error', error));
+    console.log("Bar > wishlist remove",id);
+    //return;
+    try {
+      const data = {
+          wishlistId: id,
+      };
+      const response = await removeToWishlist(data);
+      console.log("Wishlist Remove > Bar",response);
+      console.log("Wishlist Remove > w object",this.state.data.vendorDetail[0].ecom_ba_wishlist);
+      this.state.data.vendorDetail[0].ecom_ba_wishlist = null;
+      this.setState({ isFavorite: false })
+  } catch (error) {
+      console.log("Product Details Bar > removeFavorite > Catch", error);
+      ToastAndroid.showWithGravity(
+        error,
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+      );
+  }
   };
 
   render() {
-    console.log("DetailsBar > StateData",this.state.data);
     return (
       <SafeAreaView
         style={{
@@ -201,14 +136,14 @@ export default class ProductDetailBars extends Component {
 
                   <TouchableOpacity
                     onPress={() => {
-                      this.state.data.vendorDetail[0].ecom_ba_wishlist && this.state.data.vendorDetail[0].ecom_ba_wishlist.wishlistId
+                      this.state.isFavorite
                             ? this.wishListRemove(this.state.data.vendorDetail[0].ecom_ba_wishlist.wishlistId)
                             : this.wishListAdd(this.state.data.vendorDetail[0].vendorId);
                     }}>
                       <Image
                         resizeMode={'cover'}
-                        source={this.state.data.vendorDetail[0].ecom_ba_wishlist ? images.heartFill : images.heart}
-                        defaultSource={this.state.data.vendorDetail[0].ecom_ba_wishlist ? images.heartFill : images.heart}
+                        source={this.state.isFavorite ? images.heartFill : images.heart}
+                        defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
                         //style={styles.flexEnd}
                       />
                   </TouchableOpacity>
@@ -252,10 +187,10 @@ export default class ProductDetailBars extends Component {
                 shadowColor: '#000',
                 shadowOffset: { width: 1, height: 1 },
                 shadowOpacity: 0.4,
-                shadowRadius: 3,
+                shadowRadius: 4,
                 elevation: 0,
                 marginTop: -10,
-                borderRadius: 20,
+                borderRadius: 15,
               }}>
               <View style={{ margin: 15 }}>
                 <View
@@ -435,8 +370,7 @@ export default class ProductDetailBars extends Component {
                         defaultSource={images.product2}
                       />
                     </View>
-
-                    <View style={{ margin: 5, marginLeft: 10 }}>
+                    <View style={{ margin: 5, marginLeft: 10,width:'60%' }}>
                       <View
                         style={{
                           flexDirection: 'row',
@@ -448,12 +382,13 @@ export default class ProductDetailBars extends Component {
                           style={{
                             fontSize: 16,
                             fontWeight: '500',
+                            width:'75%',
                             color: '#4D4F50',
+                            paddingHorizontal:5,
                           }}>
                           {item.name}
                         </Text>
                       </View>
-
                       <View>
                         <Text
                           style={{
@@ -467,7 +402,7 @@ export default class ProductDetailBars extends Component {
 
                       <View
                         style={{
-                          marginTop: 7,
+                          marginTop: 1,
                           flexDirection: 'row',
                           alignItems: 'center',
                         }}>
@@ -531,6 +466,16 @@ export default class ProductDetailBars extends Component {
                           </Text>
                         </TouchableOpacity> */}
                       </View>
+                    </View>
+                    <View style={{marginTop:17,marginRight:12,}}>
+                    <TouchableOpacity
+                        style={{
+                          backgroundColor: '#BABABA',
+                          padding: 2,
+                          borderRadius: 20,
+                        }}>
+                        <Icon name="add" size={18} color="#fff" />
+                      </TouchableOpacity>    
                     </View>
                   </View>
                 ))
@@ -633,9 +578,9 @@ const styles = StyleSheet.create({
     height: 241,
   },
   productView: {
-    backgroundColor: '#fff',
-    height: 100,
-    width: '96%',
+    backgroundColor: ThemeColors.CLR_WHITE,
+    //height: 100,
+    //width: '96%',
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,

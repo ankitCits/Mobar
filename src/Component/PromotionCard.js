@@ -4,6 +4,7 @@ import {
   StyleSheet,
   View,
   Image,
+  TouchableOpacity,
 } from 'react-native';
 import { FontFamily } from '../Theme/FontFamily';
 import { ThemeColors } from '../Theme/ThemeColors';
@@ -24,51 +25,53 @@ export default class PromotionCard extends React.Component {
     return (
       <>
         <View style={styles.container}>
-          <View
-            style={styles.subContainer}
+          <TouchableOpacity
             onPress={() =>
               this.props.navigation.navigate('OrderHistoryDetail')
             }>
-            <View style={styles.productInnerView}>
-              <Image
-                resizeMode={'cover'}
-                source={{ uri: `${hostUrl + item.images}` }}
-              />
-            </View>
-            <View style={styles.details}>
-              <View
-                style={styles.header}>
-                <Text
-                  style={styles.title}>
-                  {item.ecom_ac_product.name}
-                </Text>
+            <View
+              style={styles.subContainer}>
+              <View style={styles.productInnerView}>
+                <Image
+                  resizeMode={'cover'}
+                  source={{ uri: `${hostUrl + item.images}` }}
+                />
               </View>
-              <View>
-                <Text
-                  style={styles.qty}>
-                  {productUnit[0].unitQty} {productUnit[0].unitType}
-                </Text>
-              </View>
+              <View style={styles.details}>
+                <View
+                  style={styles.header}>
+                  <Text
+                    style={styles.title}>
+                    {item.ecom_ac_product.name}
+                  </Text>
+                </View>
+                <View>
+                  <Text
+                    style={styles.qty}>
+                    {productUnit[0].unitQty} {productUnit[0].unitType}
+                  </Text>
+                </View>
 
-              <View
-                style={styles.priceContainer}>
-                {productUnit[0].unitUserPrice != " " || productUnit[0].unitUserPrice != null ?
-                  <Text
-                    style={styles.priceText}>
-                    {productUnit[0].unitUserPrice}
-                  </Text> :
-                  <Text></Text>
-                }
-                {productUnit[0].unitDiscountPrice != " " && productUnit[0].unitDiscountType != null ?
-                  <Text
-                    style={styles.discountPrice}>
-                    {productUnit[0].unitDiscountPrice + ' ' + productUnit[0].unitDiscountType}
-                  </Text> :
-                  <Text style={styles.discountPrice}></Text>
-                }
+                <View
+                  style={styles.priceContainer}>
+                  {productUnit[0].unitUserPrice != " " || productUnit[0].unitUserPrice != null ?
+                    <Text
+                      style={styles.priceText}>
+                      {'$ ' + productUnit[0].unitUserPrice}
+                    </Text> :
+                    <Text></Text>
+                  }
+                  {productUnit[0].unitDiscountPrice != " " && productUnit[0].unitDiscountType != null ?
+                    <Text
+                      style={styles.discountPrice}>
+                      {productUnit[0].unitDiscountPrice + ' ' + productUnit[0].unitDiscountType}
+                    </Text> :
+                    <Text style={styles.discountPrice}></Text>
+                  }
+                </View>
               </View>
             </View>
-          </View>
+          </TouchableOpacity>
         </View>
       </>
     );

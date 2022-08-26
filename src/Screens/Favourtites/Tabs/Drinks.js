@@ -8,7 +8,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ToastAndroid,
 } from 'react-native';
+import { removeToWishlist } from '../../../api/wishlist';
 import images from '../../../assets/images';
 import NoContentFound from '../../../Component/NoContentFound';
 import { FontFamily } from '../../../Theme/FontFamily';
@@ -21,8 +23,23 @@ export default class Drinks extends Component {
     };
   }
 
-  removeFavorite = (id) => {
+  removeFavorite = async (id) => {
     console.log("Id", id);
+    try {
+      const data = {
+        wishlistId: id
+      }
+      const response = await removeToWishlist(data);
+      console.log("RemoveFavortie > response", response);
+      this.setState({ data: this.state.data.filter(x => x.wishlistId != id) });
+    } catch (error) {
+      console.log("CategoryCard > removeFavorite > Catch", error);
+      ToastAndroid.showWithGravity(
+        error,
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+      );
+    }
   }
 
   handleRedirect = (item) => {
@@ -37,7 +54,8 @@ export default class Drinks extends Component {
       navigation,
       index
     } = this.props;
-    //console.log("Favorites > Drinks > Data", this.state.data);
+    //this.state.data.filter(x=>console.log("Favorite > Drinks  Filter > Item",x.wishlistId));
+
     return (
       <SafeAreaView
         style={styles.container}>
@@ -141,13 +159,13 @@ export default class Drinks extends Component {
 }
 
 const styles = StyleSheet.create({
-  container:{
+  container: {
     flex: 1,
     backgroundColor: '#fff',
   },
   productView: {
     backgroundColor: ThemeColors.CLR_WHITE,
-    height: 130,
+    height: 140,
     width: '90%',
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 1 },
@@ -158,15 +176,18 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     marginTop: 15,
+    marginBottom: 5,
     justifyContent: 'space-between',
   },
   itemContainer: {
     margin: 5,
-    marginLeft: 10
+    marginLeft: 10,
+    width: '60%'
   },
   header: {
     flexDirection: 'row',
-    marginTop: 5,
+    //marginTop: 5,
+    //width:'80%'
   },
   title: {
     fontFamily: FontFamily.TAJAWAL_REGULAR,
@@ -183,8 +204,8 @@ const styles = StyleSheet.create({
     color: ThemeColors.CLR_DARK_GREY,
     fontWeight: '400',
   },
-  qtyText:{
-    fontStyle:FontFamily.TAJAWAL_REGULAR,
+  qtyText: {
+    fontStyle: FontFamily.TAJAWAL_REGULAR,
     fontSize: 14,
     color: ThemeColors.CLR_DARK_GREY,
     fontWeight: '400',
@@ -192,63 +213,63 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  priceContainer:{
+  priceContainer: {
     marginTop: 7,
     flexDirection: 'row',
     alignItems: 'center',
   },
-  priceText:{
-    fontFamily:FontFamily.TAJAWAL_REGULAR,
+  priceText: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
     marginLeft: 5,
     fontSize: 21,
     color: ThemeColors.CLR_DARK_GREY,
     fontWeight: '700',
   },
-  discountPrice:{
+  discountPrice: {
     marginLeft: 10,
-    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
     fontSize: 13,
-    alignSelf:'center',
-    fontWeight:'400',
+    alignSelf: 'center',
+    fontWeight: '400',
     color: '#969696',
     textDecorationLine: 'line-through',
   },
-  savePrice:{
+  savePrice: {
     marginLeft: 10,
-    fontFamily:FontFamily.ROBOTO_REGULAR,
+    fontFamily: FontFamily.ROBOTO_REGULAR,
     fontSize: 11,
-    fontWeight:'400',
-    fontStyle:'italic',
+    fontWeight: '400',
+    fontStyle: 'italic',
     color: '#B51D36',
   },
-  cartButton:{
-    marginTop: 7,
+  cartButton: {
+    //marginTop: 7,
     alignItems: 'center',
     width: 94,
     height: 24,
     backgroundColor: '#B51D36',
-    justifyContent: 'center',
     borderRadius: 12,
   },
-  cartText:{
+  cartText: {
     fontSize: 12,
-    fontFamily:FontFamily.CLR_WHITE,
+    fontFamily: FontFamily.CLR_WHITE,
     fontWeight: '500',
     color: ThemeColors.CLR_WHITE,
   },
   productInnerView: {
     flexDirection: 'row',
-    backgroundColor:ThemeColors.CLR_WHITE,
+    backgroundColor: ThemeColors.CLR_WHITE,
     alignItems: 'center',
+    alignContent: 'flex-start',
     width: 125,
     shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.8,
     shadowRadius: 10,
     borderRadius: 10,
-    elevation: 5,  
+    elevation: 5,
   },
-prodImage:{ width: 85, height: 85 },
+  prodImage: { width: 85, height: 85 },
   favIcon: {
     alignSelf: 'flex-start',
     marginTop: 8,

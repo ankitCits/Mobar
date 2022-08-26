@@ -6,70 +6,76 @@ import {
     TouchableOpacity,
     View,
     Image,
-    Dimensions
+    ToastAndroid,
 } from 'react-native';
 import images from '../assets/images';
-import { FontFamily } from '../Theme/FontFamily';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { addToWishlist, removeToWishlist } from '../api/wishlist';
 
 export default class CategoryCard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isFavorite: (this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId)
+            isFavorite: (this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId),
+            data: this.props.item
         }
+        //console.log("State Data",this.state.data);
     }
 
-    removeFavorite = async (id, item) => {
+    removeFavorite = async (id) => {
         try {
             const data = {
                 wishlistId: id
             }
             const response = await removeToWishlist(data);
-            // item.ecom_ba_wishlist = null;
+            this.state.data.ecom_ba_wishlist.wishlistId = null;
             this.setState({ isFavorite: false })
-            console.log("removeFavorite response", response);
         } catch (error) {
             console.log("CategoryCard > removeFavorite > Catch", error);
         }
     }
 
-    addFavorite = async (id) => {
+    addFavorite = async (id, index) => {
         try {
             const data = {
                 productId: id,
                 comboId: 0,
                 vendorId: 0
             };
+            //console.log("CategoryCard > addFavorite > response",this.state.data.ecom_ba_wishlist);
             const response = await addToWishlist(data);
-            console.log(response);
-            // item.ecom_ba_wishlist = {
-            //     "wishlistId": id,
-            //     "wishlistFor": "Drinks"
-            // }
+            //console.log("CategoryCard > addFavorite > response",response);
+            this.state.data.ecom_ba_wishlist = {
+                "wishlistId": response.result.data.wishlistId,
+                "wishlistFor": "Drinks"
+            }
             this.setState({ isFavorite: true })
+            console.log();
 
         } catch (error) {
             console.log("CategoryCard > addFavorite > Catch", error);
+            ToastAndroid.showWithGravity(
+                error,
+                ToastAndroid.LONG,
+                ToastAndroid.BOTTOM,
+            );
         }
     }
 
     render() {
         const {
-            item,
+            item,   
             hostUrl,
             navigation,
             index,
         } = this.props;
-        // console.log("CCard > Item", item);
+        //console.log("CCard > Item", item);
         return (
             <>
                 <TouchableOpacity
                     key={index}
                     onPress={() => {
                         // console.log(hostUrl + item.images);
-                        navigation.navigate('ProductDetailDrinks', { id: item.productId });
+                        navigation.navigate('ProductDetailDrinks', { id: this.state.data.productId });
                     }}
                     style={{
                         marginTop: 28,
@@ -95,19 +101,19 @@ export default class CategoryCard extends React.Component {
                             </TouchableOpacity> */}
                             <TouchableOpacity
                                 onPress={() => {
-                                    this.state.isFavorite
-                                        ? this.removeFavorite(item.ecom_ba_wishlist.wishlistId, item)
-                                        : this.addFavorite(item.productId, index);
+                                    this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId
+                                        ? this.removeFavorite(this.state.data.ecom_ba_wishlist.wishlistId)
+                                        : this.addFavorite(this.state.data.productId, index);
                                 }}>
                                 <Image
                                     resizeMode={'cover'}
-                                    source={this.state.isFavorite ? images.heartFill : images.heart}
-                                    defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
+                                    source={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
+                                    defaultSource={this.state.data.ecom_ba_wishlist ? images.heartFill : images.heart}
                                     style={styles.favIcon}
                                 />
                             </TouchableOpacity>
                             <Text style={{ color: '#fff', fontSize: 12 }}>
-                                {item.ecom_aca_product_units[0].unitQty + item.ecom_aca_product_units[0].unitType}
+                                {this.state.data.ecom_aca_product_units[0].unitQty + this.state.data.ecom_aca_product_units[0].unitType}
                             </Text>
                         </View>
 
@@ -115,7 +121,7 @@ export default class CategoryCard extends React.Component {
                             style={styles.productImg}
                             resizeMode={'cover'}
                             defaultSource={images.product1}
-                            source={{ uri: hostUrl + item.images }}
+                            source={{ uri: hostUrl + this.state.data.images }}
                         // source={images.product1}
                         />
 
@@ -129,7 +135,7 @@ export default class CategoryCard extends React.Component {
                         <View style={styles.innerBottom}>
                             <View>
                                 <Text style={styles.innerBottomText}>
-                                    {item.name}
+                                    {this.state.data.name}
                                     {/* Ballantines Blended */}
                                 </Text>
                             </View>
@@ -137,7 +143,7 @@ export default class CategoryCard extends React.Component {
                                 <Text style={styles.innerBottomText2}>
                                     Your Saving:{' '}
                                     {
-                                        item.ecom_aca_product_units[0].unitDiscountPrice
+                                        this.state.data.ecom_aca_product_units[0].unitDiscountPrice
                                     }
                                     {/* Your Saving: $19 */}
                                 </Text>
@@ -146,7 +152,7 @@ export default class CategoryCard extends React.Component {
                                 <Text style={styles.innerBottomText3}>
                                     ${' '}
                                     {
-                                        item.ecom_aca_product_units[0].unitUserPrice
+                                        this.state.data.ecom_aca_product_units[0].unitUserPrice
                                     }
                                     {/* $ 89 */}
                                 </Text>
