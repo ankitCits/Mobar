@@ -1,8 +1,10 @@
 import { A_KEY, BASE_URL, MY_HEADER } from '../config';
+import { getAccessToken } from '../localstorage';
 
 export const singIn = (postData) => {
     return new Promise(async (resolve, reject) => {
         const { contact, password, deviceInfo, fcmToken } = postData
+        console.log("Auth > signIn >Contact",contact);
         if (contact && password) {
             const postData = JSON.stringify({
                 contact: contact,
@@ -36,6 +38,8 @@ export const singIn = (postData) => {
 
 export const getUserDetails = (postData) => {
     return new Promise(async (resolve, reject) => {
+        const { contact, password, deviceInfo, fcmToken } = postData;
+        const token = await getAccessToken();
         const data = JSON.stringify({
             contact: contact,
             password: password,
