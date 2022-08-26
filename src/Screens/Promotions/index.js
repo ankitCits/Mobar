@@ -58,16 +58,20 @@ export default class Promotions extends Component {
   renderPromotion = (item, index) => {
     if (item.type == 1) {
       return (
-        <BarCard navigation={this.props.navigation} index={index} item={item.ecom_ae_vendor} hostUrl={this.state.hostUrl} />
+        <View style={{ marginHorizontal: 15, }}>
+          <BarCard navigation={this.props.navigation} index={index} item={item.ecom_ae_vendor} hostUrl={this.state.hostUrl} />
+        </View>
       );
     } else {
       return (
-        <PromotionCard navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />
+        <View style={{ marginHorizontal: 15, marginTop: 10 }}>
+          <PromotionCard navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />
+        </View>
       );
     }
   }
 
-  footerComponent = () => 
+  footerComponent = () =>
     <View
       style={styles.banner}>
       <Image
@@ -76,7 +80,7 @@ export default class Promotions extends Component {
         defaultSource={images.promotionBanner}
       />
     </View>
-  
+
 
   render() {
     return (

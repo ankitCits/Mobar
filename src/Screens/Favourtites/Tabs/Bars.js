@@ -23,26 +23,26 @@ export default class Bars extends Component {
     };
   }
 
-  removeFavorite = async (id,comboId=0,productId=0) =>{
-    console.log("Favorites > Drinks > removeFavorite > Id",id);
+  removeFavorite = async (id, comboId = 0, productId = 0) => {
+    console.log("Favorites > Drinks > removeFavorite > Id", id);
     console.log("Id", id);
-    const index = this.state.data.indexOf(x=>x.wishlistId == id);
-    console.log("Index",index);
+    const index = this.state.data.indexOf(x => x.wishlistId == id);
+    console.log("Index", index);
     try {
       const data = {
-          wishlistId: id
+        wishlistId: id
       }
       const response = await removeToWishlist(data);
-      console.log("RemoveFavortie > response",response);
-      this.setState({data:this.state.data.filter(x=>x.wishlistId != id)});
-  } catch (error) {
+      console.log("RemoveFavortie > response", response);
+      this.setState({ data: this.state.data.filter(x => x.wishlistId != id) });
+    } catch (error) {
       console.log("CategoryCard > removeFavorite > Catch", error);
       ToastAndroid.showWithGravity(
         error,
         ToastAndroid.LONG,
         ToastAndroid.BOTTOM,
       );
-  }
+    }
   }
 
   render() {
@@ -59,7 +59,7 @@ export default class Bars extends Component {
                     this.props.navigation.navigate('ProductDetailBars', { id: item.ecom_ae_vendor.vendorId })
                   }>
                   <View style={styles.productInnerView}>
-                  {/* <ImageBackground
+                    {/* <ImageBackground
                       resizeMode=''
                         style={styles.productInnerView}
                         source={{
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   productView: {
     backgroundColor: ThemeColors.CLR_WHITE,
     //width: '90%',
-    margin:15,
+    margin: 15,
     shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
@@ -169,17 +169,17 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
   },
-
   favIcon: {
-    flex: 1,
-    alignSelf: 'flex-start',
-    textAlign: 'flex-start',
+    position: 'absolute',
+    top: 0,
+    left: 0,
     margin: 10,
+    zIndex: 1,
   },
-  prodImage: { 
-    width: 75,
-    height:75, 
-    margin:5
+  prodImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 10,
   },
   itemContainer: {
     margin: 5,

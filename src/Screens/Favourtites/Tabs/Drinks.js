@@ -239,14 +239,13 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.ROBOTO_REGULAR,
     fontSize: 11,
     fontWeight: '400',
-    fontStyle: 'italic',
+    // fontStyle: 'italic',
     color: '#B51D36',
   },
   cartButton: {
-    //marginTop: 7,
     alignItems: 'center',
-    width: 94,
-    height: 24,
+    width: 100,
+    height: 25,
     backgroundColor: '#B51D36',
     borderRadius: 12,
   },
@@ -255,6 +254,8 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.CLR_WHITE,
     fontWeight: '500',
     color: ThemeColors.CLR_WHITE,
+    textAlignVertical: 'center',
+    flex: 1
   },
   productInnerView: {
     flexDirection: 'row',
@@ -269,9 +270,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     elevation: 5,
   },
-  prodImage: { width: 85, height: 85 },
+  prodImage: {
+    width: '80%',
+    height: '80%',
+    borderRadius: 10,
+  },
   favIcon: {
-    alignSelf: 'flex-start',
-    marginTop: 8,
+    // alignSelf: 'flex-start',
+    // marginTop: 8,
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    margin: 10,
+    zIndex: 1,
   },
 });

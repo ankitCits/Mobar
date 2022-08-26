@@ -24,7 +24,7 @@ export default class PromotionCard extends React.Component {
     } = this.props;
     return (
       <>
-        <View style={styles.container}>
+        {/* <View style={styles.container}> */}
           <TouchableOpacity
             onPress={() =>
               this.props.navigation.navigate('OrderHistoryDetail')
@@ -72,14 +72,14 @@ export default class PromotionCard extends React.Component {
               </View>
             </View>
           </TouchableOpacity>
-        </View>
+        {/* </View> */}
       </>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: { margin: 10 },
+  // container: { margin: 10 },
   subContainer: {
     backgroundColor: ThemeColors.CLR_WHITE,
     width: '100%',
