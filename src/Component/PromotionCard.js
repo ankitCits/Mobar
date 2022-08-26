@@ -21,7 +21,6 @@ export default class PromotionCard extends React.Component {
       index,
       productUnit = this.props.item.ecom_ac_product.ecom_aca_product_units,
     } = this.props;
-    console.log("PromotionCard > Item",item);
     return (
       <>
         <View style={styles.container}>

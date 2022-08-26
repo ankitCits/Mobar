@@ -8,6 +8,7 @@ import {
   ScrollView,
   ImageBackground,
   FlatList,
+  RefreshControl,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { fetchPromotionDetails } from '../../api/vendor';
@@ -23,13 +24,19 @@ export default class Promotions extends Component {
     this.state = {
       visibility: false,
       promotion: [],
-      hostUrl: ''
+      hostUrl: '',
+      refreshing: false
     };
   }
 
   componentDidMount() {
     this.getPromotion();
   }
+
+  onRefresh = async () => {
+    await this.getPromotion();
+  }
+
 
   getPromotion = async () => {
     try {
@@ -38,8 +45,10 @@ export default class Promotions extends Component {
         longitude: 103.853607
       };
       const promotion = await fetchPromotionDetails(data);
-      this.setState({ promotion: promotion.response.result.promotionList, hostUrl: promotion.response.result.hostUrl });
-
+      this.setState({
+        promotion: promotion.response.result.promotionList,
+        hostUrl: promotion.response.result.hostUrl
+      });
     } catch (error) {
       console.log("Promotion > Catch > Error", error);
     }
@@ -57,6 +66,17 @@ export default class Promotions extends Component {
       );
     }
   }
+
+  footerComponent = () => 
+    <View
+      style={styles.banner}>
+      <Image
+        resizeMode={'cover'}
+        source={images.promotionBanner}
+        defaultSource={images.promotionBanner}
+      />
+    </View>
+  
 
   render() {
     return (
@@ -76,24 +96,21 @@ export default class Promotions extends Component {
         </View>
         {/* Header Ends */}
         <>
-          <ScrollView>
-            <View
-              style={styles.cardContainer}>
-              <FlatList
-                data={this.state.promotion}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item, index }) => this.renderPromotion(item, index)}
-              />
-              <View
-                style={styles.banner}>
-                <Image
-                  resizeMode={'cover'}
-                  source={images.promotionBanner}
-                  defaultSource={images.promotionBanner}
-                />
-              </View>
-            </View>
-          </ScrollView>
+          {/* <ScrollView > */}
+          <View
+            style={styles.cardContainer}>
+            <FlatList
+              data={this.state.promotion}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item, index }) => this.renderPromotion(item, index)}
+              refreshControl={
+                <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+              }
+              ListFooterComponent={this.footerComponent()}
+            />
+
+          </View>
+          {/* </ScrollView> */}
         </>
       </SafeAreaView>
     );

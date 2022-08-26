@@ -29,7 +29,7 @@ export default class Favourites extends Component {
     super(props);
     this.state = {
       loader: true,
-      data: null,
+      data: [],
       hostUrl: null,
       index: 0,
       routes: [
@@ -53,13 +53,13 @@ export default class Favourites extends Component {
         hostUrl: response.result.hostUrl
       });
     } catch (error) {
-      this.setState({loader: false});
-        console.log("Wishlist > fetchData > Catch",error);
-        ToastAndroid.showWithGravity(
-          'Network Error!',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
+      this.setState({ loader: false });
+      console.log("Wishlist > fetchData > Catch", error);
+      ToastAndroid.showWithGravity(
+        'Network Error!',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+      );
     }
   };
 
@@ -179,18 +179,18 @@ export default class Favourites extends Component {
 }
 
 const styles = StyleSheet.create({
-  container:{
-      flex: 1,
-      backgroundColor: '#fff',
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
   },
-  headerContainer:{ 
-    margin: 12, 
-    flexDirection: 'row', 
-    alignItems: 'center' 
+  headerContainer: {
+    margin: 12,
+    flexDirection: 'row',
+    alignItems: 'center'
   },
-  header:{ marginLeft: 10 },
-  titleText:{ fontStyle:FontFamily.ROBOTO_REGULAR,fontSize: 20, color: '#4D4F50', fontWeight: '500' },
-  searchContainer:{ alignSelf: 'center', marginTop: -5 },
+  header: { marginLeft: 10 },
+  titleText: { fontStyle: FontFamily.ROBOTO_REGULAR, fontSize: 20, color: '#4D4F50', fontWeight: '500' },
+  searchContainer: { alignSelf: 'center', marginTop: -5 },
   sectionStyle: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -203,10 +203,10 @@ const styles = StyleSheet.create({
     margin: 10,
     elevation: 2,
   },
-  searchInput:{flex: 1},
-  tabContainer:{ flex: 1, marginTop: 10 },
-  tabView:{ flexDirection: 'row', height: '100%' },
-  tabRow:{ flexDirection: 'row' },
+  searchInput: { flex: 1 },
+  tabContainer: { flex: 1, marginTop: 10 },
+  tabView: { flexDirection: 'row', height: '100%' },
+  tabRow: { flexDirection: 'row' },
   imageStyle: {
     margin: 5,
     resizeMode: 'stretch',
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   selectedTabBorder: {
     backgroundColor: '#C11331',
     height: 3,
-    width:100,
+    width: 100,
     top: '30%',
   },
   tabText: {
@@ -226,9 +226,9 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: FontFamily.ROBOTO_REGULAR,
-    fontSize:18,
+    fontSize: 18,
     fontWeight: '400',
-    color:'#4D4F50'
+    color: '#4D4F50'
   },
   iconStyle: {
     alignSelf: 'center',

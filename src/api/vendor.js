@@ -18,7 +18,6 @@ export const fetchPromotionDetails = (postData) => {
         fetch(`${BASE_URL}/vendor/promotion`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                //console.log('fetchPromotionDetail > result', result)
                 if (result.errors) {
                     reject(result.errors[0].msg);
                 } else {

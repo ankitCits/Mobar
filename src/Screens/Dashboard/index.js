@@ -10,6 +10,7 @@ import {
     ScrollView,
     Animated,
     ImageBackground,
+    RefreshControl
 } from 'react-native';
 import { connect } from 'react-redux';
 import Header from '../Component/Header';
@@ -45,22 +46,21 @@ class Dashboard extends Component {
             drinkObj: {},
             hostUrl: null,
             index: 0,
-            routes: []
-            // routes: [
-            //     { key: '1', name: 'Whiskey' },
-            //     { key: '2', name: 'Beer' },
-            //     { key: '3', name: 'Wine' },
-            //     { key: '4', name: 'Cocktails' },
-            // ],
+            routes: [],
+            refreshing: false
         };
     }
 
     componentDidMount() {
-        this.getTabDetail();
         this.getDetail();
+        this.getTabDetail();
     }
 
     componentDidUpdate() {
+    }
+
+    onRefresh = async () => {
+        await this.getTabDetail();
     }
 
     getDetail = async () => {
@@ -73,8 +73,6 @@ class Dashboard extends Component {
         }
         try {
             const responseDetail = await getUserDetails(postData);
-            this.setState({ data: responseDetail });
-            this.setState({ hostUrl: responseDetail.response.result.hostUrl })
             this.props.dispatch(setUserDetail(responseDetail.response.result.profile));
         } catch (error) {
             this.setState({ loader: false });
@@ -109,14 +107,15 @@ class Dashboard extends Component {
             .then(result => {
                 if (result.response) {
                     const categories = result.response.result.drinkCategory;
-                    //console.log("Dashboard > Category", categories);
                     categories.forEach((element, index) => {
                         categories[index].key = index;
                     });
-                    this.setState({ routes: categories });
-                    this.setState({ drinkObj: result.response.result })
-                    this.setState({ loader: false });
-                    // console.log("Dash board > Drink Obj",this.state.drinkObj.drinkCategory);
+                    this.setState({
+                        loader: false,
+                        routes: categories,
+                        drinkObj: result.response.result,
+                        hostUrl: result.response.result.hostUrl
+                    })
                 }
                 if (result.errors) {
                     this.setState({ loader: false });
@@ -174,6 +173,9 @@ class Dashboard extends Component {
                                     }
                                 />
                                 <ScrollView
+                                    refreshControl={
+                                        <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+                                    }
                                     showsVerticalScrollIndicator={false}
                                     style={{
                                         flex: 1,

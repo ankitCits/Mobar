@@ -25,10 +25,10 @@ export default class CreateAccount extends Component {
       legalCheck: true,
       visibility: false,
       showDatePicker: false,
-      mobileNumber: '90333401',
-      emailId: 'ravi@mehtawebsolution.com',
+      mobileNumber: '',
+      emailId: '',
       dateOfBirth: null,
-      password: 'Ravi@12345',
+      password: '',
       loader: false,
     };
     this.setDateInState = this.setDateInState.bind(this);
@@ -69,12 +69,13 @@ export default class CreateAccount extends Component {
   }
 
   async onProceed() {
-    console.log(this.state.mobileNumber, ':', this.state.password, ':', this.state.emailId);
-    let FinalResponse = {
-      mobileNumber: this.state.mobileNumber,
-    };
+    // console.log(this.state.mobileNumber, ':', this.state.password, ':', this.state.emailId);
+    // let FinalResponse = {
+    //   mobileNumber: this.state.mobileNumber,
+    // };
     //this.props.navigation.navigate('VerifyOtp',FinalResponse);
     //return;
+
     // check Not Blank
     if (this.state.mobileNumber == null) {
       ToastAndroid.showWithGravity(
