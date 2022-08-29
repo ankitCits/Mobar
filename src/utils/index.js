@@ -32,8 +32,9 @@ const Util = {
    * @param {*} Email
    * @return Boolean true|false
    */
-  validEmail: function ValidateEmail(mail) {
-    if (/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/) {
+  validEmail: function ValidateEmail(Email) {
+    const emailRegex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    if (emailRegex.test(Email)==true) {
       return true;
     } else {
       return false;

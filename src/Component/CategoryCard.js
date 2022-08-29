@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import images from '../assets/images';
 import { addToWishlist, removeToWishlist } from '../api/wishlist';
+import { getAccessToken } from '../localstorage';
+import { showAlert } from '../api/auth';
 
 export default class CategoryCard extends React.Component {
     constructor(props) {
@@ -21,40 +23,50 @@ export default class CategoryCard extends React.Component {
     }
 
     removeFavorite = async (id) => {
-        try {
-            const data = {
-                wishlistId: id
+        const token = await getAccessToken();
+        if (token == null) {
+            showAlert();
+        } else {
+            try {
+                const data = {
+                    wishlistId: id
+                }
+                const response = await removeToWishlist(data);
+                this.state.data.ecom_ba_wishlist.wishlistId = null;
+                this.setState({ isFavorite: false })
+            } catch (error) {
+                console.log("CategoryCard > removeFavorite > Catch", error);
             }
-            const response = await removeToWishlist(data);
-            this.state.data.ecom_ba_wishlist.wishlistId = null;
-            this.setState({ isFavorite: false })
-        } catch (error) {
-            console.log("CategoryCard > removeFavorite > Catch", error);
         }
     }
 
     addFavorite = async (id, index) => {
-        try {
-            const data = {
-                productId: id,
-                comboId: 0,
-                vendorId: 0
-            };
-            const response = await addToWishlist(data);
-            this.state.data.ecom_ba_wishlist = {
-                "wishlistId": response.result.data.wishlistId,
-                "wishlistFor": "Drinks"
-            }
-            this.setState({ isFavorite: true })
-            console.log();
+        const token = await getAccessToken();
+        if (token == null) {
+            showAlert();
+        } else {
+            try {
+                const data = {
+                    productId: id,
+                    comboId: 0,
+                    vendorId: 0
+                };
+                const response = await addToWishlist(data);
+                this.state.data.ecom_ba_wishlist = {
+                    "wishlistId": response.result.data.wishlistId,
+                    "wishlistFor": "Drinks"
+                }
+                this.setState({ isFavorite: true })
+                console.log();
 
-        } catch (error) {
-            console.log("CategoryCard > addFavorite > Catch", error);
-            ToastAndroid.showWithGravity(
-                error,
-                ToastAndroid.LONG,
-                ToastAndroid.BOTTOM,
-            );
+            } catch (error) {
+                console.log("CategoryCard > addFavorite > Catch", error);
+                ToastAndroid.showWithGravity(
+                    error,
+                    ToastAndroid.LONG,
+                    ToastAndroid.BOTTOM,
+                );
+            }
         }
     }
 

@@ -9,16 +9,20 @@ import {
   StyleSheet,
   ScrollView,
   ToastAndroid,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
-import { A_KEY, BASE_URL } from '../../config';
-import { getAccessToken } from '../../localstorage';
 import ThemeFullPagerLoader from '../../Component/ThemeFullPageLoader';
 import { addToWishlist, removeToWishlist } from '../../api/wishlist';
-import { set } from 'immer/dist/internal';
+
 import { fetchVendorDetails } from '../../api/vendor';
 import { ThemeColors } from '../../Theme/ThemeColors';
+import { FontFamily } from '../../Theme/FontFamily';
+import { addToCart } from '../../api/product';
+import { getAccessToken } from '../../localstorage';
+import { showAlert } from '../../api/auth';
+
 export default class ProductDetailBars extends Component {
   constructor(props) {
     super(props);
@@ -59,45 +63,86 @@ export default class ProductDetailBars extends Component {
   };
 
   wishListAdd = async (id) => {
-    console.log("Product Details Bar > addFav > ItemID", id);
-    const data = {
-      productId: 0,
-      comboId: 0,
-      vendorId: id
-    };
-    try {
-      const response = await addToWishlist(data);
-      this.state.data.vendorDetail[0].ecom_ba_wishlist = {
-        "wishlistId": response.result.data.wishlistId,
-        "wishlistFor": "Drinks"
+    const token = await getAccessToken();
+    if (token == null) {
+      showAlert();
+    } else {
+      const data = {
+        productId: 0,
+        comboId: 0,
+        vendorId: id
       };
-      this.setState({ isFavorite: true })
-    } catch (error) {
-      console.log("Product Details Bar > addFavorite > Catch", error);
+      try {
+        const response = await addToWishlist(data);
+        this.state.data.vendorDetail[0].ecom_ba_wishlist = {
+          "wishlistId": response.result.data.wishlistId,
+          "wishlistFor": "Drinks"
+        };
+        this.setState({ isFavorite: true })
+      } catch (error) {
+        console.log("Product Details Bar > addFavorite > Catch", error);
+      }
     }
   };
 
   wishListRemove = async (id) => {
-    console.log("Bar > wishlist remove", id);
-    //return;
-    try {
-      const data = {
-        wishlistId: id,
-      };
-      const response = await removeToWishlist(data);
-      console.log("Wishlist Remove > Bar", response);
-      console.log("Wishlist Remove > w object", this.state.data.vendorDetail[0].ecom_ba_wishlist);
-      this.state.data.vendorDetail[0].ecom_ba_wishlist = null;
-      this.setState({ isFavorite: false })
-    } catch (error) {
-      console.log("Product Details Bar > removeFavorite > Catch", error);
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-      );
+    const token = await getAccessToken();
+    if (token == null) {
+      showAlert();
+    } else {
+      try {
+        const data = {
+          wishlistId: id,
+        };
+        const response = await removeToWishlist(data);
+        console.log("Wishlist Remove > Bar", response);
+        console.log("Wishlist Remove > w object", this.state.data.vendorDetail[0].ecom_ba_wishlist);
+        this.state.data.vendorDetail[0].ecom_ba_wishlist = null;
+        this.setState({ isFavorite: false })
+      } catch (error) {
+        console.log("Product Details Bar > removeFavorite > Catch", error);
+        ToastAndroid.showWithGravity(
+          error,
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+        );
+      }
     }
   };
+
+  setModalVisible = () => {
+    this.setState({modalVisible:false});
+  }
+  
+
+  addCart = async (prodUnitId, qty) => {
+    const token = await getAccessToken();
+    if (token == null) {
+      showAlert();
+    } else {
+      const cartItem = {
+        productUnitId: prodUnitId,
+        comboId: 0,
+        qty: qty,
+      };
+      try {
+        const cartResponse = await addToCart(cartItem);
+        //console.log("DetailBar > addToCart > response",cartResponse);
+        showAlert('Success','Item added to cart successfully');
+      } catch (error) {
+        console.log("Details Bars > addCart > catch", error);
+        showAlert('Error',error);
+        // Alert.alert(
+        //   'Error',
+        //   'Try Again',
+        //   error,
+        //   [
+        //     { text: "OK", onPress: () => console.log("OK Pressed") }
+        //   ]
+        // );
+      }
+    }
+  }
 
   render() {
     return (
@@ -246,8 +291,7 @@ export default class ProductDetailBars extends Component {
                     }}>
                     {this.state.data.vendorDetail[0].address}
                   </Text>
-                </View>
-
+                  </View>
                 {/* <View style={{marginTop: 10}}>
                   <Text>Star</Text>
                 </View> */}
@@ -471,6 +515,7 @@ export default class ProductDetailBars extends Component {
                     </View>
                     <View style={{ marginTop: 17, marginRight: 12, }}>
                       <TouchableOpacity
+                      onPress={()=>{this.addCart(item.ecom_aca_product_units[0].productUnitId,2)}}
                         key={index}
                         style={{
                           backgroundColor: '#BABABA',
@@ -480,6 +525,7 @@ export default class ProductDetailBars extends Component {
                         <Icon name="add" size={18} color="#fff" />
                       </TouchableOpacity>
                     </View>
+                    {/* <CartModal itemName={'Product'} modalVisible={this.state.modalVisible} /> */}
                   </View>
                 ))
                 : null}
@@ -601,6 +647,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 10,
+  },
+  msgContainer:{
+    flex:1,
+    flexDirection:'row',
+    margin:20
+  },
+  headerText:{
+    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    fontWeight:'500',
+    fontSize:14,
+    color:'#ACACAC',
   },
   save: {
     backgroundColor: '#851729',

@@ -10,14 +10,17 @@ import {
   ScrollView,
   ToastAndroid,
   FlatList,
+  Alert,
 } from 'react-native';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { fetchProductDetails } from '../../api/product';
+import { addToCart, fetchProductDetails } from '../../api/product';
 import images from '../../assets/images';
 import { FontFamily } from '../../Theme/FontFamily';
 import HTMLView from 'react-native-htmlview';
 import { addToWishlist, removeToWishlist } from '../../api/wishlist';
+import { showAlert } from '../../api/auth';
+import { getAccessToken } from '../../localstorage';
 
 export default class ProductDetailDrinks extends Component {
   constructor(props) {
@@ -35,6 +38,41 @@ export default class ProductDetailDrinks extends Component {
 
   componentDidMount() {
     this.productDetails();
+  }
+
+  addCart = async () => {
+    const token = await getAccessToken();
+    if (token == null) {
+      showAlert();
+      return;
+    } else {
+      //console.log("DetailsBars > addCart >details",this.state.details.ecom_aca_product_units[0].productUnitId);
+      const cartItem = {
+        productUnitId: this.state.details.ecom_aca_product_units[0].productUnitId,
+        comboId: 0,
+        qty: 1,
+      };
+      try {
+        const cartResponse = await addToCart(cartItem);
+        Alert.alert(
+          'Success',
+          'Item added to cart successfully',
+          [
+            { text: "OK", onPress: () => console.log("OK Pressed") }
+          ]
+        );
+      } catch (error) {
+        console.log("Details Bars > addCart > catch", error);
+        Alert.alert(
+          'Error',
+          'Try Again',
+          error,
+          [
+            { text: "OK", onPress: () => console.log("OK Pressed") }
+          ]
+        );
+      }
+    }
   }
 
   productDetails = async () => {
@@ -61,44 +99,56 @@ export default class ProductDetailDrinks extends Component {
   }
 
   removeFavorite = async (id) => {
-    try {
-      const data = {
-        wishlistId: id
+    const token = await getAccessToken();
+    if (token == null) {
+      showAlert();
+      return;
+    } else {
+      try {
+        const data = {
+          wishlistId: id
+        }
+        const response = await removeToWishlist(data);
+        this.state.details.ecom_ba_wishlist = null;
+        this.setState({ isFavorite: false });
+      } catch (error) {
+        console.log("CategoryCard > removeFavorite > Catch", error);
+        ToastAndroid.showWithGravity(
+          error,
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+        );
       }
-      const response = await removeToWishlist(data);
-      this.state.details.ecom_ba_wishlist = null;
-      this.setState({ isFavorite: false });
-    } catch (error) {
-      console.log("CategoryCard > removeFavorite > Catch", error);
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-      );
     }
   }
 
   addFavorite = async (id) => {
-    try {
-      const data = {
-        productId: id,
-        comboId: 0,
-        vendorId: 0
-      };
-      const response = await addToWishlist(data);
-      this.state.details.ecom_ba_wishlist = {
-        "wishlistId": response.result.data.wishlistId,
-        "wishlistFor": "Drinks"
+    const token = await getAccessToken();
+    if (token == null) {
+      showAlert();
+      return;
+    } else {
+      try {
+        const data = {
+          productId: id,
+          comboId: 0,
+          vendorId: 0
+        };
+        const response = await addToWishlist(data);
+        this.state.details.ecom_ba_wishlist = {
+          "wishlistId": response.result.data.wishlistId,
+          "wishlistFor": "Drinks"
+        }
+        this.setState({ isFavorite: true })
+      } catch (error) {
+        console.log("CategoryCard > addFavorite > Catch", error);
+        console.log("CategoryCard > removeFavorite > Catch", error);
+        ToastAndroid.showWithGravity(
+          error,
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+        );
       }
-      this.setState({ isFavorite: true })
-    } catch (error) {
-      console.log("CategoryCard > addFavorite > Catch", error);
-      console.log("CategoryCard > removeFavorite > Catch", error);
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-      );
     }
   }
 
@@ -300,6 +350,7 @@ export default class ProductDetailDrinks extends Component {
                         ADD TO CART
                       </Text>
                       <TouchableOpacity
+                      onPress={()=>{this.addCart()}}
                         style={styles.cartIcon}>
                         <Image
                           resizeMode={'cover'}

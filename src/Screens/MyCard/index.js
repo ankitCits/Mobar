@@ -10,11 +10,14 @@ import {
   StyleSheet,
   FlatList,
   ToastAndroid,
+  ActivityIndicator,
 } from 'react-native';
+import { set } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { fetchCart } from '../../api/product';
 import images from '../../assets/images';
 import CartProduct from '../../Component/CartProduct';
+import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import { FontFamily } from '../../Theme/FontFamily';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import HeaderSide from '../Component/HeaderSide';
@@ -25,8 +28,8 @@ export default class MyCard extends Component {
       cart: [],
       hostUrl: '',
       totalQty: 0,
-      // subTotal: 0,
-      payableTotal: 0
+      payableTotal: 0,
+      isLoading:false,
     };
   }
 
@@ -35,11 +38,13 @@ export default class MyCard extends Component {
   }
 
   fetchData = async () => {
+    this.setState({isLoading:true});
     try {
       const resp = await fetchCart();
       this.setState({
         cart: resp.response.result.data,
         hostUrl: resp.response.result.hostUrl,
+        isLoading:false
       });
       if (this.state.cart.length > 0) {
         this.setState({ totalQty: this.state.cart.reduce((x, c) => x + parseInt(c.qty), 0) });
@@ -48,6 +53,7 @@ export default class MyCard extends Component {
       }
       //console.log("state cart details",this.state.cart);
     } catch (error) {
+      this.setState({isLoading:false});
       ToastAndroid.showWithGravity(
         error,
         ToastAndroid.LONG,
@@ -72,20 +78,24 @@ export default class MyCard extends Component {
           name={'My Cart'}
           onClick={() => this.props.navigation.pop()}
         />
+        { this.state.isLoading ? 
         <>
-          <View style={styles.cartCount}>
+         <ActivityIndicator size="large" style={{}} color={ThemeColors.CLR_TAB} /> 
+        </>
+         :
+        (<>
+        <View style={styles.cartCount}>
             <Text
               style={styles.itemCountText}>
               {this.state.totalQty} items in your cart
             </Text>
           </View>
-
+        
           <FlatList
             data={this.state.cart}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item, index }) => this.renderCartItems(item, index)}
           />
-
           <View style={styles.bottomContainer}>
             <View
               style={styles.subContainer}>
@@ -238,7 +248,9 @@ export default class MyCard extends Component {
               </View>
             </View>
           </View>
-        </>
+          </>
+          ) 
+        }   
       </SafeAreaView>
     );
   }

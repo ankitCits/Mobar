@@ -17,6 +17,7 @@ import TextInputField from '../../Component/TextInputField';
 import ThemeButton from '../../Component/ThemeButton';
 import { FontFamily } from '../../Theme/FontFamily';
 import { ThemeColors } from '../../Theme/ThemeColors';
+import { IgnorePattern } from 'react-native/Libraries/LogBox/LogBox';
 export default class CreateAccount extends Component {
   constructor(props) {
     super(props);
@@ -30,8 +31,59 @@ export default class CreateAccount extends Component {
       dateOfBirth: null,
       password: '',
       loader: false,
+      mobileError: null,
+      emailError:null,
+      passwordError: null,
+      dobError:null
     };
     this.setDateInState = this.setDateInState.bind(this);
+  }
+
+  handleUserInput = (name, value) => {
+    console.log("Name And Value",name,value);
+    this.setState({ [name]: value }, () => { this.validateField(name, value) });
+  }
+
+  validateField = (fieldName, value) => {
+    switch (fieldName) {
+      case 'mobileNumber':
+        let zero = this.state.mobileNumber.startsWith('0');
+        if (this.state.mobileNumber == null || this.state.mobileNumber.trim() == '') {
+          this.setState({ mobileError: '* Mobile number mandatory' });
+        } else if (zero) {
+          this.setState({ mobileError: '* Mobile number should not start with a zero' });
+        } else if (!Util.validMobile(this.state.mobileNumber)) {
+          this.setState({ mobileError: '* Mobile number not valid!' });
+        } else {
+          this.setState({ mobileError: null });
+        }
+        break;
+        case 'emailId':
+        if (this.state.emailId == null || this.state.emailId.trim() == '') {
+          this.setState({ emailError: '* Email id mandatory' });
+        } else if(!Util.validEmail(this.state.emailId)){
+          this.setState({ emailError: 'Invalid email id' });
+        }else{
+          this.setState({ emailError: null });
+        }
+        break;
+      case 'password':
+        if (this.state.password == null || this.state.password.trim() == '') {
+          this.setState({ passwordError: '* Password mandatory' });
+        } else {
+          this.setState({ passwordError: null });
+        }
+        break;
+      case 'dateOfBirth':
+      if (this.state.password == null || this.state.password.trim() == '') {
+        this.setState({ dobError: '* Date of birth mandatory' });
+      } else {
+        this.setState({ dobError: null });
+      }
+      break;
+      default:
+        break;
+    }
   }
 
   dateToUnix(dateSpace) {
@@ -77,75 +129,14 @@ export default class CreateAccount extends Component {
     //return;
 
     // check Not Blank
-    if (this.state.mobileNumber == null) {
-      ToastAndroid.showWithGravity(
-        'Mobile number mandatory',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      return;
+    this.validateField('mobileNumber');
+    this.validateField('emailId');
+    this.validateField('dateOfBirth');
+    this.validateField('password');
+    if (this.state.mobileError == null && this.state.emailError == null &&
+      this.state.dobError == null && this.state.passwordError == null) {
+      this.sendCredentials();
     }
-
-    // Valid Mobile
-    let isMobile = Util.validMobile(this.state.mobileNumber);
-    console.log(isMobile);
-    if (!isMobile) {
-      ToastAndroid.showWithGravity(
-        'Mobile number not valid!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-    }
-
-    // Not Start With Zero
-    let zero = this.state.mobileNumber.startsWith('0');
-    if (zero) {
-      ToastAndroid.showWithGravity(
-        'Mobile number should not start with a zero',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      return;
-    }
-
-    if (this.state.emailId == null) {
-      ToastAndroid.showWithGravity(
-        'Email mandatory',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      return;
-    }
-
-    // Valid Email
-    let isEmail = Util.validEmail(this.state.emailId);
-    if (!isEmail) {
-      ToastAndroid.showWithGravity(
-        'Email not valid!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-    }
-
-    if (this.state.dateOfBirth == null) {
-      ToastAndroid.showWithGravity(
-        'Date Of Birth mandatory',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      return;
-    }
-
-    if (this.state.password == null) {
-      ToastAndroid.showWithGravity(
-        'Password mandatory',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      return;
-    }
-
-    this.sendCredentials();
   }
 
   sendCredentials() {
@@ -226,16 +217,14 @@ export default class CreateAccount extends Component {
             <TextInputField
               placeholder="Mobile Number"
               iconName={'call'}
-              onChangeText={text => {
-                this.setState({ mobileNumber: text });
-              }}
+              onChangeText={text => this.handleUserInput('mobileNumber', text)}
+              error={this.state.mobileError}
             />
             <TextInputField
               placeholder="Email Address"
               iconName={'mail'}
-              onChangeText={text => {
-                this.setState({ emailId: text });
-              }}
+              onChangeText={text => this.handleUserInput('emailId', text)}
+              error={this.state.emailError}
             />
 
             <TouchableOpacity
@@ -244,10 +233,12 @@ export default class CreateAccount extends Component {
                 placeholder="Date of Birth"
                 iconName={'event-note'}
                 value={this.state.dateOfBirth}
+                onChangeText={text => this.handleUserInput('dateOfBirth', text)}
+                error={this.state.dobError}
+                isButton={true}
                 editable={false}
               />
             </TouchableOpacity>
-
             <DatePicker
               modal
               mode={'date'}
@@ -265,9 +256,8 @@ export default class CreateAccount extends Component {
             <TextInputField
               placeholder="Password"
               iconName={'lock'}
-              onChangeText={text => {
-                this.setState({ password: text });
-              }}
+              onChangeText={text => this.handleUserInput('password', text)}
+              error={this.state.passwordError}
               isPassword={true}
               visibility={true}
             />

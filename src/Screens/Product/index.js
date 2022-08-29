@@ -11,14 +11,13 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Header from '../Component/Header';
-
 import { connect } from 'react-redux';
 import { A_KEY, BASE_URL } from '../../config';
 import NoContentFound from '../../Component/NoContentFound';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
-
 import styles from './styles';
 import ProductCard from '../../Component/ProductCard';
+import { fetchProductData } from '../../api/product';
 const numColumns = 2;
 
 class Product extends Component {
@@ -78,57 +77,33 @@ class Product extends Component {
       });
   };
 
-  getProductList = cat => {
+  getProductList = async (cat) => {
     this.setState({ loader: true, itemIndex: cat });
-    let myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append('A_Key', A_KEY);
-    let raw = JSON.stringify({
-      Keyword: this.state.categoryList.data[cat].name,
-      // categorys: [1, 2],
-    });
-
-    let requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow',
-    };
-
-    fetch(`${BASE_URL}/products/alldatas`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        if (result.response) {
-          let data = [];
-          for (let i = 0; i < result.response.result.data.length; i++) {
-            data.push({ ...result.response.result.data[i], cart: 0, fav: 0 });
-          }
-          this.setState({
-            categoryData: {
-              data,
-              hostUrl: result.response.result.hostUrl,
-            },
-          });
-          this.setState({ loader: false });
-        }
-        if (result.errors) {
-          this.setState({ loader: false });
-          ToastAndroid.showWithGravity(
-            result.errors[0].msg,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
-        }
-      })
-      .catch(error => {
-        this.setState({ loader: false });
-        ToastAndroid.showWithGravity(
-          'Network Error!',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
-        console.log('error', error);
+    try {
+      const prodData = await fetchProductData(this.state.categoryList.data[cat].name);
+      console.log("ProductScreen > getProductList > response", prodData.response.result.data);
+      let data = [];
+      for (let i = 0; i < prodData.response.result.data.length; i++) {
+        data.push({ ...prodData.response.result.data[i], cart: 0, fav: 0 });
+      }
+      this.setState({
+        categoryData: {
+          data,
+          hostUrl: prodData.response.result.hostUrl,
+        },
       });
+      this.state.categoryData.data.filter(x => console.log("Product Screen > state Data > filter > wishlist", x));
+      this.setState({ loader: false });
+    } catch (error) {
+      this.setState({ loader: false });
+      console.log("Product > getProductList > Catch", error);
+      this.setState({ loader: false });
+      ToastAndroid.showWithGravity(
+        'Network Error!',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+      );
+    }
   };
 
   renderCategories = (item, index) =>

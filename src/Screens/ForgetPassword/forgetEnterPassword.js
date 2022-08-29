@@ -24,62 +24,70 @@ export default class ForgetEnterPassword extends Component {
     this.state = {
       newPassword: '',
       confirmPassword: '',
-      p_c_token: this.props.route.params.response['password-create-token'],
+      passwordError:null,
+      confirmPwdError:null,
+      p_c_token: '',//this.props.route.params.response['password-create-token'],
+      formError:null,
       loader: false,
     };
   }
 
   onPasswordChange = async () => {
     this.setState({ loader: true });
-    if (this.state.newPassword == '') {
-      ToastAndroid.showWithGravity(
-        'Password mandatory!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      return;
+    this.validateField('newPassword');
+    this.validateField('confirmPassword');
+    if(this.state.passwordError == null && this.state.confirmPwdError == null){
+      const data = {
+        newPassword: this.state.newPassword,
+        confirmPassword: this.state.confirmPassword,
+        p_c_token: this.state.p_c_token
+      }
+      console.log("ForgotEnterPassword > onPasswordChange > PostData", data);
+      try {
+        const result = await newPasswordChange(data);
+        this.setState({ loader: false });
+        console.log("ForgotEnterPassword > onPasswordChange > response", result);
+        this.setState({ loader: false,formError:null });
+        this.props.navigation.navigate('PasswordSuccessFullyChanged');
+      }
+      catch (error) {
+        console.log("ForgotEnterPassword > onPasswordChange > Catch", error);
+        //this.props.navigation.navigate('PasswordSuccessFullyChanged');
+        this.setState({ loader: false,formError:'Network Error!' });
+      }
     }
-    if (this.state.confirmPassword == '') {
-      ToastAndroid.showWithGravity(
-        'Confirm Password mandatory!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      return;
-    }
-
-    if (this.state.newPassword != this.state.confirmPassword) {
-      ToastAndroid.showWithGravity(
-        'Password and Confirm Password should be same!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      return;
-    }
-
-    const data = {
-      newPassword: this.state.newPassword,
-      confirmPassword: this.state.confirmPassword,
-      p_c_token: this.state.p_c_token
-    }
-    console.log("ForgotEnterPassword > onPasswordChange > PostData", data);
-    try {
-      const result = await newPasswordChange(data);
-      this.setState({ loader: false });
-      console.log("ForgotEnterPassword > onPasswordChange > response", result);
-      this.props.navigation.navigate('PasswordSuccessFullyChanged');
-    }
-    catch (error) {
-      console.log("ForgotEnterPassword > onPasswordChange > Catch", error);
-      this.props.navigation.navigate('PasswordSuccessFullyChanged');
-      this.setState({ loader: false });
-      ToastAndroid.showWithGravity(
-        'Network Error!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-    }
+   
   }
+
+  handleUserInput = (name, value) => {
+    console.log("Name And Value",name,value);
+    this.setState({ [name]: value }, () => { this.validateField(name, value) });
+  }
+
+  validateField = (fieldName) => {
+    switch (fieldName) {
+      case 'newPassword':
+        if (this.state.newPassword == null || this.state.newPassword.trim() == '') {
+          this.setState({ passwordError: '* Password mandatory', loader: false });
+          return;
+        }else{
+          this.setState({ passwordError: null, loader: false });
+        }  
+        break;
+      case 'confirmPassword':
+        if (this.state.confirmPassword == null || this.state.confirmPassword.trim() == '') {
+          this.setState({ confirmPwdError: '* Confirm Password mandatory', loader: false });
+          return;
+        }else{
+          this.setState({ confirmPwdError: null, loader: false });
+        } 
+        break;
+      default:
+        break;
+    }
+
+  }
+
 
   render() {
     return (
@@ -124,11 +132,13 @@ export default class ForgetEnterPassword extends Component {
                 placeholder="Password"
                 iconName={'lock'}
                 value={this.state.newPassword}
-                onChangeText={text => {
-                  this.setState({ newPassword: text });
-                }}
+                // onChangeText={text => {
+                //   this.setState({ newPassword: text });
+                // }}
                 isPassword={true}
                 visibility={true}
+                onChangeText={text => this.handleUserInput('newPassword', text)}
+                error={this.state.passwordError}
               />
             </View>
             <View style={styles.sectionStyle}>
@@ -136,12 +146,19 @@ export default class ForgetEnterPassword extends Component {
                 placeholder="Confirm Password"
                 iconName={'lock'}
                 value={this.state.confirmPassword}
-                onChangeText={text => {
-                  this.setState({ confirmPassword: text });
-                }}
+                // onChangeText={text => {
+                //   this.setState({ confirmPassword: text });
+                // }}
                 isPassword={true}
                 visibility={true}
+                onChangeText={text => this.handleUserInput('confirmPassword', text)}
+                error={this.state.confirmPwdError}
               />
+               {
+              this.state.formError && <Text style={styles.errorText}>
+                {this.state.formError}
+              </Text>
+            }
             </View>
 
             <View style={styles.signup}>
@@ -233,7 +250,8 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   signup: {
-    marginTop: '5%',
+    marginTop: '13%',
+    marginLeft:15,
     width: '80%',
     height: 44,
   },
@@ -252,4 +270,9 @@ const styles = StyleSheet.create({
   cancel: {
     marginTop: '7%',
   },
+  errorText: {
+    color: 'red',
+    marginTop: 10,
+    marginBottom:20,
+  }
 });

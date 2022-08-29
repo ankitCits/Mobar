@@ -1,3 +1,4 @@
+import { style } from 'deprecated-react-native-prop-types/DeprecatedImagePropType';
 import React from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -18,6 +19,7 @@ export default class TextInputField extends React.Component {
         const {
             editable = true,
             isPassword = false,
+            isButton , 
             error
         } = this.props
         return (
@@ -101,10 +103,12 @@ const innerStyle = StyleSheet.create({
         shadowRadius: 4,
     },
     errorContainer: {
-        // padding: 5,
         width: screenWidth(80),
     },
     errorText: {
-        color: 'red'
+        color: 'red',
+    },
+    isModal:{
+       // marginLeft: 25,
     }
 });

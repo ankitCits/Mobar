@@ -8,8 +8,10 @@ import {
     Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { showAlert } from '../api/auth';
 import { addToWishlist, removeToWishlist } from '../api/wishlist';
 import images from '../assets/images';
+import { getAccessToken } from '../localstorage';
 import { FontFamily } from '../Theme/FontFamily';
 import { ThemeColors } from '../Theme/ThemeColors';
 import StarRating from './StarRatings';
@@ -28,42 +30,53 @@ class BarCard extends Component {
     }
 
     removeFavorite = async (id) => {
-        console.log("BarCard > removeFavorite > WId", id);
-        console.log("object before remove fav", this.state.data.ecom_ba_wishlist);
-        const data = {
-            wishlistId: id
-        }
-        try {
-            const response = await removeToWishlist(data);
-            this.setState({ isFavorite: false });
-            this.state.data.ecom_ba_wishlist = null,
-                console.log("BarCard > removeFavorite > Response", response);
-            console.log("object after remove fav", this.state.data.ecom_ba_wishlist);
-        } catch (error) {
-            console.log("BarCard > removeFavorite > Error", error);
+        const token = getAccessToken();
+        if (token == null) {
+            showAlert();
+        } else {
+            console.log("BarCard > removeFavorite > WId", id);
+            console.log("object before remove fav", this.state.data.ecom_ba_wishlist);
+            const data = {
+                wishlistId: id
+            }
+            try {
+                const response = await removeToWishlist(data);
+                this.setState({ isFavorite: false });
+                this.state.data.ecom_ba_wishlist = null,
+                    console.log("BarCard > removeFavorite > Response", response);
+                console.log("object after remove fav", this.state.data.ecom_ba_wishlist);
+            } catch (error) {
+                console.log("BarCard > removeFavorite > Error", error);
+            }
         }
     }
 
     addFavorite = async (id, index) => {
-        console.log("BarCard > addFav > ItemID", id);
-        console.log("BarCard > addFav > this.state.data.ecom_ba_wishlist", this.state.data.ecom_ba_wishlist);
+        const token = await getAccessToken();
+        console.log("AddFavorites > BarCard >Token",token);
+        if (token == null) {
+            showAlert();
+        } else {
+            console.log("BarCard > addFav > ItemID", id);
+            console.log("BarCard > addFav > this.state.data.ecom_ba_wishlist", this.state.data.ecom_ba_wishlist);
 
-        const data = {
-            productId: 0,
-            comboId: 0,
-            vendorId: id
-        };
-        try {
-            const response = await addToWishlist(data);
-            console.log("BarCard > addFavorite > response", response.result.data.wishlistId);
-            this.state.data.ecom_ba_wishlist = {
-                "wishlistId": response.result.data.wishlistId,
-                "wishlistFor": "Bars"
+            const data = {
+                productId: 0,
+                comboId: 0,
+                vendorId: id
             };
-            this.setState({ isFavorite: true });
-            console.log("object after add fav", this.state.data.ecom_ba_wishlist);
-        } catch (error) {
-            console.log("BarCard > addFavorite > Catch", error);
+            try {
+                const response = await addToWishlist(data);
+                console.log("BarCard > addFavorite > response", response.result.data.wishlistId);
+                this.state.data.ecom_ba_wishlist = {
+                    "wishlistId": response.result.data.wishlistId,
+                    "wishlistFor": "Bars"
+                };
+                this.setState({ isFavorite: true });
+                console.log("object after add fav", this.state.data.ecom_ba_wishlist);
+            } catch (error) {
+                console.log("BarCard > addFavorite > Catch", error);
+            }
         }
     }
 

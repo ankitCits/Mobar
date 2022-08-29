@@ -4,16 +4,67 @@ import {
   StyleSheet,
   View,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  ToastAndroid
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { showAlert } from '../api/auth';
+import { addToCart, removeFromCart } from '../api/product';
 import images from '../assets/images';
+import { getAccessToken } from '../localstorage';
 import { FontFamily } from '../Theme/FontFamily';
 import { ThemeColors } from '../Theme/ThemeColors';
 export default class CartProduct extends React.Component {
   constructor(props) {
     super(props);
+    this.state={
+      data:this.props.item,
+      qty:1
+    };
   }
+
+  addCart = async ()=>{
+    console.log("MyCard > CartProduct > addCart",this.state.data.ecom_aca_product_unit.productUnitId);
+    const token = await getAccessToken();
+    if (token == null) {
+      showAlert();
+    } else {
+      const cartItem = {
+        productUnitId: this.state.data.ecom_aca_product_unit.productUnitId,
+        comboId: 0,
+        qty: 1,
+      };
+      try {
+        const cartResponse = await addToCart(cartItem);
+        console.log("DetailBar > addToCart > response",cartResponse);
+        this.setState({qty:this.state.qty+1});
+        //showAlert('Success','Item added to cart successfully');
+      } catch (error) {
+        console.log("Details Bars > addCart > catch", error);
+        showAlert('Error',error);
+      }
+    }
+  }
+
+  removeCart = async () => {
+    console.log("ProductCard > removeCart > Item",this.state.data.cartId);
+    const token = await getAccessToken();
+    if (token == null) {
+        showAlert();
+    } else {
+        try {
+            const response =  await removeFromCart(this.state.data.cartId);
+            console.log("MyCard > CartProduct > response",response);
+            this.setState({qty:this.state.qty-1});
+        } catch (error) {
+            ToastAndroid.showWithGravity(
+                error,
+                ToastAndroid.LONG,
+                ToastAndroid.BOTTOM,
+            );
+        }
+    }
+}
 
   render() {
     const {
@@ -22,19 +73,18 @@ export default class CartProduct extends React.Component {
       navigation,
       index
     } = this.props;
-    // console.log("CartProduct > Item", item);
+    //console.log("CartProduct > state Data", this.state.data);
     return (
       <>
         <View style={styles.container}>
           <View style={styles.subContainer}>
-
             {/* Image */}
             <View style={styles.productInnerView}>
-              {item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
+              {this.state.data.ecom_aca_product_unit && this.state.data.ecom_aca_product_unit.ecom_ac_product ?
                 <Image
                   style={styles.prodImage}
                   resizeMode={'cover'}
-                  source={{ uri: `${hostUrl + item.ecom_aca_product_unit.ecom_ac_product.images}` }}
+                  source={{ uri: `${hostUrl + this.state.data.ecom_aca_product_unit.ecom_ac_product.images}` }}
                 /> :
                 <Image
                   style={styles.prodImage}
@@ -46,9 +96,9 @@ export default class CartProduct extends React.Component {
 
             <View style={styles.details}>
               <View style={styles.header}>
-                {item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
+                {this.state.data.ecom_aca_product_unit && this.state.data.ecom_aca_product_unit.ecom_ac_product ?
                   <Text style={styles.title}>
-                    {item.ecom_aca_product_unit.ecom_ac_product.name}
+                    {this.state.data.ecom_aca_product_unit.ecom_ac_product.name}
                   </Text>
                   :
                   <Text style={styles.title}>Not Available</Text>}
@@ -56,22 +106,22 @@ export default class CartProduct extends React.Component {
               <View>
                 <Text
                   style={styles.qty}>
-                  {item.unitQty + ' ' + item.unitType}
+                  {this.state.data.unitQty + ' ' + this.state.data.unitType}
                 </Text>
               </View>
               <View
                 style={styles.priceContainer}>
-                {item.ecom_aca_product_unit ?
+                {this.state.data.ecom_aca_product_unit ?
                   <Text
                     style={styles.priceText}>
-                    ${item.ecom_aca_product_unit.unitUserPrice}
+                    ${this.state.data.ecom_aca_product_unit.unitUserPrice}
                   </Text> 
                   :
                   <Text style={styles.priceText}>Price</Text>
                 }
-                {item.ecom_aca_product_unit && item.ecom_aca_product_unit.unitDiscountPrice ?
+                {this.state.data.ecom_aca_product_unit && this.state.data.ecom_aca_product_unit.unitDiscountPrice ?
                   <Text style={styles.discountPrice}>
-                    ${item.ecom_aca_product_unit.unitDiscountType}
+                    ${this.state.data.ecom_aca_product_unit.unitDiscountType}
                   </Text> 
                   :
                   <Text style={styles.discountPrice}></Text>
@@ -81,17 +131,17 @@ export default class CartProduct extends React.Component {
             <View
               style={styles.qtyContainer}>
               <TouchableOpacity
-                //onPress={() => this.setState({ modalVisible: true })}
+                onPress={() => {this.removeCart()}}
                 style={styles.icon}>
                 <Icon name="remove" size={18} color="#fff" />
               </TouchableOpacity>
 
               <Text
                 style={styles.inputQty}>
-                3
+                {this.state.qty}
               </Text>
               <TouchableOpacity
-                //onPress={() => this.setState({ modalVisible: true })}
+                onPress={() => {this.addCart()}}
                 style={styles.icon}>
                 <Icon name="add" size={18} color="#fff" />
               </TouchableOpacity>

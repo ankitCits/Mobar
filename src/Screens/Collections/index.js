@@ -4,60 +4,110 @@ import {
   View,
   SafeAreaView,
   Image,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
   Modal,
+  Alert,
+  ToastAndroid,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { showAlert } from '../../api/auth';
+import { addToCart, fetchCollectionData } from '../../api/product';
+import { FontFamily } from '../../Theme/FontFamily';
 import images from '../../assets/images';
-import HeaderSide from '../Component/HeaderSide';
+import { getAccessToken } from '../../localstorage';
 export default class Collections extends Component {
   constructor(props) {
     super(props);
     this.state = {
       visibilityQuantity: 30,
       modalVisible: false,
+      data:[],
     };
+  }
+
+  componentDidMount() {
+    this.fetchData();
+}
+
+  fetchData = async () => {
+    try{
+    const response = await fetchCollectionData();
+    console.log("Collection > fetchData > response",response.response.result);
+    //this.setState({data:})
+    }catch(error){
+      ToastAndroid.showWithGravity(
+        error,
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+    );
+    }
+  }
+
+  addCart = async () => {
+    // console.log("DetailsBars > addCart >details",this.state.details.ecom_aca_product_units[0].productUnitId);
+    // const cartItem = {
+    //   productUnitId: this.state.details.ecom_aca_product_units[0].productUnitId,
+    //   comboId: 0,
+    //   qty: 2,
+    // };
+   
+      try {
+        //const cartResponse = await addToCart(cartItem);
+        // Alert.alert(
+        //   'Success',
+        //   'Item added to cart successfully',
+        //   [
+        //     { text: "OK", onPress: () => this.setState({ modalVisible: false }) }
+        //   ]
+        // );
+        showAlert('Success','Item added to cart successfully');
+      } catch (error) {
+        console.log("Details Bars > addCart > catch", error);
+        Alert.alert(
+          'Error',
+          'Try Again',
+          error,
+          [
+            { text: "OK", onPress: () => this.setState({ modalVisible: false }) }
+          ]
+        );
+      }
+  }
+
+  showModal = async() => {
+    const token = await getAccessToken();
+    if (token == null) {
+      showAlert();
+      return;
+    } else {
+      this.setState({ modalVisible: true });
+    }
   }
 
   render() {
     const {modalVisible} = this.state;
     return (
       <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: '#fff',
-        }}>
-        <View
-          style={{
-            backgroundColor: '#fff',
-            height: 60,
-          }}>
+        style={styles.container}>
+        <View style={styles.subContainer}>
           <View
-            style={{margin: 12, flexDirection: 'row', alignItems: 'center'}}>
+            style={styles.header}>
             <TouchableOpacity
               onPress={() => this.props.navigation.navigate('MyBottomTabs')}>
               {/* <Icon name="arrow-back" size={28} color="#4D4F50" /> */}
             </TouchableOpacity>
-
-            <View style={{marginLeft: 10}}>
-              <Text style={{fontSize: 20, color: '#4D4F50', fontWeight: '500'}}>
+            <View style={{}}>
+              <Text style={styles.headerText}>
               Collections
               </Text>
             </View>
           </View>
         </View>
-        <View style={{flexDirection: 'row'}}>
+        <View style={styles.filterRow}>
           <View style={styles.filterView}>
             <View
-              style={{
-                margin: 12,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-around',
-              }}>
+              style={styles.sort}>
               <TouchableOpacity style={styles.filterInnerView}>
                 <Icon name="swap-vert" size={28} color="#4D4F50" />
                 <Text style={styles.filterInnerText}>Sort</Text>
@@ -96,7 +146,7 @@ export default class Collections extends Component {
               />
             </View>
 
-            <View style={{margin: 5, marginLeft: 10}}>
+            <View style={{margin: 5 }}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -138,7 +188,7 @@ export default class Collections extends Component {
                 justifyContent: 'space-between',
               }}>
               <TouchableOpacity
-                onPress={() => this.setState({modalVisible: true})}
+                onPress={() => this.showModal()}
                 style={{
                   alignSelf: 'center',
                   backgroundColor: '#BABABA',
@@ -230,7 +280,7 @@ export default class Collections extends Component {
                 justifyContent: 'space-between',
               }}>
               <TouchableOpacity
-                onPress={() => this.setState({modalVisible: true})}
+                onPress={() => this.showModal()}
                 style={{
                   alignSelf: 'center',
                   backgroundColor: '#BABABA',
@@ -518,7 +568,7 @@ export default class Collections extends Component {
               <View style={{marginTop: '10%', marginBottom: 10}}>
                 <TouchableOpacity
                   style={styles.addToCard}
-                  onPress={() => this.setState({modalVisible: false})}>
+                  onPress={() => this.addCart()}>
                   <Text style={{color: '#fff', fontSize: 15}}>ADD TO CART</Text>
                 </TouchableOpacity>
               </View>
@@ -531,6 +581,25 @@ export default class Collections extends Component {
 }
 
 const styles = StyleSheet.create({
+  container:{
+    flex:1,
+    backgroundColor:'#fff',
+  },
+  subContainer:{         
+    padding: 10,
+  },
+  header:{
+    margin: 12, 
+    flexDirection: 'row', 
+    alignItems: 'center'
+  },
+  headerText:{
+    fontFamily:FontFamily.ROBOTO_REGULAR,
+    fontSize: 20, 
+    color: '#4D4F50', 
+    fontWeight: '500'
+  },
+  filterRow:{flexDirection: 'row'},
   filterView: {
     backgroundColor: '#fff',
     height: 50,
@@ -541,7 +610,12 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 5,
     borderTopWidth:0
-    
+  },
+  sort:{
+    margin: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
   },
   filterInnerView: {
     flexDirection: 'row',
@@ -549,6 +623,8 @@ const styles = StyleSheet.create({
   },
   filterInnerText: {
     marginLeft: 5,
+    fontFamily:FontFamily.ROBOTO_REGULAR,
+    fontWeight:'400',
     fontSize: 18,
     color: '#4D4F50',
   },
@@ -559,7 +635,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     height: 100,
     width: '97%',
-    overflow:"hidden",
     shadowColor: '#000',
     shadowOffset: {width: 1, height: 1},
     shadowOpacity: 0.4,
@@ -568,18 +643,14 @@ const styles = StyleSheet.create({
     elevation: 5,
     alignSelf: 'center',
     flexDirection: 'row',
-    marginTop: 15,
+    margin: 15,
   },
   productInnerView: {
-    backgroundColor: '#fff',
-    height: 100,
-    width: '30%',
+    //backgroundColor: '#fff',
+    //height: 100,
+    width: '28%',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  orderPercentageImg: {
-    width: 16.97,
-    height: 17.79,
   },
   save: {
     backgroundColor: '#851729',
