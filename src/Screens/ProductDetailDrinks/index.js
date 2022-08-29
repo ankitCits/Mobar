@@ -193,8 +193,7 @@ export default class ProductDetailDrinks extends Component {
       <SafeAreaView>
         <ScrollView>
           <View>
-            <View
-              style={styles.productDetailsContainer}>
+            <View style={styles.productDetailsContainer}>
               <View
                 style={styles.backArrowContainer}>
                 <TouchableOpacity onPress={() => this.props.navigation.pop()}>
@@ -289,11 +288,9 @@ export default class ProductDetailDrinks extends Component {
               </View>
             </View>
 
-            <View
-              style={styles.cart}>
+            <View style={styles.cart}>
               <View style={styles.cartMargin}>
-                <View
-                  style={styles.cartBtnContainer}>
+                <View style={styles.cartBtnContainer}>
                   <View />
                   <View>
                     <View
@@ -441,7 +438,8 @@ const styles = StyleSheet.create({
     elevation: 5,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-   
+    zIndex: 1
+
   },
   backArrowContainer: {
     margin: 12,
@@ -474,7 +472,7 @@ const styles = StyleSheet.create({
     color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     fontWeight: '400',
     marginTop: 10,
-    
+
   },
   discountContainer: {
     width: 180,
@@ -495,7 +493,7 @@ const styles = StyleSheet.create({
   },
   quantity: {
     marginTop: '40%',
-   
+
   },
   qtyText: {
     fontFamily: FontFamily.TAJAWAL_REGULAR,
@@ -531,9 +529,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 3,
     elevation: 3,
-    marginTop: -10,
-    //backgroundColor:"powderblue",
-    
+    marginTop: -20,
+    zIndex: 0,
+    // backgroundColor: "powderblue",
+
   },
   cartContainer: {
     flexDirection: 'row',
@@ -542,7 +541,7 @@ const styles = StyleSheet.create({
     width: 192,
     borderRadius: 20,
   },
-  cartMargin: { margin: 10 },
+  cartMargin: { margin: 40 },
   cartBtnContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -559,7 +558,7 @@ const styles = StyleSheet.create({
   heartContainer: {
     flexDirection: 'row',
     alignItems: 'center'
-    
+
   },
   cartIcon: {
     backgroundColor: '#D46679',
