@@ -83,7 +83,7 @@ export default class Redeem extends Component {
       <SafeAreaView
         style={{
           flex: 1,
-          backgroundColor: '#E5E5E5',
+          backgroundColor: '#fff',
         }}>
         <HeaderSide
           name={'Redeem'}
@@ -661,7 +661,7 @@ export default class Redeem extends Component {
           onRequestClose={() => {
             this.setState({modalVisible: false});
           }}>
-          <View style={{flex: 1, backgroundColor: '#E5E5E5'}}>
+          <View style={{flex: 1, backgroundColor: '#fff'}}>
             <ScrollView>
               <View
                 style={{

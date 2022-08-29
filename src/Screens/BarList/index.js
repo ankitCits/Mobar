@@ -26,7 +26,7 @@ export default class BarList extends Component {
       <SafeAreaView
         style={{
           flex: 1,
-          backgroundColor: '#E5E5E5',
+          backgroundColor: '#fff',
         }}>
         <View
           style={{

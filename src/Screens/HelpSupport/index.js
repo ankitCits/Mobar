@@ -24,12 +24,12 @@ export default class HelpSupport extends Component {
     this.state = {
       visibility: false,
       loader: false,
-      name: 'Ravi',
-      email: 'Rv_5690@gmail.com',
-      contact: '9033340196',
+      name: '',
+      email: '',
+      contact: '',
       category: '',
       isToggle: false,
-      description: 'Test',
+      description: '',
     };
 
   }
@@ -111,7 +111,7 @@ export default class HelpSupport extends Component {
       category: this.state.category,
     };
 
-    console.log("Param with Category",raw);
+    console.log("Param with Category", raw);
 
     try {
       const response = await helpSupport(raw);
@@ -370,7 +370,7 @@ export default class HelpSupport extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#E5E5E5'
+    backgroundColor: '#fff'
   },
   FirstText: {
     alignSelf: 'center',

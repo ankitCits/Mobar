@@ -141,7 +141,7 @@ export default class OrderHistory extends Component {
             <ActivityIndicator size="small" color="#B51D36" />
           </View>
         ) : (
-          <View style={{backgroundColor: '#E5E5E5', flex: 1}}>
+          <View style={{backgroundColor: '#fff', flex: 1}}>
             {/* <View style={{margin: 15}}>
               <Text style={styles.productList}>Today</Text>
             </View> */}

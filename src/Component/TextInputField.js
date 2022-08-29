@@ -75,7 +75,7 @@ const innerStyle = StyleSheet.create({
         color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
         fontFamily: FontFamily.TAJAWAL_REGULAR,
         fontWeight: '500',
-        size: 17,
+        fontSize: 15,
     },
     imageStyle: {
         margin: 5,

@@ -155,11 +155,11 @@ export default class ForgetPasswordOtp extends Component {
       <SafeAreaView
         style={{
           flex: 1,
-          backgroundColor: '#E5E5E5',
+          backgroundColor: '#fff',
         }}>
         <StatusBar
           animated={true}
-          backgroundColor="#E5E5E5"
+          backgroundColor="#fff"
           barStyle={'dark-content'}
         />
         <ScrollView>

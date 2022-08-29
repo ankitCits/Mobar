@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     padding: 10,
-    backgroundColor: '#E5E5E5',
+    backgroundColor: '#fff',
     borderRadius: 7,
     height: 55,
     fontFamily: FontFamily.TAJAWAL_REGULAR,

@@ -30,6 +30,7 @@ class SignIn extends Component {
       passwordError: null,
       // mobileNumber: '99887766',
       // password: "Ankit@2261",
+      formError: null,
       loader: false,
     };
   }
@@ -39,40 +40,11 @@ class SignIn extends Component {
 
   async onProceed() {
     this.setState({ loader: true });
-    // check Not Blank
-    if (this.state.mobileNumber == null || this.state.mobileNumber.trim() == '') {
-      this.setState({ mobileError: 'Mobile number mandatory', loader: false });
-      return;
-    } else {
-      this.setState({ mobileError: null });
+    this.validateField('mobileNumber');
+    this.validateField('password');
+    if (this.state.mobileError == null && this.state.passwordError == null) {
+      this.processLogin();
     }
-
-    if (this.state.password == null || this.state.password.trim() == '') {
-      this.setState({ passwordError: 'Password mandatory', loader: false });
-      return;
-    } else {
-      this.setState({ passwordError: null });
-    }
-
-    // Not Start With Zero
-    let zero = this.state.mobileNumber.startsWith('0');
-    if (zero) {
-      this.setState({ mobileError: 'Mobile number should not start with a zero', loader: false });
-      return;
-    } else {
-      this.setState({ mobileError: null });
-    }
-
-    // Valid Mobile
-    let isMobile = Util.validMobile(this.state.mobileNumber);
-    if (!isMobile) {
-      this.setState({ mobileError: 'Mobile number not valid!', loader: false });
-      return;
-    } else {
-      this.setState({ mobileError: null });
-    }
-
-    this.processLogin();
   }
 
   async processLogin() {
@@ -85,16 +57,11 @@ class SignIn extends Component {
     try {
       const resp = await singIn(postData)
       await setAccessToken(resp);
-      this.setState({ loader: false });
+      this.setState({ formError: null, loader: false });
       this.props.navigation.replace('Drawer');
       return;
     } catch (error) {
-      this.setState({ loader: false });
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      this.setState({ formError: error, loader: false });
     }
   }
 
@@ -103,23 +70,27 @@ class SignIn extends Component {
     this.setState({ [name]: value }, () => { this.validateField(name, value) });
   }
 
-  validateField = (fieldName, value) => {
+  validateField = (fieldName) => {
     switch (fieldName) {
       case 'mobileNumber':
-        let zero = this.state.mobileNumber.startsWith('0');
+        let zero = this.state.mobileNumber && this.state.mobileNumber.startsWith('0');
         if (this.state.mobileNumber == null || this.state.mobileNumber.trim() == '') {
-          this.setState({ mobileError: 'Mobile number mandatory' });
+          this.setState({ mobileError: '* Mobile number mandatory', loader: false });
+          return;
         } else if (zero) {
-          this.setState({ mobileError: 'Mobile number should not start with a zero' });
+          this.setState({ mobileError: '* Mobile number should not start with a zero', loader: false });
+          return;
         } else if (!Util.validMobile(this.state.mobileNumber)) {
-          this.setState({ mobileError: 'Mobile number not valid!' });
+          this.setState({ mobileError: '* Mobile number not valid!', loader: false });
+          return;
         } else {
           this.setState({ mobileError: null });
         }
         break;
       case 'password':
         if (this.state.password == null || this.state.password.trim() == '') {
-          this.setState({ passwordError: 'Password mandatory' });
+          this.setState({ passwordError: '* Password mandatory', loader: false });
+          return;
         } else {
           this.setState({ passwordError: null });
         }
@@ -127,6 +98,7 @@ class SignIn extends Component {
       default:
         break;
     }
+
   }
 
   render() {
@@ -161,6 +133,12 @@ class SignIn extends Component {
               visibility={true}
               error={this.state.passwordError}
             />
+
+            {
+              this.state.formError && <Text style={styles.errorText}>
+                {this.state.formError}
+              </Text>
+            }
 
             <ThemeButton
               title={'Sign in'}
@@ -269,6 +247,10 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontFamily: FontFamily.TAJAWAL_REGULAR
   },
+  errorText: {
+    color: 'red',
+    marginTop: 10
+  }
 });
 
 // dispatcher functions
