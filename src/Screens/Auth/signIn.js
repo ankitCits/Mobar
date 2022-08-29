@@ -26,10 +26,10 @@ class SignIn extends Component {
       visibility: false,
       mobileNumber: null,
       password: null,
-      mobileError: null,
-      passwordError: null,
-      // mobileNumber: '99887766',
-      // password: "Ankit@2261",
+      // mobileError: null,
+      // passwordError: null,
+      mobileNumber: '99887766',
+      password: "Ankit@2261",
       formError: null,
       loader: false,
     };
@@ -192,6 +192,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F4F4F4',// ThemeColors.CLR_BG
+   
   },
   createView: {
     marginTop: '25%',

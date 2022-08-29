@@ -21,7 +21,7 @@ export default class AllNotification extends Component {
       <SafeAreaView
         style={{
           flex: 1,
-          backgroundColor: '#fff',
+          backgroundColor: '#F4F4F4',
         }}>
         <>
           <View

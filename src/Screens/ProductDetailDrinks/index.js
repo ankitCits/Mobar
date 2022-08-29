@@ -436,11 +436,12 @@ const styles = StyleSheet.create({
     backgroundColor: ThemeColors.CLR_WHITE,
     shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     shadowOffset: { width: 1, height: 1 },
-    shadowOpacity: 0.4,
-    shadowRadius: 3,
+    shadowOpacity: 5,
+    shadowRadius: 5,
     elevation: 5,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
+   
   },
   backArrowContainer: {
     margin: 12,
@@ -473,6 +474,7 @@ const styles = StyleSheet.create({
     color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     fontWeight: '400',
     marginTop: 10,
+    
   },
   discountContainer: {
     width: 180,
@@ -492,7 +494,8 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   quantity: {
-    marginTop: '30%',
+    marginTop: '40%',
+   
   },
   qtyText: {
     fontFamily: FontFamily.TAJAWAL_REGULAR,
@@ -527,8 +530,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
     shadowRadius: 3,
-    elevation: 5,
-    marginTop: 1,
+    elevation: 3,
+    marginTop: -10,
+    //backgroundColor:"powderblue",
+    
   },
   cartContainer: {
     flexDirection: 'row',
@@ -537,7 +542,7 @@ const styles = StyleSheet.create({
     width: 192,
     borderRadius: 20,
   },
-  cartMargin: { margin: 15 },
+  cartMargin: { margin: 10 },
   cartBtnContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -554,6 +559,7 @@ const styles = StyleSheet.create({
   heartContainer: {
     flexDirection: 'row',
     alignItems: 'center'
+    
   },
   cartIcon: {
     backgroundColor: '#D46679',
