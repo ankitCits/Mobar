@@ -56,10 +56,10 @@ export default class MyCard extends Component {
     }
   };
 
-  renderCartItems = (item,index) => {
+  renderCartItems = (item, index) => {
     return (
       <>
-          <CartProduct navigation={this.props.navigation} index={index} item={item} hostUrl={this.props.hostUrl} />
+        <CartProduct navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />
       </>
     );
   };
@@ -73,170 +73,171 @@ export default class MyCard extends Component {
           onClick={() => this.props.navigation.pop()}
         />
         <>
-        <View style={styles.cartCount}>
-          <Text
-            style={styles.itemCountText}>
-            {this.state.totalQty} items in your cart
-          </Text>
-        </View>
+          <View style={styles.cartCount}>
+            <Text
+              style={styles.itemCountText}>
+              {this.state.totalQty} items in your cart
+            </Text>
+          </View>
 
-        <FlatList
+          <FlatList
             data={this.state.cart}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item, index }) => this.renderCartItems(item, index)}
-        />
-        <View style={styles.bottomContainer}>
-          <View
-            style={styles.subContainer}>
+          />
+
+          <View style={styles.bottomContainer}>
             <View
-              style={styles.containerAlign}>
+              style={styles.subContainer}>
               <View
-                style={styles.promoContainer}>
-                <TextInput
-                  style={styles.promoText}
-                  placeholder="Promocode"
-                  underlineColorAndroid="transparent"
-                />
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: '#751A2A',
-                    width: 128,
-                    height: 44,
-                    borderRadius: 20,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    alignSelf: 'center',
-                  }}>
-                  <Text
+                style={styles.containerAlign}>
+                <View
+                  style={styles.promoContainer}>
+                  <TextInput
+                    style={styles.promoText}
+                    placeholder="Promocode"
+                    underlineColorAndroid="transparent"
+                  />
+                  <TouchableOpacity
                     style={{
-                      fontFamily:FontFamily.TAJAWAL_REGULAR,
-                      fontWeight:'700',
-                      fontSize: 20,
-                      color: ThemeColors.CLR_WHITE,
+                      backgroundColor: '#751A2A',
+                      width: 128,
+                      height: 44,
+                      borderRadius: 20,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      alignSelf: 'center',
                     }}>
-                    Apply
-                  </Text>
+                    <Text
+                      style={{
+                        fontFamily: FontFamily.TAJAWAL_REGULAR,
+                        fontWeight: '700',
+                        fontSize: 20,
+                        color: ThemeColors.CLR_WHITE,
+                      }}>
+                      Apply
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  marginTop: 10,
+                  marginBottom: 10,
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                }}>
+                <Icon
+                  name="redeem"
+                  size={22}
+                  color="#A39B9B"
+                  style={styles.imageStyle}
+                />
+                <Text
+                  style={{
+                    marginLeft: 10,
+                  }}>
+                  Do you have any promocode?
+                </Text>
+              </View>
+              <View
+                style={{
+                  marginTop: 20,
+                  marginLeft: 20,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{
+                    marginLeft: 10,
+                    color: '#3C3C3C',
+                    fontWeight: '500',
+                    fontSize: 20,
+                  }}>
+                  Sub Total
+                </Text>
+                <Text
+                  style={{
+                    marginRight: 40,
+                    color: '#3C3C3C',
+                    fontWeight: '500',
+                    fontSize: 20,
+                  }}>
+                  $397
+                </Text>
+              </View>
+
+              <View
+                style={{
+                  marginTop: 5,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{
+                    marginLeft: 30,
+                    color: '#3C3C3C',
+                    fontWeight: '500',
+                    fontSize: 18,
+                  }}>
+                  Discount
+                </Text>
+                <Text
+                  style={{
+                    marginRight: 40,
+                    color: '#F01111',
+                    fontWeight: '500',
+                    fontSize: 18,
+                  }}>
+                  -$99
+                </Text>
+              </View>
+
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: '#000',
+                  marginTop: 10,
+                  marginBottom: 10,
+                }}
+              />
+
+              <View
+                style={{
+                  marginTop: 5,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{
+                    marginLeft: 30,
+                    color: '#000',
+                    fontWeight: '700',
+                    fontSize: 22,
+                  }}>
+                  Total Payable
+                </Text>
+                <Text
+                  style={{
+                    marginRight: 40,
+                    color: '#000',
+                    fontWeight: '700',
+                    fontSize: 22,
+                  }}>
+                  $262
+                </Text>
+              </View>
+
+              <View style={{ marginTop: '10%', marginBottom: 10 }}>
+                <TouchableOpacity
+                  style={styles.save}
+                  onPress={() => this.props.navigation.navigate('Checkout')}>
+                  <Text style={{ color: '#fff', fontSize: 18 }}>CHECKOUT</Text>
                 </TouchableOpacity>
               </View>
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 10,
-                marginBottom: 10,
-                alignSelf: 'center',
-                alignItems: 'center',
-              }}>
-              <Icon
-                name="redeem"
-                size={22}
-                color="#A39B9B"
-                style={styles.imageStyle}
-              />
-              <Text
-                style={{
-                  marginLeft: 10,
-                }}>
-                Do you have any promocode?
-              </Text>
-            </View>
-            <View
-              style={{
-                marginTop: 20,
-                marginLeft: 20,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <Text
-                style={{
-                  marginLeft: 10,
-                  color: '#3C3C3C',
-                  fontWeight: '500',
-                  fontSize: 20,
-                }}>
-                Sub Total
-              </Text>
-              <Text
-                style={{
-                  marginRight: 40,
-                  color: '#3C3C3C',
-                  fontWeight: '500',
-                  fontSize: 20,
-                }}>
-                $397
-              </Text>
-            </View>
-
-            <View
-              style={{
-                marginTop: 5,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <Text
-                style={{
-                  marginLeft: 30,
-                  color: '#3C3C3C',
-                  fontWeight: '500',
-                  fontSize: 18,
-                }}>
-                Discount
-              </Text>
-              <Text
-                style={{
-                  marginRight: 40,
-                  color: '#F01111',
-                  fontWeight: '500',
-                  fontSize: 18,
-                }}>
-                -$99
-              </Text>
-            </View>
-
-            <View
-              style={{
-                height: 1,
-                backgroundColor: '#000',
-                marginTop: 10,
-                marginBottom: 10,
-              }}
-            />
-
-            <View
-              style={{
-                marginTop: 5,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <Text
-                style={{
-                  marginLeft: 30,
-                  color: '#000',
-                  fontWeight: '700',
-                  fontSize: 22,
-                }}>
-                Total Payable
-              </Text>
-              <Text
-                style={{
-                  marginRight: 40,
-                  color: '#000',
-                  fontWeight: '700',
-                  fontSize: 22,
-                }}>
-                $262
-              </Text>
-            </View>
-
-            <View style={{ marginTop: '10%', marginBottom: 10 }}>
-              <TouchableOpacity
-                style={styles.save}
-                onPress={() => this.props.navigation.navigate('Checkout')}>
-                <Text style={{ color: '#fff', fontSize: 18 }}>CHECKOUT</Text>
-              </TouchableOpacity>
-            </View>
           </View>
-        </View>
         </>
       </SafeAreaView>
     );
@@ -244,25 +245,25 @@ export default class MyCard extends Component {
 }
 
 const styles = StyleSheet.create({
-  container:{
+  container: {
     flex: 1,
     backgroundColor: ThemeColors.CLR_BG,
   },
-  cartCount:{ 
+  cartCount: {
     margin: 15,
-    marginBottom:0, 
+    marginBottom: 0,
   },
-  itemCountText:{
-    fontFamily:FontFamily.TAJAWAL_REGULAR,
+  itemCountText: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
     fontSize: 16,
     fontWeight: '400',
     color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
   },
-  bottomContainer:{ 
-    marginTop:0, 
-    justifyContent: 'flex-end' 
+  bottomContainer: {
+    marginTop: 0,
+    justifyContent: 'flex-end'
   },
-  subContainer:{
+  subContainer: {
     shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     shadowOffset: {
       width: 0,
@@ -276,11 +277,11 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     overflow: 'hidden',
   },
-  containerAlign:{
+  containerAlign: {
     marginTop: 20,
     alignSelf: 'center',
   },
-  promoContainer:{
+  promoContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: '#DADADA',
@@ -288,13 +289,13 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 20,
   },
-  promoText:{
-    fontFamily:FontFamily.TAJAWAL_REGULAR,
+  promoText: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
     fontSize: 20,
-    fontWeight:'400',
-    color:ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+    fontWeight: '400',
+    color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     alignItems: 'center',
-    alignSelf:'center',
+    alignSelf: 'center',
     paddingLeft: '13%',
   },
   productView: {

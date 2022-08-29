@@ -18,7 +18,6 @@ export default class CategoryCard extends React.Component {
             isFavorite: (this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId),
             data: this.props.item
         }
-        //console.log("State Data",this.state.data);
     }
 
     removeFavorite = async (id) => {
@@ -41,9 +40,7 @@ export default class CategoryCard extends React.Component {
                 comboId: 0,
                 vendorId: 0
             };
-            //console.log("CategoryCard > addFavorite > response",this.state.data.ecom_ba_wishlist);
             const response = await addToWishlist(data);
-            //console.log("CategoryCard > addFavorite > response",response);
             this.state.data.ecom_ba_wishlist = {
                 "wishlistId": response.result.data.wishlistId,
                 "wishlistFor": "Drinks"
@@ -63,18 +60,16 @@ export default class CategoryCard extends React.Component {
 
     render() {
         const {
-            item,   
+            item,
             hostUrl,
             navigation,
             index,
         } = this.props;
-        //console.log("CCard > Item", item);
         return (
             <>
                 <TouchableOpacity
                     key={index}
                     onPress={() => {
-                        // console.log(hostUrl + item.images);
                         navigation.navigate('ProductDetailDrinks', { id: this.state.data.productId });
                     }}
                     style={{
@@ -91,14 +86,6 @@ export default class CategoryCard extends React.Component {
                         defaultSource={images.boxOuter}>
 
                         <View style={styles.innerTop}>
-                            {/* <TouchableOpacity onPress={() => console.log('nothing')}>
-                                <Icon
-                                    name={'favorite'}
-                                    size={22}
-                                    color="#FF1405"
-                                    style={[styles.imageStyle]}
-                                />
-                            </TouchableOpacity> */}
                             <TouchableOpacity
                                 onPress={() => {
                                     this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId
@@ -122,7 +109,6 @@ export default class CategoryCard extends React.Component {
                             resizeMode={'cover'}
                             defaultSource={images.product1}
                             source={{ uri: hostUrl + this.state.data.images }}
-                        // source={images.product1}
                         />
 
                         <Image
@@ -136,7 +122,6 @@ export default class CategoryCard extends React.Component {
                             <View>
                                 <Text style={styles.innerBottomText}>
                                     {this.state.data.name}
-                                    {/* Ballantines Blended */}
                                 </Text>
                             </View>
                             <View>
@@ -145,7 +130,6 @@ export default class CategoryCard extends React.Component {
                                     {
                                         this.state.data.ecom_aca_product_units[0].unitDiscountPrice
                                     }
-                                    {/* Your Saving: $19 */}
                                 </Text>
                             </View>
                             <View>
@@ -154,7 +138,6 @@ export default class CategoryCard extends React.Component {
                                     {
                                         this.state.data.ecom_aca_product_units[0].unitUserPrice
                                     }
-                                    {/* $ 89 */}
                                 </Text>
                             </View>
                         </View>
@@ -177,7 +160,6 @@ const styles = StyleSheet.create({
         marginTop: '-40%',
         marginLeft: 10,
         position: 'relative',
-        // backgroundColor: 'red',
         width: 60,
         height: 145,
         zIndex: 0,
@@ -193,7 +175,6 @@ const styles = StyleSheet.create({
         position: 'relative',
     },
     innerBottom: {
-        // width: '94%',
         alignItems: 'center',
         marginTop: '-10%',
     },
