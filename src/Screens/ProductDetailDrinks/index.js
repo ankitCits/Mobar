@@ -159,8 +159,8 @@ export default class ProductDetailDrinks extends Component {
         <TouchableOpacity
           style={styles.vendorItem}
           onPress={() =>
-            // this.props.navigation.navigate('ProductDetailBars')
-            console.log('go to bar details')
+            this.props.navigation.navigate('ProductDetailBars',{ 'id': item.vendorId })
+            ///console.log('go to bar details')
           }>
           <View style={styles.vendorImgContainer}>
             <Image

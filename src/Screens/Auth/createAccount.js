@@ -34,7 +34,8 @@ export default class CreateAccount extends Component {
       mobileError: null,
       emailError:null,
       passwordError: null,
-      dobError:null
+      dobError:null,
+      formError:null,
     };
     this.setDateInState = this.setDateInState.bind(this);
   }
@@ -173,26 +174,27 @@ export default class CreateAccount extends Component {
           };
           // let MobileNumber = this.state.mobileNumber
           this.props.navigation.navigate('VerifyOtp', FinalResponse);
+          this.setState({ formError:null,loader: false });
           return response;
         }
 
         if (response.errors) {
-          this.setState({ loader: false });
-          ToastAndroid.showWithGravity(
-            response.errors[0].msg,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
+          this.setState({ formError:'Try again!',loader: false });
+          // ToastAndroid.showWithGravity(
+          //   response.errors[0].msg,
+          //   ToastAndroid.LONG,
+          //   ToastAndroid.TOP,
+          // );
         }
       })
       .catch(error => {
         console.log('error', error);
-        this.setState({ loader: false });
-        ToastAndroid.showWithGravity(
-          error,
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
+        this.setState({ formError:'Network rrror!',loader: false });
+        // ToastAndroid.showWithGravity(
+        //   error,
+        //   ToastAndroid.LONG,
+        //   ToastAndroid.TOP,
+        // );
       });
   }
 
@@ -261,6 +263,12 @@ export default class CreateAccount extends Component {
               isPassword={true}
               visibility={true}
             />
+
+{
+              this.state.formError && <Text style={styles.errorText}>
+                {this.state.formError}
+              </Text>
+            }
 
             <View style={styles.term}>
               <View style={styles.termInner}>
@@ -402,5 +410,11 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: ThemeColors.CLR_ACTIVITY_INDICATOR,
     fontWeight: '700'
+  },
+  errorText: {
+    color: 'red',
+    marginTop: 10,
+    alignContent:'center'
+
   }
 });

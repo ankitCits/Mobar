@@ -398,11 +398,16 @@ export default class ProductDetailBars extends Component {
 
               {this.state.data && this.state.data.vendorDetail.length && this.state.data.vendorDetail[0].ecom_ac_products
                 ? this.state.data.vendorDetail[0].ecom_ac_products.map((item, index) => (
+                  <TouchableOpacity 
+                  onPress={() => {
+                    this.props.navigation.navigate('ProductDetailDrinks', { id: item.productId });
+                }}>
                   <View
                     style={styles.productView}
-                    onPress={() =>
-                      this.props.navigation.navigate('OrderHistoryDetail')
-                    }>
+                    // onPress={() =>
+                    //   this.props.navigation.navigate('OrderHistoryDetail')
+                    // }
+                    >
                     <View style={styles.productInnerView}>
                       <Image
                         key={index}
@@ -528,6 +533,7 @@ export default class ProductDetailBars extends Component {
                     </View>
                     {/* <CartModal itemName={'Product'} modalVisible={this.state.modalVisible} /> */}
                   </View>
+                  </TouchableOpacity>
                 ))
                 : null}
             </View>
