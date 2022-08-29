@@ -111,9 +111,9 @@ export default class ProductDetailBars extends Component {
   };
 
   setModalVisible = () => {
-    this.setState({modalVisible:false});
+    this.setState({ modalVisible: false });
   }
-  
+
 
   addCart = async (prodUnitId, qty) => {
     const token = await getAccessToken();
@@ -128,10 +128,10 @@ export default class ProductDetailBars extends Component {
       try {
         const cartResponse = await addToCart(cartItem);
         //console.log("DetailBar > addToCart > response",cartResponse);
-        showAlert('Success','Item added to cart successfully');
+        showAlert('Success', 'Item added to cart successfully');
       } catch (error) {
         console.log("Details Bars > addCart > catch", error);
-        showAlert('Error',error);
+        showAlert('Error', error);
         // Alert.alert(
         //   'Error',
         //   'Try Again',
@@ -291,7 +291,7 @@ export default class ProductDetailBars extends Component {
                     }}>
                     {this.state.data.vendorDetail[0].address}
                   </Text>
-                  </View>
+                </View>
                 {/* <View style={{marginTop: 10}}>
                   <Text>Star</Text>
                 </View> */}
@@ -405,6 +405,7 @@ export default class ProductDetailBars extends Component {
                     }>
                     <View style={styles.productInnerView}>
                       <Image
+                        key={index}
                         style={{
                           width: 75,
                           height: 75,
@@ -515,14 +516,14 @@ export default class ProductDetailBars extends Component {
                     </View>
                     <View style={{ marginTop: 17, marginRight: 12, }}>
                       <TouchableOpacity
-                      onPress={()=>{this.addCart(item.ecom_aca_product_units[0].productUnitId,2)}}
+                        onPress={() => { this.addCart(item.ecom_aca_product_units[0].productUnitId, 2) }}
                         key={index}
                         style={{
                           backgroundColor: '#BABABA',
                           padding: 2,
                           borderRadius: 20,
                         }}>
-                        <Icon name="add" size={18} color="#fff" />
+                        <Icon name="add" size={18} color="#fff" key={index} />
                       </TouchableOpacity>
                     </View>
                     {/* <CartModal itemName={'Product'} modalVisible={this.state.modalVisible} /> */}
@@ -648,16 +649,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginLeft: 10,
   },
-  msgContainer:{
-    flex:1,
-    flexDirection:'row',
-    margin:20
+  msgContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    margin: 20
   },
-  headerText:{
-    fontFamily:FontFamily.TAJAWAL_REGULAR,
-    fontWeight:'500',
-    fontSize:14,
-    color:'#ACACAC',
+  headerText: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    fontWeight: '500',
+    fontSize: 14,
+    color: '#ACACAC',
   },
   save: {
     backgroundColor: '#851729',
