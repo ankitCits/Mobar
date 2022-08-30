@@ -18,8 +18,15 @@ export default class CategoryCard extends React.Component {
         super(props);
         this.state = {
             isFavorite: (this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId),
-            data: this.props.item
+            data: this.props.item,
+            images: [
+                { innerBox: images.boxInnerOrange, outerBox: images.boxOuterOrange },
+                { innerBox: images.boxInnerRed, outerBox: images.boxOuterRed },
+                { innerBox: images.boxInnerPurple, outerBox: images.boxOuterPurple },
+            ],
         }
+
+
     }
 
     removeFavorite = async (id) => {
@@ -70,6 +77,11 @@ export default class CategoryCard extends React.Component {
         }
     }
 
+    randomIntFromInterval = (min, max) => {
+        return Math.floor(Math.random() * (max - min + 1) + min)
+    }
+
+
     render() {
         const {
             item,
@@ -77,6 +89,8 @@ export default class CategoryCard extends React.Component {
             navigation,
             index,
         } = this.props;
+        const idx = this.randomIntFromInterval(0, 2);
+        const currImage = this.state.images[idx]
         return (
             <>
                 <TouchableOpacity
@@ -94,8 +108,8 @@ export default class CategoryCard extends React.Component {
                         key={index}
                         style={styles.boxInner}
                         resizeMode={'cover'}
-                        source={images.boxOuter}
-                        defaultSource={images.boxOuter}>
+                        source={currImage.outerBox}
+                        defaultSource={currImage.outerBox}>
 
                         <View style={styles.innerTop}>
                             <TouchableOpacity
@@ -126,8 +140,8 @@ export default class CategoryCard extends React.Component {
                         <Image
                             style={styles.boxOuter}
                             resizeMode={'cover'}
-                            source={images.boxInner}
-                            defaultSource={images.boxInner}
+                            source={currImage.innerBox}
+                            defaultSource={currImage.innerBox}
                         />
 
                         <View style={styles.innerBottom}>
