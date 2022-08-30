@@ -295,8 +295,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     favContainer:{
-        width:40,
-        height:40,
+        width:30,
+        height:30,
         justifyContent:'center',
         backgroundColor:ThemeColors.CLR_WHITE,
         elevation:4,

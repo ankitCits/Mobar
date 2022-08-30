@@ -225,8 +225,8 @@ const styles = StyleSheet.create({
         fontSize: 15,
     },
     favContainer: {
-        width: 50,
-        height: 50,
+        width: 35,
+        height: 35,
         justifyContent: 'center',
         backgroundColor: ThemeColors.CLR_WHITE,
         elevation: 4,

@@ -173,8 +173,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   favContainer:{
-    width:40,
-    height:40,
+    width:33,
+    height:33,
     justifyContent:'center',
     backgroundColor:ThemeColors.CLR_WHITE,
     elevation:4,

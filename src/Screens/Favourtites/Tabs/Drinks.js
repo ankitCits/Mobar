@@ -313,8 +313,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   favContainer:{
-    width:40,
-    height:40,
+    width:33,
+    height:33,
     flexDirection:'row',
     justifyContent:'center',
     backgroundColor:ThemeColors.CLR_WHITE,

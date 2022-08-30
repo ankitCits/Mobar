@@ -196,8 +196,8 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     favContainer:{
-        width:40,
-        height:40,
+        width:35,
+        height:35,
         justifyContent:'center',
         backgroundColor:ThemeColors.CLR_WHITE,
         borderRadius:50,
