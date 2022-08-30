@@ -45,14 +45,7 @@ export default class Collections extends Component {
   }
 
   addCart = async () => {
-    // console.log("DetailsBars > addCart >details",this.state.details.ecom_aca_product_units[0].productUnitId);
-    // const cartItem = {
-    //   productUnitId: this.state.details.ecom_aca_product_units[0].productUnitId,
-    //   comboId: 0,
-    //   qty: 2,
-    // };
-   
-      try {
+    try {
         //const cartResponse = await addToCart(cartItem);
         // Alert.alert(
         //   'Success',
@@ -61,16 +54,17 @@ export default class Collections extends Component {
         //     { text: "OK", onPress: () => this.setState({ modalVisible: false }) }
         //   ]
         // );
-        showAlert('Success','Item added to cart successfully');
+        ToastAndroid.showWithGravity(
+          'Item added to cart successfully',
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
+        );
       } catch (error) {
         console.log("Details Bars > addCart > catch", error);
-        Alert.alert(
-          'Error',
-          'Try Again',
-          error,
-          [
-            { text: "OK", onPress: () => this.setState({ modalVisible: false }) }
-          ]
+        ToastAndroid.showWithGravity(
+          'Try again!',
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
         );
       }
   }

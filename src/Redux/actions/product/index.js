@@ -143,7 +143,7 @@ export const helpSupport = async (postData) => {
                         ToastAndroid.LONG,
                         ToastAndroid.TOP,
                     );
-                    reject(result.errors)
+                    reject(result.errors.find(x => x.msg).msg)
                 }
             })
             .catch(error => {

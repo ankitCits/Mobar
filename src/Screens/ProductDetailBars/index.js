@@ -128,18 +128,18 @@ export default class ProductDetailBars extends Component {
       try {
         const cartResponse = await addToCart(cartItem);
         //console.log("DetailBar > addToCart > response",cartResponse);
-        showAlert('Success', 'Item added to cart successfully');
+        ToastAndroid.showWithGravity(
+          'Item added to cart successfully',
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
+        );
       } catch (error) {
         console.log("Details Bars > addCart > catch", error);
-        showAlert('Error', error);
-        // Alert.alert(
-        //   'Error',
-        //   'Try Again',
-        //   error,
-        //   [
-        //     { text: "OK", onPress: () => console.log("OK Pressed") }
-        //   ]
-        // );
+        ToastAndroid.showWithGravity(
+          error,
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
+        );
       }
     }
   }

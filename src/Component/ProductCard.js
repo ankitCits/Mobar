@@ -96,7 +96,7 @@ class ProductCard extends Component {
     }
 
     addFavorite = async (productId, index) => {
-        console.log("AddFavorite State Token",this.state.token);
+        //console.log("AddFavorite State Token",this.state.token);
         const token =  await getAccessToken();
         if (token == null) {
             showAlert();
@@ -108,7 +108,8 @@ class ProductCard extends Component {
                     vendorId: 4,
                 };
                 const wishlistData = await addToWishlist(sendData);
-                this.state.data.ecom_ba_wishlist = wishlistData.response.result.data;
+                console.log("Product Card > addFavorite",wishlistData);
+                this.state.data.ecom_ba_wishlist = wishlistData.result.data;
                 this.setState({ isFavorite: true });
                 const data = this.state.categoryData.data;
                 data[index].fav = 1;
@@ -129,19 +130,6 @@ class ProductCard extends Component {
     };
 
     removeFavorite = async (prodId, index) => {
-        // let data = this.state.categoryData.data;
-        // data[index].fav = 0;
-        // this.setState({
-        //     categoryData: {
-        //         data,
-        //         hostUrl: this.state.categoryData.hostUrl,
-        //     },
-        // });
-        // let sendData = {
-        //     wishlistId: 11,
-        // };
-        // this.props.dispatch(removeToFav(sendData));
-        console.log("State Token",this.state.token);
         const token =  await getAccessToken();
         if (token == null) {
             showAlert();

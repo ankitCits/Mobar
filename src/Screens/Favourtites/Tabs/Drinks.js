@@ -10,9 +10,12 @@ import {
   Alert,
   ToastAndroid,
 } from 'react-native';
+import { showAlert } from '../../../api/auth';
+import { addToCart } from '../../../api/product';
 import { removeToWishlist } from '../../../api/wishlist';
 import images from '../../../assets/images';
 import NoContentFound from '../../../Component/NoContentFound';
+import { getAccessToken } from '../../../localstorage';
 import { FontFamily } from '../../../Theme/FontFamily';
 import { ThemeColors } from '../../../Theme/ThemeColors';
 export default class Drinks extends Component {
@@ -47,6 +50,38 @@ export default class Drinks extends Component {
       this.props.navigation.navigate('ProductDetailDrinks', { id: item.ecom_ac_product.productId });
     }
   }
+
+  addCart = async (item, index) => {
+    console.log("AddCart > item",item);
+    return;
+    const token = await getAccessToken();
+    if (token == null) {
+        showAlert();
+    } else {
+        try {
+            const sendData = {
+                productUnitId: item.productId,
+                comboId: 0,
+                qty: item.cart + 1,
+            };
+            const response = await addToCart(sendData);
+            const data = this.state.categoryData.data;
+            data[index].cart = data[index].cart + 1;
+            this.setState({
+                categoryData: {
+                    data,
+                    hostUrl: this.state.categoryData.hostUrl,
+                },
+            });
+        } catch (error) {
+            ToastAndroid.showWithGravity(
+                error,
+                ToastAndroid.LONG,
+                ToastAndroid.BOTTOM,
+            );
+        }
+    }
+}
 
   render() {
     const {
@@ -109,6 +144,7 @@ export default class Drinks extends Component {
                     </View>
 
                     <TouchableOpacity
+                      onPress={() => this.addCart(item, index)}
                       style={styles.cartButton}>
                       <Text
                         style={styles.cartText}>

@@ -17,14 +17,13 @@ import { ThemeColors } from '../Theme/ThemeColors';
 export default class CartProduct extends React.Component {
   constructor(props) {
     super(props);
-    this.state={
-      data:this.props.item,
-      qty:1
+    this.state = {
+      data: this.props.item,
+      qty: 1
     };
   }
 
-  addCart = async ()=>{
-    console.log("MyCard > CartProduct > addCart",this.state.data.ecom_aca_product_unit.productUnitId);
+  addCart = async () => {
     const token = await getAccessToken();
     if (token == null) {
       showAlert();
@@ -36,35 +35,38 @@ export default class CartProduct extends React.Component {
       };
       try {
         const cartResponse = await addToCart(cartItem);
-        console.log("DetailBar > addToCart > response",cartResponse);
-        this.setState({qty:this.state.qty+1});
-        //showAlert('Success','Item added to cart successfully');
+        console.log("DetailBar > addToCart > response", cartResponse);
+        this.setState({ qty: this.state.qty + 1 });
       } catch (error) {
         console.log("Details Bars > addCart > catch", error);
-        showAlert('Error',error);
+        ToastAndroid.showWithGravity(
+          error,
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+        );
       }
     }
   }
 
   removeCart = async () => {
-    console.log("ProductCard > removeCart > Item",this.state.data.cartId);
+    console.log("ProductCard > removeCart > Item", this.state.data.cartId);
     const token = await getAccessToken();
     if (token == null) {
-        showAlert();
+      showAlert();
     } else {
-        try {
-            const response =  await removeFromCart(this.state.data.cartId);
-            console.log("MyCard > CartProduct > response",response);
-            this.setState({qty:this.state.qty-1});
-        } catch (error) {
-            ToastAndroid.showWithGravity(
-                error,
-                ToastAndroid.LONG,
-                ToastAndroid.BOTTOM,
-            );
-        }
+      try {
+        const response = await removeFromCart(this.state.data.cartId);
+        console.log("MyCard > CartProduct > response", response);
+        this.setState({ qty: this.state.qty - 1 });
+      } catch (error) {
+        ToastAndroid.showWithGravity(
+          error,
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+        );
+      }
     }
-}
+  }
 
   render() {
     const {
@@ -115,14 +117,14 @@ export default class CartProduct extends React.Component {
                   <Text
                     style={styles.priceText}>
                     ${this.state.data.ecom_aca_product_unit.unitUserPrice}
-                  </Text> 
+                  </Text>
                   :
                   <Text style={styles.priceText}>Price</Text>
                 }
                 {this.state.data.ecom_aca_product_unit && this.state.data.ecom_aca_product_unit.unitDiscountPrice ?
                   <Text style={styles.discountPrice}>
                     ${this.state.data.ecom_aca_product_unit.unitDiscountType}
-                  </Text> 
+                  </Text>
                   :
                   <Text style={styles.discountPrice}></Text>
                 }
@@ -131,7 +133,7 @@ export default class CartProduct extends React.Component {
             <View
               style={styles.qtyContainer}>
               <TouchableOpacity
-                onPress={() => {this.removeCart()}}
+                onPress={() => { this.removeCart() }}
                 style={styles.icon}>
                 <Icon name="remove" size={18} color="#fff" />
               </TouchableOpacity>
@@ -141,7 +143,7 @@ export default class CartProduct extends React.Component {
                 {this.state.qty}
               </Text>
               <TouchableOpacity
-                onPress={() => {this.addCart()}}
+                onPress={() => { this.addCart() }}
                 style={styles.icon}>
                 <Icon name="add" size={18} color="#fff" />
               </TouchableOpacity>
@@ -179,7 +181,8 @@ const styles = StyleSheet.create({
   },
   prodImage: {
     width: 100,
-    height: 100
+    height: 100,
+    marginLeft: 7,
   },
   details: {
     margin: 5,
@@ -194,7 +197,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontStyle: FontFamily.TAJAWAL_REGULAR,
     color: '#4D4F50',
-    width: 170
+    width: 150
   },
   qty: {
     fontSize: 14,
@@ -204,7 +207,6 @@ const styles = StyleSheet.create({
   },
   qtyContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
   },
   priceContainer: {
