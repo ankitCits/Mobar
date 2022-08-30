@@ -12,6 +12,7 @@ import images from '../assets/images';
 import { addToWishlist, removeToWishlist } from '../api/wishlist';
 import { getAccessToken } from '../localstorage';
 import { showAlert } from '../api/auth';
+import { ThemeColors } from '../Theme/ThemeColors';
 
 export default class CategoryCard extends React.Component {
     constructor(props) {
@@ -119,12 +120,14 @@ export default class CategoryCard extends React.Component {
                                         ? this.removeFavorite(this.state.data.ecom_ba_wishlist.wishlistId)
                                         : this.addFavorite(this.state.data.productId, index);
                                 }}>
+                            <View style={styles.favContainer}>
                                 <Image
                                     resizeMode={'cover'}
                                     source={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
                                     defaultSource={this.state.data.ecom_ba_wishlist ? images.heartFill : images.heart}
                                     style={styles.favIcon}
                                 />
+                                </View>
                             </TouchableOpacity>
                             <Text style={{ color: '#fff', fontSize: 12 }}>
                                 {this.state.data.ecom_aca_product_units[0].unitQty + this.state.data.ecom_aca_product_units[0].unitType}
@@ -191,6 +194,16 @@ const styles = StyleSheet.create({
         height: 145,
         zIndex: 0,
         alignSelf: 'center'
+    },
+    favContainer:{
+        width:40,
+        height:40,
+        justifyContent:'center',
+        backgroundColor:ThemeColors.CLR_WHITE,
+        borderRadius:50,
+    },
+    favIcon:{
+        alignSelf:'center',
     },
     innerTop: {
         flexDirection: 'row',

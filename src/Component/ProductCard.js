@@ -185,12 +185,14 @@ class ProductCard extends Component {
                                     ? this.removeFavorite(this.state.data.ecom_ba_wishlist.wishlistId, index)
                                     : this.addFavorite(this.state.data.productId, index);
                             }}>
-                            <Image
-                                resizeMode={'cover'}
-                                source={this.state.isFavorite  ? images.heartFill : images.heart}
-                                defaultSource={this.state.isFavorite  ? images.heartFill : images.heart}
-                                style={styles.favIcon}
-                            />
+                            <View style={styles.favContainer}>
+                                <Image
+                                    resizeMode={'cover'}
+                                    source={this.state.isFavorite ? images.heartFill : images.heart}
+                                    defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
+                                    style={styles.favIcon}
+                                />
+                            </View>
                         </TouchableOpacity>
                     </View>
                     <View
@@ -284,12 +286,24 @@ const styles = StyleSheet.create({
         borderTopWidth: 0,
         borderRadius: 20,
         marginTop: 20,
+        marginBottom:10,
         alignSelf:'center',
         backgroundColor: '#fff',
         borderRadius: 10,
     },
     itemDetails:{
         alignItems: 'center',
+    },
+    favContainer:{
+        width:40,
+        height:40,
+        justifyContent:'center',
+        backgroundColor:ThemeColors.CLR_WHITE,
+        elevation:4,
+        borderRadius:25,
+    },
+    favIcon:{
+        alignSelf:'center',
     },
     prodImage:{
         height: 80,
@@ -343,12 +357,6 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: '400',
         color: '#000',
-    },
-    favIcon: {
-        width: 23,
-        height: 20,
-        marginRight:5,
-        marginTop:3,
     },
     cartActionIcon: {
         alignSelf: 'center',

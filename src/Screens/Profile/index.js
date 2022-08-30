@@ -457,14 +457,17 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   adsContainer:{
-    marginTop:-45
+         marginTop:-45
   },
   addressSectionStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: '#7B7B7B',
     height: 80,
     width: 320,
-    margin:10,
+    marginLeft:10,
+    marginTop:10,
     borderRadius: 10,
   },
   adsInput:{

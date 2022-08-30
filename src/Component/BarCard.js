@@ -53,7 +53,7 @@ class BarCard extends Component {
 
     addFavorite = async (id, index) => {
         const token = await getAccessToken();
-        console.log("AddFavorites > BarCard >Token",token);
+        console.log("AddFavorites > BarCard >Token", token);
         if (token == null) {
             showAlert();
         } else {
@@ -117,15 +117,15 @@ class BarCard extends Component {
                                         : this.addFavorite(this.state.data.vendorId, index); // pass vendor id 
                                 }}
                             >
-                                <View style={styles.imageContainer}>
-                                <Image
-                                    resizeMode={'cover'}
-                                    source={this.state.isFavorite ? images.heartFill : images.heart}
-                                    defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
-                                    // source={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
-                                    // defaultSource={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
-                                    style={styles.flexEnd}
-                                />
+                                <View style={styles.favContainer}>
+                                    <Image
+                                        resizeMode={'cover'}
+                                        source={this.state.isFavorite ? images.heartFill : images.heart}
+                                        defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
+                                        // source={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
+                                        // defaultSource={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
+                                        style={styles.favIcon}
+                                    />
                                 </View>
                             </TouchableOpacity>
                             <View style={styles.off}>
@@ -141,7 +141,7 @@ class BarCard extends Component {
                             {this.state.data.vendorShopName}
                         </Text>
                         <View>
-                        {/* numberOfLines={2} ellipsizeMode='tail' */}
+                            {/* numberOfLines={2} ellipsizeMode='tail' */}
                             <Text style={styles.textAddress}>{this.state.data.address}</Text>
                         </View>
                         <View style={styles.footer}>
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
         // margin: 10,
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
-        elevation:4,
+        elevation: 4,
 
     },
     off: {
@@ -223,27 +223,18 @@ const styles = StyleSheet.create({
         marginTop: '4%',
         marginRight: 15,
         fontSize: 15,
-        borderRadius:100,
     },
-    imageContainer:{
-        width:50,
-        height:50,
-        flexDirection:'row',
-        alignSelf:'center',
-        justifyContent:'center',
-        backgroundColor:ThemeColors.CLR_WHITE,
-        elevation:4,
-        alignSelf:'flex-end',
-        borderRadius:50,
+    favContainer: {
+        width: 50,
+        height: 50,
+        justifyContent: 'center',
+        backgroundColor: ThemeColors.CLR_WHITE,
+        elevation: 4,
+        alignSelf: 'flex-end',
+        borderRadius: 25,
     },
-    flexEnd: {
-        position:'absolute',
-        top:'auto',
-        alignSelf:'center',
-        alignContent:'center',
-        alignItems:'center',
-        flexDirection:'row',
-        backgroundColor:ThemeColors.CLR_WHITE,
+    favIcon: {
+        alignSelf: 'center',
     },
     textAddress: {
         flexDirection: 'row',
@@ -282,7 +273,7 @@ const styles = StyleSheet.create({
         fontFamily: FontFamily.TAJAWAL_BLACK,
         fontSize: 15,
         fontWeight: '500',
-        color:ThemeColors.CLR_DARK_GREY
+        color: ThemeColors.CLR_DARK_GREY
     },
     openLink: {
         marginTop: 10,

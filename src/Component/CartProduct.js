@@ -172,6 +172,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     marginTop: 15,
+    marginBottom:15,
   },
   productInnerView: {
     width: '28%',
@@ -185,9 +186,9 @@ const styles = StyleSheet.create({
     marginLeft: 7,
   },
   details: {
-    margin: 5,
     alignSelf: 'center',
-    marginLeft: 0
+    marginLeft: 20,
+    width:140,
   },
   header: {
     marginTop: 5,

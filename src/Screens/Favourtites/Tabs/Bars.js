@@ -73,11 +73,14 @@ export default class Bars extends Component {
                         this.removeFavorite(item.wishlistId);
                       }}
                     >
+                      <View style={styles.favContainer}>
                       <Image
                         resizeMode={'cover'}
                         source={images.heartFill}
                         defaultSource={images.heartFill}
+                        style={styles.flexCenter}
                       />
+                      </View>
                     </TouchableOpacity>
                     <Image
                       style={styles.prodImage}
@@ -169,13 +172,24 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
   },
-  favIcon: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    margin: 10,
-    zIndex: 1,
-  },
+  favContainer:{
+    width:40,
+    height:40,
+    justifyContent:'center',
+    backgroundColor:ThemeColors.CLR_WHITE,
+    elevation:4,
+    borderRadius:50,
+},
+favIcon: {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  margin: 5,
+  zIndex: 1,
+},
+  flexCenter: {
+    alignSelf:'center',
+},
   prodImage: {
     width: '100%',
     height: '100%',

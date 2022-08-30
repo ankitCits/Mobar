@@ -354,23 +354,9 @@ export default class ProductDetailDrinks extends Component {
                           defaultSource={images.cart}
                           style={styles.cartImage}
                         />
-                        {/* <Icon
-                          name="add-cart"
-                          size={25}
-                          color={ThemeColors.CLR_WHITE}
-                          style={styles.addCartIcon}
-                        /> */}
                       </TouchableOpacity>
                     </View>
                   </View>
-                  {/* <TouchableOpacity>
-                    <Icon
-                      name="favorite"
-                      size={30}
-                      color="#FF1405"
-                      style={styles.favorite}
-                    />
-                  </TouchableOpacity> */}
                   <TouchableOpacity
                     style={styles.heartContainer}
                     onPress={() => {
@@ -378,12 +364,12 @@ export default class ProductDetailDrinks extends Component {
                         ? this.removeFavorite(this.state.details.ecom_ba_wishlist.wishlistId)
                         : this.addFavorite(this.state.details.productId);
                     }}>
-                    <View style={styles.imageContainer}>
+                    <View style={styles.favContainer}>
                     <Image
                       resizeMode={'cover'}
                       source={this.state.isFavorite ? images.heartFill : images.heart}
                       defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
-                      style={styles.flexEnd}
+                      style={styles.favIcon}
                     />
                     </View>
                   </TouchableOpacity>
@@ -579,9 +565,8 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
     marginTop: -20,
+    alignContent:'center',
     zIndex: 0,
-    // backgroundColor: "powderblue",
-
   },
   cartContainer: {
     flexDirection: 'row',
@@ -590,7 +575,9 @@ const styles = StyleSheet.create({
     width: 192,
     borderRadius: 20,
   },
-  cartMargin: { margin: 40 },
+  cartMargin: { 
+    margin: 40 
+  },
   cartBtnContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -606,28 +593,19 @@ const styles = StyleSheet.create({
   },
   heartContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
-
+    alignContent: 'flex-end',
+    marginLeft:60,
   },
-  imageContainer:{
+  favContainer:{
     width:50,
     height:50,
-    flexDirection:'row',
-    alignSelf:'center',
     justifyContent:'center',
     backgroundColor:ThemeColors.CLR_WHITE,
-    elevation:4,
-    alignSelf:'flex-end',
-    borderRadius:50,
+    elevation:5,
+    borderRadius:25,
 },
-flexEnd: {
-    position:'absolute',
-    top:'auto',
+favIcon: {
     alignSelf:'center',
-    alignContent:'center',
-    alignItems:'center',
-    flexDirection:'row',
-    backgroundColor:ThemeColors.CLR_WHITE,
 },
   cartIcon: {
     backgroundColor: '#D46679',

@@ -4,10 +4,8 @@ import {
   View,
   SafeAreaView,
   Image,
-  Linking,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   ToastAndroid,
 } from 'react-native';
 import { showAlert } from '../../../api/auth';
@@ -175,11 +173,14 @@ export default class Drinks extends Component {
                       }}
                     >
                       {/* <Icon name="favorite" size={25} color="#FF1405" /> */}
+                      <View style={styles.favContainer}>
                       <Image
                         resizeMode={'cover'}
                         source={images.heartFill}
                         defaultSource={images.heartFill}
+                        style={styles.flexEnd}
                       />
+                      </View>
                     </TouchableOpacity>
                   </View>
                 </TouchableOpacity>
@@ -311,9 +312,19 @@ const styles = StyleSheet.create({
     height: '80%',
     borderRadius: 10,
   },
+  favContainer:{
+    width:40,
+    height:40,
+    flexDirection:'row',
+    justifyContent:'center',
+    backgroundColor:ThemeColors.CLR_WHITE,
+    elevation:4,
+    borderRadius:50,
+},
+  flexEnd: {
+    alignSelf:'center',
+},
   favIcon: {
-    // alignSelf: 'flex-start',
-    // marginTop: 8,
     position: 'absolute',
     top: 0,
     right: 0,
