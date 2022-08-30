@@ -30,9 +30,7 @@ class ComboOfferCard extends Component {
                     style={{
                         marginTop: 28,
                         marginBottom: 30,
-                        marginLeft: 10,
                     }}>
-
 
                     <ImageBackground
                         key={index}
@@ -45,8 +43,6 @@ class ComboOfferCard extends Component {
                             key={index}
                             style={{
                                 flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                marginLeft: 20,
                             }}>
                             <View style={{
                                 marginTop: 20,
@@ -55,6 +51,7 @@ class ComboOfferCard extends Component {
                                     style={{
                                         flexDirection: 'row',
                                         alignItems: 'center',
+                                        marginLeft:10
                                     }}>
                                     <Image
                                         key={index}
@@ -75,7 +72,7 @@ class ComboOfferCard extends Component {
 
                                 <View
                                     style={{
-                                        marginTop: 10,
+                                        margin: 10,
                                     }}>
                                     <Text
                                         style={{
@@ -89,7 +86,7 @@ class ComboOfferCard extends Component {
 
                                 <View
                                     style={{
-                                        marginTop: 5,
+                                        marginLeft: 10,
                                     }}>
                                     <Text
                                         style={{
@@ -103,7 +100,8 @@ class ComboOfferCard extends Component {
 
                                 <View
                                     style={{
-                                        marginTop: 5,
+                                        marginLeft: 10,
+                                        marginTop: 10,
                                         right: 5,
                                     }}>
                                     <Image
