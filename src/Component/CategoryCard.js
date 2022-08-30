@@ -89,8 +89,9 @@ export default class CategoryCard extends React.Component {
             navigation,
             index,
         } = this.props;
-        const idx = this.randomIntFromInterval(0, 2);
-        const currImage = this.state.images[idx]
+        // const idx = this.randomIntFromInterval(0, 2);
+        // const currImage = this.state.images[idx]
+        const currImage = this.state.images[index % 3]
         return (
             <>
                 <TouchableOpacity
