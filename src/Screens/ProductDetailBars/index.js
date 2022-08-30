@@ -187,12 +187,14 @@ export default class ProductDetailBars extends Component {
                         ? this.wishListRemove(this.state.data.vendorDetail[0].ecom_ba_wishlist.wishlistId)
                         : this.wishListAdd(this.state.data.vendorDetail[0].vendorId);
                     }}>
-                    <Image
-                      resizeMode={'cover'}
-                      source={this.state.isFavorite ? images.heartFill : images.heart}
-                      defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
-                    //style={styles.flexEnd}
-                    />
+                      <View style={styles.imageContainer}>
+                        <Image
+                          resizeMode={'cover'}
+                          source={this.state.isFavorite ? images.heartFill : images.heart}
+                          defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
+                          style={styles.flexEnd}
+                        />
+                      </View>
                   </TouchableOpacity>
                 </View>
 
@@ -655,11 +657,31 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginLeft: 10,
   },
+  imageContainer:{
+    width:50,
+    height:50,
+    flexDirection:'row',
+    alignSelf:'center',
+    justifyContent:'center',
+    backgroundColor:ThemeColors.CLR_WHITE,
+    elevation:4,
+    alignSelf:'flex-end',
+    borderRadius:50,
+},
   msgContainer: {
     flex: 1,
     flexDirection: 'row',
     margin: 20
   },
+  flexEnd: {
+    position:'absolute',
+    top:'auto',
+    alignSelf:'center',
+    alignContent:'center',
+    alignItems:'center',
+    flexDirection:'row',
+    backgroundColor:ThemeColors.CLR_WHITE,
+},
   headerText: {
     fontFamily: FontFamily.TAJAWAL_REGULAR,
     fontWeight: '500',

@@ -117,6 +117,7 @@ class BarCard extends Component {
                                         : this.addFavorite(this.state.data.vendorId, index); // pass vendor id 
                                 }}
                             >
+                                <View style={styles.imageContainer}>
                                 <Image
                                     resizeMode={'cover'}
                                     source={this.state.isFavorite ? images.heartFill : images.heart}
@@ -125,6 +126,7 @@ class BarCard extends Component {
                                     // defaultSource={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
                                     style={styles.flexEnd}
                                 />
+                                </View>
                             </TouchableOpacity>
                             <View style={styles.off}>
                                 <Text style={styles.offText}>
@@ -139,6 +141,7 @@ class BarCard extends Component {
                             {this.state.data.vendorShopName}
                         </Text>
                         <View>
+                        {/* numberOfLines={2} ellipsizeMode='tail' */}
                             <Text style={styles.textAddress}>{this.state.data.address}</Text>
                         </View>
                         <View style={styles.footer}>
@@ -184,10 +187,13 @@ export default BarCard;
 const styles = StyleSheet.create({
     container: {
         marginTop: 20,
-        backgroundColor: '#8A87AC',
+        //backgroundColor: '#8A87AC',
+        backgroundColor: ThemeColors.CLR_WHITE,
         // margin: 10,
         borderBottomLeftRadius: 20,
-        borderBottomRightRadius: 20
+        borderBottomRightRadius: 20,
+        elevation:4,
+
     },
     off: {
         marginTop: 20,
@@ -199,36 +205,64 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 10
     },
     offText: {
-        color: ThemeColors.CLR_WHITE
+        color: ThemeColors.CLR_DARK_GREY
     },
     textTitle: {
         fontSize: 20,
-        color: '#FFFFFF',
+        color: ThemeColors.CLR_DARK_GREY,
         fontWeight: '400',
         fontFamily: FontFamily.ROBOTO_REGULAR,
         // marginBottom: 5
     },
     addressContainer: {
         margin: 12,
+        // overflow: 'hidden',
+        // width: '70%',
     },
     heartContainer: {
-        marginTop: '3%',
+        marginTop: '4%',
         marginRight: 15,
-        //marginRight: '5%',
         fontSize: 15,
-        //backgroundColor:'red',
-        //width:'95%'
+        borderRadius:100,
+    },
+    imageContainer:{
+        width:50,
+        height:50,
+        flexDirection:'row',
+        alignSelf:'center',
+        justifyContent:'center',
+        backgroundColor:ThemeColors.CLR_WHITE,
+        elevation:4,
+        alignSelf:'flex-end',
+        borderRadius:50,
     },
     flexEnd: {
-        alignSelf: 'flex-end',
+        position:'absolute',
+        top:'auto',
+        alignSelf:'center',
+        alignContent:'center',
+        alignItems:'center',
+        flexDirection:'row',
+        backgroundColor:ThemeColors.CLR_WHITE,
     },
     textAddress: {
         flexDirection: 'row',
         fontFamily: FontFamily.ROBOTO_REGULAR,
         fontSize: 13,
         fontWeight: '400',
-        color: '#FFFFFF'
+        color: ThemeColors.CLR_DARK_GREY,
     },
+    // distance:{
+    //     flexDirection: 'row',
+    //     fontFamily: FontFamily.ROBOTO_REGULAR,
+    //     fontSize: 13,
+    //     fontWeight: '400',
+    //     color: ThemeColors.CLR_DARK_GREY,
+    //     overflow: 'hidden',
+    //     textOverflow: 'ellipsis',
+    //     //width:'90%',
+    //     backgroundColor:'red'   
+    // },
     footer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -248,7 +282,7 @@ const styles = StyleSheet.create({
         fontFamily: FontFamily.TAJAWAL_BLACK,
         fontSize: 15,
         fontWeight: '500',
-        color: '#FFFFFF'
+        color:ThemeColors.CLR_DARK_GREY
     },
     openLink: {
         marginTop: 10,

@@ -378,12 +378,14 @@ export default class ProductDetailDrinks extends Component {
                         ? this.removeFavorite(this.state.details.ecom_ba_wishlist.wishlistId)
                         : this.addFavorite(this.state.details.productId);
                     }}>
+                    <View style={styles.imageContainer}>
                     <Image
                       resizeMode={'cover'}
                       source={this.state.isFavorite ? images.heartFill : images.heart}
                       defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
-                      style={styles.favIcon}
+                      style={styles.flexEnd}
                     />
+                    </View>
                   </TouchableOpacity>
                 </View>
                 <View style={styles.descriptionContainer}>
@@ -607,6 +609,26 @@ const styles = StyleSheet.create({
     alignItems: 'center'
 
   },
+  imageContainer:{
+    width:50,
+    height:50,
+    flexDirection:'row',
+    alignSelf:'center',
+    justifyContent:'center',
+    backgroundColor:ThemeColors.CLR_WHITE,
+    elevation:4,
+    alignSelf:'flex-end',
+    borderRadius:50,
+},
+flexEnd: {
+    position:'absolute',
+    top:'auto',
+    alignSelf:'center',
+    alignContent:'center',
+    alignItems:'center',
+    flexDirection:'row',
+    backgroundColor:ThemeColors.CLR_WHITE,
+},
   cartIcon: {
     backgroundColor: '#D46679',
     width: 61,
@@ -734,7 +756,6 @@ const styles = StyleSheet.create({
   vendorItem: {
     flex: 1,
     flexDirection: 'row',
-
   },
   // bottomContainer: {
   //   marginTop: '10%',
