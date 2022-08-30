@@ -344,6 +344,7 @@ class MyProfile extends Component {
                 this.state.name != this.state.data.name ||
                 this.state.email != this.state.data.email ||
                 this.state.contact != this.state.data.contact ||
+                this.state.address != this.state.data.address ||
                 this.state.gender != this.state.data.gender ? (
                   <View>
                     <TouchableOpacity
