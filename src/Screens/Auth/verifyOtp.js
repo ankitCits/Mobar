@@ -217,7 +217,7 @@ export default class VerifyOtp extends Component {
                 <Text
                   style={styles.textDetail}>
                   {' '}
-                  {this.state.timer != 0 ? `Otp resent in ${this.state.timer} secs` : 'Request New OTP'}
+                  {this.state.timer != 0 ? `Resend OTP in ${this.state.timer} secs` : 'Resend OTP'}
                 </Text>
 
               </TouchableOpacity>

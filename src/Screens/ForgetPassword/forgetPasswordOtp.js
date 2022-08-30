@@ -185,14 +185,14 @@ export default class ForgetPasswordOtp extends Component {
             />
           </View>
           <View style={styles.createView}>
-            <Text style={styles.createText}>An OTP has sent to your mobile number ending in XXXX-{String(this.props.route.params.mobileNo).slice(-4)}</Text>
+            <Text style={styles.createText}>An OTP has been sent to your mobile number ending in XXXX-{String(this.props.route.params.mobileNo).slice(-4)}</Text>
           </View>
-          <View style={styles.emailView}>
-            <Text style={{ fontSize: 15, fontWeight: '500', color: '#969696' }}>
-              {/* We have send OTP in your mobile number */}
-              Enter OTP
-            </Text>
-          </View>
+          {/* <View style={styles.emailView}> */}
+          {/* <Text style={{ fontSize: 15, fontWeight: '500', color: '#969696' }}> */}
+          {/* We have send OTP in your mobile number */}
+          {/* Enter OTP */}
+          {/* </Text> */}
+          {/* </View> */}
           <View style={styles.viewInput}>
             <View>
               <SmoothPinCodeInput
@@ -229,7 +229,7 @@ export default class ForgetPasswordOtp extends Component {
                 <Text
                   style={{ fontSize: 17, color: '#969696', fontWeight: '400' }}>
                   {' '}
-                  {this.state.timer != 0 ? `Otp resent in ${this.state.timer} secs` : 'Resent OTP'}
+                  {this.state.timer != 0 ? `Resend OTP in ${this.state.timer} secs` : 'Resend OTP'}
                 </Text>
               </TouchableOpacity>
             </View>
