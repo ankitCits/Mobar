@@ -32,16 +32,16 @@ export default class CreateAccount extends Component {
       password: '',
       loader: false,
       mobileError: null,
-      emailError:null,
+      emailError: null,
       passwordError: null,
-      dobError:null,
-      formError:null,
+      dobError: null,
+      formError: null,
     };
     this.setDateInState = this.setDateInState.bind(this);
   }
 
   handleUserInput = (name, value) => {
-    console.log("Name And Value",name,value);
+    console.log("Name And Value", name, value);
     this.setState({ [name]: value }, () => { this.validateField(name, value) });
   }
 
@@ -59,12 +59,12 @@ export default class CreateAccount extends Component {
           this.setState({ mobileError: null });
         }
         break;
-        case 'emailId':
+      case 'emailId':
         if (this.state.emailId == null || this.state.emailId.trim() == '') {
           this.setState({ emailError: '* Email id mandatory' });
-        } else if(!Util.validEmail(this.state.emailId)){
+        } else if (!Util.validEmail(this.state.emailId)) {
           this.setState({ emailError: 'Invalid email id' });
-        }else{
+        } else {
           this.setState({ emailError: null });
         }
         break;
@@ -76,12 +76,12 @@ export default class CreateAccount extends Component {
         }
         break;
       case 'dateOfBirth':
-      if (this.state.password == null || this.state.password.trim() == '') {
-        this.setState({ dobError: '* Date of birth mandatory' });
-      } else {
-        this.setState({ dobError: null });
-      }
-      break;
+        if (this.state.password == null || this.state.password.trim() == '') {
+          this.setState({ dobError: '* Date of birth mandatory' });
+        } else {
+          this.setState({ dobError: null });
+        }
+        break;
       default:
         break;
     }
@@ -130,10 +130,43 @@ export default class CreateAccount extends Component {
     //return;
 
     // check Not Blank
-    this.validateField('mobileNumber');
-    this.validateField('emailId');
-    this.validateField('dateOfBirth');
-    this.validateField('password');
+
+    let zero = this.state.mobileNumber.startsWith('0');
+    if (this.state.mobileNumber == null || this.state.mobileNumber.trim() == '') {
+      this.setState({ mobileError: '* Mobile number mandatory' });
+      return;
+    } else if (zero) {
+      this.setState({ mobileError: '* Mobile number should not start with a zero' });
+      return;
+
+    } else if (!Util.validMobile(this.state.mobileNumber)) {
+      this.setState({ mobileError: '* Mobile number not valid!' });
+      return;
+    } else {
+      this.setState({ mobileError: null });
+    }
+    if (this.state.emailId == null || this.state.emailId.trim() == '') {
+      this.setState({ emailError: '* Email id mandatory' });
+      return;
+    } else if (!Util.validEmail(this.state.emailId)) {
+      this.setState({ emailError: 'Invalid email id' });
+      return;
+    } else {
+      this.setState({ emailError: null });
+    }
+    if (this.state.password == null || this.state.password.trim() == '') {
+      this.setState({ passwordError: '* Password mandatory' });
+      return;
+    } else {
+      this.setState({ passwordError: null });
+    }
+    if (this.state.password == null || this.state.password.trim() == '') {
+      this.setState({ dobError: '* Date of birth mandatory' });
+      return;
+    } else {
+      this.setState({ dobError: null });
+    }
+
     if (this.state.mobileError == null && this.state.emailError == null &&
       this.state.dobError == null && this.state.passwordError == null) {
       this.sendCredentials();
@@ -174,12 +207,12 @@ export default class CreateAccount extends Component {
           };
           // let MobileNumber = this.state.mobileNumber
           this.props.navigation.navigate('VerifyOtp', FinalResponse);
-          this.setState({ formError:null,loader: false });
+          this.setState({ formError: null, loader: false });
           return response;
         }
 
         if (response.errors) {
-          this.setState({ formError:'Try again!',loader: false });
+          this.setState({ formError: 'Try again!', loader: false });
           // ToastAndroid.showWithGravity(
           //   response.errors[0].msg,
           //   ToastAndroid.LONG,
@@ -189,7 +222,7 @@ export default class CreateAccount extends Component {
       })
       .catch(error => {
         console.log('error', error);
-        this.setState({ formError:'Network rrror!',loader: false });
+        this.setState({ formError: 'Network rrror!', loader: false });
         // ToastAndroid.showWithGravity(
         //   error,
         //   ToastAndroid.LONG,
@@ -264,7 +297,7 @@ export default class CreateAccount extends Component {
               visibility={true}
             />
 
-{
+            {
               this.state.formError && <Text style={styles.errorText}>
                 {this.state.formError}
               </Text>
@@ -414,7 +447,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     marginTop: 10,
-    alignContent:'center'
+    alignContent: 'center'
 
   }
 });

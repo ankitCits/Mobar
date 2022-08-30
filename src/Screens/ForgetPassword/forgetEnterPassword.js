@@ -24,43 +24,54 @@ export default class ForgetEnterPassword extends Component {
     this.state = {
       newPassword: '',
       confirmPassword: '',
-      passwordError:null,
-      confirmPwdError:null,
+      passwordError: null,
+      confirmPwdError: null,
       p_c_token: '',//this.props.route.params.response['password-create-token'],
-      formError:null,
+      formError: null,
       loader: false,
     };
   }
 
   onPasswordChange = async () => {
     this.setState({ loader: true });
-    this.validateField('newPassword');
-    this.validateField('confirmPassword');
-    if(this.state.passwordError == null && this.state.confirmPwdError == null){
+    if (this.state.newPassword == null || this.state.newPassword.trim() == '') {
+      this.setState({ passwordError: '* Password mandatory', loader: false });
+      return;
+    } else {
+      this.setState({ passwordError: null, loader: false });
+    }
+    if (this.state.confirmPassword == null || this.state.confirmPassword.trim() == '') {
+      this.setState({ confirmPwdError: '* Confirm Password mandatory', loader: false });
+      return;
+    } else {
+      this.setState({ confirmPwdError: null, loader: false });
+    }
+    if (this.state.passwordError == null && this.state.confirmPwdError == null) {
       const data = {
         newPassword: this.state.newPassword,
         confirmPassword: this.state.confirmPassword,
         p_c_token: this.state.p_c_token
       }
+      
       console.log("ForgotEnterPassword > onPasswordChange > PostData", data);
       try {
         const result = await newPasswordChange(data);
         this.setState({ loader: false });
         console.log("ForgotEnterPassword > onPasswordChange > response", result);
-        this.setState({ loader: false,formError:null });
+        this.setState({ loader: false, formError: null });
         this.props.navigation.navigate('PasswordSuccessFullyChanged');
       }
       catch (error) {
         console.log("ForgotEnterPassword > onPasswordChange > Catch", error);
         //this.props.navigation.navigate('PasswordSuccessFullyChanged');
-        this.setState({ loader: false,formError:'Network Error!' });
+        this.setState({ loader: false, formError: 'Network Error!' });
       }
     }
-   
+
   }
 
   handleUserInput = (name, value) => {
-    console.log("Name And Value",name,value);
+    console.log("Name And Value", name, value);
     this.setState({ [name]: value }, () => { this.validateField(name, value) });
   }
 
@@ -70,17 +81,17 @@ export default class ForgetEnterPassword extends Component {
         if (this.state.newPassword == null || this.state.newPassword.trim() == '') {
           this.setState({ passwordError: '* Password mandatory', loader: false });
           return;
-        }else{
+        } else {
           this.setState({ passwordError: null, loader: false });
-        }  
+        }
         break;
       case 'confirmPassword':
         if (this.state.confirmPassword == null || this.state.confirmPassword.trim() == '') {
           this.setState({ confirmPwdError: '* Confirm Password mandatory', loader: false });
           return;
-        }else{
+        } else {
           this.setState({ confirmPwdError: null, loader: false });
-        } 
+        }
         break;
       default:
         break;
@@ -154,11 +165,11 @@ export default class ForgetEnterPassword extends Component {
                 onChangeText={text => this.handleUserInput('confirmPassword', text)}
                 error={this.state.confirmPwdError}
               />
-               {
-              this.state.formError && <Text style={styles.errorText}>
-                {this.state.formError}
-              </Text>
-            }
+              {
+                this.state.formError && <Text style={styles.errorText}>
+                  {this.state.formError}
+                </Text>
+              }
             </View>
 
             <View style={styles.signup}>
@@ -251,7 +262,7 @@ const styles = StyleSheet.create({
   },
   signup: {
     marginTop: '13%',
-    marginLeft:15,
+    marginLeft: 15,
     width: '80%',
     height: 44,
   },
@@ -273,6 +284,6 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     marginTop: 10,
-    marginBottom:20,
+    marginBottom: 20,
   }
 });

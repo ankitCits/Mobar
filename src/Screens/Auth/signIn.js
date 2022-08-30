@@ -26,10 +26,10 @@ class SignIn extends Component {
       visibility: false,
       mobileNumber: null,
       password: null,
-      // mobileError: null,
-      // passwordError: null,
-      mobileNumber: '99887766',
-      password: "Ankit@2261",
+      mobileError: null,
+      passwordError: null,
+      // mobileNumber: '99887766',
+      // password: "Ankit@2261",
       formError: null,
       loader: false,
     };
@@ -40,8 +40,28 @@ class SignIn extends Component {
 
   async onProceed() {
     this.setState({ loader: true });
-    this.validateField('mobileNumber');
-    this.validateField('password');
+    let zero = this.state.mobileNumber && this.state.mobileNumber.startsWith('0');
+    if (this.state.mobileNumber == null || this.state.mobileNumber.trim() == '') {
+      this.setState({ mobileError: '* Mobile number mandatory', loader: false });
+      return;
+    } else if (zero) {
+      this.setState({ mobileError: '* Mobile number should not start with a zero', loader: false });
+      return;
+    } else if (!Util.validMobile(this.state.mobileNumber)) {
+      this.setState({ mobileError: '* Mobile number not valid!', loader: false });
+      return;
+    } else {
+      this.setState({ mobileError: null });
+    }
+    
+    if (this.state.password == null || this.state.password.trim() == '') {
+      this.setState({ passwordError: '* Password mandatory', loader: false });
+      return;
+    } else {
+      this.setState({ passwordError: null });
+    }
+
+
     if (this.state.mobileError == null && this.state.passwordError == null) {
       this.processLogin();
     }
@@ -192,7 +212,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F4F4F4',// ThemeColors.CLR_BG
-   
+
   },
   createView: {
     marginTop: '25%',

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -15,29 +15,50 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { retrieveAccount } from '../../api/auth';
 import images from '../../assets/images';
-import {A_KEY, BASE_URL} from '../../config';
+import TextInputField from '../../Component/TextInputField';
+import { A_KEY, BASE_URL } from '../../config';
+import Util from '../../utils';
 export default class ForgetPassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      contact: '',
+      contact: null,
       loader: false,
+      mobileError: null,
+      formError: null,
+
     };
   }
 
   onProceed = async () => {
     //this.props.navigation.navigate('forgetPasswordOtp');
     //return;
-    if (this.state.contact == null || this.state.contact == '') {
-      ToastAndroid.showWithGravity(
-        'Mobile Number mandatory !',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+    // if (this.state.contact == null || this.state.contact == '') {
+    //   ToastAndroid.showWithGravity(
+    //     'Mobile Number mandatory !',
+    //     ToastAndroid.LONG,
+    //     ToastAndroid.TOP,
+    //   );
+    //   return;
+    // }
+    let zero = this.state.contact && this.state.contact.startsWith('0');
+    if (this.state.contact == null || this.state.contact.trim() == '') {
+      this.setState({ mobileError: '* Mobile number mandatory', loader: false });
       return;
+    } else if (zero) {
+      this.setState({ mobileError: '* Mobile number should not start with a zero', loader: false });
+      return;
+    } else if (!Util.validMobile(this.state.contact)) {
+      this.setState({ mobileError: '* Mobile number not valid!', loader: false });
+      return;
+    } else {
+      this.setState({ mobileError: null });
     }
+    
+    console.log(this.state.mobileError);
+    this.setState({ loader: true });
 
-    this.setState({loader: true});
+
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('A_Key', A_KEY);
@@ -71,32 +92,32 @@ export default class ForgetPassword extends Component {
       .then(response => response.json())
       .then(result => {
         console.log(result);
-        this.setState({loader: false});
+        this.setState({ loader: false });
 
         if (result.response) {
-          this.setState({loader: false});
+          this.setState({ loader: false });
           let FinalResponse = {
             response: result.response,
           };
-          console.log("Forgot Password > Final Response",FinalResponse);
-          this.props.navigation.navigate('forgetPasswordOtp', {response:FinalResponse,mobileNo:this.state.contact});
+          console.log("Forgot Password > Final Response", FinalResponse);
+          this.props.navigation.navigate('forgetPasswordOtp', { response: FinalResponse, mobileNo: this.state.contact });
           return result;
         }
 
         if (result.errors) {
-          this.setState({loader: false});
-          ToastAndroid.showWithGravity(
-            result.errors[0].msg,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
+          this.setState({ formError: result.errors[0].msg, loader: false });
+          // ToastAndroid.showWithGravity(
+          //   result.errors[0].msg,
+          //   ToastAndroid.LONG,
+          //   ToastAndroid.TOP,
+          // );
         }
 
-        
+
       })
       .catch(error => {
         console.log('error', error);
-        this.setState({loader: false});
+        this.setState({ loader: false });
         ToastAndroid.showWithGravity(
           error,
           ToastAndroid.LONG,
@@ -104,6 +125,38 @@ export default class ForgetPassword extends Component {
         );
       });
   };
+
+
+
+  handleUserInput = (name, value) => {
+    this.setState({ [name]: value }, () => { this.validateField(name, value) });
+  }
+
+
+  validateField = (fieldName) => {
+    switch (fieldName) {
+      case 'contact':
+        let zero = this.state.contact && this.state.contact.startsWith('0');
+        if (this.state.contact == null || this.state.contact.trim() == '') {
+          this.setState({ mobileError: '* Mobile number mandatory', loader: false });
+          return;
+        } else if (zero) {
+          this.setState({ mobileError: '* Mobile number should not start with a zero', loader: false });
+          return;
+        } else if (!Util.validMobile(this.state.contact)) {
+          this.setState({ mobileError: '* Mobile number not valid!', loader: false });
+          return;
+        } else {
+          this.setState({ mobileError: null });
+        }
+        break;
+      default:
+        break;
+    }
+
+
+  }
+
   render() {
     return (
       <SafeAreaView
@@ -117,7 +170,7 @@ export default class ForgetPassword extends Component {
           barStyle={'dark-content'}
         />
         <ScrollView>
-          <View style={{marginLeft: 10}}>
+          <View style={{ marginLeft: 10 }}>
             <TouchableOpacity onPress={() => this.props.navigation.pop()}>
               <Icon
                 name="arrow-back"
@@ -142,24 +195,37 @@ export default class ForgetPassword extends Component {
             <Text style={styles.createText}>Forgot your Password?</Text>
           </View>
           <View style={styles.emailView}>
-            <Text style={{fontSize: 15, fontWeight: '500', color: '#969696'}}>
+            <Text style={{ fontSize: 15, fontWeight: '500', color: '#969696' }}>
               Enter your registered mobile number to receive OTP
             </Text>
           </View>
           <View style={styles.viewInput}>
-            <View style={styles.sectionStyle}>
-              <TextInput
-                style={{flex: 1, padding: 10}}
+            {/* <View style={styles.sectionStyle}> */}
+            {/* <TextInput
+                style={{ flex: 1, padding: 10 }}
                 placeholder="Mobile Number"
                 underlineColorAndroid="transparent"
                 placeholderTextColor="#A39B9B"
                 keyboardType="numeric"
                 value={this.state.contact}
-                onChangeText={text => {
-                  this.setState({contact: text});
-                }}
-              />
-            </View>
+                onChangeText={text => this.handleUserInput('contact', text)}
+                error={this.state.mobileError}
+              /> */}
+            <TextInputField
+              placeholder="Mobile Number"
+              keyboardType="numeric"
+              iconName={'call'}
+              value={this.state.contact}
+              onChangeText={text => this.handleUserInput('contact', text)}
+              error={this.state.mobileError}
+            />
+            {/* </View> */}
+
+            {
+              this.state.formError && <Text style={styles.errorText}>
+                {this.state.formError}
+              </Text>
+            }
 
             <View style={styles.signup}>
               <TouchableOpacity
@@ -171,7 +237,7 @@ export default class ForgetPassword extends Component {
                   <ActivityIndicator size="small" color="#BE212F" />
                 ) : (
                   <Text
-                    style={{color: '#BE212F', fontSize: 18, fontWeight: '700'}}>
+                    style={{ color: '#BE212F', fontSize: 18, fontWeight: '700' }}>
                     SEND
                   </Text>
                 )}
@@ -181,7 +247,7 @@ export default class ForgetPassword extends Component {
             <View style={styles.signin}>
               <TouchableOpacity onPress={() => this.props.navigation.pop()}>
                 <Text
-                  style={{fontSize: 17, color: '#969696', fontWeight: '400'}}>
+                  style={{ fontSize: 17, color: '#969696', fontWeight: '400' }}>
                   {' '}
                   Cancel
                 </Text>
@@ -203,7 +269,7 @@ const styles = StyleSheet.create({
     marginTop: '5%',
     marginLeft: '5%',
     alignItems: 'center',
-    width:'90%',
+    width: '90%',
   },
   otpView: {
     marginTop: '5%',
@@ -301,4 +367,8 @@ const styles = StyleSheet.create({
     borderColor: '#741728',
     borderWidth: 1,
   },
+  errorText: {
+    color: 'red',
+    marginTop: 10
+  }
 });
