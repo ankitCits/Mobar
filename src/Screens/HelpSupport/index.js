@@ -18,114 +18,122 @@ import { FontFamily } from '../../Theme/FontFamily';
 import HeaderSide from '../Component/HeaderSide';
 import Util from '../../utils'
 import { helpSupport } from '../../Redux/actions/product';
+import TextInputField from '../../Component/TextInputField';
+import HelpInput from '../../Component/HelpInput';
 export default class HelpSupport extends Component {
   constructor(props) {
     super(props);
     this.state = {
       visibility: false,
       loader: false,
-      name: '',
-      email: '',
-      contact: '',
-      category: '',
+      name: null,
+      email: null,
+      mobileNumber: null,
+      category: null,
       isToggle: false,
-      description: '',
+      description: null,
+      nameError: null,
+      emailError: null,
+      mobileError: null,
+      categoryError: null,
+      descriptionError: null,
+      formError: null,
     };
+  }
 
+  handleUserInput = (name, value) => {
+    this.setState({ [name]: value }, () => { this.validateField(name, value) });
+  }
+
+  validateField = (fieldName) => {
+    switch (fieldName) {
+      case 'name':
+        if (this.state.name == null || this.state.name.trim() == '') {
+          this.setState({ nameError: '* Name mandatory', loader: false });
+          return;
+        } else {
+          this.setState({ nameError: null });
+        }
+        break;
+      case 'email':
+        if (this.state.email == null || this.state.email.trim() == '') {
+          this.setState({ emailError: '* Email id mandatory', loader: false });
+          return;
+        } else if (!Util.validEmail(this.state.email)) {
+          this.setState({ emailError: '* Invalid email id', loader: false });
+          return;
+        } else {
+          this.setState({ emailError: null });
+        }
+        break;
+      case 'mobileNumber':
+        let zero = this.state.mobileNumber.startsWith('0');
+        if (this.state.mobileNumber == null || this.state.mobileNumber.trim() == '') {
+          this.setState({ mobileError: '* Mobile number mandatory', loader: false });
+          return;
+        } else if (!Util.validMobile(this.state.mobileNumber)) {
+          this.setState({ mobileError: '* Invalid mobile number', loader: false });
+          return;
+        } else if (zero) {
+          this.setState({ mobileError: '* Mobile number should not start with a zero' });
+          return;
+        } else {
+          this.setState({ mobileError: null });
+        }
+        break;
+      case 'description':
+        if (this.state.description == null || this.state.description.trim() == '') {
+          this.setState({ descriptionError: '* Description mandatory', loader: false });
+          return;
+        } else {
+          this.setState({ descriptionError: null });
+        }
+        break;
+      case 'category':
+        if (this.state.categoryError == null || this.state.categoryError.trim() == '') {
+          this.setState({ categoryError: '* Category mandatory', loader: false });
+          return;
+        } else {
+          this.setState({ categoryError: null });
+        }
+        break;
+      default:
+        break;
+    }
   }
 
   onProceed = async () => {
     this.setState({ loader: true });
-    if (this.state.name == null || this.state.name == '') {
-      ToastAndroid.showWithGravity(
-        'Name Required!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      this.setState({ loader: false });
-      return;
-    }
-    if (this.state.email == null || this.state.email == '') {
-      ToastAndroid.showWithGravity(
-        'Email Required!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      this.setState({ loader: false });
-      return;
-    }
-    let isEmail = Util.validEmail(this.state.email);
-    if (!isEmail) {
-      ToastAndroid.showWithGravity(
-        'Invalid Email Address!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      this.setState({ loader: false });
-      return;
-    }
-    if (this.state.contact == null || this.state.contact == '') {
-      ToastAndroid.showWithGravity(
-        'Mobile Number Required!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      this.setState({ loader: false });
-      return;
-    }
-    const isValidateMobile = Util.validMobile(this.state.contact);
-    if (!isValidateMobile) {
-      ToastAndroid.showWithGravity(
-        'Invalid Mobile No.!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      this.setState({ loader: false });
-      return;
-    }
-
-    if (this.state.category == null || this.state.category == '') {
-      ToastAndroid.showWithGravity(
-        'Category Required!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      this.setState({ loader: false });
-      return;
-    }
-    if (this.state.description == null || this.state.description == '') {
-      ToastAndroid.showWithGravity(
-        'Description Issue Required!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      this.setState({ loader: false });
-      return;
-    }
-
-    var raw = {
-      name: this.state.name,
-      contact: this.state.contact,
-      email: this.state.email,
-      issue: this.state.description,
-      category: this.state.category,
-    };
-
-    console.log("Param with Category", raw);
-
-    try {
-      const response = await helpSupport(raw);
-      if (response && response.status == 'SUCCESS') {
-        ToastAndroid.showWithGravity(
-          response.mag,
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
+    this.validateField('name');
+    this.validateField('email');
+    this.validateField('mobileNumber');
+    this.validateField('description');
+    this.validateField('category');
+    if (this.state.nameError == null && this.state.emailError == null &&
+      this.state.mobileError == null && this.state.descriptionError == null &&
+      this.state.descriptionError == null && this.state.categoryError == null) {
+      var raw = {
+        name: this.state.name,
+        contact: this.state.mobileNumber,
+        email: this.state.email,
+        issue: this.state.description,
+        category: this.state.category,
+      };
+      try {
+        const response = await helpSupport(raw);
+        if (response && response.status == 'SUCCESS') {
+          this.setState({ categoryError: null });
+          ToastAndroid.showWithGravity(
+            response.mag,
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+          );
+        }
+        this.setState({ formError: null, loader: false });
+      } catch (error) {
+        console.log("error", error);
+        this.setState({ formError: '* ' + error, loader: false });
       }
-      this.setState({ loader: false });
-    } catch (error) {
-      console.log("error", error);
-      this.setState({ loader: false });
     }
   };
 
@@ -140,7 +148,6 @@ export default class HelpSupport extends Component {
 
 
   render() {
-    console.log('====>', this.state.name);
     return (
       <SafeAreaView
         style={styles.container}>
@@ -206,44 +213,27 @@ export default class HelpSupport extends Component {
           </View>
 
           <View style={styles.FirstText}>
-            <View style={styles.sectionStyle}>
-              <TextInput
-                style={styles.inputText}
-                placeholder="Name"
-                underlineColorAndroid="transparent"
-                placeholderTextColor={ThemeColors.CLR_DARK_GREY}
-                value={this.state.name}
-                onChangeText={text => {
-                  this.setState({ name: text });
-                }}
-              />
-            </View>
+            <HelpInput
+              placeholder={'Name'}
+              value={this.state.name}
+              onChangeText={text => this.handleUserInput('name', text)}
+              error={this.state.nameError}
+            />
 
-            <View style={styles.sectionStyle}>
-              <TextInput
-                style={styles.inputText}
-                placeholder="Email"
-                underlineColorAndroid="transparent"
-                placeholderTextColor={ThemeColors.CLR_DARK_GREY}
-                value={this.state.email}
-                onChangeText={text => {
-                  this.setState({ email: text });
-                }}
-              />
-            </View>
+            <HelpInput
+              placeholder={'Email'}
+              value={this.state.email}
+              onChangeText={text => this.handleUserInput('email', text)}
+              error={this.state.emailError}
+            />
 
-            <View style={styles.sectionStyle}>
-              <TextInput
-                style={styles.inputText}
-                placeholder="Mobile Number"
-                underlineColorAndroid="transparent"
-                placeholderTextColor={ThemeColors.CLR_DARK_GREY}
-                value={this.state.contact}
-                onChangeText={text => {
-                  this.setState({ contact: text });
-                }}
-              />
-            </View>
+            <HelpInput
+              placeholder={'Mobile Number'}
+              value={this.state.mobileNumber}
+              onChangeText={text => this.handleUserInput('mobileNumber', text)}
+              error={this.state.mobileError}
+            />
+
             <View style={styles.sectionStyle} >
               <Text onPress={() => this.toggle()}
                 style={styles.inputText}
@@ -278,20 +268,24 @@ export default class HelpSupport extends Component {
                 >Order</Text>
               </View>
             </TouchableOpacity>
-            <View style={styles.sectionStyleDes}>
-              <TextInput
-                style={styles.inputText}
-                placeholder="Describe your issue...."
-                underlineColorAndroid="transparent"
-                placeholderTextColor={ThemeColors.CLR_DARK_GREY}
-                multiline={true}
-                numberOfLines={1}
-                value={this.state.description}
-                onChangeText={text => {
-                  this.setState({ description: text });
-                }}
-              />
-            </View>
+            {this.state.categoryError &&
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{this.state.categoryError}</Text>
+              </View>
+            }
+            <HelpInput
+              placeholder={'Describe your issue....'}
+              value={this.state.description}
+              multiline={true}
+              onChangeText={text => this.handleUserInput('description', text)}
+              error={this.state.descriptionError}
+            />
+
+            {this.state.formError &&
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{this.state.formError}</Text>
+              </View>
+            }
           </View>
           <View>
             <View style={styles.btnContainer}>
@@ -525,7 +519,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#DADADA',
     height: 1,
   },
-
+  errorContainer: {
+    width: '80%',
+    marginLeft: 15,
+  },
+  errorText: {
+    color: 'red',
+  },
   // accoridian
   item: {
     flexDirection: 'row',

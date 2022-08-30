@@ -54,22 +54,17 @@ export default class ProductDetailDrinks extends Component {
       };
       try {
         const cartResponse = await addToCart(cartItem);
-        Alert.alert(
-          'Success',
+        ToastAndroid.showWithGravity(
           'Item added to cart successfully',
-          [
-            { text: "OK", onPress: () => console.log("OK Pressed") }
-          ]
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
         );
       } catch (error) {
         console.log("Details Bars > addCart > catch", error);
-        Alert.alert(
-          'Error',
+        ToastAndroid.showWithGravity(
           'Try Again',
-          error,
-          [
-            { text: "OK", onPress: () => console.log("OK Pressed") }
-          ]
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
         );
       }
     }
@@ -154,6 +149,7 @@ export default class ProductDetailDrinks extends Component {
 
 
   renderItem = (item) => {
+    console.log("VendorId",item.vendorId);
     return (
       <View style={styles.vendorContainer}>
         <TouchableOpacity
@@ -650,6 +646,7 @@ const styles = StyleSheet.create({
   vendor: {
     backgroundColor: ThemeColors.CLR_WHITE,
     marginTop: 15,
+    marginBottom:10
   },
   vendorContainer: {
     margin: 14,
@@ -668,7 +665,9 @@ const styles = StyleSheet.create({
   {
     margin: 0,
     width: '50%',
-    marginLeft: 5
+    marginLeft: 5,
+    paddingHorizontal:5,
+
   },
   vendorRow: {
     flexDirection: 'row',
