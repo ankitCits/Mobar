@@ -33,6 +33,7 @@ class MyProfile extends Component {
       email: '',
       contact: '',
       gender: '',
+      address:'',
       lblEmail:'',
       lblName:''
     };
@@ -126,6 +127,18 @@ class MyProfile extends Component {
       this.setState({loader: false});
       return;
     }
+
+    if ((this.state.address == '')) {
+      ToastAndroid.showWithGravity(
+        'Address Required!',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+      );
+      this.setState({loader: false});
+      return;
+    }
+
+
     const raw ={
       name: `${this.state.name}`,
       email: `${this.state.email}`,
@@ -271,7 +284,6 @@ class MyProfile extends Component {
                   />
                 </View>
               </View>
-
               <View style={styles.row}>
                 <View>
                   <Text style={styles.labelText}>Date of Birth</Text>
@@ -311,6 +323,23 @@ class MyProfile extends Component {
                   </View>
                 </View>
               </View>
+              <View style={styles.adsContainer}>
+                  <Text style={styles.labelText}>Address</Text>
+                  <View style={styles.addressSectionStyle}>
+                    <TextInput
+                      value={this.state.address}
+                      underlineColorAndroid="transparent"
+                      multiline={this.props.multiline}
+                      numberOfLines={3}
+                      style={styles.adsInput}
+                      placeholderTextColor="#000"
+                      onChangeText={text => {
+                        this.setState({...this.state,address: text });
+                      }}
+                    />
+                  </View>
+                </View>
+              
               {viewData ? (
                 this.state.name != this.state.data.name ||
                 this.state.email != this.state.data.email ||
@@ -425,6 +454,20 @@ const styles = StyleSheet.create({
     width: 320,
     borderRadius: 10,
     margin: 10,
+  },
+  adsContainer:{
+    marginTop:-45
+  },
+  addressSectionStyle: {
+    borderWidth: 1,
+    borderColor: '#7B7B7B',
+    height: 80,
+    width: 320,
+    margin:10,
+    borderRadius: 10,
+  },
+  adsInput:{
+    marginLeft:10
   },
   sectionStyleNext: {
     flexDirection: 'row',
