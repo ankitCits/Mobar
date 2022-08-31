@@ -405,6 +405,8 @@ const styles = StyleSheet.create({
   },
   sectionStyle: {
     flexDirection: 'row',
+    alignContent:'center',
+    alignItems:'center',
     backgroundColor: ThemeColors.CLR_WHITE,
     borderWidth: 0,
     borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,

@@ -41,14 +41,14 @@ export const singIn = (postData) => {
 
 export const getUserDetails = (postData) => {
     return new Promise(async (resolve, reject) => {
-        const { contact, password, deviceInfo, fcmToken } = postData;
+        //const { contact, password, deviceInfo, fcmToken } = postData;
         const token = await getAccessToken();
-        const data = JSON.stringify({
-            contact: contact,
-            password: password,
-            deviceInfo: deviceInfo,
-            fcmToken: fcmToken,
-        });
+        // const data = JSON.stringify({
+        //     contact: contact,
+        //     password: password,
+        //     deviceInfo: deviceInfo,
+        //     fcmToken: fcmToken,
+        // });
         fetch(`${BASE_URL}/users/profile`, {
             method: 'GET',
             headers: {
@@ -72,22 +72,19 @@ export const getUserDetails = (postData) => {
 };
 
 
-export const newPasswordChange = (postData) => {
+export const newPasswordChange = (postData, token) => {
     return new Promise(async (resolve, reject) => {
         const data = JSON.stringify(postData);
         const headers = {
-            Accept: 'application/json, text/plain, */*', // It can be used to overcome cors errors
             'Content-Type': 'application/json',
             A_Key: A_KEY,
-            body:data
+            P_C_Token: token,
         };
-
         fetch(`${BASE_URL}/password/newPasswordChange`, {
-            method: 'GET',
+            method: 'POST',
             headers: headers,
-            redirect: 'follow',
+            body: data
         }).then(result => result.json()).then(responseDetail => {
-            console.log("Auth > newPasswordChange > response",responseDetail);
             if (responseDetail.response) {
                 resolve(responseDetail.response);
             }

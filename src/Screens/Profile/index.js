@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -14,14 +14,16 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
-import {connect} from 'react-redux';
-import {Picker} from '@react-native-picker/picker';
-import {getAccessToken} from '../../localstorage';
-import {A_KEY, BASE_URL} from '../../config';
+import { connect } from 'react-redux';
+import { Picker } from '@react-native-picker/picker';
+import { getAccessToken } from '../../localstorage';
+import { A_KEY, BASE_URL } from '../../config';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import { FontFamily } from '../../Theme/FontFamily';
-import { cos } from 'react-native-reanimated';
 import { updateProfile } from '../../Redux/actions/product';
+import HelpInput from '../../Component/HelpInput';
+import Util from '../../utils';
+import { getUserDetails } from '../../api/auth';
 class MyProfile extends Component {
   constructor(props) {
     super(props);
@@ -29,13 +31,18 @@ class MyProfile extends Component {
       data: null,
       loader: false,
       loading: true,
-      name: '',
-      email: '',
-      contact: '',
+      name: null,
+      email: null,
+      mobileNumber: null,
+      mobileError: null,
+      emailError: null,
+      addressError: null,
+      nameError: null,
       gender: '',
-      address:'',
-      lblEmail:'',
-      lblName:''
+      address: null,
+      formError: null,
+      lblEmail: '',
+      lblName: ''
     };
 
     //this.getDetail = this.getDetail.bind(this);
@@ -45,140 +52,174 @@ class MyProfile extends Component {
     this.getDetail();
   }
 
-  getDetail = async () => {
-    let token = await getAccessToken(token);
-    if (!token) {
-      return this.setState({loading: false});
-    }
-    fetch(`${BASE_URL}/users/profile`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json, text/plain, */*', // It can be used to overcome cors errors
-        'Content-Type': 'application/json',
-        Token: token,
-        A_Key: A_KEY,
-      },
-      redirect: 'follow',
-    })
-      .then(result => result.json())
-      .then(responseDetail => {
-        if (responseDetail.response) {
-          this.setState({loading: false});
-          this.setState({
-            data: responseDetail.response.result.profile,
-            name: responseDetail.response.result.profile.name,
-            email: responseDetail.response.result.profile.email,
-            lblName: responseDetail.response.result.profile.name,
-            lblEmail: responseDetail.response.result.profile.email,
-            contact: responseDetail.response.result.profile.contact,
-            address:responseDetail.response.result.profile.address,
-            gender: responseDetail.response.result.profile.gender,
-          });
-        }
+  handleUserInput = (name, value) => {
+    this.setState({ [name]: value }, () => { this.validateField(name, value) });
+  }
 
-        if (responseDetail.errors) {
-          this.setState({loading: false});
+  validateField = (fieldName) => {
+    switch (fieldName) {
+      case 'name':
+        if (this.state.name == null || this.state.name.trim() == '') {
+          this.setState({ nameError: '* Name mandatory', loader: false });
+          return;
+        } else {
+          this.setState({ nameError: null });
+        }
+        break;
+      case 'email':
+        if (this.state.email == null || this.state.email.trim() == '') {
+          this.setState({ emailError: '* Email id mandatory', loader: false });
+          return;
+        } else if (!Util.validEmail(this.state.email)) {
+          this.setState({ emailError: '* Invalid email id', loader: false });
+          return;
+        } else {
+          this.setState({ emailError: null });
+        }
+        break;
+      case 'mobileNumber':
+        let zero = this.state.mobileNumber.startsWith('0');
+        if (this.state.mobileNumber == null || this.state.mobileNumber.trim() == '') {
+          this.setState({ mobileError: '* Mobile number mandatory', loader: false });
+          return;
+        } else if (!Util.validMobile(this.state.mobileNumber)) {
+          this.setState({ mobileError: '* Invalid mobile number', loader: false });
+          return;
+        } else if (zero) {
+          this.setState({ mobileError: '* Mobile number should not start with a zero' });
+          return;
+        } else {
+          this.setState({ mobileError: null });
+        }
+        break;
+      case 'address':
+        if (this.state.address == null || this.state.address.trim() == '') {
+          this.setState({ addressError: '* Address mandatory', loader: false });
+          return;
+        } else {
+          this.setState({ addressError: null });
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  getDetail = async () => {
+    try {
+      const data = await getUserDetails();
+      console.log("Profile > getDetails > data response", data);
+      this.setState({
+        data: data.response.result.profile,
+        name: data.response.result.profile.name,
+        email: data.response.result.profile.email,
+        lblName: data.response.result.profile.name,
+        lblEmail: data.response.result.profile.email,
+        mobileNumber: data.response.result.profile.contact,
+        address: data.response.result.profile.address,
+        gender: data.response.result.profile.gender,
+      });
+      this.setState({ loading: false });
+    } catch (error) {
+      this.setState({ loading: false });
+      ToastAndroid.showWithGravity(
+        error,
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+      );
+      console.log('Error_On_Data_Fetch', error);
+    }
+  };
+
+  onProceed = async () => {
+    this.setState({ loader: true });
+    this.validateField('name');
+    this.validateField('email');
+    this.validateField('mobileNumber');
+    this.validateField('address');
+    // if ((this.state.name == '')) {
+    //   ToastAndroid.showWithGravity(
+    //     'Name Required!',
+    //     ToastAndroid.LONG,
+    //     ToastAndroid.TOP,
+    //   );
+    //   this.setState({loader: false});
+    //   return;
+    // }
+
+    // if ((this.state.email == '')) {
+    //   ToastAndroid.showWithGravity(
+    //     'Email Required!',
+    //     ToastAndroid.LONG,
+    //     ToastAndroid.TOP,
+    //   );
+    //   this.setState({loader: false});
+    //   return;
+    // }
+
+    // if ((this.state.mobileNumber == '')) {
+    //   ToastAndroid.showWithGravity(
+    //     'Contact Required!',
+    //     ToastAndroid.LONG,
+    //     ToastAndroid.TOP,
+    //   );
+    //   this.setState({loader: false});
+    //   return;
+    // }
+
+    // if ((this.state.address == '')) {
+    //   ToastAndroid.showWithGravity(
+    //     'Address Required!',
+    //     ToastAndroid.LONG,
+    //     ToastAndroid.TOP,
+    //   );
+    //   this.setState({loader: false});
+    //   return;
+    // }
+    if (this.state.nameError == null && this.state.emailError == null &&
+      this.state.mobileError == null && this.state.addressError == null
+    ) {
+      const raw = {
+        name: `${this.state.name}`,
+        email: `${this.state.email}`,
+        contact: this.state.mobileNumber,
+        dateofbirth: `${this.state.data.dateofbirth}`,
+        gender: `${this.state.gender}`,
+        address: `${this.state.address}`,
+        latitude: 1.28668,
+        longitude: 103.853607,
+      };
+      try {
+        const response = await updateProfile(raw);
+        if (response.status == 'SUCCESS') {
+          this.setState({ lblName: this.state.name, lblEmail: this.state.email });
           ToastAndroid.showWithGravity(
-            responseDetail.errors[0].msg,
+            'Profile updated successfully..!',
             ToastAndroid.LONG,
             ToastAndroid.TOP,
           );
         }
-      })
-      .catch(error => {
-        this.setState({loading: false});
-        ToastAndroid.showWithGravity(
-          'Network Error!',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
-        console.log('Error_On_Data_Fetch', error);
-      });
-  };
-
-  onProceed = async () => {
-    this.setState({loader: true});
-    if ((this.state.name == '')) {
-      ToastAndroid.showWithGravity(
-        'Name Required!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      this.setState({loader: false});
-      return;
-    }
-
-    if ((this.state.email == '')) {
-      ToastAndroid.showWithGravity(
-        'Email Required!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      this.setState({loader: false});
-      return;
-    }
-
-    if ((this.state.contact == '')) {
-      ToastAndroid.showWithGravity(
-        'Contact Required!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      this.setState({loader: false});
-      return;
-    }
-
-    if ((this.state.address == '')) {
-      ToastAndroid.showWithGravity(
-        'Address Required!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      this.setState({loader: false});
-      return;
-    }
-
-
-    const raw ={
-      name: `${this.state.name}`,
-      email: `${this.state.email}`,
-      contact: this.state.contact,
-      dateofbirth: `${this.state.data.dateofbirth}`,
-      gender: `${this.state.gender}`,
-      address: `${this.state.address}`,
-      latitude: 1.28668,
-      longitude: 103.853607,
-    };
-    try {
-      const response = await updateProfile(raw);
-      if (response.status == 'SUCCESS') {
-        this.setState({lblName:this.state.name,lblEmail:this.state.email});
-        ToastAndroid.showWithGravity(
-          'Profile updated successfully..!',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
+        this.setState({ formError: null, loader: false });
+      } catch (error) {
+        console.log("Profile > Update Profile > error", error);
+        this.setState({ loader: false, formError: '* ' + error });
       }
-      this.setState({ loader: false });
-    } catch (error) {
-      console.log("Profile > Update Profile > error",error);
-      this.setState({ loader: false });
     }
   };
 
 
-  changeDateFormat(inputDate){  // expects Y-m-d
+  changeDateFormat(inputDate) {  // expects Y-m-d
     var splitDate = inputDate.split('-');
-    if(splitDate.count == 0){
-        return null;
+    if (splitDate.count == 0) {
+      return null;
     }
 
     var year = splitDate[0];
     var month = splitDate[1];
-    var day = splitDate[2]; 
+    var day = splitDate[2];
 
     return day + '-' + month + '-' + year;
-}
+  }
 
   render() {
     const viewData = this.state.data;
@@ -189,7 +230,7 @@ class MyProfile extends Component {
           backgroundColor="#84182B"
           barStyle={'light-content'}
         />
-        
+
         {this.state.loading && this.state.data == null ? (
           <View
             style={styles.loaderContainer}>
@@ -227,7 +268,15 @@ class MyProfile extends Component {
             <View style={styles.inputContainer}>
               <View>
                 <Text style={styles.labelText}>Name</Text>
-                <View style={styles.sectionStyle}>
+                <HelpInput
+                  placeholder={'Name'}
+                  value={this.state.name}
+                  page={'Profile'}
+                  icon={'person'}
+                  onChangeText={text => this.handleUserInput('name', text)}
+                  error={this.state.nameError}
+                />
+                {/* <View style={styles.sectionStyle}>
                   <Icon
                     name="person"
                     size={20}
@@ -243,12 +292,20 @@ class MyProfile extends Component {
                       this.setState({...this.state,name: text});
                     }}
                   />
-                </View>
+                </View> */}
               </View>
 
-                <View>
-                  <Text style={styles.labelText}>Email</Text>
-                  <View style={styles.sectionStyle}>
+              <View>
+                <Text style={styles.labelText}>Email</Text>
+                <HelpInput
+                  placeholder={'Email'}
+                  value={this.state.email}
+                  page={'Profile'}
+                  icon={'mail'}
+                  onChangeText={text => this.handleUserInput('email', text)}
+                  error={this.state.emailError}
+                />
+                {/* <View style={styles.sectionStyle}>
                     <Icon
                       name="mail"
                       size={20}
@@ -263,11 +320,19 @@ class MyProfile extends Component {
                         this.setState({...this.state,email: text });
                       }}
                     />
-                  </View>
-                </View>
+                  </View> */}
+              </View>
               <View>
                 <Text style={styles.labelText}>Phone No</Text>
-                <View style={styles.sectionStyle}>
+                <HelpInput
+                  placeholder={'Phone No'}
+                  value={this.state.mobileNumber}
+                  page={'Profile'}
+                  icon={'call'}
+                  onChangeText={text => this.handleUserInput('mobileNumber', text)}
+                  error={this.state.mobileError}
+                />
+                {/* <View style={styles.sectionStyle}>
                   <Icon
                     name="call"
                     size={20}
@@ -282,7 +347,7 @@ class MyProfile extends Component {
                       this.setState({...this.state,contact: text});
                     }}
                   />
-                </View>
+                </View> */}
               </View>
               <View style={styles.row}>
                 <View>
@@ -315,7 +380,7 @@ class MyProfile extends Component {
                       style={styles.picker}
                       selectedValue={viewData ? this.state.gender : ''}
                       onValueChange={(itemValue, itemIndex) =>
-                        this.setState({gender: itemValue})
+                        this.setState({ gender: itemValue })
                       }>
                       <Picker.Item label="Male" value="Male" />
                       <Picker.Item label="Female" value="Female" />
@@ -324,8 +389,18 @@ class MyProfile extends Component {
                 </View>
               </View>
               <View style={styles.adsContainer}>
-                  <Text style={styles.labelText}>Address</Text>
-                  <View style={styles.addressSectionStyle}>
+                <Text style={styles.labelText}>Address</Text>
+                <HelpInput
+                  placeholder={'Address'}
+                  value={this.state.address}
+                  page={'Profile'}
+                  icon={'location-on'}
+                  multiline={true}
+                  onChangeText={text => this.handleUserInput('address', text)}
+                  error={this.state.addressError}
+                />
+
+                {/* <View style={styles.addressSectionStyle}>
                     <TextInput
                       value={this.state.address}
                       underlineColorAndroid="transparent"
@@ -337,23 +412,27 @@ class MyProfile extends Component {
                         this.setState({...this.state,address: text });
                       }}
                     />
-                  </View>
-                </View>
-              
+                  </View> */}
+              </View>
+              {this.state.formError ?
+                <View style={styles.errorContainer}>
+                  <Text style={styles.errorText}>{this.state.formError}</Text>
+                </View> : null
+              }
               {viewData ? (
                 this.state.name != this.state.data.name ||
-                this.state.email != this.state.data.email ||
-                this.state.contact != this.state.data.contact ||
-                this.state.address != this.state.data.address ||
-                this.state.gender != this.state.data.gender ? (
+                  this.state.email != this.state.data.email ||
+                  this.state.mobileNumber != this.state.data.contact ||
+                  this.state.address != this.state.data.address ||
+                  this.state.gender != this.state.data.gender ? (
                   <View>
                     <TouchableOpacity
                       style={styles.save}
                       onPress={() =>
-                        // this.props.navigation.navigate('MyBottomTabs')
-                        {
-                          this.onProceed();
-                        }
+                      // this.props.navigation.navigate('MyBottomTabs')
+                      {
+                        this.onProceed();
+                      }
                       }>
                       {this.state.loader ? (
                         <ActivityIndicator size="small" color="#fff" />
@@ -382,25 +461,25 @@ function mapDispatchToProps(dispatch) {
 //getting props from redux
 function mapStateToProps(state) {
   let redux = state.auth.userData;
-  return {redux};
+  return { redux };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyProfile);
 
 const styles = StyleSheet.create({
-  container:{
+  container: {
     flex: 1,
     backgroundColor: ThemeColors.CLR_WHITE,
   },
-  arrowBack:{
+  arrowBack: {
     margin: 10
   },
-  loaderContainer:{
+  loaderContainer: {
     flex: 1,
     justifyContent: 'center',
     alignSelf: 'center',
   },
-  profileContainer:{
+  profileContainer: {
     height: 220,
     backgroundColor: '#84182B',
     borderBottomLeftRadius: 10,
@@ -412,66 +491,67 @@ const styles = StyleSheet.create({
     width: 80,
   },
   userView: {
-    flex:1,
+    flex: 1,
     alignItems: 'center',
-    alignContent:'center'
+    alignContent: 'center'
   },
   userName: {
     fontSize: 20,
     fontWeight: '700',
-    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
     color: ThemeColors.CLR_WHITE
   },
   userMail: {
     fontSize: 20,
     fontWeight: '500',
-    fontFamily:FontFamily.TAJAWAL_REGULAR,
-    color:ThemeColors.CLR_WHITE
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    color: ThemeColors.CLR_WHITE
   },
-  inputContainer:{
-    margin: 10, 
-    marginTop:'15%',
+  inputContainer: {
+    margin: 10,
+    marginTop: '15%',
     alignItems: 'center'
   },
-  inputText:{
-    fontFamily:FontFamily.TAJAWAL_REGULAR,
-    fontSize:18,
-    fontWeight:'500',
-    color:ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
-  },
-  labelText:{
+  // inputText:{
+  //   fontFamily:FontFamily.TAJAWAL_REGULAR,
+  //   fontSize:18,
+  //   fontWeight:'500',
+  //   color:ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+  // },
+  labelText: {
     marginLeft: 15,
-    fontFamily:FontFamily.TAJAWAL_REGULAR,
-    fontSize:16,
-    fontWeight:'500',
-    color:'#828282'
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#828282'
   },
-  sectionStyle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#7B7B7B',
-    height: 50,
-    width: 320,
-    borderRadius: 10,
-    margin: 10,
+  // sectionStyle: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   borderWidth: 1,
+  //   borderColor: '#7B7B7B',
+  //   height: 50,
+  //   width: 320,
+  //   borderRadius: 10,
+  //   margin: 10,
+  // },
+  adsContainer: {
+    marginTop: -45,
+    marginLeft: 1
   },
-  adsContainer:{
-         marginTop:-45
-  },
-  addressSectionStyle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#7B7B7B',
-    height: 80,
-    width: 320,
-    marginLeft:10,
-    marginTop:10,
-    borderRadius: 10,
-  },
+  // addressSectionStyle: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   borderWidth: 1,
+  //   borderColor: '#7B7B7B',
+  //   height: 80,
+  //   width: 320,
+  //   marginLeft:10,
+  //   marginTop:10,
+  //   borderRadius: 10,
+  // },
   adsInput:{
-    marginLeft:10
+    marginLeft:13
   },
   sectionStyleNext: {
     flexDirection: 'row',
@@ -483,19 +563,19 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     margin: 10,
   },
-  selectContainer:{
+  selectContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:ThemeColors.CLR_WHITE,
+    backgroundColor: ThemeColors.CLR_WHITE,
     height: 44,
     margin: 10,
   },
   imageStyle: {
     margin: 7,
-    resizeMode: 'stretch',
+    //resizeMode: 'stretch',
   },
-  genderDropDown:{
+  genderDropDown: {
     borderWidth: 1,
     borderRadius: 5,
     height: 44,
@@ -503,17 +583,22 @@ const styles = StyleSheet.create({
     borderColor: '#7B7B7B',
     bottom: 55,
   },
-  row:{
+  row: {
     flexDirection: 'row'
   },
-  picker:{
+  picker: {
     marginTop: -5
   },
-  saveText:{
+  errorContainer: {
+    alignSelf: 'flex-start',
+    marginLeft: 30
+  },
+  errorText: { color: 'red' },
+  saveText: {
     color: ThemeColors.CLR_WHITE,
-    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
     fontSize: 18,
-    fontWeight:'700',
+    fontWeight: '700',
   },
   save: {
     backgroundColor: '#851729',

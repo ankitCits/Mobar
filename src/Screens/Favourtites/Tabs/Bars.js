@@ -19,7 +19,7 @@ export default class Bars extends Component {
     super(props);
     this.state = {
       data: props.data,
-      hostUrl: props.hostUrl
+      hostUrl: this.props.hostUrl
     };
   }
 
@@ -50,7 +50,7 @@ export default class Bars extends Component {
       <SafeAreaView>
         <>
           {this.state.data && this.state.data.length > 0 ? (
-            this.state.data.map(item => (
+            this.state.data.map((item,index) => (
               <View>
                 <TouchableOpacity
                   key={item.vendorId}
@@ -59,15 +59,8 @@ export default class Bars extends Component {
                     this.props.navigation.navigate('ProductDetailBars', { id: item.ecom_ae_vendor.vendorId })
                   }>
                   <View style={styles.productInnerView}>
-                    {/* <ImageBackground
-                      resizeMode=''
-                        style={styles.productInnerView}
-                        source={{
-                            uri: `${this.state.hostUrl + item.ecom_ae_vendor.images}`,
-                        }}
-                        
-                    > */}
                     <TouchableOpacity
+                      key={index}
                       style={styles.favIcon}
                       onPress={() => {
                         this.removeFavorite(item.wishlistId);

@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   qtyText: {
-    fontStyle: FontFamily.TAJAWAL_REGULAR,
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
     fontSize: 14,
     color: ThemeColors.CLR_DARK_GREY,
     fontWeight: '400',

@@ -26,7 +26,7 @@ export default class ForgetEnterPassword extends Component {
       confirmPassword: '',
       passwordError: null,
       confirmPwdError: null,
-      p_c_token: '',//this.props.route.params.response['password-create-token'],
+      p_c_token: this.props.route.params.response['password-create-token'],
       formError: null,
       loader: false,
     };
@@ -50,12 +50,9 @@ export default class ForgetEnterPassword extends Component {
       const data = {
         newPassword: this.state.newPassword,
         confirmPassword: this.state.confirmPassword,
-        p_c_token: this.state.p_c_token
       }
-      
-      console.log("ForgotEnterPassword > onPasswordChange > PostData", data);
       try {
-        const result = await newPasswordChange(data);
+        const result = await newPasswordChange(data, this.state.p_c_token);
         this.setState({ loader: false });
         console.log("ForgotEnterPassword > onPasswordChange > response", result);
         this.setState({ loader: false, formError: null });
@@ -63,11 +60,9 @@ export default class ForgetEnterPassword extends Component {
       }
       catch (error) {
         console.log("ForgotEnterPassword > onPasswordChange > Catch", error);
-        //this.props.navigation.navigate('PasswordSuccessFullyChanged');
-        this.setState({ loader: false, formError: 'Network Error!' });
+        this.setState({ loader: false, formError: '* ' + error });
       }
     }
-
   }
 
   handleUserInput = (name, value) => {
@@ -101,6 +96,9 @@ export default class ForgetEnterPassword extends Component {
 
 
   render() {
+    console.log("FGotEnterPassword > Render > this.state.p_c_token", this.state.p_c_token);
+    console.log("FGotEnterPassword > Render > this.state.propd", this.props.route.params);
+
     return (
       <SafeAreaView
         style={styles.container}>
