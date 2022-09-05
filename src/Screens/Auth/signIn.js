@@ -42,20 +42,20 @@ class SignIn extends Component {
     this.setState({ loader: true });
     let zero = this.state.mobileNumber && this.state.mobileNumber.startsWith('0');
     if (this.state.mobileNumber == null || this.state.mobileNumber.trim() == '') {
-      this.setState({ mobileError: '* Mobile number mandatory', loader: false });
+      this.setState({ mobileError: '* Invalid Mobile Number entered, Please check!', loader: false });
       return;
     } else if (zero) {
-      this.setState({ mobileError: '* Mobile number should not start with a zero', loader: false });
+      this.setState({ mobileError: '* Invalid Mobile Number entered, Please check!', loader: false });
       return;
     } else if (!Util.validMobile(this.state.mobileNumber)) {
-      this.setState({ mobileError: '* Mobile number not valid!', loader: false });
+      this.setState({ mobileError: '* Invalid Mobile Number entered, Please check!', loader: false });
       return;
     } else {
       this.setState({ mobileError: null });
     }
-    
+
     if (this.state.password == null || this.state.password.trim() == '') {
-      this.setState({ passwordError: '* Password mandatory', loader: false });
+      this.setState({ passwordError: '* Invalid Password entered, Please check!', loader: false });
       return;
     } else {
       this.setState({ passwordError: null });
@@ -87,7 +87,8 @@ class SignIn extends Component {
 
 
   handleUserInput = (name, value) => {
-    this.setState({ [name]: value }, () => { this.validateField(name, value) });
+    this.setState({ [name]: value });
+    // this.setState({ [name]: value }, () => { this.validateField(name, value) });
   }
 
   validateField = (fieldName) => {
@@ -95,13 +96,13 @@ class SignIn extends Component {
       case 'mobileNumber':
         let zero = this.state.mobileNumber && this.state.mobileNumber.startsWith('0');
         if (this.state.mobileNumber == null || this.state.mobileNumber.trim() == '') {
-          this.setState({ mobileError: '* Mobile number mandatory', loader: false });
+          this.setState({ mobileError: '* Invalid Mobile Number entered, Please check!', loader: false });
           return;
         } else if (zero) {
-          this.setState({ mobileError: '* Mobile number should not start with a zero', loader: false });
+          this.setState({ mobileError: '* Invalid Mobile Number entered, Please check!', loader: false });
           return;
         } else if (!Util.validMobile(this.state.mobileNumber)) {
-          this.setState({ mobileError: '* Mobile number not valid!', loader: false });
+          this.setState({ mobileError: '* Invalid Mobile Number entered, Please check!', loader: false });
           return;
         } else {
           this.setState({ mobileError: null });
@@ -109,7 +110,7 @@ class SignIn extends Component {
         break;
       case 'password':
         if (this.state.password == null || this.state.password.trim() == '') {
-          this.setState({ passwordError: '* Password mandatory', loader: false });
+          this.setState({ passwordError: '* Invalid Password entered, Please check!', loader: false });
           return;
         } else {
           this.setState({ passwordError: null });

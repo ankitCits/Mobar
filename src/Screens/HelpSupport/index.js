@@ -247,25 +247,17 @@ export default class HelpSupport extends Component {
             </View>
             <TouchableOpacity onPress={() => this.onSelected('Account')}>
               <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == 'Account' ? styles.selected : '']}>
-                <Text
-                  style={styles.inputText}
-                >Account</Text>
+                <Text style={styles.inputText}>Account</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => this.onSelected('Payment')}>
               <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == 'Payment' ? styles.selected : '']}>
-                <Text
-                  style={styles.inputText}
-                >Payment</Text>
+                <Text style={styles.inputText}>Payment</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => this.onSelected('Order')}>
-              <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == 'Order' ? styles.selected : '']}
-
-              >
-                <Text
-                  style={styles.inputText}
-                >Order</Text>
+              <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == 'Order' ? styles.selected : '']} >
+                <Text style={styles.inputText}>Order</Text>
               </View>
             </TouchableOpacity>
             {this.state.categoryError &&
@@ -405,8 +397,8 @@ const styles = StyleSheet.create({
   },
   sectionStyle: {
     flexDirection: 'row',
-    alignContent:'center',
-    alignItems:'center',
+    alignContent: 'center',
+    alignItems: 'center',
     backgroundColor: ThemeColors.CLR_WHITE,
     borderWidth: 0,
     borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
