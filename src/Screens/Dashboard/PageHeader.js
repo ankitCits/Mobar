@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
 import Carousel from 'react-native-snap-carousel';
 import { connect } from 'react-redux';
+import { screenHeight } from '../../Theme/Matrices';
 
 // const { width: screenWidth } = Dimensions.get('window')
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
@@ -92,7 +93,7 @@ class PageHeader extends Component {
                 </View>
 
                 {/* Slider */}
-                <View style={{ alignItems: 'center', marginTop: -15, height: 200 }}>
+                <View style={{ alignItems: 'center', marginTop: -15, height: screenHeight(26) }}>
                     <View style={{ marginVertical: 10 }}>
                         <Carousel
                             ref={(c) => { this._carousel = c; }}

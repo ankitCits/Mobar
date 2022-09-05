@@ -20,14 +20,15 @@ import { getAccessToken } from '../localstorage';
 import { showAlert } from '../api/auth';
 import { FontFamily } from '../Theme/FontFamily';
 import { ThemeColors } from '../Theme/ThemeColors';
+import { screenHeight, screenWidth } from '../Theme/Matrices';
 
 class ProductCard extends Component {
     constructor(props) {
         super(props);
         this.state = {
             categoryData: this.props.categoryData,
-            isFavorite:false,
-            data:this.props.item,
+            isFavorite: false,
+            data: this.props.item,
         };
     }
 
@@ -64,7 +65,7 @@ class ProductCard extends Component {
     }
 
     removeFromCart = async (item, index) => {
-        console.log("ProductCard > removeCart > Item",item);
+        console.log("ProductCard > removeCart > Item", item);
         return;
         const token = await getAccessToken();
         if (token == null) {
@@ -97,7 +98,7 @@ class ProductCard extends Component {
 
     addFavorite = async (productId, index) => {
         //console.log("AddFavorite State Token",this.state.token);
-        const token =  await getAccessToken();
+        const token = await getAccessToken();
         if (token == null) {
             showAlert();
         } else {
@@ -108,7 +109,7 @@ class ProductCard extends Component {
                     vendorId: 4,
                 };
                 const wishlistData = await addToWishlist(sendData);
-                console.log("Product Card > addFavorite",wishlistData);
+                console.log("Product Card > addFavorite", wishlistData);
                 this.state.data.ecom_ba_wishlist = wishlistData.result.data;
                 this.setState({ isFavorite: true });
                 const data = this.state.categoryData.data;
@@ -130,7 +131,7 @@ class ProductCard extends Component {
     };
 
     removeFavorite = async (prodId, index) => {
-        const token =  await getAccessToken();
+        const token = await getAccessToken();
         if (token == null) {
             showAlert();
         } else {
@@ -181,7 +182,7 @@ class ProductCard extends Component {
                         </Text>
                         <TouchableOpacity
                             onPress={() => {
-                                this.state.isFavorite 
+                                this.state.isFavorite
                                     ? this.removeFavorite(this.state.data.ecom_ba_wishlist.wishlistId, index)
                                     : this.addFavorite(this.state.data.productId, index);
                             }}>
@@ -235,8 +236,8 @@ class ProductCard extends Component {
                                     Save $50{this.state.data.ecom_aca_product_units.savedPrices}
                                 </Text>
                             </ImageBackground>
-                          ): (  <ImageBackground></ImageBackground> )
-                          }
+                        ) : (<ImageBackground></ImageBackground>)
+                        }
                         <View
                             style={styles.cartRow}>
                             {this.state.data.cart ? (
@@ -272,13 +273,10 @@ const numColumns = 2;
 const size = Dimensions.get('window').width / numColumns;
 const styles = StyleSheet.create({
     itemOuterContainer: {
-        //width: size,
-        //height: size + 50,
-        flex:1,
-
+        flex: 1,
     },
     itemContainer: {
-        width: size-28,
+        width: size - 28,
         shadowColor: '#000',
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.5,
@@ -287,68 +285,72 @@ const styles = StyleSheet.create({
         borderTopWidth: 0,
         borderRadius: 20,
         marginTop: 20,
-        marginBottom:10,
-        alignSelf:'center',
+        marginBottom: 10,
+        alignSelf: 'center',
         backgroundColor: '#fff',
         borderRadius: 10,
-        //backgroundColor:"powderblue",
-        height:255,
-        marginBottom:12,
+        height: screenHeight(30),
+        marginBottom: 12,
     },
-    itemDetails:{
+    itemDetails: {
         alignItems: 'center',
     },
-    favContainer:{
-        width:30,
-        height:30,
-        justifyContent:'center',
-        backgroundColor:ThemeColors.CLR_WHITE,
-        elevation:4,
-        borderRadius:25,
+    favContainer: {
+        width: 30,
+        height: 30,
+        justifyContent: 'center',
+        backgroundColor: ThemeColors.CLR_WHITE,
+        elevation: 4,
+        alignSelf: 'flex-end',
+        borderRadius: 25,
     },
-    favIcon:{
-        alignSelf:'center',
+    favIcon: {
+        alignSelf: 'center',
+        height: 20,
+        width: 22
     },
-    prodImage:{
+    prodImage: {
+        marginTop: -40,
         height: 80,
         width: 40,
     },
-    prodName:{
-        fontSize: 16,
+    prodName: {
+        fontSize: 14,
         fontWeight: '500',
         color: '#050505',
-        fontFamily:FontFamily.TAJAWAL_REGULAR,
+        fontFamily: FontFamily.TAJAWAL_REGULAR,
         marginTop: 10,
+        marginHorizontal: 10
     },
-    prodDesText:{
-        fontFamily:FontFamily.TAJAWAL_REGULAR,
+    prodDesText: {
+        fontFamily: FontFamily.TAJAWAL_REGULAR,
         fontSize: 15,
         fontWeight: '400',
         color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     },
-    priceText:{
-        fontFamily:FontFamily.TAJAWAL_REGULAR,
+    priceText: {
+        fontFamily: FontFamily.TAJAWAL_REGULAR,
         fontSize: 20,
         fontWeight: '700',
         color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     },
-    savedPrices:{
+    savedPrices: {
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
-    savedPriceImg:{
+    savedPriceImg: {
         width: 76,
         height: 19,
         marginTop: 5,
     },
-    savedPriceText:{
-        fontFamily:FontFamily.TAJAWAL_REGULAR,
+    savedPriceText: {
+        fontFamily: FontFamily.TAJAWAL_REGULAR,
         fontSize: 13,
         fontWeight: '500',
         color: ThemeColors.CLR_WHITE,
         marginLeft: 5,
     },
-    cartRow:{
+    cartRow: {
         flexDirection: 'row',
     },
     topBar: {
@@ -357,7 +359,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     item: {
-        fontFamily:FontFamily.TAJAWAL_REGULAR,
+        fontFamily: FontFamily.TAJAWAL_REGULAR,
         fontSize: 15,
         fontWeight: '400',
         color: '#000',

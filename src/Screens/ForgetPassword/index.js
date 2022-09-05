@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
   },
   imageStyle: {
     margin: 5,
-    resizeMode: 'stretch',
+    // resizeMode: 'stretch',
     alignItems: 'center',
   },
   term: {

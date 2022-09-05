@@ -13,6 +13,7 @@ import { addToWishlist, removeToWishlist } from '../api/wishlist';
 import { getAccessToken } from '../localstorage';
 import { showAlert } from '../api/auth';
 import { ThemeColors } from '../Theme/ThemeColors';
+import { screenHeight, screenWidth } from '../Theme/Matrices';
 
 export default class CategoryCard extends React.Component {
     constructor(props) {
@@ -90,8 +91,6 @@ export default class CategoryCard extends React.Component {
             navigation,
             index,
         } = this.props;
-        // const idx = this.randomIntFromInterval(0, 2);
-        // const currImage = this.state.images[idx]
         const currImage = this.state.images[index % 3]
         return (
             <>
@@ -120,13 +119,13 @@ export default class CategoryCard extends React.Component {
                                         ? this.removeFavorite(this.state.data.ecom_ba_wishlist.wishlistId)
                                         : this.addFavorite(this.state.data.productId, index);
                                 }}>
-                            <View style={styles.favContainer}>
-                                <Image
-                                    resizeMode={'cover'}
-                                    source={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
-                                    defaultSource={this.state.data.ecom_ba_wishlist ? images.heartFill : images.heart}
-                                    style={styles.favIcon}
-                                />
+                                <View style={styles.favContainer}>
+                                    <Image
+                                        resizeMode={'contain'}
+                                        source={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
+                                        defaultSource={this.state.data.ecom_ba_wishlist ? images.heartFill : images.heart}
+                                        style={styles.favIcon}
+                                    />
                                 </View>
                             </TouchableOpacity>
                             <Text style={{ color: '#fff', fontSize: 12 }}>
@@ -179,8 +178,8 @@ export default class CategoryCard extends React.Component {
 }
 const styles = StyleSheet.create({
     boxInner: {
-        width: 147,
-        height: 169,
+        width: screenWidth(37.5),
+        height: screenHeight(26),
     },
     boxOuter: {
         bottom: 0,
@@ -195,15 +194,19 @@ const styles = StyleSheet.create({
         zIndex: 0,
         alignSelf: 'center'
     },
-    favContainer:{
-        width:35,
-        height:35,
-        justifyContent:'center',
-        backgroundColor:ThemeColors.CLR_WHITE,
-        borderRadius:50,
+    favContainer: {
+        width: 30,
+        height: 30,
+        justifyContent: 'center',
+        backgroundColor: ThemeColors.CLR_WHITE,
+        elevation: 4,
+        alignSelf: 'flex-end',
+        borderRadius: 25,
     },
-    favIcon:{
-        alignSelf:'center',
+    favIcon: {
+        alignSelf: 'center',
+        height: 20,
+        width: 22
     },
     innerTop: {
         flexDirection: 'row',
@@ -223,7 +226,6 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: '400',
         height: 20,
-
     },
     innerBottomText2: {
         color: '#fff',

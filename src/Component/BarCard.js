@@ -101,38 +101,30 @@ class BarCard extends Component {
                         }}
                         defaultSource={images.promotions1}
                     >
-                        <View style={styles.heartContainer}>
-                            {/* <TouchableOpacity
-                                style={styles.flexEnd}>
+                        <TouchableOpacity
+                            onPress={() => {
+                                this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId
+                                    ? this.removeFavorite(this.state.data.ecom_ba_wishlist.wishlistId)
+                                    : this.addFavorite(this.state.data.vendorId, index); // pass vendor id 
+                            }}
+                            style={styles.heartContainer}
+                        >
+                            <View style={styles.favContainer}>
                                 <Image
-                                    resizeMode={'cover'}
-                                    source={images.heart}
-                                    defaultSource={images.heart}
+                                    resizeMode={'contain'}
+                                    source={this.state.isFavorite ? images.heartFill : images.heart}
+                                    defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
+                                    // source={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
+                                    // defaultSource={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
+                                    style={styles.favIcon}
                                 />
-                            </TouchableOpacity> */}
-                            <TouchableOpacity
-                                onPress={() => {
-                                    this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId
-                                        ? this.removeFavorite(this.state.data.ecom_ba_wishlist.wishlistId)
-                                        : this.addFavorite(this.state.data.vendorId, index); // pass vendor id 
-                                }}
-                            >
-                                <View style={styles.favContainer}>
-                                    <Image
-                                        resizeMode={'cover'}
-                                        source={this.state.isFavorite ? images.heartFill : images.heart}
-                                        defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
-                                        // source={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
-                                        // defaultSource={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
-                                        style={styles.favIcon}
-                                    />
-                                </View>
-                            </TouchableOpacity>
-                            <View style={styles.off}>
-                                <Text style={styles.offText}>
-                                    50% Off
-                                </Text>
                             </View>
+                        </TouchableOpacity>
+
+                        <View style={styles.off}>
+                            <Text style={styles.offText}>
+                                50% Off
+                            </Text>
                         </View>
                     </ImageBackground>
                     <View
@@ -154,11 +146,10 @@ class BarCard extends Component {
                                 <Icon
                                     name="directions-run"
                                     size={16}
-                                    color={ThemeColors.CLR_WHITE}
                                     style={styles.bottomIcon}
                                 />
                                 <Text style={styles.textAddress}>
-                                    {this.state.data.distance.toFixed(2)}
+                                    {this.state.data.distance.toFixed(1)}
                                 </Text>
                             </TouchableOpacity>
 
@@ -220,13 +211,13 @@ const styles = StyleSheet.create({
         // width: '70%',
     },
     heartContainer: {
-        marginTop: '4%',
+        marginTop: 15,
         marginRight: 15,
-        fontSize: 15,
+        // fontSize: 15,
     },
     favContainer: {
-        width: 35,
-        height: 35,
+        width: 30,
+        height: 30,
         justifyContent: 'center',
         backgroundColor: ThemeColors.CLR_WHITE,
         elevation: 4,
@@ -235,6 +226,8 @@ const styles = StyleSheet.create({
     },
     favIcon: {
         alignSelf: 'center',
+        height: 20,
+        width: 22
     },
     textAddress: {
         flexDirection: 'row',
