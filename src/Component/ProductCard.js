@@ -275,9 +275,10 @@ const styles = StyleSheet.create({
         //width: size,
         //height: size + 50,
         flex:1,
+
     },
     itemContainer: {
-        width: 155,
+        width: size-28,
         shadowColor: '#000',
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.5,
@@ -290,6 +291,9 @@ const styles = StyleSheet.create({
         alignSelf:'center',
         backgroundColor: '#fff',
         borderRadius: 10,
+        //backgroundColor:"powderblue",
+        height:255,
+        marginBottom:12,
     },
     itemDetails:{
         alignItems: 'center',

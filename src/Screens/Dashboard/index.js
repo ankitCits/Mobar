@@ -238,6 +238,7 @@ class Dashboard extends Component {
                                                         flexDirection: 'row',
                                                         alignItems: 'center',
                                                         justifyContent: 'space-between',
+                                                        
                                                     }}>
                                                     <Text style={styles.sectionTitle}>Combos</Text>
                                                     <TouchableOpacity>
@@ -272,6 +273,7 @@ class Dashboard extends Component {
                                                 borderRadius: 15,
                                                 elevation: 5,
                                                 alignSelf: 'center',
+                                                
                                             }}>
                                             <ImageBackground
                                                 style={styles.promotionsImg}
@@ -326,6 +328,7 @@ class Dashboard extends Component {
                                                         alignItems: 'center',
                                                         justifyContent: 'space-between',
                                                         marginTop: '8%',
+                                                        
                                                     }}>
                                                     <Text style={styles.sectionTitle}>Bars</Text>
                                                     <TouchableOpacity>
@@ -391,7 +394,9 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 18,
         fontWeight: '500',
-        color: ThemeColors.THEME_COLOR
+        color: ThemeColors.THEME_COLOR,
+        paddingLeft:8,
+        //backgroundColor:"powderblue"
     },
     selectedTabText: {
         color: ThemeColors.CLR_TAB,
@@ -416,7 +421,7 @@ const styles = StyleSheet.create({
     promotionsImg: {
         borderBottomLeftRadius: 15,
         borderBottomRightRadius: 15,
-        width: 350,
+        width: 360,
         height: 181,
     },
 

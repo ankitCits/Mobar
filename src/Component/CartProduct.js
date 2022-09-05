@@ -159,6 +159,8 @@ const styles = StyleSheet.create({
   container: {
     margin: 10,
     marginBottom: 0,
+    paddingBottom:8,
+    //backgroundColor:"powderblue"
   },
   subContainer: {
     backgroundColor: ThemeColors.CLR_WHITE,

@@ -57,6 +57,8 @@ export default class AllNotification extends Component {
               style={{
                 marginTop: '5%',
                 flexDirection: 'row',
+                alignSelf:"center",
+                paddingRight:2
               }}>
               <Icon
                 name={'check-circle'}
