@@ -5,7 +5,7 @@ import { getAccessToken } from '../localstorage';
 export const singIn = (postData) => {
     return new Promise(async (resolve, reject) => {
         const { contact, password, deviceInfo, fcmToken } = postData
-        console.log("Auth > signIn >Contact",contact);
+        console.log("Auth > signIn >Contact", contact);
         if (contact && password) {
             const postData = JSON.stringify({
                 contact: contact,
@@ -100,16 +100,16 @@ export const newPasswordChange = (postData, token) => {
 export const retrieveAccount = (postData) => {
     return new Promise(async (resolve, reject) => {
         const data = JSON.stringify(postData);
-        console.log("Auth > postData",data);
+        console.log("Auth > postData", data);
         const headers = {
             method: 'POST',
             headers: myHeaders,
             body: data,
             redirect: 'follow',
-          };
-          console.log("Auth > headers",headers);
-        fetch(`${BASE_URL}/password/retrieveAccount`,headers).then(result => result.json()).then(responseDetail => {
-            console.log("Auth > retrieveAccount > response",responseDetail);
+        };
+        console.log("Auth > headers", headers);
+        fetch(`${BASE_URL}/password/retrieveAccount`, headers).then(result => result.json()).then(responseDetail => {
+            console.log("Auth > retrieveAccount > response", responseDetail);
             if (responseDetail.response) {
                 resolve(responseDetail.response);
             }
@@ -122,17 +122,17 @@ export const retrieveAccount = (postData) => {
     });
 };
 
-export const showAlert = (title='Unauthorized User',msg='Login to add or remove cart and wishlist') => {
+export const showAlert = (title = 'Unauthorized User', msg = 'Sign In / Sign Up to add this to your FAVOURITE or CART') => {
     Alert.alert(
         title,
         msg,
         [
-          {
-            text: "Cancel",
-            onPress: () => console.log("Cancel Pressed"),
-            style: "cancel"
-          },
-          { text: "OK", onPress: () => console.log("OK Pressed") }
+            {
+                text: "Cancel",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+            },
+            { text: "OK", onPress: () => console.log("OK Pressed") }
         ]
-      );
+    );
 }

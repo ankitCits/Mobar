@@ -65,8 +65,6 @@ class ProductCard extends Component {
     }
 
     removeFromCart = async (item, index) => {
-        console.log("ProductCard > removeCart > Item", item);
-        return;
         const token = await getAccessToken();
         if (token == null) {
             showAlert();
