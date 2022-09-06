@@ -21,6 +21,8 @@ import { showAlert } from '../api/auth';
 import { FontFamily } from '../Theme/FontFamily';
 import { ThemeColors } from '../Theme/ThemeColors';
 import { screenHeight, screenWidth } from '../Theme/Matrices';
+import HTMLView from 'react-native-htmlview';
+import { numberOfLines } from 'deprecated-react-native-prop-types/DeprecatedTextPropTypes';
 
 class ProductCard extends Component {
     constructor(props) {
@@ -212,10 +214,17 @@ class ProductCard extends Component {
                             style={styles.prodName}>
                             {this.state.data.name}
                         </Text>
+                       
                         <Text
-                            style={styles.prodDesText}>
+                            style={styles.prodDesText}
+                             >
                             {this.state.data.shortDescription}
-                        </Text>
+                         </Text>
+                         {/* <HTMLView
+                             style={styles.prodDesText}
+                             value={this.data.shortDescription}
+                             >
+                         </HTMLView> */}
                         <Text
                             style={styles.priceText}>
                             ${this.state.data.ecom_aca_product_units[0].unitUserPrice}
@@ -324,6 +333,7 @@ const styles = StyleSheet.create({
         fontFamily: FontFamily.TAJAWAL_REGULAR,
         fontSize: 15,
         fontWeight: '400',
+        
         color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     },
     priceText: {

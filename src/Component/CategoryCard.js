@@ -178,8 +178,11 @@ export default class CategoryCard extends React.Component {
 }
 const styles = StyleSheet.create({
     boxInner: {
-        width: screenWidth(37.5),
-        height: screenHeight(26),
+        // width: screenWidth(37.5),
+        // height: screenHeight(26),
+        width: 147,
+        height: 180,
+        //height: 169,
     },
     boxOuter: {
         bottom: 0,

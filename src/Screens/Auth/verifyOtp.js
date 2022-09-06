@@ -129,6 +129,7 @@ export default class VerifyOtp extends Component {
       .then(result => {
         console.log("varify Otp > ResendOtp > response", result);
         if (result.response) {
+          this.setState({ password:'' })
           ToastAndroid.showWithGravity(
             'OTP Resend Successfully !',
             ToastAndroid.LONG,
