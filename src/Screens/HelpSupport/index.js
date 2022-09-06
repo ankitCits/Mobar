@@ -29,8 +29,8 @@ export default class HelpSupport extends Component {
       name: null,
       email: null,
       mobileNumber: null,
-      category: null,
-      isToggle: false,
+      category: 'Enquiry',
+      isToggle:false,
       description: null,
       nameError: null,
       emailError: null,
@@ -38,6 +38,15 @@ export default class HelpSupport extends Component {
       categoryError: null,
       descriptionError: null,
       formError: null,
+      categoryData:[
+        {id:1,text:'Enquiry'},
+        {id:2,text:'Complaint'},
+        {id:3,text:'Order Related'},
+        {id:4,text:'Account Related'},
+        {id:5,text:'Product Related'},
+        {id:6,text:'Payment Related'},
+        {id:7,text:'Bar Related'}
+      ]
     };
   }
 
@@ -46,60 +55,64 @@ export default class HelpSupport extends Component {
   }
 
   validateField = (fieldName) => {
+    console.log("field name");
     switch (fieldName) {
       case 'name':
         if (this.state.name == null || this.state.name.trim() == '') {
-          this.setState({ nameError: '* Name mandatory', loader: false });
+          this.setState({ nameError: null, loader: false,formError:'Name fields are mandatory' });
           return;
         } else {
-          this.setState({ nameError: null });
+          this.setState({ nameError: null,formError:null });
         }
         break;
       case 'email':
         if (this.state.email == null || this.state.email.trim() == '') {
-          this.setState({ emailError: '* Email id mandatory', loader: false });
+          this.setState({ emailError: null, loader: false,formError:'Email fields are mandatory' });
           return;
         } else if (!Util.validEmail(this.state.email)) {
-          this.setState({ emailError: '* Invalid email id', loader: false });
+          this.setState({ emailError: 'Invalid email id', loader: false });
           return;
         } else {
-          this.setState({ emailError: null });
+          this.setState({ emailError: null,formError:null });
         }
         break;
       case 'mobileNumber':
-        let zero = this.state.mobileNumber.startsWith('0');
         if (this.state.mobileNumber == null || this.state.mobileNumber.trim() == '') {
-          this.setState({ mobileError: '* Mobile number mandatory', loader: false });
+          this.setState({ mobileError: ' ', loader: false,formError:'Mobile fields are mandatory'});
           return;
         } else if (!Util.validMobile(this.state.mobileNumber)) {
           this.setState({ mobileError: '* Invalid mobile number', loader: false });
           return;
-        } else if (zero) {
+        }
+        const zero = this.state.mobileNumber.startsWith('0');
+        if (zero) {
           this.setState({ mobileError: '* Mobile number should not start with a zero' });
           return;
         } else {
-          this.setState({ mobileError: null });
+          this.setState({ mobileError: null,formError:null });
         }
         break;
       case 'description':
         if (this.state.description == null || this.state.description.trim() == '') {
-          this.setState({ descriptionError: '* Description mandatory', loader: false });
+          this.setState({ descriptionError: ' ', loader: false ,formError:'Description fields are mandatory'});
           return;
         } else {
-          this.setState({ descriptionError: null });
+          this.setState({ descriptionError: null,formError:null });
         }
         break;
       case 'category':
-        if (this.state.categoryError == null || this.state.categoryError.trim() == '') {
-          this.setState({ categoryError: '* Category mandatory', loader: false });
+        console.log("this.state.category",this.state.category);
+        if (this.state.category == null || this.state.category.trim() == '') {
+          this.setState({ categoryError: ' ', loader: false,formError:'Category fields are mandatory' });
           return;
         } else {
-          this.setState({ categoryError: null });
+          this.setState({ categoryError: null,formError:null });
         }
         break;
       default:
         break;
     }
+    console.log("fomr error",this.state.formError);
   }
 
   onProceed = async () => {
@@ -109,9 +122,12 @@ export default class HelpSupport extends Component {
     this.validateField('mobileNumber');
     this.validateField('description');
     this.validateField('category');
-    if (this.state.nameError == null && this.state.emailError == null &&
-      this.state.mobileError == null && this.state.descriptionError == null &&
-      this.state.descriptionError == null && this.state.categoryError == null) {
+    console.log(this.state.formError);
+    // if (this.state.nameError == null && this.state.emailError == null &&
+    //   this.state.mobileError == null && this.state.descriptionError == null &&
+    //   this.state.categoryError == null && this.state.formError == null) 
+    if(this.state.formError == null)
+    {
       var raw = {
         name: this.state.name,
         contact: this.state.mobileNumber,
@@ -132,13 +148,14 @@ export default class HelpSupport extends Component {
         this.setState({ formError: null, loader: false });
       } catch (error) {
         console.log("error", error);
-        this.setState({ formError: '* ' + error, loader: false });
+        //this.setState({ formError: '* ' + error, loader: false });
       }
     }
   };
 
   toggle = () => {
-    this.setState({ isToggle: !this.state.isToggle });
+    this.setState({ isToggle:!this.state.isToggle });
+    console.log("toggle after",this.state.isToggle);
   };
 
   onSelected = (value) => {
@@ -245,19 +262,48 @@ export default class HelpSupport extends Component {
                 style={styles.imageStyle}
               />
             </View>
-            <TouchableOpacity onPress={() => this.onSelected('Account')}>
-              <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == 'Account' ? styles.selected : '']}>
-                <Text style={styles.inputText}>Account</Text>
+            {/* {
+              this.state.categoryData.filter((item, index) => {
+                <TouchableOpacity onPress={() => this.onSelected(item)}>
+                  <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == item.text ? styles.selected : '']}>
+                    <Text style={styles.inputText}>{item.text}</Text>
+                  </View>
+                </TouchableOpacity>
+              })
+            } */}
+            <TouchableOpacity onPress={() => this.onSelected('Enquiry')}>
+              <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == 'Enquiry' ? styles.selected : '']}>
+                <Text style={styles.inputText}>Enquiry</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.onSelected('Payment')}>
-              <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == 'Payment' ? styles.selected : '']}>
-                <Text style={styles.inputText}>Payment</Text>
+            <TouchableOpacity onPress={() => this.onSelected('Complaint')}>
+              <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == 'Complaint' ? styles.selected : '']}>
+                <Text style={styles.inputText}>Complaint</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.onSelected('Order')}>
-              <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == 'Order' ? styles.selected : '']} >
-                <Text style={styles.inputText}>Order</Text>
+            <TouchableOpacity onPress={() => this.onSelected('Order Related')}>
+              <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == 'Order Related' ? styles.selected : '']} >
+                <Text style={styles.inputText}>Order Related</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.onSelected('Account Related')}>
+              <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == 'Account Related' ? styles.selected : '']} >
+                <Text style={styles.inputText}>Account Related</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.onSelected('Product Related')}>
+              <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == 'Product Related' ? styles.selected : '']} >
+                <Text style={styles.inputText}>Product Related</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.onSelected('Payment Related')}>
+              <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == 'Payment Related' ? styles.selected : '']} >
+                <Text style={styles.inputText}>Payment Related</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.onSelected('Bar Related')}>
+              <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == 'Bar Related' ? styles.selected : '']} >
+                <Text style={styles.inputText}>Bar Related</Text>
               </View>
             </TouchableOpacity>
             {this.state.categoryError &&
@@ -273,11 +319,15 @@ export default class HelpSupport extends Component {
               error={this.state.descriptionError}
             />
 
-            {this.state.formError &&
-              <View style={styles.errorContainer}>
+            {this.state.formError == null ?
+            (<View style={styles.errorContainer}>
+              <Text style={styles.errorText}>All fields are mandatory</Text>
+            </View>):
+              (<View style={styles.errorContainer}>
                 <Text style={styles.errorText}>{this.state.formError}</Text>
-              </View>
+              </View>)
             }
+            
           </View>
           <View>
             <View style={styles.btnContainer}>
