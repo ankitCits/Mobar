@@ -134,7 +134,9 @@ class BarCard extends Component {
                         </Text>
                         <View>
                             {/* numberOfLines={2} ellipsizeMode='tail' */}
-                            <Text style={styles.textAddress}>{this.state.data.address}</Text>
+                            <Text style={styles.textAddress}
+                             numberOfLines={2}
+                            >{this.state.data.address}</Text>
                         </View>
                         <View style={styles.footer}>
                             <TouchableOpacity style={styles.details}>
