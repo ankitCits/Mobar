@@ -44,7 +44,8 @@ export default class About extends Component {
               <TouchableOpacity
                 style={styles.helpBottomList}
                 onPress={async () =>
-                  await Linking.openURL('https://www.mobar.sg/p/About-Us')
+                  this.props.navigation.navigate('Info',{title:'About Us'})
+                  //await Linking.openURL('https://www.mobar.sg/p/About-Us')
                 }>
                 <Text style={styles.helpBottomListText}>About Mobar</Text>
                 <Icon
@@ -60,7 +61,8 @@ export default class About extends Component {
               <TouchableOpacity
                 style={styles.helpBottomList}
                 onPress={async () =>
-                  await Linking.openURL('https://www.mobar.sg')
+                  this.props.navigation.navigate('Info',{title:'Privacy Policy'})
+                  //await Linking.openURL('https://www.mobar.sg')
                 }>
                 <Text style={styles.helpBottomListText}>Privacy Policy</Text>
                 <Icon
@@ -76,7 +78,8 @@ export default class About extends Component {
               <TouchableOpacity
                 style={styles.helpBottomList}
                 onPress={async () =>
-                  await Linking.openURL('https://www.mobar.sg/p/terms')
+                  this.props.navigation.navigate('Info',{title:'Term & Condition'})
+                  //await Linking.openURL('https://www.mobar.sg/p/terms')
                 }>
                 <Text style={styles.helpBottomListText}>
                   Terms & Conditions
@@ -122,7 +125,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   helpBottomList: {
-    margin: 16,
+    margin: 15,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

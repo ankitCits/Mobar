@@ -212,19 +212,18 @@ class ProductCard extends Component {
                         </TouchableOpacity>
                         <Text
                             style={styles.prodName}>
-                            {this.state.data.name}
+                            {this.state.data.name.substring(0,16)}
                         </Text>
                        
-                        <Text
+                        {/* <Text
                             style={styles.prodDesText}
                              >
-                            {this.state.data.shortDescription}
-                         </Text>
-                         {/* <HTMLView
-                             style={styles.prodDesText}
-                             value={this.data.shortDescription}
-                             >
-                         </HTMLView> */}
+                            {this.state.data.shortDescription = this.state.data.shortDescription.substring(3, 1) + '.'}
+                         </Text> */}
+                        <View style={styles.oneLine}>
+                            <HTMLView value={this.state.data.shortDescription.substring(0,20)} />
+                        </View>
+                         
                         <Text
                             style={styles.priceText}>
                             ${this.state.data.ecom_aca_product_units[0].unitUserPrice}
@@ -294,13 +293,15 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginBottom: 10,
         alignSelf: 'center',
-        backgroundColor: '#fff',
+        backgroundColor:'#fff',
         borderRadius: 10,
-        height: screenHeight(30),
         marginBottom: 12,
     },
     itemDetails: {
         alignItems: 'center',
+    },
+    oneLine:{
+      marginLeft:5,
     },
     favContainer: {
         width: 30,

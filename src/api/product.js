@@ -1,4 +1,4 @@
-import { A_KEY, BASE_URL } from '../config';
+import { A_KEY, BASE_URL, MY_HEADER } from '../config';
 import { getAccessToken } from '../localstorage';
 
 export const addToFav = (payload) => {
@@ -269,3 +269,21 @@ export const fetchCollectionData = () => {
             });
     })
 }
+
+export const getAllPages = () => {
+    return new Promise(async (resolve, reject) => {
+        fetch(`${BASE_URL}/common/allPages`, {
+            method: 'GET',
+            headers: MY_HEADER,
+        }).then(result => result.json()).then(responseDetail => {
+            if (responseDetail.response) {
+                resolve(responseDetail);
+            }
+            if (responseDetail.errors) {
+                reject(responseDetail.errors[0].msg)
+            }
+        }).catch(error => {
+            reject(error.message);
+        });
+    });
+};
