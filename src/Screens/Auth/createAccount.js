@@ -212,7 +212,7 @@ export default class CreateAccount extends Component {
         }
 
         if (response.errors) {
-          this.setState({ formError: 'Try again!', loader: false });
+          this.setState({ formError: response.errors[0].msg, loader: false });
           // ToastAndroid.showWithGravity(
           //   response.errors[0].msg,
           //   ToastAndroid.LONG,

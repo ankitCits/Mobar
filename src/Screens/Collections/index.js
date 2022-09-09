@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Modal,
+  ActivityIndicator,
   Alert,
   ToastAndroid,
 } from 'react-native';
@@ -17,26 +18,34 @@ import { FontFamily } from '../../Theme/FontFamily';
 import images from '../../assets/images';
 import { getAccessToken } from '../../localstorage';
 import { ThemeColors } from '../../Theme/ThemeColors';
+import NoContentFound from '../../Component/NoContentFound';
+import HTMLView from 'react-native-htmlview';
 export default class Collections extends Component {
   constructor(props) {
     super(props);
     this.state = {
       visibilityQuantity: 30,
       modalVisible: false,
+      hostUrl:'',
+      isLoading:false,
       data: [],
     };
   }
 
   componentDidMount() {
-    this.fetchData();
+    // const token = await getAccessToken();
+    // console.log("Token ",token);
+    // if (token != null) {
+      this.fetchData();
   }
 
   fetchData = async () => {
     try {
+      this.setState({isLoading:true});
       const response = await fetchCollectionData();
-      console.log("Collection > fetchData > response", response.response.result.data);
-      //this.setState({data:})
+      this.setState({hostUrl:response.response.result.hostUrl,data:response.response.result.data,isLoading:false});
     } catch (error) {
+      this.setState({isLoading:false});
       ToastAndroid.showWithGravity(
         error,
         ToastAndroid.LONG,
@@ -120,18 +129,21 @@ export default class Collections extends Component {
             </View>
           </View>
         </View>
-
+        {this.state.isLoading ? (
+                <ActivityIndicator size="small" color={ThemeColors.CLR_WHITE} />
+              ) : 
+        this.state.data && this.state.data.length > 0 ? 
+        this.state.data.map((item,index)=>
         <>
-          <View
+          <TouchableOpacity
             style={styles.productView}
             onPress={() =>
               this.props.navigation.navigate('OrderHistoryDetail')
             }>
             <View style={styles.productInnerView}>
               <Image
-                resizeMode={'cover'}
-                source={images.product2}
-                defaultSource={images.product2}
+                source={{ uri: `${this.state.hostUrl + item.ecom_aca_product_unit.ecom_ac_product.images}` }}
+                style={{width:75,height:75}}
               />
             </View>
             <View style={styles.item}>
@@ -139,28 +151,29 @@ export default class Collections extends Component {
                 style={styles.itemHeader}>
                 <Text
                   style={styles.title}>
-                  Chivas Regal 12
+                  {item.ecom_aca_product_unit.ecom_ac_product.name}
                 </Text>
               </View>
-
+              <View style={styles.itemDes}>
+                <HTMLView
+                  value={item.ecom_aca_product_unit.ecom_ac_product.shortDescription.substr(0,28)} />                
+              </View>
+              {/* <View>
+                <Text
+                  style={styles.itemDes}>
+                  Available Qty: {item.availableQty+' '+item.unitType}
+                </Text>
+              </View> */}
               <View>
                 <Text
                   style={styles.itemDes}>
-                  Blended
+                  Qty: {item.ecom_aca_product_unit.unitQty + ' ' +item.ecom_aca_product_unit.unitType}
                 </Text>
               </View>
-
-              <View>
-                <Text
-                  style={styles.itemDes}>
-                  Available Qty: 150 ml
-                </Text>
-              </View>
-
               <View>
                 <Text
                   style={[styles.validDate, styles.itemDes]}>
-                  Valid until: 20 Jun 2021
+                  Valid until: {item.validTillDate}
                 </Text>
               </View>
             </View>
@@ -182,9 +195,9 @@ export default class Collections extends Component {
                 </TouchableOpacity>
               </View>
             </View>
-          </View>
+          </TouchableOpacity>
 
-          <View
+          {/* <View
             style={styles.productView}
             onPress={() =>
               this.props.navigation.navigate('OrderHistoryDetail')
@@ -244,8 +257,12 @@ export default class Collections extends Component {
                 </TouchableOpacity>
               </View>
             </View>
-          </View>
-        </>
+          </View> */}
+        
+        </>):(
+            <NoContentFound title="No Data Found" />
+          )}
+
 
         {/* <View style={{marginTop: '10%', flex: 1, justifyContent: 'flex-end'}}>
           <View
