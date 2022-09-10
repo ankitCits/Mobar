@@ -14,4 +14,7 @@
     <!-- Change textColor of the date modal -->
     <item name="android:textColorPrimary">#000000</item>
     </style>
+    <style name="Theme.MyApp" parent="Theme.MaterialComponents.DayNight">
+        <!-- ... -->
+    </style>
 </resources>

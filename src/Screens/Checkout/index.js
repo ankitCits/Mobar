@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -13,13 +13,60 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
 import HeaderSide from '../Component/HeaderSide';
+import PaymentForm from '../../Component/PaymentForm';
+import { initStripe, confirmPayment } from '@stripe/stripe-react-native';
+import { fetchPaymentIntentClientSecret } from '../../api/order';
+// pk_test_QNBEnRDDdYq1Yc7TZjVZhhwG00JySy2oJq
+// sk_test_f1pXZRO62VZWj5xCJvqsOnLa00Kaq1E3nT
 export default class Checkout extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
       visibility: false,
       paymentType: 'creditDebit',
     };
+  }
+
+
+  componentDidMount() {
+    async function initialize() {
+      await initStripe({
+        publishableKey: 'pk_test_QNBEnRDDdYq1Yc7TZjVZhhwG00JySy2oJq',
+      });
+    }
+    initialize().catch(console.error);
+  }
+
+  placeOrder = async () => {
+    console.log('placeorder');
+    if (this.state.paymentType == 'creditDebit') {
+      const billingDetails = {
+        email: 'test@test.com',
+      };
+      const postData = { orderAmount: 1000 }; // get dynamic amount and pass to below api 
+      const res = await fetchPaymentIntentClientSecret(postData);
+      const { paymentIntent, error } = await confirmPayment(
+        res.response.result.paymentIntent,
+        {
+          paymentMethodType: 'Card',
+          paymentMethodData: {
+            billingDetails,
+          },
+        },
+        { setupFutureUsage: 'OffSession', }
+      );
+      if (error) {
+        console.log(error);
+        Alert.alert(`${error.code}`, error.localizedMessage)
+      } else if (paymentIntent) {
+        if (paymentIntent.status === 'Succeeded') {
+          console.log(paymentIntent)
+          // await placeOrder(orderData); // Call api to submit order
+          // this.props.navigation.navigate('OrderHistoryDetail', { home: true }) // navigate to order history page
+        }
+      }
+    }
   }
 
   render() {
@@ -34,7 +81,7 @@ export default class Checkout extends Component {
           onClick={() => this.props.navigation.pop()}
         />
         <ScrollView>
-          <View style={{margin: 15, marginBottom: 0}}>
+          <View style={{ margin: 15, marginBottom: 0 }}>
             <Text
               style={{
                 fontSize: 20,
@@ -47,8 +94,8 @@ export default class Checkout extends Component {
               <View style={styles.paymentSelect}>
                 <TouchableOpacity
                   style={styles.paymentCardList}
-                  onPress={() => this.setState({paymentType: 'creditDebit'})}>
-                  <View style={{flexDirection: 'row'}}>
+                  onPress={() => this.setState({ paymentType: 'creditDebit' })}>
+                  <View style={{ flexDirection: 'row' }}>
                     <Image
                       // style={styles.productImg}
                       resizeMode={'cover'}
@@ -60,7 +107,7 @@ export default class Checkout extends Component {
                     </Text>
                   </View>
                   <TouchableOpacity
-                    onPress={() => this.setState({paymentType: 'creditDebit'})}>
+                    onPress={() => this.setState({ paymentType: 'creditDebit' })}>
                     <Icon
                       name={
                         this.state.paymentType == 'creditDebit'
@@ -82,8 +129,8 @@ export default class Checkout extends Component {
                 {/* netBanking */}
                 <TouchableOpacity
                   style={styles.paymentCardList}
-                  onPress={() => this.setState({paymentType: 'netBanking'})}>
-                  <View style={{flexDirection: 'row', marginLeft: 5}}>
+                  onPress={() => this.setState({ paymentType: 'netBanking' })}>
+                  <View style={{ flexDirection: 'row', marginLeft: 5 }}>
                     <Image
                       // style={styles.productImg}
                       resizeMode={'cover'}
@@ -93,7 +140,7 @@ export default class Checkout extends Component {
                     <Text style={styles.paymentcardName}>Net Banking</Text>
                   </View>
                   <TouchableOpacity
-                    onPress={() => this.setState({paymentType: 'netBanking'})}>
+                    onPress={() => this.setState({ paymentType: 'netBanking' })}>
                     <Icon
                       name={
                         this.state.paymentType == 'netBanking'
@@ -115,19 +162,19 @@ export default class Checkout extends Component {
                 {/* payPal */}
                 <TouchableOpacity
                   style={styles.paymentCardList}
-                  onPress={() => this.setState({paymentType: 'payPal'})}>
-                  <View style={{flexDirection: 'row', marginLeft: 5}}>
+                  onPress={() => this.setState({ paymentType: 'payPal' })}>
+                  <View style={{ flexDirection: 'row', marginLeft: 5 }}>
                     <Image
                       // style={styles.productImg}
                       resizeMode={'cover'}
                       source={images.payPal}
                       defaultSource={images.creditCard}
-                      style={{alignSelf: 'center'}}
+                      style={{ alignSelf: 'center' }}
                     />
                     <Text style={styles.paymentcardName}>PayPal</Text>
                   </View>
                   <TouchableOpacity
-                    onPress={() => this.setState({paymentType: 'payPal'})}>
+                    onPress={() => this.setState({ paymentType: 'payPal' })}>
                     <Icon
                       name={
                         this.state.paymentType == 'payPal'
@@ -149,8 +196,8 @@ export default class Checkout extends Component {
                 {/* SavedCard */}
                 <TouchableOpacity
                   style={styles.paymentCardList}
-                  onPress={() => this.setState({paymentType: 'savedCard'})}>
-                  <View style={{flexDirection: 'row'}}>
+                  onPress={() => this.setState({ paymentType: 'savedCard' })}>
+                  <View style={{ flexDirection: 'row' }}>
                     <Image
                       // style={styles.productImg}
                       resizeMode={'cover'}
@@ -162,7 +209,7 @@ export default class Checkout extends Component {
                     </Text>
                   </View>
                   <TouchableOpacity
-                    onPress={() => this.setState({paymentType: 'savedCard'})}>
+                    onPress={() => this.setState({ paymentType: 'savedCard' })}>
                     <Icon
                       name={
                         this.state.paymentType == 'savedCard'
@@ -183,7 +230,7 @@ export default class Checkout extends Component {
 
                 {/* AddNew */}
                 <View style={styles.paymentCardList}>
-                  <View style={{flexDirection: 'row', marginLeft: 5}}>
+                  <View style={{ flexDirection: 'row', marginLeft: 5 }}>
                     <Icon name="add" size={28} color="#969696" />
                     <Text style={styles.paymentcardName}>Add new card</Text>
                   </View>
@@ -206,11 +253,12 @@ export default class Checkout extends Component {
                 }}>
                 Enter Payment Details
               </Text>
-
+              <PaymentForm></PaymentForm>
+              {/* 
               <View style={styles.paymentSelect}>
                 <View style={styles.paymentDetailCardList}>
-                  <View style={{marginTop: 0}}>
-                    <View style={{marginLeft: 10}}>
+                  <View style={{ marginTop: 0 }}>
+                    <View style={{ marginLeft: 10 }}>
                       <Text
                         style={{
                           color: '#969696',
@@ -221,7 +269,7 @@ export default class Checkout extends Component {
                     </View>
                     <View style={styles.sectionStyle}>
                       <TextInput
-                        style={{flex: 1, paddingLeft: 15}}
+                        style={{ flex: 1, paddingLeft: 15 }}
                         placeholder=""
                         underlineColorAndroid="transparent"
                         placeholderTextColor="#000"
@@ -231,8 +279,8 @@ export default class Checkout extends Component {
                 </View>
 
                 <View style={styles.paymentDetailCardList}>
-                  <View style={{marginTop: 0}}>
-                    <View style={{marginLeft: 10}}>
+                  <View style={{ marginTop: 0 }}>
+                    <View style={{ marginLeft: 10 }}>
                       <Text
                         style={{
                           color: '#969696',
@@ -243,7 +291,7 @@ export default class Checkout extends Component {
                     </View>
                     <View style={styles.sectionStyle}>
                       <TextInput
-                        style={{flex: 1, paddingLeft: 15}}
+                        style={{ flex: 1, paddingLeft: 15 }}
                         placeholder=""
                         underlineColorAndroid="transparent"
                         placeholderTextColor="#000"
@@ -253,8 +301,8 @@ export default class Checkout extends Component {
                 </View>
 
                 <View style={styles.paymentDetailCardList}>
-                  <View style={{marginTop: 0}}>
-                    <View style={{marginLeft: 10}}>
+                  <View style={{ marginTop: 0 }}>
+                    <View style={{ marginLeft: 10 }}>
                       <Text
                         style={{
                           color: '#969696',
@@ -265,7 +313,7 @@ export default class Checkout extends Component {
                     </View>
                     <View style={styles.sectionStyleNext}>
                       <TextInput
-                        style={{flex: 1, paddingLeft: 15}}
+                        style={{ flex: 1, paddingLeft: 15 }}
                         placeholder="mm/yy"
                         underlineColorAndroid="transparent"
                         placeholderTextColor="#000"
@@ -273,8 +321,8 @@ export default class Checkout extends Component {
                     </View>
                   </View>
 
-                  <View style={{marginTop: 0, right: '50%'}}>
-                    <View style={{marginLeft: 10}}>
+                  <View style={{ marginTop: 0, right: '50%' }}>
+                    <View style={{ marginLeft: 10 }}>
                       <Text
                         style={{
                           color: '#969696',
@@ -285,7 +333,7 @@ export default class Checkout extends Component {
                     </View>
                     <View style={styles.sectionStyleNext}>
                       <TextInput
-                        style={{flex: 1, paddingLeft: 15}}
+                        style={{ flex: 1, paddingLeft: 15 }}
                         placeholder=""
                         underlineColorAndroid="transparent"
                         placeholderTextColor="#000"
@@ -293,7 +341,7 @@ export default class Checkout extends Component {
                     </View>
                   </View>
                 </View>
-              </View>
+              </View> */}
             </View>
           ) : null}
 
@@ -420,13 +468,14 @@ export default class Checkout extends Component {
                 </Text>
               </View>
 
-              <View style={{marginTop: '10%', marginBottom: 10}}>
+              <View style={{ marginTop: '10%', marginBottom: 10 }}>
                 <TouchableOpacity
                   style={styles.save}
                   onPress={() =>
-                    this.props.navigation.navigate('OrderHistoryDetail',{home:true})
+                    this.placeOrder()
+                    // this.props.navigation.navigate('OrderHistoryDetail', { home: true })
                   }>
-                  <Text style={{color: '#fff', fontSize: 18}}>PLACE ORDER</Text>
+                  <Text style={{ color: '#fff', fontSize: 18 }}>PLACE ORDER</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -444,7 +493,7 @@ export default class Checkout extends Component {
                       ]
                     )
                     // this.props.navigation.navigate('MyBottomTabs')
-                  
+
                   }}
                   style={{
                     marginTop: 10,
@@ -476,7 +525,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: '#fff',
     shadowColor: '#000',
-    shadowOffset: {width: 1, height: 1},
+    shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
     shadowRadius: 10,
     elevation: 5,
@@ -491,7 +540,7 @@ const styles = StyleSheet.create({
   },
   paymentDetailCardList: {
     margin: 10,
-    marginBottom:5,
+    marginBottom: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
