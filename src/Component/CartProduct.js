@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { showAlert } from '../api/auth';
-import { addToCart, removeFromCart } from '../api/product';
+import { addToCart, removeFromCart, updateToCart } from '../api/product';
 import images from '../assets/images';
 import { getAccessToken } from '../localstorage';
 import { FontFamily } from '../Theme/FontFamily';
@@ -19,26 +19,29 @@ export default class CartProduct extends React.Component {
     super(props);
     this.state = {
       data: this.props.item,
-      qty: 1
+      qty: parseInt(this.props.item.qty)
     };
   }
 
-  addCart = async () => {
+  updateCart = async (type) => {
     const token = await getAccessToken();
     if (token == null) {
       showAlert();
     } else {
       const cartItem = {
-        productUnitId: this.state.data.ecom_aca_product_unit.productUnitId,
-        comboId: 0,
-        qty: 1,
+        cartId: this.state.data.cartId,
+        type:type,
       };
       try {
-        const cartResponse = await addToCart(cartItem);
-        console.log("DetailBar > addToCart > response", cartResponse);
-        this.setState({ qty: this.state.qty + 1 });
+        const response = await updateToCart(cartItem);
+        if(type==1){
+          const qty = this.state.qty + 1;
+          this.setState({ qty:qty  });
+        }else{
+          const qty = this.state.qty - 1;
+          this.setState({ qty: qty });
+        } 
       } catch (error) {
-        console.log("Details Bars > addCart > catch", error);
         ToastAndroid.showWithGravity(
           error,
           ToastAndroid.LONG,
@@ -48,38 +51,22 @@ export default class CartProduct extends React.Component {
     }
   }
 
-  removeCart = async () => {
-    console.log("ProductCard > removeCart > Item", this.state.data.cartId);
-    const token = await getAccessToken();
-    if (token == null) {
-      showAlert();
-    } else {
-      try {
-        const response = await removeFromCart(this.state.data.cartId);
-        console.log("MyCard > CartProduct > response", response);
-        this.setState({ qty: this.state.qty - 1 });
-      } catch (error) {
-        ToastAndroid.showWithGravity(
-          error,
-          ToastAndroid.LONG,
-          ToastAndroid.BOTTOM,
-        );
-      }
-    }
+  onChange=(qty)=>{
+    return qty;
   }
 
   render() {
     const {
       item,
       hostUrl,
+      onChange,
       navigation,
       index
     } = this.props;
-    //console.log("CartProduct > state Data", this.state.data);
     return (
       <>
-        <View style={styles.container}>
-          <View style={styles.subContainer}>
+        <TouchableOpacity style={styles.container} key={index} onPress={this.props.onChange(this.state.qty,this.state.data.cartId)}>
+          <View style={styles.subContainer} key={index}>
             {/* Image */}
             <View style={styles.productInnerView}>
               {this.state.data.ecom_aca_product_unit && this.state.data.ecom_aca_product_unit.ecom_ac_product ?
@@ -95,7 +82,6 @@ export default class CartProduct extends React.Component {
                 />
               }
             </View>
-
             <View style={styles.details}>
               <View style={styles.header}>
                 {this.state.data.ecom_aca_product_unit && this.state.data.ecom_aca_product_unit.ecom_ac_product ?
@@ -133,7 +119,7 @@ export default class CartProduct extends React.Component {
             <View
               style={styles.qtyContainer}>
               <TouchableOpacity
-                onPress={() => { this.removeCart() }}
+                onPress={() => { this.updateCart(2) }}
                 style={styles.icon}>
                 <Icon name="remove" size={18} color="#fff" />
               </TouchableOpacity>
@@ -143,13 +129,13 @@ export default class CartProduct extends React.Component {
                 {this.state.qty}
               </Text>
               <TouchableOpacity
-                onPress={() => { this.addCart() }}
+                onPress={() => { this.updateCart(1) }}
                 style={styles.icon}>
                 <Icon name="add" size={18} color="#fff" />
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
       </>
     );
   }
@@ -158,8 +144,8 @@ export default class CartProduct extends React.Component {
 const styles = StyleSheet.create({
   container: {
     margin: 10,
-    marginBottom: 0,
-    paddingBottom:8,
+    marginBottom: 5,
+    //paddingBottom:8,
     //backgroundColor:"powderblue"
   },
   subContainer: {
@@ -174,7 +160,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     marginTop: 15,
-    marginBottom:15,
+    //marginBottom:15,
   },
   productInnerView: {
     width: '28%',
@@ -190,7 +176,7 @@ const styles = StyleSheet.create({
   details: {
     alignSelf: 'center',
     marginLeft: 20,
-    width:140,
+    width:120,//140,
   },
   header: {
     marginTop: 5,
@@ -211,6 +197,10 @@ const styles = StyleSheet.create({
   qtyContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    alignContent:'flex-start',
+    alignSelf:'center',
+    justifyContent:'center',
+    width:100
   },
   priceContainer: {
     flexDirection: 'row',

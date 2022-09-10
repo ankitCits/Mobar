@@ -22,6 +22,7 @@ import { FontFamily } from '../../Theme/FontFamily';
 import { addToCart } from '../../api/product';
 import { getAccessToken } from '../../localstorage';
 import { showAlert } from '../../api/auth';
+import HTMLView from 'react-native-htmlview';
 
 export default class ProductDetailBars extends Component {
   constructor(props) {
@@ -123,7 +124,7 @@ export default class ProductDetailBars extends Component {
       const cartItem = {
         productUnitId: prodUnitId,
         comboId: 0,
-        qty: qty,
+        qty: 1,
       };
       try {
         const cartResponse = await addToCart(cartItem);
@@ -443,15 +444,20 @@ export default class ProductDetailBars extends Component {
                           {item.name}
                         </Text>
                       </View>
-                      <View>
-                        <Text
+                      <View style={{
+                            fontSize: 14,
+                            color: '#4D4F50',
+                            fontWeight: '400',
+                          }}>
+                        {/* <Text
                           style={{
                             fontSize: 14,
                             color: '#4D4F50',
                             fontWeight: '400',
                           }}>
                           {item.shortDescription}
-                        </Text>
+                        </Text> */}
+                        <HTMLView value={item.shortDescription} />
                       </View>
 
                       <View

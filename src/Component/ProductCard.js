@@ -14,7 +14,7 @@ import {
 import images from '../assets/images';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { connect } from 'react-redux';
-import { addToCart, removeFromCart, addToFav, removeToFav } from '../api/product';
+import { addToCart, removeFromCart, addToFav, removeToFav, updateToCart } from '../api/product';
 import { addToWishlist, removeToWishlist } from '../api/wishlist';
 import { getAccessToken } from '../localstorage';
 import { showAlert } from '../api/auth';
@@ -34,8 +34,8 @@ class ProductCard extends Component {
         };
     }
 
-    addCart = async (item, index) => {
-        // console.log("ProductCard >  addToCart > Item", item.ecom_aca_product_units[0].productUnitId);
+    addCart = async (productUnitId, index) => {
+        console.log("ProductCard >  addToCart > id", productUnitId);
         // console.log("ProductCard >  addToCart > Item", item.cart);
         const token = await getAccessToken();
         if (token == null) {
@@ -43,11 +43,12 @@ class ProductCard extends Component {
         } else {
             try {
                 const sendData = {
-                    productUnitId: item.productId,
+                    productUnitId: productUnitId,
                     comboId: 0,
-                    qty: item.cart + 1,
+                    qty: 1,
                 };
                 const response = await addToCart(sendData);
+                console.log("ProductCard > addCart > response",response);
                 const data = this.state.categoryData.data;
                 data[index].cart = data[index].cart + 1;
                 this.setState({
@@ -66,18 +67,51 @@ class ProductCard extends Component {
         }
     }
 
-    removeFromCart = async (item, index) => {
+    updateCart = async (item,type,index) => {
+        console.log("ProductCart > updateCart > id",item);
         const token = await getAccessToken();
         if (token == null) {
             showAlert();
         } else {
             try {
                 const sendData = {
-                    productUnitId: item.productId,
-                    comboId: 0,
-                    qty: item.cart - 1,
+                    cartId: item.cartId,
+                    type: type,//type 1 for add and 2 for substraction
                 };
-                await removeFromCart(sendData);
+                const response = await updateToCart(sendData);
+                console.log("ProductCard >  updateCart > response",response);
+                const data = this.state.categoryData.data;
+                data[index].cart = type == 1 ? data[index].cart + 1:data[index].cart - 1;
+                this.setState({
+                    categoryData: {
+                        data,
+                        hostUrl: this.state.categoryData.hostUrl,
+                    },
+                });
+            } catch (error) {
+                ToastAndroid.showWithGravity(
+                    error,
+                    ToastAndroid.LONG,
+                    ToastAndroid.BOTTOM,
+                );
+            }
+        }
+    }
+
+    removeCart = async (cartId, index) => {
+        console.log("ProductCard > removeCart > id",cartId);
+        const token = await getAccessToken();
+        if (token == null) {
+            showAlert();
+        } else {
+            try {
+                // const sendData = {
+                //     productUnitId: prodUnitId,
+                //     comboId: 0,
+                //     qty: 1,
+                // };
+                const response =  await removeFromCart(cartId);
+                console.log("response > removeCart > response",response);
                 const data = this.state.categoryData.data;
                 data[index].cart = data[index].cart - 1;
                 this.setState({
@@ -172,6 +206,7 @@ class ProductCard extends Component {
             navigation,
             index
         } = this.props;
+        //console.log("ProductCard > Item",item);
         return (
             <View style={styles.itemOuterContainer}>
                 <View style={styles.itemContainer}>
@@ -214,7 +249,6 @@ class ProductCard extends Component {
                             style={styles.prodName}>
                             {this.state.data.name.substring(0,16)}
                         </Text>
-                       
                         {/* <Text
                             style={styles.prodDesText}
                              >
@@ -249,7 +283,7 @@ class ProductCard extends Component {
                             {this.state.data.cart ? (
                                 <>
                                     <TouchableOpacity
-                                        onPress={() => this.removeFromCart(this.state.data, index)}
+                                        onPress={() =>item.ecom_aca_product_units[0].ecom_ba_cart ? this.updateCart(item.ecom_aca_product_units[0].ecom_ba_cart,2,index):''}
                                         style={styles.cartActionIcon}>
                                         <Icon
                                             name="remove"
@@ -264,7 +298,7 @@ class ProductCard extends Component {
                                 </>
                             ) : null}
                             <TouchableOpacity
-                                onPress={() => this.addCart(this.state.data, index)}
+                                onPress={() => item.ecom_aca_product_units[0].ecom_ba_cart ? this.updateCart(item.ecom_aca_product_units[0].ecom_ba_cart,1,index) : this.addCart(item.ecom_aca_product_units[0].productUnitId, index)}
                                 style={styles.cartActionIcon}>
                                 <Icon name="add" size={18} color="#fff" />
                             </TouchableOpacity>
@@ -375,6 +409,7 @@ const styles = StyleSheet.create({
     },
     cartActionIcon: {
         alignSelf: 'center',
+        alignItems:'center',
         backgroundColor: '#BABABA',
         borderRadius: 20,
         marginBottom: 5,
@@ -384,7 +419,9 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '700',
         alignItems: 'center',
-        marginTop: -5,
+        alignContent:'center',
+        justifyContent:'center',
+        marginTop:-2,
         marginRight: 5,
     }
 });

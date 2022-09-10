@@ -11,6 +11,7 @@ import {
   FlatList,
   ToastAndroid,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import { set } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -29,6 +30,7 @@ export default class MyCard extends Component {
       hostUrl: '',
       totalQty: 0,
       payableTotal: 0,
+      isFetching:false,
       isLoading:false,
     };
   }
@@ -37,6 +39,14 @@ export default class MyCard extends Component {
     this.fetchData();
   }
 
+  componentDidUpdate(){
+    
+  }
+
+  // componentWillUpdate(){
+    
+  // }
+
   fetchData = async () => {
     this.setState({isLoading:true});
     try {
@@ -44,16 +54,16 @@ export default class MyCard extends Component {
       this.setState({
         cart: resp.response.result.data,
         hostUrl: resp.response.result.hostUrl,
+        isFetching:false,
         isLoading:false
       });
       if (this.state.cart.length > 0) {
-        this.setState({ totalQty: this.state.cart.reduce((x, c) => x + parseInt(c.qty), 0) });
+        this.setState({ totalQty: this.state.cart.length,isFetching:false, });
         this.setState({ payableTotal: this.state.cart.reduce((x, c) => x + parseInt(c.productAmount), 0) });
         // this.setState({ payableTotal: this.state.cart.reduce((x, c) => x + parseInt(c.productAmount), 0) });
       }
-      //console.log("state cart details",this.state.cart);
     } catch (error) {
-      this.setState({isLoading:false});
+      this.setState({isLoading:false,isFetching:false,});
       ToastAndroid.showWithGravity(
         error,
         ToastAndroid.LONG,
@@ -62,10 +72,24 @@ export default class MyCard extends Component {
     }
   };
 
+  onChange = (qty,id) => {
+    console.log("Item",qty,id);
+    if (qty == 0) {
+      //this.setState({isFetching:true});
+      this.fetchData();
+      // const data=this.state.cart.filter(x => x.cartId != id);
+      // this.setState({ cart:this.state.cart.filter(x => x.cartId !== id),qty:this.state.qty-1 })
+    }
+  }
+
+  onRefresh=()=>{
+    this.fetchData();
+  }
+
   renderCartItems = (item, index) => {
     return (
       <>
-        <CartProduct navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />
+        <CartProduct navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} onChange={this.onChange} />
       </>
     );
   };
@@ -94,8 +118,21 @@ export default class MyCard extends Component {
           <FlatList
             data={this.state.cart}
             keyExtractor={(item, index) => index.toString()}
+            // onRefresh={this.onRefresh}
+            // refreshing={this.state.isFetching}
             renderItem={({ item, index }) => this.renderCartItems(item, index)}
           />
+          {/* <View style={{height:'46%'}}>
+          <ScrollView>
+            {
+              this.state.cart && this.state.cart.length > 0 && this.state.cart.map((cartItem, index)=>(
+                <CartProduct navigation={this.props.navigation} index={index} item={cartItem} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item, qty) }} />
+                ))
+            }
+            </ScrollView>
+          </View> */}
+
+
           <View style={styles.bottomContainer}>
             <View
               style={styles.subContainer}>
@@ -273,6 +310,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     marginTop: 0,
+    //flex:1,
     justifyContent: 'flex-end'
   },
   subContainer: {

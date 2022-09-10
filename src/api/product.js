@@ -74,7 +74,6 @@ export const removeToFav = (payload) => {
 };
 
 export const addToCart = (payload) => {
-    console.log("Product > addToCart > payload",payload);
     return new Promise(async (resolve, reject) => {
         const token = await getAccessToken(token);
         const myHeaders = new Headers();
@@ -93,9 +92,39 @@ export const addToCart = (payload) => {
         fetch(`${BASE_URL}/cart/addToCart`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log('ApiProduct > addToCart > result', result)
+                //console.log('ApiProduct > addToCart > result', result)
                 if (result.status == 'FAILED') {
                     reject(result.reason);
+                } else {
+                    resolve(result);
+                }
+            })
+        .catch(error => {
+                console.log('ApiProduct > addToCart > Catch', error);
+                reject(error.message);
+        });
+    })
+}
+
+export const updateToCart = (payload) => {
+    return new Promise(async (resolve, reject) => {
+        const token = await getAccessToken(token);
+        const myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+        myHeaders.append('A_Key', A_KEY);
+        myHeaders.append('Token', `${token}`);
+        const raw = JSON.stringify(payload);
+        const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow',
+        };
+        fetch(`${BASE_URL}/cart/updateTocart`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                if (result.errors) {
+                    reject(result.errors[0].msg);
                 } else {
                     resolve(result);
                 }
@@ -256,7 +285,7 @@ export const fetchCollectionData = () => {
         fetch(`${BASE_URL}/redeem/collection`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log('ApiProduct > fetchCollectionData > result', result)
+                // console.log('ApiProduct > fetchCollectionData > result', result)
                 if (result.errors) {
                     reject(result.errors[0].msg);
                 } else {

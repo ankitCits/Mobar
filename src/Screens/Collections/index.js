@@ -54,16 +54,14 @@ export default class Collections extends Component {
     }
   }
 
-  addCart = async () => {
+  addCart = async (prodUnitId) => {
     try {
-      //const cartResponse = await addToCart(cartItem);
-      // Alert.alert(
-      //   'Success',
-      //   'Item added to cart successfully',
-      //   [
-      //     { text: "OK", onPress: () => this.setState({ modalVisible: false }) }
-      //   ]
-      // );
+      const cartItem={
+        productUnitId:prodUnitId,
+        comboId:0,
+        qty:1
+      }
+      const cartResponse = await addToCart(cartItem);
       ToastAndroid.showWithGravity(
         'Item added to cart successfully',
         ToastAndroid.LONG,
@@ -136,14 +134,15 @@ export default class Collections extends Component {
         this.state.data.map((item,index)=>
         <>
           <TouchableOpacity
+          key={index}
             style={styles.productView}
             onPress={() =>
               this.props.navigation.navigate('OrderHistoryDetail')
             }>
-            <View style={styles.productInnerView}>
+            <View style={styles.productInnerView} key={index}>
               <Image
                 source={{ uri: `${this.state.hostUrl + item.ecom_aca_product_unit.ecom_ac_product.images}` }}
-                style={{width:75,height:75}}
+                style={styles.prodImg}
               />
             </View>
             <View style={styles.item}>
@@ -181,7 +180,7 @@ export default class Collections extends Component {
               style={styles.cartContainer}>
               <View style={styles.cart}>
                 <TouchableOpacity
-                  onPress={() => this.showModal()}
+                  onPress={() => this.addCart(item.ecom_aca_product_unit.productUnitId)}
                   style={styles.cartIcon}>
                   <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
                 </TouchableOpacity>
@@ -569,6 +568,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  prodImg:{width:75,height:75},
   item: {
     margin: 5,
     width:'45%',
