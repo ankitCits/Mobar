@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '700',
-    fontStyle: FontFamily.TAJAWAL_REGULAR,
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
     color: '#4D4F50',
     width: 150
   },
