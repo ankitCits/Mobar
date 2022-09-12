@@ -10,7 +10,9 @@ import {
   ScrollView,
   Modal,
 } from 'react-native';
+import HTMLView from 'react-native-htmlview';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { fetchRedeemBars } from '../../api/vendor';
 import images from '../../assets/images';
 import HeaderSide from '../Component/HeaderSide';
 export default class SelectBars extends Component {
@@ -20,11 +22,48 @@ export default class SelectBars extends Component {
       visibility: false,
       visibilityQuantity: 30,
       modalVisible: false,
-      itemselected: false,
+      collectionWallet:{},
+      itemSelected: 0,
+      hostUrl:'',
+      data:{}
     };
+    console.log("route data",props.route.params.data);
+  }
+
+  componentDidMount() {
+      this.fetchData();
+  }
+
+  fetchData = async () => {
+    try {
+      this.setState({isLoading:true});
+      const data= {
+        walletId:this.props.route.params.data.walletId,
+        productId:this.props.route.params.data.productId,
+        latitude: 1.28668,
+        longitude: 103.853607
+      };
+      console.log("router data",data);
+      const response = await fetchRedeemBars(data);
+      this.setState({
+        hostUrl:response.response.result.hostUrl,
+        data:response.response.result.productWithBar,
+        collectionWallet:response.response.result.collectionWallet,
+        isLoading:false});
+      console.log("State data ",this.state.data);
+    } catch (error) {
+      console.log("Select bars > catch > error",error);
+      this.setState({isLoading:false});
+      ToastAndroid.showWithGravity(
+        error,
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+      );
+    }
   }
 
   render() {
+    console.log("Select bars > fetchDataResponse > stateData",this.state.data);
     return (
       <SafeAreaView
         style={{
@@ -65,44 +104,41 @@ export default class SelectBars extends Component {
                 }}>
                 <Image
                   style={{
-                    width: 66,
-                    height: 118,
+                    width: 75,
+                    height: 75,
                   }}
-                  resizeMode={'cover'}
-                  source={images.product2}
-                  defaultSource={images.product2}
+                  source={{ uri: `${this.state.hostUrl + this.state.data.images}` }}
                 />
+                {/* <Text>{this.state.hostUrl + this.state.data.images}</Text> */}
               </View>
               <View
                 style={{
                   width: '70%',
+                  alignSelf:'flex-start',
+                  margin:10,
                 }}>
                 <Text
                   style={{
-                    fontSize: 25,
+                    fontSize: 20,
                     fontWeight: '700',
                     color: '#4D4F50',
-                    top: 20,
-                    // left: 20,
                   }}>
-                  Chivas Regal
+                  {this.state.data.name}
                 </Text>
-
                 <Text
                   style={{
                     fontSize: 18,
                     fontWeight: '500',
                     color: '#424242',
-                    top: 25,
-                    left: 5,
+                    top: 10,
+                    //left: 5,
                   }}>
-                  Available Qty: 500 ml
+                  Available Qty: {this.state.collectionWallet.availableQty + this.state.collectionWallet.unitType}
                 </Text>
 
                 <View
                   style={{
-                    top: 50,
-                    left: 5,
+                    top: 15,
                     flexDirection: 'row',
                     alignItems: 'center',
                   }}>
@@ -119,7 +155,7 @@ export default class SelectBars extends Component {
                       color: '#424242',
                       left: 5,
                     }}>
-                    Valid until: 20 Jun 2021
+                    Valid until: {this.state.collectionWallet.validTillDate}
                   </Text>
                 </View>
               </View>
@@ -150,11 +186,14 @@ export default class SelectBars extends Component {
               Select your nearest bar and redeem your drink
             </Text>
           </View>
+          { this.state.data.ecom_ae_vendors && this.state.data.ecom_ae_vendors.length > 0 ?
+          this.state.data.ecom_ae_vendors.map((item,index)=>
+          (
           <TouchableOpacity
             onPress={() => {
-              this.state.itemselected
-                ? this.setState({itemselected: false})
-                : this.setState({itemselected: true});
+              this.setState({itemSelected: item.vendorId})
+                //? this.setState({itemSelected: false})
+                //: this.setState({itemSelected: true});
             }}
             style={{
               width: '96%',
@@ -169,7 +208,7 @@ export default class SelectBars extends Component {
               shadowRadius: 5,
               elevation: 5,
               borderRadius: 10,
-              borderWidth: this.state.itemselected ? 2 : 0,
+              borderWidth: this.state.itemSelected == item.vendorId ? 2 : 0,
               borderColor: '#B41430',
             }}>
             <View
@@ -186,8 +225,7 @@ export default class SelectBars extends Component {
                     borderRadius:10
                 }}
                 resizeMode={'cover'}
-                source={images.nearMe}
-                defaultSource={images.nearMe}
+                source={{ uri: `${this.state.hostUrl + item.images}` }}
               >
                   <View style={{
                       backgroundColor:'#B41430',
@@ -208,16 +246,20 @@ export default class SelectBars extends Component {
             <View
               style={{
                 width: '50%',
+                flexDirection:'column',
+                justifyContent:'space-evenly',
+                alignContent: 'flex-start',
               }}>
               <Text
                 style={{
-                  fontSize: 21,
+                  fontSize: 18,
                   fontWeight: '700',
                   color: '#424242',
-                  top: 20,
+                  top: 10,
+                  width:'100%',
                   left: 20,
                 }}>
-                New Town Bar
+                {item.vendorShopName}
               </Text>
 
               <Text
@@ -225,17 +267,18 @@ export default class SelectBars extends Component {
                   fontSize: 13,
                   fontWeight: '400',
                   color: '#424242',
-                  top: 25,
+                  top: 10,
+                  width:'90%',
                   left: 20,
                 }}>
-                Odeon Towers Extension Rooftop, Singapore
+                {item.address.substr(0,40)}
               </Text>
 
               <View
                 style={{
                   flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  marginTop: 50,
+                  justifyContent: 'space-around',
+                  marginTop: 15,
                 }}>
                 <TouchableOpacity
                   style={{
@@ -249,7 +292,10 @@ export default class SelectBars extends Component {
                     color="#26B90E"
                     style={{marginTop: 2, marginLeft: 20}}
                   />
-                  <Text style={{color: '#3C3C3C', marginLeft: 5}}>open</Text>
+                  {item.ecom_acc_vendor_product.vendorProductStatus == 'Available'?
+                  <Text style={{color: '#3C3C3C', marginLeft: 5}}>open</Text> :
+                  <Text style={{color: 'red', marginLeft: 5}}>close</Text>
+                  }
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -264,18 +310,19 @@ export default class SelectBars extends Component {
                     color="#808080"
                     style={{marginTop: 2}}
                   />
-                  <Text style={{color: '#3C3C3C', marginLeft: 5}}>2.8Km</Text>
+                  <Text style={{color: '#3C3C3C', marginLeft: 5}}>{item.distance.toFixed(1)}Km</Text>
                 </TouchableOpacity>
               </View>
             </View>
           </TouchableOpacity>
-
-          {this.state.itemselected ? (
+          )):null
+          }
+          {this.state.itemSelected != 0 ? (
             <View style={{marginTop: '5%'}}>
               <TouchableOpacity
                 style={styles.save}
-                onPress={() => this.props.navigation.navigate('Redeem')}>
-                <Text style={{color: '#fff', fontSize: 15}}>Continue</Text>
+                onPress={() => this.props.navigation.navigate('Redeem',{vendorId:this.state.itemSelected})}>
+                <Text style={{color: '#fff', fontSize: 15}}>Continue {this.state.itemSelected}</Text>
               </TouchableOpacity>
             </View>
           ) : null}

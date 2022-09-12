@@ -28,6 +28,7 @@ export default class Redeem extends Component {
       itemModalVisible: false,
       addItemData: null,
     };
+    console.log("this.props.route.params.vendorId",this.props.route.params);
   }
 
   componentDidMount() {
@@ -42,7 +43,7 @@ export default class Redeem extends Component {
     myHeaders.append('Token', `${token}`);
 
     let raw = JSON.stringify({
-      vendorId: this.props.route.params.vendorId,
+      vendorId:8, //this.props.route.params.vendorId,
     });
 
     let requestOptions = {
@@ -117,7 +118,8 @@ export default class Redeem extends Component {
                   top: 20,
                   left: 20,
                 }}>
-                {this.props.route.params.item.name}
+                {/* {this.props.route.params.item.name} */}
+                Name
               </Text>
 
               <Text
@@ -128,7 +130,8 @@ export default class Redeem extends Component {
                   top: 25,
                   left: 20,
                 }}>
-                {this.props.route.params.item.description}
+                {/* {this.props.route.params.item.description} */}
+                description
               </Text>
 
               <View

@@ -26,8 +26,13 @@ export default class Collections extends Component {
     this.state = {
       visibilityQuantity: 30,
       modalVisible: false,
+      isComboProduct:false,
       hostUrl:'',
+      comboProduct:null,
+      comboData:[],
+      isToggle:false,
       isLoading:false,
+      currentDate:new Date().getFullYear()+"-"+new Date().getMonth()+"-"+new Date().getDate(),
       data: [],
     };
   }
@@ -43,13 +48,17 @@ export default class Collections extends Component {
     try {
       this.setState({isLoading:true});
       const response = await fetchCollectionData();
-      console.log("collection > fetchData > response",response.response.result.hostUrl);
-      console.log("collection > fetchData > response",response.response.result.data);
       this.setState({
         hostUrl:response.response.result.hostUrl,
         data:response.response.result.data,
         isLoading:false});
-        console.log("Current Date",new Date());
+      //   const cdate = new Date();
+      //   this.state.data.filter((item)=>{
+      //   const exDate = new Date(item.validTillDate);
+        
+      //   // console.log("compare Date",item.validTillDate);
+      //   console.log("compare Date", exDate < cdate ? 'redeem' : 'Active' );
+      // }); 
     } catch (error) {
       console.log("collection > catch > error",error);
       this.setState({isLoading:false});
@@ -93,6 +102,78 @@ export default class Collections extends Component {
       this.setState({ modalVisible: true });
     }
   }
+
+  toggle = () => {
+    this.setState({ isToggle: !this.state.isToggle });
+  };
+
+  onModal = (data) => {
+    this.setState({ isComboProduct: true });
+    console.log("state combo data",data);
+    <Modal
+          animationType="slide"
+          transparent={true}
+          visible={true}
+          onRequestClose={() => {
+            this.setState({ isComboProduct: false });
+          }}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalView}>
+              <View style={styles.modalHeader}>
+                <Text></Text>
+                <Text
+                  style={styles.modalTitle}>
+                  Select Products
+                </Text>
+                <TouchableOpacity
+                  onPress={() => this.setState({ isComboProduct: false })}>
+                  <Icon name="close" size={28} color="#4D4F50" />
+                </TouchableOpacity>
+              </View>
+              <View
+                style={styles.modalBorder}
+              />
+
+              <View style={styles.modalItem}>
+                <View style={styles.itemTitle}>
+                <View style={styles.sectionStyle} >
+              <Text onPress={() => this.toggle()}
+                style={styles.inputText}
+              >{this.state.comboProduct ? this.state.comboProduct : 'Select Product'}</Text>
+              <Icon
+                name="expand-more"
+                size={28}
+                color="#424242"
+                style={styles.imageStyle}
+              />
+            {
+              data && data.length > 0 ? data.map((item, index) => (
+                <TouchableOpacity onPress={() => this.onSelected(item)} key={index}>
+                  <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == item ? styles.selected : '']} key={index}>
+                    <Text style={styles.inputText}>{item}</Text>
+                  </View>
+                </TouchableOpacity>)):
+                null
+            }
+            </View>
+                </View>
+              </View>
+              <View style={styles.cartBtnContainer}>
+                <TouchableOpacity
+                  style={styles.addToCard}
+                  onPress={() => this.addCart()}>
+                  <Text style={styles.cartBtnText}>Submit</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+  }
+
+  onSelected = (value) => {
+    this.setState({ comboProduct: value });
+    this.toggle();
+  };
 
   render() {
     const { modalVisible } = this.state;
@@ -185,7 +266,7 @@ export default class Collections extends Component {
                       <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
                     </TouchableOpacity>
                     <TouchableOpacity
-                      // onPress={() => this.props.navigation.navigate('SelectBars')}
+                      onPress={() => this.props.navigation.navigate('SelectBars',{data:{walletId:item.walletId,productId:item.ecom_aca_product_unit.ecom_ac_product.productId}})}
                       style={styles.redeemBtn}>
                       <Text
                         style={styles.redeemBtnText}>
@@ -196,65 +277,67 @@ export default class Collections extends Component {
                 </View>
               </TouchableOpacity>
             </>) : (
-              null
-              // <>
-              // <View><Text>compbo product</Text></View>
-              //   {/* <TouchableOpacity
-              //     key={index}
-              //     style={styles.productView}
-              //     onPress={() =>
-              //       this.props.navigation.navigate('OrderHistoryDetail')
-              //     }>
-              //     <View style={styles.productInnerView} key={index}>
-              //       <Image
-              //         source={{ uri: `${this.state.hostUrl + item.ecom_ea_combo.images}` }}
-              //         style={styles.prodImg}
-              //       />
-              //     </View>
-              //     <View style={styles.item}>
-              //       <View
-              //         style={styles.itemHeader}>
-              //         <Text
-              //           style={styles.title}>
-              //           {item.ecom_ea_combo.name}
-              //         </Text>
-              //       </View>
-              //       <View style={styles.itemDes}>
-              //         <HTMLView
-              //           value={item.ecom_ea_combo.description.substr(0, 28)} />
-              //       </View>
-              //       <View>
-              //         <Text
-              //           style={[styles.validDate, styles.itemDes]}>
-              //           Valid until: {item.validTillDate}
-              //         </Text>
-              //       </View>
-              //     </View>
-              //     <View
-              //       style={styles.cartContainer}>
-              //       <View style={styles.cart}>
-              //         <TouchableOpacity
-              //           onPress={() => this.addCart(item.ecom_ea_combo.comboId)}
-              //           style={styles.cartIcon}>
-              //           <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
-              //         </TouchableOpacity>
-              //         <TouchableOpacity
-              //           style={styles.redeemBtn}>
-              //           <Text
-              //             style={styles.redeemBtnText}>
-              //             Redeem
-              //           </Text>
-              //         </TouchableOpacity>
-              //       </View>
-              //     </View>
-              //   </TouchableOpacity> */}
-              // </>
+              
+              <>
+                <TouchableOpacity
+                  key={index}
+                  style={styles.productView}
+                  onPress={() =>
+                    this.props.navigation.navigate('OrderHistoryDetail')
+                  }>
+                  <View style={styles.productInnerView} key={index}>
+                    <Image
+                      source={{ uri: `${this.state.hostUrl + item.ecom_ea_combo.images}` }}
+                      style={styles.prodImg}
+                    />
+                  </View>
+                  <View style={styles.item}>
+                    <View
+                      style={styles.itemHeader}>
+                      <Text
+                        style={styles.title}>
+                        {item.ecom_ea_combo.name}
+                      </Text>
+                    </View>
+                    <View style={styles.itemDes}>
+                      <HTMLView
+                        value={item.ecom_ea_combo.description.substr(0, 28)} />
+                    </View>
+                    <View>
+                      <Text
+                        style={[styles.validDate, styles.itemDes]}>
+                        Valid until: {item.validTillDate}
+                      </Text>
+                    </View>
+                  </View>
+                  <View
+                    style={styles.cartContainer}>
+                    <View style={styles.cart}>
+                      <TouchableOpacity
+                        onPress={() => this.addCart(item.ecom_ea_combo.comboId)}
+                        style={styles.cartIcon}>
+                        <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => this.onModal(item.ecom_ea_combo.ecom_ac_products) }
+                        //onPress={() => {this.setState({comboData:item.ecom_ea_combo.ecom_ac_products,isComboProduct:true})} }
+                        style={styles.redeemBtn}>
+                        <Text
+                          style={styles.redeemBtnText}>
+                          Redeem
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </>
             )
           ) : null
         }
 
 
-        
+      
+    
 
         <Modal
           animationType="slide"
@@ -532,6 +615,50 @@ modalItem:{
 modalImage:{
   width:'35%',
   alignItems:'center'
+},
+sectionStyle: {
+  flexDirection: 'row',
+  alignSelf: 'center',
+  alignItems: 'center',
+  backgroundColor: ThemeColors.CLR_WHITE,
+  borderWidth: 0,
+  borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+  height: 48,
+  width: 324,
+  borderRadius: 5,
+  margin: 10,
+  elevation: 4,
+},
+collapsed: {
+  flexDirection: 'row',
+  backgroundColor: ThemeColors.CLR_WHITE,
+  borderWidth: 0,
+  borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+  height: 48,
+  width: 324,
+  marginTop: -9,
+  margin: 10,
+  marginLeft: 10,
+  alignItems: 'center',
+  //paddingHorizontal: 10,
+  elevation: 4,
+},
+hide: {
+  height: 0
+},
+selected: {
+  borderColor: "#AB1731",
+  alignItems: 'center',
+  alignSelf: 'center',
+  borderLeftWidth: 5,
+},
+inputText: {
+  fontFamily: FontFamily.TAJAWAL_REGULAR,
+  fontWeight: '400',
+  fontSize: 15,
+  flex: 1,
+  padding: 10,
+  color: ThemeColors.CLR_DARK_GREY
 },
 itemTitle:{ marginTop:10 },
 itemTitleText:{
