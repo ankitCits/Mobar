@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -14,8 +14,8 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
 import NoContentFound from '../../Component/NoContentFound';
-import {A_KEY, BASE_URL} from '../../config';
-import {getAccessToken} from '../../localstorage';
+import { A_KEY, BASE_URL } from '../../config';
+import { getAccessToken } from '../../localstorage';
 import Util from '../../utils';
 import HeaderSide from '../Component/HeaderSide';
 export default class Redeem extends Component {
@@ -28,7 +28,7 @@ export default class Redeem extends Component {
       itemModalVisible: false,
       addItemData: null,
     };
-    console.log("this.props.route.params.vendorId",this.props.route.params);
+    console.log("this.props.route.params.vendorId", this.props.route.params);
   }
 
   componentDidMount() {
@@ -43,7 +43,8 @@ export default class Redeem extends Component {
     myHeaders.append('Token', `${token}`);
 
     let raw = JSON.stringify({
-      vendorId:8, //this.props.route.params.vendorId,
+      vendorId: this.props.route.params.vendorId,
+      // vendorId: 8, //this.props.route.params.vendorId,
     });
 
     let requestOptions = {
@@ -58,7 +59,7 @@ export default class Redeem extends Component {
       .then(result => {
         if (result.response) {
           console.log('xxxxxxxxx=====>>>', result.response.result.data);
-          this.setState({addItemData: result.response.result.data});
+          this.setState({ addItemData: result.response.result.data });
         }
         if (result.errors) {
           ToastAndroid.showWithGravity(
@@ -79,7 +80,7 @@ export default class Redeem extends Component {
   };
 
   render() {
-    console.log('PROPS_IN_REDEEM>>', this.props.route.params);
+    console.log('PROPS_IN_REDEEM>>', this.state.addItemData);
     return (
       <SafeAreaView
         style={{
@@ -100,7 +101,7 @@ export default class Redeem extends Component {
               alignSelf: 'center',
               flexDirection: 'row',
               shadowColor: '#000',
-              shadowOffset: {width: 1, height: 1},
+              shadowOffset: { width: 1, height: 1 },
               shadowOpacity: 0.4,
               shadowRadius: 5,
               elevation: 0,
@@ -168,9 +169,8 @@ export default class Redeem extends Component {
                 }}
                 resizeMode={'cover'}
                 source={{
-                  uri: `${
-                    this.props.route.params.uri + this.props.route.params.image
-                  }`,
+                  uri: `${this.props.route.params.uri + this.props.route.params.image
+                    }`,
                 }}
                 defaultSource={images.promotions1}
               />
@@ -184,7 +184,7 @@ export default class Redeem extends Component {
               marginTop: 20,
               alignSelf: 'center',
               shadowColor: '#000',
-              shadowOffset: {width: 1, height: 1},
+              shadowOffset: { width: 1, height: 1 },
               shadowOpacity: 0.4,
               shadowRadius: 5,
               elevation: 0,
@@ -208,10 +208,9 @@ export default class Redeem extends Component {
                   }}
                   resizeMode={'cover'}
                   source={{
-                    uri: `${
-                      this.props.route.params.uri +
+                    uri: `${this.props.route.params.uri +
                       this.props.route.params.item.images
-                    }`,
+                      }`,
                   }}
                   defaultSource={images.product2}
                 />
@@ -287,13 +286,13 @@ export default class Redeem extends Component {
                   width: '70%',
                 }}>
                 <TouchableOpacity
-                  onPress={() => this.setState({visibilityQuantity: 30})}
+                  onPress={() => this.setState({ visibilityQuantity: 30 })}
                   style={
                     this.state.visibilityQuantity == 30
                       ? styles.itemQuantitySelected
                       : styles.itemQuantity
                   }>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Icon name="wine-bar" size={22} color="#7B7B7B" />
                     <Text
                       style={{
@@ -307,13 +306,13 @@ export default class Redeem extends Component {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={() => this.setState({visibilityQuantity: 60})}
+                  onPress={() => this.setState({ visibilityQuantity: 60 })}
                   style={
                     this.state.visibilityQuantity == 60
                       ? styles.itemQuantitySelected
                       : styles.itemQuantity
                   }>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Icon name="wine-bar" size={22} color="#7B7B7B" />
                     <Text
                       style={{
@@ -327,13 +326,13 @@ export default class Redeem extends Component {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={() => this.setState({visibilityQuantity: 90})}
+                  onPress={() => this.setState({ visibilityQuantity: 90 })}
                   style={
                     this.state.visibilityQuantity == 90
                       ? styles.itemQuantitySelected
                       : styles.itemQuantity
                   }>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Icon name="wine-bar" size={22} color="#7B7B7B" />
                     <Text
                       style={{
@@ -395,9 +394,9 @@ export default class Redeem extends Component {
                 </TouchableOpacity>
               </View>
 
-              <TouchableOpacity onPress={() => {}} style={styles.sectionStyle}>
+              <TouchableOpacity onPress={() => { }} style={styles.sectionStyle}>
                 <TextInput
-                  style={{flex: 1, padding: 10}}
+                  style={{ flex: 1, padding: 10 }}
                   placeholder=""
                   underlineColorAndroid="transparent"
                   placeholderTextColor="#424242"
@@ -424,7 +423,7 @@ export default class Redeem extends Component {
               marginTop: 20,
               alignSelf: 'center',
               shadowColor: '#000',
-              shadowOffset: {width: 1, height: 1},
+              shadowOffset: { width: 1, height: 1 },
               shadowOpacity: 0.4,
               shadowRadius: 5,
               elevation: 5,
@@ -443,13 +442,13 @@ export default class Redeem extends Component {
                   backgroundColor: '#939393',
                   borderRadius: 20,
                 }}
-                onPress={() => this.setState({itemModalVisible: true})}>
+                onPress={() => this.setState({ itemModalVisible: true })}>
                 <Icon name="add" size={28} color="#fff" />
               </TouchableOpacity>
 
-              <View style={{marginLeft: 20}}>
+              <View style={{ marginLeft: 20 }}>
                 <Text
-                  style={{fontSize: 20, color: '#969696', fontWeight: '700'}}>
+                  style={{ fontSize: 20, color: '#969696', fontWeight: '700' }}>
                   Add More Items
                 </Text>
               </View>
@@ -472,7 +471,7 @@ export default class Redeem extends Component {
 
               <View style={styles.sectionStyleTable}>
                 <TextInput
-                  style={{flex: 1}}
+                  style={{ flex: 1 }}
                   placeholder="Table No"
                   underlineColorAndroid="transparent"
                   placeholderTextColor={'#DADADA'}
@@ -481,13 +480,13 @@ export default class Redeem extends Component {
             </View>
           </View>
 
-          <View style={{marginTop: '5%'}}>
+          <View style={{ marginTop: '5%' }}>
             <TouchableOpacity
               style={styles.save}
-              onPress={() => this.setState({modalVisible: true})}
-              // this.props.navigation.navigate('MyCard')}
+              onPress={() => this.setState({ modalVisible: true })}
+            // this.props.navigation.navigate('MyCard')}
             >
-              <Text style={{color: '#fff', fontSize: 15}}>REDEEM</Text>
+              <Text style={{ color: '#fff', fontSize: 15 }}>REDEEM</Text>
             </TouchableOpacity>
           </View>
 
@@ -662,9 +661,9 @@ export default class Redeem extends Component {
           transparent={true}
           visible={this.state.modalVisible}
           onRequestClose={() => {
-            this.setState({modalVisible: false});
+            this.setState({ modalVisible: false });
           }}>
-          <View style={{flex: 1, backgroundColor: '#fff'}}>
+          <View style={{ flex: 1, backgroundColor: '#fff' }}>
             <ScrollView>
               <View
                 style={{
@@ -686,7 +685,7 @@ export default class Redeem extends Component {
                     Redeem Details
                   </Text>
                   <TouchableOpacity
-                    onPress={() => this.setState({modalVisible: false})}>
+                    onPress={() => this.setState({ modalVisible: false })}>
                     <Icon name="close" size={32} color="#fff" />
                   </TouchableOpacity>
                 </View>
@@ -873,14 +872,14 @@ export default class Redeem extends Component {
                 />
               </View>
 
-              <View style={{marginTop: '20%'}}>
+              <View style={{ marginTop: '20%' }}>
                 <TouchableOpacity
                   style={styles.save}
                   onPress={() => {
-                    this.setState({modalVisible: false});
+                    this.setState({ modalVisible: false });
                     this.props.navigation.navigate('MyCard');
                   }}>
-                  <Text style={{color: '#fff', fontSize: 15}}>View Orders</Text>
+                  <Text style={{ color: '#fff', fontSize: 15 }}>View Orders</Text>
                 </TouchableOpacity>
               </View>
             </ScrollView>
@@ -894,7 +893,7 @@ export default class Redeem extends Component {
           transparent={true}
           visible={this.state.itemModalVisible}
           onRequestClose={() => {
-            this.setState({itemModalVisible: false});
+            this.setState({ itemModalVisible: false });
           }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
@@ -909,7 +908,7 @@ export default class Redeem extends Component {
                   Add more items
                 </Text>
                 <TouchableOpacity
-                  onPress={() => this.setState({itemModalVisible: false})}>
+                  onPress={() => this.setState({ itemModalVisible: false })}>
                   <Icon name="close" size={28} color="#4D4F50" />
                 </TouchableOpacity>
               </View>
@@ -997,8 +996,8 @@ export default class Redeem extends Component {
                             justifyContent: 'space-evenly',
                             right: '25%',
                           }}
-                          onPress={() => {}}>
-                          <Text style={{color: '#fff', fontSize: 14}}>ADD</Text>
+                          onPress={() => { }}>
+                          <Text style={{ color: '#fff', fontSize: 14 }}>ADD</Text>
                           <Icon name="add" size={18} color="#fff" />
                         </TouchableOpacity>
                       </View>
