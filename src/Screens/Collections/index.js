@@ -43,8 +43,15 @@ export default class Collections extends Component {
     try {
       this.setState({isLoading:true});
       const response = await fetchCollectionData();
-      this.setState({hostUrl:response.response.result.hostUrl,data:response.response.result.data,isLoading:false});
+      console.log("collection > fetchData > response",response.response.result.hostUrl);
+      console.log("collection > fetchData > response",response.response.result.data);
+      this.setState({
+        hostUrl:response.response.result.hostUrl,
+        data:response.response.result.data,
+        isLoading:false});
+        console.log("Current Date",new Date());
     } catch (error) {
+      console.log("collection > catch > error",error);
       this.setState({isLoading:false});
       ToastAndroid.showWithGravity(
         error,
@@ -127,249 +134,127 @@ export default class Collections extends Component {
             </View>
           </View>
         </View>
-        {this.state.isLoading ? (
-                <ActivityIndicator size="small" color={ThemeColors.CLR_WHITE} />
-              ) : 
-        this.state.data && this.state.data.length > 0 ? 
-        this.state.data.map((item,index)=>
-        <>
-          <TouchableOpacity
-          key={index}
-            style={styles.productView}
-            onPress={() =>
-              this.props.navigation.navigate('OrderHistoryDetail')
-            }>
-            <View style={styles.productInnerView} key={index}>
-              <Image
-                source={{ uri: `${this.state.hostUrl + item.ecom_aca_product_unit.ecom_ac_product.images}` }}
-                style={styles.prodImg}
-              />
-            </View>
-            <View style={styles.item}>
-              <View
-                style={styles.itemHeader}>
-                <Text
-                  style={styles.title}>
-                  {item.ecom_aca_product_unit.ecom_ac_product.name}
-                </Text>
-              </View>
-              <View style={styles.itemDes}>
-                <HTMLView
-                  value={item.ecom_aca_product_unit.ecom_ac_product.shortDescription.substr(0,28)} />                
-              </View>
-              {/* <View>
-                <Text
-                  style={styles.itemDes}>
-                  Available Qty: {item.availableQty+' '+item.unitType}
-                </Text>
-              </View> */}
-              <View>
-                <Text
-                  style={styles.itemDes}>
-                  Qty: {item.ecom_aca_product_unit.unitQty + ' ' +item.ecom_aca_product_unit.unitType}
-                </Text>
-              </View>
-              <View>
-                <Text
-                  style={[styles.validDate, styles.itemDes]}>
-                  Valid until: {item.validTillDate}
-                </Text>
-              </View>
-            </View>
-            <View
-              style={styles.cartContainer}>
-              <View style={styles.cart}>
-                <TouchableOpacity
-                  onPress={() => this.addCart(item.ecom_aca_product_unit.productUnitId)}
-                  style={styles.cartIcon}>
-                  <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  // onPress={() => this.props.navigation.navigate('SelectBars')}
-                  style={styles.redeemBtn}>
-                  <Text
-                    style={styles.redeemBtnText}>
-                    Redeem
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </TouchableOpacity>
-
-          {/* <View
-            style={styles.productView}
-            onPress={() =>
-              this.props.navigation.navigate('OrderHistoryDetail')
-            }>
-            <View style={styles.productInnerView}>
-              <Image
-                resizeMode={'cover'}
-                source={images.product2}
-                defaultSource={images.product2}
-              />
-            </View>
-            <View style={styles.item}>
-              <View
-                style={styles.itemHeader}>
-                <Text
-                  style={styles.title}>
-                  Chivas Regal 12
-                </Text>
-              </View>
-
-              <View>
-                <Text
-                  style={styles.itemDes}>
-                  Blended
-                </Text>
-              </View>
-
-              <View>
-                <Text
-                  style={styles.itemDes}>
-                  Available Qty: 150 ml
-                </Text>
-              </View>
-
-              <View>
-                <Text
-                  style={[styles.validDate, styles.itemDes]}>
-                  Valid until: 20 Jun 2021
-                </Text>
-              </View>
-            </View>
-            <View
-              style={styles.cartContainer}>
-              <View style={styles.cart}>
-                <TouchableOpacity
-                  onPress={() => this.showModal()}
-                  style={styles.cartIcon}>
-                  <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  // onPress={() => this.props.navigation.navigate('SelectBars')}
-                  style={styles.redeemBtn}>
-                  <Text
-                    style={styles.redeemBtnText}>
-                    Active
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View> */}
         
-        </>):(
-            <NoContentFound title="No Data Found" />
-          )}
-
-
-        {/* <View style={{marginTop: '10%', flex: 1, justifyContent: 'flex-end'}}>
-          <View
-            style={{
-              shadowColor: '#000',
-              shadowOffset: {
-                width: 0,
-                height: 5,
-              },
-              shadowOpacity: 1,
-              shadowRadius: 10,
-
-              elevation: 5,
-              backgroundColor: '#fff',
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-              overflow: 'hidden',
-            }}>
-              
-            <View style={{margin: 20}}>
-              <View>
-                <Text
-                  style={{
-                    color: '#ACACAC',
-                    fontWeight: '500',
-                  }}>
-                  2 Items selected add to cart{' '}
-                </Text>
-              </View>
-
-              <View style={{marginTop: 20}}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginTop: 5,
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 15,
-                      fontWeight: '500',
-                      color: '#000',
-                    }}>
-                    Adrianna Vineyard
-                  </Text>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <TouchableOpacity>
-                      <Icon name="remove" size={20} color="#4D4F50" />
-                    </TouchableOpacity>
+        {this.state.data && this.state.data.length > 0 ?
+          this.state.data.map((item, index) => 
+            item.ecom_aca_product_unit != null ?
+            (<>
+              <TouchableOpacity
+                key={index}
+                style={styles.productView}
+                onPress={() =>
+                  this.props.navigation.navigate('OrderHistoryDetail')
+                }>
+                <View style={styles.productInnerView} key={index}>
+                  <Image
+                    source={{ uri: `${this.state.hostUrl + item.ecom_aca_product_unit.ecom_ac_product.images}` }}
+                    style={styles.prodImg}
+                  />
+                </View>
+                <View style={styles.item}>
+                  <View
+                    style={styles.itemHeader}>
                     <Text
-                      style={{
-                        fontSize: 15,
-                        fontWeight: '500',
-                        color: '#000',
-                      }}>
-                      {' '}
-                      1{' '}
+                      style={styles.title}>
+                      {item.ecom_aca_product_unit.ecom_ac_product.name}
                     </Text>
-                    <TouchableOpacity>
-                      <Icon name="add" size={20} color="#4D4F50" />
+                  </View>
+                  <View style={styles.itemDes}>
+                    <HTMLView
+                      value={item.ecom_aca_product_unit.ecom_ac_product.shortDescription.substr(0, 28)} />
+                  </View>
+                  <View>
+                    <Text
+                      style={styles.itemDes}>
+                      Qty: {item.ecom_aca_product_unit.unitQty + ' ' + item.ecom_aca_product_unit.unitType}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text
+                      style={[styles.validDate, styles.itemDes]}>
+                      Valid until: {item.validTillDate}
+                    </Text>
+                  </View>
+                </View>
+                <View
+                  style={styles.cartContainer}>
+                  <View style={styles.cart}>
+                    <TouchableOpacity
+                      onPress={() => this.addCart(item.ecom_aca_product_unit.productUnitId)}
+                      style={styles.cartIcon}>
+                      <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      // onPress={() => this.props.navigation.navigate('SelectBars')}
+                      style={styles.redeemBtn}>
+                      <Text
+                        style={styles.redeemBtnText}>
+                        Redeem
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 </View>
+              </TouchableOpacity>
+            </>) : (
+              null
+              // <>
+              // <View><Text>compbo product</Text></View>
+              //   {/* <TouchableOpacity
+              //     key={index}
+              //     style={styles.productView}
+              //     onPress={() =>
+              //       this.props.navigation.navigate('OrderHistoryDetail')
+              //     }>
+              //     <View style={styles.productInnerView} key={index}>
+              //       <Image
+              //         source={{ uri: `${this.state.hostUrl + item.ecom_ea_combo.images}` }}
+              //         style={styles.prodImg}
+              //       />
+              //     </View>
+              //     <View style={styles.item}>
+              //       <View
+              //         style={styles.itemHeader}>
+              //         <Text
+              //           style={styles.title}>
+              //           {item.ecom_ea_combo.name}
+              //         </Text>
+              //       </View>
+              //       <View style={styles.itemDes}>
+              //         <HTMLView
+              //           value={item.ecom_ea_combo.description.substr(0, 28)} />
+              //       </View>
+              //       <View>
+              //         <Text
+              //           style={[styles.validDate, styles.itemDes]}>
+              //           Valid until: {item.validTillDate}
+              //         </Text>
+              //       </View>
+              //     </View>
+              //     <View
+              //       style={styles.cartContainer}>
+              //       <View style={styles.cart}>
+              //         <TouchableOpacity
+              //           onPress={() => this.addCart(item.ecom_ea_combo.comboId)}
+              //           style={styles.cartIcon}>
+              //           <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
+              //         </TouchableOpacity>
+              //         <TouchableOpacity
+              //           style={styles.redeemBtn}>
+              //           <Text
+              //             style={styles.redeemBtnText}>
+              //             Redeem
+              //           </Text>
+              //         </TouchableOpacity>
+              //       </View>
+              //     </View>
+              //   </TouchableOpacity> */}
+              // </>
+            )
+          ) : null
+        }
 
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginTop: 5,
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 15,
-                      fontWeight: '500',
-                      color: '#000',
-                    }}>
-                    Havana Club
-                  </Text>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <TouchableOpacity>
-                      <Icon name="remove" size={20} color="#4D4F50" />
-                    </TouchableOpacity>
-                    <Text
-                      style={{
-                        fontSize: 15,
-                        fontWeight: '500',
-                        color: '#000',
-                      }}>
-                      {' '}
-                      2{' '}
-                    </Text>
-                    <TouchableOpacity>
-                      <Icon name="add" size={20} color="#4D4F50" />
-                    </TouchableOpacity>
-                  </View>
-                </View>
 
-                <View style={{marginTop: '10%', marginBottom: 10}}>
-                  <TouchableOpacity
-                    style={styles.save}
-                    onPress={() => this.props.navigation.navigate('MyCard')}>
-                    <Text style={{color: '#fff', fontSize: 15}}>VIEW CART</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View> */}
+        
 
         <Modal
           animationType="slide"
