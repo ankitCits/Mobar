@@ -12,10 +12,11 @@ import {
   ToastAndroid,
   ActivityIndicator,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { set } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { fetchCart } from '../../api/product';
+import { applyCoupon, cartCheckout, fetchCart } from '../../api/product';
 import images from '../../assets/images';
 import CartProduct from '../../Component/CartProduct';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
@@ -28,10 +29,12 @@ export default class MyCard extends Component {
     this.state = {
       cart: [],
       hostUrl: '',
+      amountData: {},
       totalQty: 0,
       payableTotal: 0,
-      isFetching:false,
-      isLoading:false,
+      isFetching: false,
+      isLoading: false,
+      couponText: ''
     };
   }
 
@@ -39,31 +42,33 @@ export default class MyCard extends Component {
     this.fetchData();
   }
 
-  componentDidUpdate(){
-    
+  componentDidUpdate() {
+
   }
 
   // componentWillUpdate(){
-    
+
   // }
 
   fetchData = async () => {
-    this.setState({isLoading:true});
+    this.setState({ isLoading: true });
     try {
       const resp = await fetchCart();
+      console.log(resp.response.result.amountData);
       this.setState({
         cart: resp.response.result.data,
         hostUrl: resp.response.result.hostUrl,
-        isFetching:false,
-        isLoading:false
+        isFetching: false,
+        isLoading: false,
+        amountData: resp.response.result.amountData
       });
       if (this.state.cart.length > 0) {
-        this.setState({ totalQty: this.state.cart.length,isFetching:false, });
-        this.setState({ payableTotal: this.state.cart.reduce((x, c) => x + parseInt(c.productAmount), 0) });
+        this.setState({ totalQty: this.state.cart.length });
+        // this.setState({ payableTotal: this.state.cart.reduce((x, c) => x + parseInt(c.productAmount), 0) });
         // this.setState({ payableTotal: this.state.cart.reduce((x, c) => x + parseInt(c.productAmount), 0) });
       }
     } catch (error) {
-      this.setState({isLoading:false,isFetching:false,});
+      this.setState({ isLoading: false, isFetching: false, });
       ToastAndroid.showWithGravity(
         error,
         ToastAndroid.LONG,
@@ -72,8 +77,7 @@ export default class MyCard extends Component {
     }
   };
 
-  onChange = (qty,id) => {
-    console.log("Item",qty,id);
+  onChange = (qty, id) => {
     if (qty == 0) {
       //this.setState({isFetching:true});
       this.fetchData();
@@ -82,7 +86,7 @@ export default class MyCard extends Component {
     }
   }
 
-  onRefresh=()=>{
+  onRefresh = () => {
     this.fetchData();
   }
 
@@ -94,6 +98,40 @@ export default class MyCard extends Component {
     );
   };
 
+  applyCoupon = async () => {
+    if (this.state.couponText != '') {
+      const payload = {
+        coupon: this.state.couponText
+      }
+      try {
+        const respCoupon = await applyCoupon(payload);
+        console.log(respCoupon.response.result);
+        this.setState({ amountData: respCoupon.response.result.data })
+      } catch (e) {
+        Alert.alert('Error', e);
+      }
+    } else {
+      Alert.alert('Error', 'Promocode cannot be empty');
+    }
+  }
+
+  cartCheckout = async () => {
+    const payload = {
+      couponCode: this.state.couponText,
+      subTotalAmount: this.state.amountData.subTotalAmount,
+      couponDiscountAmount: this.state.amountData.couponDiscount,
+      discountAmount: this.state.amountData.extraDiscount,
+      totalPayable: this.state.amountData.totalPayable
+    }
+    try {
+      const respCheckout = await cartCheckout(payload);
+      console.log(respCheckout.response.result.data);
+      this.props.navigation.navigate('Checkout')
+    } catch (e) {
+      Alert.alert('Error', e);
+    }
+  }
+
   render() {
     return (
       <SafeAreaView
@@ -102,27 +140,27 @@ export default class MyCard extends Component {
           name={'My Cart'}
           onClick={() => this.props.navigation.pop()}
         />
-        { this.state.isLoading ? 
-        <>
-         <ActivityIndicator size="large" style={{}} color={ThemeColors.CLR_TAB} /> 
-        </>
-         :
-        (<>
-        <View style={styles.cartCount}>
-            <Text
-              style={styles.itemCountText}>
-              {this.state.totalQty} items in your cart
-            </Text>
-          </View>
-        
-          <FlatList
-            data={this.state.cart}
-            keyExtractor={(item, index) => index.toString()}
-            // onRefresh={this.onRefresh}
-            // refreshing={this.state.isFetching}
-            renderItem={({ item, index }) => this.renderCartItems(item, index)}
-          />
-          {/* <View style={{height:'46%'}}>
+        {this.state.isLoading ?
+          <>
+            <ActivityIndicator size="large" style={{}} color={ThemeColors.CLR_TAB} />
+          </>
+          :
+          (<>
+            <View style={styles.cartCount}>
+              <Text
+                style={styles.itemCountText}>
+                {this.state.totalQty} items in your cart
+              </Text>
+            </View>
+
+            <FlatList
+              data={this.state.cart}
+              keyExtractor={(item, index) => index.toString()}
+              // onRefresh={this.onRefresh}
+              // refreshing={this.state.isFetching}
+              renderItem={({ item, index }) => this.renderCartItems(item, index)}
+            />
+            {/* <View style={{height:'46%'}}>
           <ScrollView>
             {
               this.state.cart && this.state.cart.length > 0 && this.state.cart.map((cartItem, index)=>(
@@ -133,161 +171,193 @@ export default class MyCard extends Component {
           </View> */}
 
 
-          <View style={styles.bottomContainer}>
-            <View
-              style={styles.subContainer}>
+            <View style={styles.bottomContainer}>
               <View
-                style={styles.containerAlign}>
+                style={styles.subContainer}>
                 <View
-                  style={styles.promoContainer}>
-                  <TextInput
-                    style={styles.promoText}
-                    placeholder="Promocode"
-                    underlineColorAndroid="transparent"
+                  style={styles.containerAlign}>
+                  <View
+                    style={styles.promoContainer}>
+                    <TextInput
+                      style={styles.promoText}
+                      placeholder="Promocode"
+                      underlineColorAndroid="transparent"
+                      onChangeText={(text) => this.setState({ couponText: text })}
+                    />
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: '#751A2A',
+                        width: 120,
+                        height: 44,
+                        borderRadius: 20,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        alignSelf: 'center',
+                      }}
+                      onPress={() => this.applyCoupon()}
+                    >
+                      <Text
+                        style={{
+                          fontFamily: FontFamily.TAJAWAL_REGULAR,
+                          fontWeight: '700',
+                          fontSize: 20,
+                          color: ThemeColors.CLR_WHITE,
+                        }}>
+                        Apply
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    marginTop: 10,
+                    marginBottom: 10,
+                    alignSelf: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Icon
+                    name="redeem"
+                    size={22}
+                    color="#A39B9B"
+                    style={styles.imageStyle}
                   />
-                  <TouchableOpacity
+                  <Text
                     style={{
-                      backgroundColor: '#751A2A',
-                      width: 128,
-                      height: 44,
-                      borderRadius: 20,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      alignSelf: 'center',
+                      marginLeft: 10,
+                    }}>
+                    Do you have any promocode?
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    marginTop: 20,
+                    marginLeft: 20,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text
+                    style={{
+                      marginLeft: 10,
+                      color: '#3C3C3C',
+                      fontWeight: '500',
+                      fontSize: 20,
+                    }}>
+                    Sub Total
+                  </Text>
+                  <Text
+                    style={{
+                      marginRight: 40,
+                      color: '#3C3C3C',
+                      fontWeight: '500',
+                      fontSize: 20,
+                    }}>
+                    ${this.state.amountData.subTotalAmount}
+                  </Text>
+                </View>
+
+                {this.state.amountData.couponDiscount > 0 &&
+                  <View
+                    style={{
+                      marginTop: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
                     }}>
                     <Text
                       style={{
-                        fontFamily: FontFamily.TAJAWAL_REGULAR,
-                        fontWeight: '700',
-                        fontSize: 20,
-                        color: ThemeColors.CLR_WHITE,
+                        marginLeft: 30,
+                        color: '#3C3C3C',
+                        fontWeight: '500',
+                        fontSize: 18,
                       }}>
-                      Apply
+                      Coupon Discount
                     </Text>
+                    <Text
+                      style={{
+                        marginRight: 40,
+                        color: '#F01111',
+                        fontWeight: '500',
+                        fontSize: 18,
+                      }}>
+                      -${this.state.amountData.couponDiscount}
+                    </Text>
+                  </View>
+                }
+                {this.state.amountData.extraDiscount > 0 &&
+                  <View
+                    style={{
+                      marginTop: 5,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Text
+                      style={{
+                        marginLeft: 30,
+                        color: '#3C3C3C',
+                        fontWeight: '500',
+                        fontSize: 18,
+                      }}>
+                      Discount
+                    </Text>
+                    <Text
+                      style={{
+                        marginRight: 40,
+                        color: '#F01111',
+                        fontWeight: '500',
+                        fontSize: 18,
+                      }}>
+                      -${this.state.amountData.extraDiscount}
+                    </Text>
+                  </View>
+                }
+
+                <View
+                  style={{
+                    height: 1,
+                    backgroundColor: '#000',
+                    marginTop: 10,
+                    marginBottom: 10,
+                  }}
+                />
+
+                <View
+                  style={{
+                    marginTop: 5,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text
+                    style={{
+                      marginLeft: 30,
+                      color: '#000',
+                      fontWeight: '700',
+                      fontSize: 22,
+                    }}>
+                    Total Payable
+                  </Text>
+                  <Text
+                    style={{
+                      marginRight: 40,
+                      color: '#000',
+                      fontWeight: '700',
+                      fontSize: 22,
+                    }}>
+                    ${this.state.amountData.totalPayable}
+                  </Text>
+                </View>
+
+                <View style={{ marginTop: '10%', marginBottom: 10 }}>
+                  <TouchableOpacity
+                    style={styles.save}
+                    onPress={() => this.cartCheckout()}>
+                    <Text style={{ color: '#fff', fontSize: 18 }}>CHECKOUT</Text>
                   </TouchableOpacity>
                 </View>
               </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  marginTop: 10,
-                  marginBottom: 10,
-                  alignSelf: 'center',
-                  alignItems: 'center',
-                }}>
-                <Icon
-                  name="redeem"
-                  size={22}
-                  color="#A39B9B"
-                  style={styles.imageStyle}
-                />
-                <Text
-                  style={{
-                    marginLeft: 10,
-                  }}>
-                  Do you have any promocode?
-                </Text>
-              </View>
-              <View
-                style={{
-                  marginTop: 20,
-                  marginLeft: 20,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <Text
-                  style={{
-                    marginLeft: 10,
-                    color: '#3C3C3C',
-                    fontWeight: '500',
-                    fontSize: 20,
-                  }}>
-                  Sub Total
-                </Text>
-                <Text
-                  style={{
-                    marginRight: 40,
-                    color: '#3C3C3C',
-                    fontWeight: '500',
-                    fontSize: 20,
-                  }}>
-                  $397
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  marginTop: 5,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <Text
-                  style={{
-                    marginLeft: 30,
-                    color: '#3C3C3C',
-                    fontWeight: '500',
-                    fontSize: 18,
-                  }}>
-                  Discount
-                </Text>
-                <Text
-                  style={{
-                    marginRight: 40,
-                    color: '#F01111',
-                    fontWeight: '500',
-                    fontSize: 18,
-                  }}>
-                  -$99
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  height: 1,
-                  backgroundColor: '#000',
-                  marginTop: 10,
-                  marginBottom: 10,
-                }}
-              />
-
-              <View
-                style={{
-                  marginTop: 5,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <Text
-                  style={{
-                    marginLeft: 30,
-                    color: '#000',
-                    fontWeight: '700',
-                    fontSize: 22,
-                  }}>
-                  Total Payable
-                </Text>
-                <Text
-                  style={{
-                    marginRight: 40,
-                    color: '#000',
-                    fontWeight: '700',
-                    fontSize: 22,
-                  }}>
-                  $262
-                </Text>
-              </View>
-
-              <View style={{ marginTop: '10%', marginBottom: 10 }}>
-                <TouchableOpacity
-                  style={styles.save}
-                  onPress={() => this.props.navigation.navigate('Checkout')}>
-                  <Text style={{ color: '#fff', fontSize: 18 }}>CHECKOUT</Text>
-                </TouchableOpacity>
-              </View>
             </View>
-          </View>
           </>
-          ) 
-        }   
+          )
+        }
       </SafeAreaView>
     );
   }
@@ -347,6 +417,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     paddingLeft: '13%',
+    width: 200
   },
   productView: {
     backgroundColor: '#fff',

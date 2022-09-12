@@ -99,10 +99,10 @@ export const addToCart = (payload) => {
                     resolve(result);
                 }
             })
-        .catch(error => {
+            .catch(error => {
                 console.log('ApiProduct > addToCart > Catch', error);
                 reject(error.message);
-        });
+            });
     })
 }
 
@@ -129,10 +129,10 @@ export const updateToCart = (payload) => {
                     resolve(result);
                 }
             })
-        .catch(error => {
+            .catch(error => {
                 console.log('ApiProduct > addToCart > Catch', error);
                 reject(error.message);
-        });
+            });
     })
 }
 
@@ -214,10 +214,10 @@ export const fetchProductDetails = (postData) => {
         const requestOptions = {
             method: 'POST',
             headers: myHeaders,
-            body:postDataStr,
+            body: postDataStr,
             //redirect: 'follow',
         };
-        console.log("request option",requestOptions);
+        console.log("request option", requestOptions);
         fetch(`${BASE_URL}/products/productDetailsById`, requestOptions)
             .then(response => response.json())
             .then(result => {
@@ -239,7 +239,7 @@ export const fetchProductData = (postData) => {
     const data = JSON.stringify({
         Keyword: postData,
         // categorys: [1, 2],
-      });
+    });
     return new Promise(async (resolve, reject) => {
         const token = await getAccessToken(token);
         const myHeaders = new Headers();
@@ -249,9 +249,9 @@ export const fetchProductData = (postData) => {
         const requestOptions = {
             method: 'POST',
             headers: myHeaders,
-            body:data,
+            body: data,
         };
-        console.log("request option",requestOptions);
+        console.log("request option", requestOptions);
         fetch(`${BASE_URL}/products/alldatas`, requestOptions)
             .then(response => response.json())
             .then(result => {
@@ -272,7 +272,7 @@ export const fetchProductData = (postData) => {
 export const fetchCollectionData = () => {
     return new Promise(async (resolve, reject) => {
         const token = await getAccessToken(token);
-        console.log("Token",token);
+        console.log("Token", token);
         const myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
         myHeaders.append('A_Key', A_KEY);
@@ -281,7 +281,7 @@ export const fetchCollectionData = () => {
             method: 'POST',
             headers: myHeaders,
         };
-        console.log("request option",requestOptions);
+        console.log("request option", requestOptions);
         fetch(`${BASE_URL}/redeem/collection`, requestOptions)
             .then(response => response.json())
             .then(result => {
@@ -316,3 +316,64 @@ export const getAllPages = () => {
         });
     });
 };
+
+export const applyCoupon = (payload) => {
+    return new Promise(async (resolve, reject) => {
+        const token = await getAccessToken(token);
+        const myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+        myHeaders.append('A_Key', A_KEY);
+        myHeaders.append('Token', `${token}`);
+        const raw = JSON.stringify(payload);
+        const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow',
+        };
+        fetch(`${BASE_URL}/cart/coupanCode`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                if (result.errors) {
+                    reject(result.errors[0].msg);
+                } else {
+                    resolve(result);
+                }
+            })
+            .catch(error => {
+                console.log('ApiProduct > coupanCode > Catch', error);
+                reject(error.message);
+            });
+    })
+}
+
+export const cartCheckout = (payload) => {
+    return new Promise(async (resolve, reject) => {
+        const token = await getAccessToken(token);
+        const myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+        myHeaders.append('A_Key', A_KEY);
+        myHeaders.append('Token', `${token}`);
+        const raw = JSON.stringify(payload);
+        const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow',
+        };
+        fetch(`${BASE_URL}/orders/checkout`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                if (result.errors) {
+                    reject(result.errors[0].msg);
+                } else {
+                    resolve(result);
+                }
+            })
+            .catch(error => {
+                console.log('ApiProduct > orders/checkout > Catch', error);
+                reject(error.message);
+            });
+    })
+}
+
