@@ -10,7 +10,9 @@ import {
     ScrollView,
     Animated,
     ImageBackground,
-    RefreshControl
+    RefreshControl,
+    PermissionsAndroid,
+    Alert
 } from 'react-native';
 import { connect } from 'react-redux';
 import Header from '../Component/Header';
@@ -26,10 +28,11 @@ import BarCard from '../../Component/BarCard';
 import ProductSliderRoute from './ProductSliderRoute';
 import { FontFamily } from '../../Theme/FontFamily';
 
-import { setUserDetail } from '../../Redux/actions/auth';
+import { setUserDetail, setUserLocationDetail } from '../../Redux/actions/auth';
 import { getUserDetails } from '../../api/auth';
 import images from '../../assets/images';
 import { screenWidth } from '../../Theme/Matrices';
+import Geolocation from '@react-native-community/geolocation';
 
 
 const LazyPlaceholder = ({ route }) => (
@@ -37,6 +40,8 @@ const LazyPlaceholder = ({ route }) => (
         <ThemeFullPageLoader />
     </View>
 );
+
+
 class Dashboard extends Component {
     constructor(props) {
         super(props);
@@ -47,16 +52,63 @@ class Dashboard extends Component {
             hostUrl: null,
             index: 0,
             routes: [],
-            refreshing: false
+            refreshing: false,
+            locationPermission: false,
+            position: {
+                longitude: 0,
+                latitude: 0,
+                isLocation: false
+            }
         };
     }
 
     componentDidMount() {
         this.getDetail();
         this.getTabDetail();
+        this.requestLocationPermission();
+        // setTimeout(() => {
+        //     console.log('loca',this.props.redux.auth.position);
+        // }, 2000);
     }
 
     componentDidUpdate() {
+    }
+
+    requestLocationPermission = async () => {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                    title: "Location Permission Required",
+                    message: "App Require to access your current location",
+                    buttonNeutral: "Ask Me Later",
+                    buttonNegative: "Cancel",
+                    buttonPositive: "OK"
+                }
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log("You can use the location");
+                this.setState({ locationPermission: true });
+                this.getLatLong();
+            } else {
+                Alert.alert('Alert', 'Location Permission Denied.')
+            }
+        } catch (err) {
+            console.warn(err);
+        }
+    };
+
+    getLatLong = async () => {
+        Geolocation.getCurrentPosition((position) => {
+            this.setState({ position: { longitude: position.coords.longitude, latitude: position.coords.latitude, isLocation: true } });
+            this.props.dispatch(setUserLocationDetail(this.state.position));
+        }, (error) => {
+            Alert.alert(JSON.stringify(error))
+        }, {
+            enableHighAccuracy: true,
+            timeout: 20000,
+            maximumAge: 1000
+        });
     }
 
     onRefresh = async () => {
@@ -95,6 +147,8 @@ class Dashboard extends Component {
         }
         let raw = JSON.stringify({
             vendorId: 4,
+            latitude: this.state.position.isLocation ? this.state.position.latitude : 1.28668,
+            longitude: this.state.position.isLocation ? this.state.position.longitude : 103.853607
         });
         let requestOptions = {
             method: 'POST',
@@ -238,7 +292,7 @@ class Dashboard extends Component {
                                                         flexDirection: 'row',
                                                         alignItems: 'center',
                                                         justifyContent: 'space-between',
-                                                        
+
                                                     }}>
                                                     <Text style={styles.sectionTitle}>Combos</Text>
                                                     <TouchableOpacity>
@@ -273,7 +327,7 @@ class Dashboard extends Component {
                                                 borderRadius: 15,
                                                 elevation: 5,
                                                 alignSelf: 'center',
-                                                
+
                                             }}>
                                             <ImageBackground
                                                 style={styles.promotionsImg}
@@ -328,7 +382,7 @@ class Dashboard extends Component {
                                                         alignItems: 'center',
                                                         justifyContent: 'space-between',
                                                         marginTop: '8%',
-                                                        
+
                                                     }}>
                                                     <Text style={styles.sectionTitle}>Bars</Text>
                                                     <TouchableOpacity>
@@ -395,7 +449,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '500',
         color: ThemeColors.THEME_COLOR,
-        paddingLeft:8,
+        paddingLeft: 8,
         //backgroundColor:"powderblue"
     },
     selectedTabText: {

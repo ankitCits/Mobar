@@ -1,4 +1,4 @@
-import { SUCCESS_USER_DETAIL } from '../../constants/auth';
+import { SUCCESS_USER_DETAIL, SUCCESS_LOCATION_DETAIL } from '../../constants/auth';
 
 /**
  * Getting Authentication User
@@ -10,6 +10,20 @@ export const setUserDetail = data => {
     try {
       dispatch({
         type: SUCCESS_USER_DETAIL,
+        data
+      });
+      return data
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const setUserLocationDetail = data => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: SUCCESS_LOCATION_DETAIL,
         data
       });
       return data

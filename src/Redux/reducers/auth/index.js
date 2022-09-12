@@ -1,7 +1,12 @@
-import { SUCCESS_USER_DETAIL } from '../../constants/auth'
+import { SUCCESS_USER_DETAIL, SUCCESS_LOCATION_DETAIL } from '../../constants/auth'
 
 const initialState = {
-  userData: null
+  userData: null,
+  position: {
+    latitude: 0,
+    longitude: 0,
+    isLocation: false
+  }
 }
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -9,6 +14,11 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         userData: action.data
+      }
+    case SUCCESS_LOCATION_DETAIL:
+      return {
+        ...state,
+        position: action.data
       }
     default:
       return state
