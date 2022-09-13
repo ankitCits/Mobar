@@ -18,8 +18,8 @@ import { FontFamily } from '../Theme/FontFamily';
 import { ThemeColors } from '../Theme/ThemeColors';
 import { setUserDetail } from '../Redux/actions/auth';
 import { loggedOut } from '../Redux/actions/product';
-
-
+import Share from 'react-native-share';
+import { inviteShare } from '../api/common';
 
 class SideDrawer extends Component {
   constructor(props) {
@@ -29,8 +29,28 @@ class SideDrawer extends Component {
     };
   }
 
-  onPressFun = screen => {
-    console.log("drawer Index",screen);
+
+  onPressFun = async (screen) => {
+    console.log("drawer Index", screen);
+    if (screen == 'Share') {
+      try {
+        const res = await inviteShare();
+        const regex = /(<([^>]+)>)/ig;
+
+        const options = Platform.select({
+          default: {
+            title: res.response.result.pageData.title,
+            subject: res.response.result.pageData.title,
+            message: res.response.result.referLink,
+            // message: `${res.response.result.pageData.content.replace(regex, '').replace('&nbsp;', ' ')}`,
+          },
+        });
+        await Share.open(options);
+      } catch (error) {
+        console.log(error);
+      }
+      return;
+    }
     if (screen == 'MyBottomTabs') {
       this.setState({ drawerIndex: 0 });
     }
@@ -60,12 +80,12 @@ class SideDrawer extends Component {
         this.reStart();
       }
     } catch (error) {
-      console.log("Password > Update PAssword > error",error);
+      console.log("Password > Update PAssword > error", error);
       ToastAndroid.showWithGravity(
         'Internet Issue!',
         ToastAndroid.LONG,
         ToastAndroid.TOP,
-    );
+      );
     }
   };
 
@@ -137,31 +157,31 @@ class SideDrawer extends Component {
           )}
 
           <View style={styles.menuItemContainer}>
-              <View style={[drawerIndex == 0 ? styles.selectedItem :'']}>
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={() => this.onPressFun('MyBottomTabs')}>
-                  <Icon name="home" size={28} color={drawerIndex == 0 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
-                  <Text style={[styles.listText,drawerIndex == 0 ? styles.selectedTextColor : '']}>Home</Text>
-                </TouchableOpacity>
-              </View>
-            {this.props.redux && 
-            <>
-                <View style={[drawerIndex == 1 ? styles.selectedItem :'']}>
+            <View style={[drawerIndex == 0 ? styles.selectedItem : '']}>
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => this.onPressFun('MyBottomTabs')}>
+                <Icon name="home" size={28} color={drawerIndex == 0 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
+                <Text style={[styles.listText, drawerIndex == 0 ? styles.selectedTextColor : '']}>Home</Text>
+              </TouchableOpacity>
+            </View>
+            {this.props.redux &&
+              <>
+                <View style={[drawerIndex == 1 ? styles.selectedItem : '']}>
                   <TouchableOpacity
                     style={styles.menuItem}
                     onPress={() => this.onPressFun('MyProfile')}>
                     <Icon name="account-circle" size={28} color={drawerIndex == 1 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
-                    <Text style={[styles.listText,drawerIndex == 1 ? styles.selectedTextColor : '']}>My Profile</Text>
+                    <Text style={[styles.listText, drawerIndex == 1 ? styles.selectedTextColor : '']}>My Profile</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={[drawerIndex == 2 ? styles.selectedItem : '']}>
                   <TouchableOpacity
                     style={styles.menuItem}
                     onPress={() => this.onPressFun('ChangePassword')}
-                    >
+                  >
                     <Icon name="vpn-key" size={28} color={drawerIndex == 2 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
-                    <Text style={[styles.listText,drawerIndex == 2 ? styles.selectedTextColor : '']}>Change Password</Text>
+                    <Text style={[styles.listText, drawerIndex == 2 ? styles.selectedTextColor : '']}>Change Password</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={[drawerIndex == 3 ? styles.selectedItem : '']}>
@@ -169,46 +189,46 @@ class SideDrawer extends Component {
                     style={styles.menuItem}
                     onPress={() => this.onPressFun('OrderHistory')}>
                     <Icon name="schedule" size={28} color={drawerIndex == 3 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
-                    <Text style={[styles.listText,drawerIndex == 3 ? styles.selectedTextColor : '']}>Order History</Text>
+                    <Text style={[styles.listText, drawerIndex == 3 ? styles.selectedTextColor : '']}>Order History</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={[drawerIndex == 4 ? styles.selectedItem : '']}>
                   <TouchableOpacity
                     style={styles.menuItem}
-                    onPress={() => this.onPressFun('share')}
+                    onPress={() => this.onPressFun('Share')}
                   >
                     <Icon name="share" size={26} color={drawerIndex == 4 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
-                    <Text style={[styles.listText,drawerIndex == 4 ? styles.selectedTextColor : '']}>
+                    <Text style={[styles.listText, drawerIndex == 4 ? styles.selectedTextColor : '']}>
                       Invite Your Friends
                     </Text>
                   </TouchableOpacity>
                 </View>
-                </>
+              </>
             }
-             <View style={[ drawerIndex == 5 ? styles.selectedItem : '']}>
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={() => this.onPressFun('HelpSupport')}>
-                  <Icon name="support-agent" size={28} color={drawerIndex == 5 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
-                  <Text style={[styles.listText,drawerIndex == 5 ? styles.selectedTextColor : '']}>Help & Support</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={[drawerIndex == 6 ? styles.selectedItem:'']}>
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={() => this.onPressFun('About')}>
-                  <Icon name="info" size={28} color={drawerIndex == 6 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
-                  <Text style={[styles.listText,drawerIndex == 6 ? styles.selectedTextColor:'']}>About</Text>
-                </TouchableOpacity>
-              </View>
-               { this.props.redux ? (  <View style={[drawerIndex == 7 ? styles.selectedItem:'']}>
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={() => this.loggedOut()}>
-                  <Icon name="phonelink-lock" size={28} color={ThemeColors.CLR_TAB} />
-                  <Text style={[styles.listText,drawerIndex == 7 ? styles.selectedTextColor:'']}>Sign out</Text>
-                </TouchableOpacity>
-              </View>):
+            <View style={[drawerIndex == 5 ? styles.selectedItem : '']}>
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => this.onPressFun('HelpSupport')}>
+                <Icon name="support-agent" size={28} color={drawerIndex == 5 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
+                <Text style={[styles.listText, drawerIndex == 5 ? styles.selectedTextColor : '']}>Help & Support</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={[drawerIndex == 6 ? styles.selectedItem : '']}>
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => this.onPressFun('About')}>
+                <Icon name="info" size={28} color={drawerIndex == 6 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
+                <Text style={[styles.listText, drawerIndex == 6 ? styles.selectedTextColor : '']}>About</Text>
+              </TouchableOpacity>
+            </View>
+            {this.props.redux ? (<View style={[drawerIndex == 7 ? styles.selectedItem : '']}>
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => this.loggedOut()}>
+                <Icon name="phonelink-lock" size={28} color={ThemeColors.CLR_TAB} />
+                <Text style={[styles.listText, drawerIndex == 7 ? styles.selectedTextColor : '']}>Sign out</Text>
+              </TouchableOpacity>
+            </View>) :
               null}
           </View>
         </View>
@@ -218,72 +238,72 @@ class SideDrawer extends Component {
 }
 
 const styles = StyleSheet.create({
-  container:{
-    flex: 1, 
+  container: {
+    flex: 1,
     backgroundColor: ThemeColors.CLR_WHITE,
   },
-  menuTitle:{
-    fontSize: 18, 
-    color: ThemeColors.CLR_DARK_GREY, 
+  menuTitle: {
+    fontSize: 18,
+    color: ThemeColors.CLR_DARK_GREY,
     fontFamily: FontFamily.TAJAWAL_BOLD
   },
-  header:{
+  header: {
     width: '90%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     margin: 10,
   },
-  profileContainer:{
+  profileContainer: {
     marginTop: '10%',
   },
-  profileDetails:{
+  profileDetails: {
     alignSelf: 'center',
     flexDirection: 'row',
     borderWidth: 1,
-    borderRadius:14,
+    borderRadius: 14,
     height: 60,
     borderColor: '#D41335',
     alignItems: 'center',
     padding: 5
   },
-  profileTitle:{
+  profileTitle: {
     fontSize: 17,
-    fontFamily:FontFamily.TAJAWAL_REGULAR, 
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
     fontWeight: '700',
-    color:ThemeColors.CLR_DARK_GREY
+    color: ThemeColors.CLR_DARK_GREY
   },
-  profileSubHeader:{
+  profileSubHeader: {
     marginLeft: 2,
-    fontFamily:FontFamily.ROBOTO_REGULAR,
+    fontFamily: FontFamily.ROBOTO_REGULAR,
     fontSize: 12,
-    color:'#3C3C3C',
+    color: '#3C3C3C',
     fontWeight: '500'
   },
-  profileSubContainer:{
+  profileSubContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  editBtnContainer:{
+  editBtnContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 5,
   },
-  editBtnText:{
+  editBtnText: {
     fontSize: 10,
     color: '#A1172F',
     fontWeight: '400',
-    fontFamily:FontFamily.ROBOTO_REGULAR
+    fontFamily: FontFamily.ROBOTO_REGULAR
   },
-  editIcon:{
-    marginTop: 2, 
+  editIcon: {
+    marginTop: 2,
     marginLeft: 5
   },
-  menuItemContainer:{
-    marginTop:30
+  menuItemContainer: {
+    marginTop: 30
   },
-  selectedItem:{
+  selectedItem: {
     backgroundColor: '#A1172F',
-    color:ThemeColors.CLR_WHITE,
+    color: ThemeColors.CLR_WHITE,
   },
   menuItem: {
     flexDirection: 'row',
@@ -295,10 +315,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '500',
     marginLeft: 10,
-    fontFamily:FontFamily.TAJAWAL_REGULAR,
-    color:ThemeColors.CLR_DARK_GREY
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    color: ThemeColors.CLR_DARK_GREY
   },
-  selectedTextColor:{
+  selectedTextColor: {
     color: ThemeColors.CLR_WHITE,
   },
 });

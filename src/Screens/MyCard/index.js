@@ -37,8 +37,7 @@ export default class MyCard extends Component {
       isLoading: false,
       couponText: '',
       couponLoader: false,
-      ckeckOutLoader:false
-
+      checkoutLoader: false
     };
 
   }
@@ -46,7 +45,7 @@ export default class MyCard extends Component {
   componentDidMount() {
     this.fetchData();
   }
-  
+
 
   fetchData = async () => {
     this.setState({ isLoading: true, isFetching: true, });
@@ -78,8 +77,6 @@ export default class MyCard extends Component {
     this.fetchData();
   }
 
-  
-
   renderCartItems = (item, index) => {
     return (
       <>
@@ -108,23 +105,22 @@ export default class MyCard extends Component {
   }
 
   cartCheckout = async () => {
-    this.setState({ ckeckOutLoader: true })
+    this.setState({ checkoutLoader: true })
     const payload = {
       couponCode: this.state.couponText,
       subTotalAmount: this.state.amountData.subTotalAmount,
       couponDiscountAmount: this.state.amountData.couponDiscount,
       discountAmount: this.state.amountData.extraDiscount,
       totalPayable: this.state.amountData.totalPayable,
-
     }
     try {
       const respCheckout = await cartCheckout(payload);
       const result = respCheckout.response.result.data;
-      this.props.navigation.navigate('Checkout', { orderDetails: result, ckeckOutLoader: false })
-      this.setState({ ckeckOutLoader: false })
+      this.props.navigation.navigate('Checkout', { orderDetails: result, checkoutLoader: false })
+      this.setState({ checkoutLoader: false })
     } catch (e) {
       Alert.alert('Error', e);
-      this.setState({ ckeckOutLoader: false })
+      this.setState({ checkoutLoader: false })
     }
   }
 
@@ -354,16 +350,16 @@ export default class MyCard extends Component {
                   <TouchableOpacity
                     style={styles.save}
                     onPress={() => this.cartCheckout()}
-                    disabled={this.state.ckeckOutLoader}  
-                    >
-                 
-                     {this.state.ckeckOutLoader ?
-                        (
-                          <ActivityIndicator size="small" color="#ffffff" />
-                        ) :(
-                    <Text style={{ color: '#fff', fontSize: 18 }}>CHECKOUT</Text>
+                    disabled={this.state.checkoutLoader}
+                  >
+
+                    {this.state.checkoutLoader ?
+                      (
+                        <ActivityIndicator size="small" color="#ffffff" />
+                      ) : (
+                        <Text style={{ color: '#fff', fontSize: 18 }}>CHECKOUT</Text>
                       )
-                   }
+                    }
                   </TouchableOpacity>
                 </View>
               </View>

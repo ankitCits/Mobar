@@ -9,7 +9,8 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
-  BackHandler
+  BackHandler,
+  ActivityIndicator
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { connect } from 'react-redux';
@@ -17,7 +18,9 @@ import images from '../../assets/images';
 import HeaderSide from '../Component/HeaderSide';
 import PaymentForm from '../../Component/PaymentForm';
 import { initStripe, confirmPayment } from '@stripe/stripe-react-native';
-import { fetchPaymentIntentClientSecret, placeOrder,fetchCart } from '../../api/order';
+import { fetchPaymentIntentClientSecret, placeOrder, fetchCart } from '../../api/order';
+
+import moment from 'moment'
 // pk_test_QNBEnRDDdYq1Yc7TZjVZhhwG00JySy2oJq
 // sk_test_f1pXZRO62VZWj5xCJvqsOnLa00Kaq1E3nT
 class Checkout extends Component {
@@ -25,7 +28,7 @@ class Checkout extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loader:false,
+      loader: false,
       visibility: false,
       paymentType: 'creditDebit',
       amountData: props.route.params.orderDetails,
@@ -44,14 +47,15 @@ class Checkout extends Component {
     }
     initialize().catch(console.error);
   }
-  
-componentWillUnmount(){
-  BackHandler.removeEventListener();
-}
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener();
+  }
 
   placeOrder = async () => {
     // console.log('placeorder');
     if (this.state.paymentType == 'creditDebit') {
+      this.setState({ loader: true });
       const billingDetails = {
         email: this.state.userData.email,
       };
@@ -69,28 +73,33 @@ componentWillUnmount(){
       );
       if (error) {
         console.log(error);
+        this.setState({ loader: false });
         Alert.alert(`${error.code}`, error.localizedMessage)
       } else if (paymentIntent) {
         if (paymentIntent.status === 'Succeeded') {
           try {
-            console.log(paymentIntent)
-            console.log(this.state.orderAmount);
+            // console.log(paymentIntent)
+            // console.log(this.state.orderAmount);
             const orderData = {
               orderId: this.props.route.params.orderDetails.orderId,
               transactionId: paymentIntent.id,
               paymentMethod: 'credit-debit-cart',
               transactionPayAmount: paymentIntent.amount,
-              transactionDate: new Date().toDateString(),
-              transactionTime: new Date().toTimeString(),
+              transactionDate: moment().format('YYYY-MM-DD'),
+              transactionTime: moment().format('HH:mm:ss'),
               transactionStatus: 'SUCCEEDED'
             }
-            console.log(orderData)
+            // console.log(orderData)
             await placeOrder(orderData); // Call api to submit order
+            this.setState({ loader: false });
             this.props.navigation.navigate('OrderHistoryDetail', { home: true }) // navigate to order history page
           } catch (e) {
             console.log(e)
+            this.setState({ loader: false });
             Alert.alert('Error', 'Error while processing payment')
           }
+        } else {
+          this.setState({ loader: false });
         }
       }
     }
@@ -529,11 +538,18 @@ componentWillUnmount(){
               <View style={{ marginTop: '10%', marginBottom: 10 }}>
                 <TouchableOpacity
                   style={styles.save}
+                  disabled={this.state.loader}
                   onPress={() =>
                     this.placeOrder()
                     // this.props.navigation.navigate('OrderHistoryDetail', { home: true })
                   }>
-                  <Text style={{ color: '#fff', fontSize: 18 }}>PLACE ORDER</Text>
+                  {this.state.loader ?
+                    (
+                      <ActivityIndicator size="small" color="#ffffff" />
+                    ) : (
+                      <Text style={{ color: '#fff', fontSize: 18 }}>PLACE ORDER</Text>
+                    )
+                  }
                 </TouchableOpacity>
 
                 <TouchableOpacity

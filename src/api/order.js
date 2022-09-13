@@ -1,4 +1,4 @@
-import { A_KEY, BASE_URL, MY_HEADER } from '../config';
+import { A_KEY, BASE_URL } from '../config';
 import { getAccessToken } from '../localstorage';
 
 
@@ -16,6 +16,7 @@ export const fetchPaymentIntentClientSecret = (postData) => {
             redirect: 'follow',
             body: data,
         }
+        console.log(myHeaders)
         fetch(`${BASE_URL}/orders/getPaymentIntent`, requestOptions)
             .then(result => result.json())
             .then(responseDetail => {
@@ -45,10 +46,11 @@ export const placeOrder = (postData) => {
             redirect: 'follow',
             body: data,
         }
-        console.log(requestOptions);
+        // console.log(myHeaders);
         fetch(`${BASE_URL}/orders/placeOrder`, requestOptions)
             .then(result => result.json())
             .then(responseDetail => {
+                // console.log(responseDetail);
                 if (responseDetail.response) {
                     resolve(responseDetail);
                 }
