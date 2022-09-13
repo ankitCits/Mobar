@@ -40,7 +40,6 @@ class ComboOfferCard extends Component {
                         defaultSource={images.combo}
                     >
                         <View
-                            key={index}
                             style={{
                                 flexDirection: 'row',
                             }}>
@@ -51,7 +50,7 @@ class ComboOfferCard extends Component {
                                     style={{
                                         flexDirection: 'row',
                                         alignItems: 'center',
-                                        marginLeft:10
+                                        marginLeft: 10
                                     }}>
                                     <Image
                                         key={index}
@@ -128,7 +127,6 @@ class ComboOfferCard extends Component {
                                     />
                                 ) : (
                                     <Image
-                                        key={index}
                                         resizeMode={'cover'}
                                         source={{
                                             uri: `${hostUrl + item.images}`,

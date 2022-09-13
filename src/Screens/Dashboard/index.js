@@ -31,8 +31,7 @@ import { FontFamily } from '../../Theme/FontFamily';
 import { setUserDetail, setUserLocationDetail } from '../../Redux/actions/auth';
 import { getUserDetails } from '../../api/auth';
 import images from '../../assets/images';
-import { screenWidth } from '../../Theme/Matrices';
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from 'react-native-geolocation-service';
 
 
 const LazyPlaceholder = ({ route }) => (
@@ -62,10 +61,10 @@ class Dashboard extends Component {
         };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.getDetail();
         this.getTabDetail();
-        this.requestLocationPermission();
+        await this.requestLocationPermission();
         // setTimeout(() => {
         //     console.log('loca',this.props.redux.auth.position);
         // }, 2000);
@@ -100,14 +99,18 @@ class Dashboard extends Component {
 
     getLatLong = async () => {
         Geolocation.getCurrentPosition((position) => {
+            console.log('>>>>position', position)
             this.setState({ position: { longitude: position.coords.longitude, latitude: position.coords.latitude, isLocation: true } });
             this.props.dispatch(setUserLocationDetail(this.state.position));
         }, (error) => {
-            Alert.alert(JSON.stringify(error))
+            console.log(JSON.stringify(error));
+            Alert.alert('Alert', 'Unable to retrieve your location')
         }, {
             enableHighAccuracy: true,
             timeout: 20000,
-            maximumAge: 1000
+            maximumAge: 1000,
+            forceRequestLocation: true,
+            showLocationDialog: true,
         });
     }
 

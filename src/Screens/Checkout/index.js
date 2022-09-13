@@ -11,21 +11,26 @@ import {
   Alert
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { connect } from 'react-redux';
 import images from '../../assets/images';
 import HeaderSide from '../Component/HeaderSide';
 import PaymentForm from '../../Component/PaymentForm';
 import { initStripe, confirmPayment } from '@stripe/stripe-react-native';
-import { fetchPaymentIntentClientSecret } from '../../api/order';
+import { fetchPaymentIntentClientSecret, placeOrder } from '../../api/order';
 // pk_test_QNBEnRDDdYq1Yc7TZjVZhhwG00JySy2oJq
 // sk_test_f1pXZRO62VZWj5xCJvqsOnLa00Kaq1E3nT
-export default class Checkout extends Component {
+class Checkout extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
       visibility: false,
       paymentType: 'creditDebit',
+      amountData: props.route.params.orderDetails,
+      userData: props.redux.auth.userData
     };
+    // console.log(this.props.route.params)
+    // console.log(this.props.redux.auth.userData)
   }
 
 
@@ -39,12 +44,12 @@ export default class Checkout extends Component {
   }
 
   placeOrder = async () => {
-    console.log('placeorder');
+    // console.log('placeorder');
     if (this.state.paymentType == 'creditDebit') {
       const billingDetails = {
-        email: 'test@test.com',
+        email: this.state.userData.email,
       };
-      const postData = { orderAmount: 1000 }; // get dynamic amount and pass to below api 
+      const postData = { orderAmount: this.state.amountData.totalPayable * 100 }; // get dynamic amount and pass to below api 
       const res = await fetchPaymentIntentClientSecret(postData);
       const { paymentIntent, error } = await confirmPayment(
         res.response.result.paymentIntent,
@@ -61,9 +66,25 @@ export default class Checkout extends Component {
         Alert.alert(`${error.code}`, error.localizedMessage)
       } else if (paymentIntent) {
         if (paymentIntent.status === 'Succeeded') {
-          console.log(paymentIntent)
-          // await placeOrder(orderData); // Call api to submit order
-          // this.props.navigation.navigate('OrderHistoryDetail', { home: true }) // navigate to order history page
+          try {
+            console.log(paymentIntent)
+            console.log(this.state.orderAmount);
+            const orderData = {
+              orderId: this.props.route.params.orderDetails.orderId,
+              transactionId: paymentIntent.id,
+              paymentMethod: 'credit-debit-cart',
+              transactionPayAmount: paymentIntent.amount,
+              transactionDate: new Date().toDateString(),
+              transactionTime: new Date().toTimeString(),
+              transactionStatus: 'SUCCEEDED'
+            }
+            console.log(orderData)
+            await placeOrder(orderData); // Call api to submit order
+            this.props.navigation.navigate('OrderHistoryDetail', { home: true }) // navigate to order history page
+          } catch (e) {
+            console.log(e)
+            Alert.alert('Error', 'Error while processing payment')
+          }
         }
       }
     }
@@ -403,35 +424,65 @@ export default class Checkout extends Component {
                     fontWeight: '500',
                     fontSize: 20,
                   }}>
-                  $397
+                  ${this.state.amountData.subTotalAmount}
                 </Text>
               </View>
 
-              <View
-                style={{
-                  marginTop: 5,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <Text
+              {this.state.amountData.couponDiscount > 0 &&
+                <View
                   style={{
-                    marginLeft: 30,
-                    color: '#3C3C3C',
-                    fontWeight: '500',
-                    fontSize: 18,
+                    marginTop: 5,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
                   }}>
-                  Discount
-                </Text>
-                <Text
+                  <Text
+                    style={{
+                      marginLeft: 30,
+                      color: '#3C3C3C',
+                      fontWeight: '500',
+                      fontSize: 18,
+                    }}>
+                    Coupon Discount
+                  </Text>
+                  <Text
+                    style={{
+                      marginRight: 40,
+                      color: '#F01111',
+                      fontWeight: '500',
+                      fontSize: 18,
+                    }}>
+                    -${this.state.amountData.couponDiscount}
+                  </Text>
+                </View>
+              }
+
+              {this.state.amountData.extraDiscount > 0 &&
+                <View
                   style={{
-                    marginRight: 40,
-                    color: '#F01111',
-                    fontWeight: '500',
-                    fontSize: 18,
+                    marginTop: 5,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
                   }}>
-                  -$99
-                </Text>
-              </View>
+                  <Text
+                    style={{
+                      marginLeft: 30,
+                      color: '#3C3C3C',
+                      fontWeight: '500',
+                      fontSize: 18,
+                    }}>
+                    Discount
+                  </Text>
+                  <Text
+                    style={{
+                      marginRight: 40,
+                      color: '#F01111',
+                      fontWeight: '500',
+                      fontSize: 18,
+                    }}>
+                    -${this.state.amountData.extraDiscount}
+                  </Text>
+                </View>
+              }
 
               <View
                 style={{
@@ -464,7 +515,7 @@ export default class Checkout extends Component {
                     fontWeight: '700',
                     fontSize: 22,
                   }}>
-                  $262
+                  ${this.state.amountData.totalPayable}
                 </Text>
               </View>
 
@@ -517,6 +568,17 @@ export default class Checkout extends Component {
     );
   }
 }
+
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatch,
+  };
+}
+function mapStateToProps(state) {
+  let redux = state;
+  return { redux };
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Checkout);
 
 const styles = StyleSheet.create({
   paymentSelect: {

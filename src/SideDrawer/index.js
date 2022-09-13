@@ -76,7 +76,7 @@ class SideDrawer extends Component {
 
   render() {
     var drawerIndex = this.state.drawerIndex;
-    console.log("========>>>>", this.props.redux)
+    // console.log("========>>>>", this.props.redux)
     return (
       <>
         <StatusBar

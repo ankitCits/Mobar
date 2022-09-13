@@ -80,7 +80,7 @@ export default class OrderHistory extends Component {
   formatDDMMM = s => {
     var months = 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' ');
     var b = s.split(/\D/);
-    console.log('==========>>>>>>>>>', b);
+    // console.log('==========>>>>>>>>>', b);
     return b[2] + ' ' + months[b[1] - 1];
   };
 

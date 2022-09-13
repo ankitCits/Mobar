@@ -21,7 +21,7 @@ export default class OrderHistoryDetail extends Component {
   }
 
   render() {
-    console.log('==============>>>>>>>>>', this.props.route.params);
+    // console.log('==============>>>>>>>>>', this.props.route.params);
     return (
       <SafeAreaView
         style={{

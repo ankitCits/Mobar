@@ -30,17 +30,18 @@ export default class CartProduct extends React.Component {
     } else {
       const cartItem = {
         cartId: this.state.data.cartId,
-        type:type,
+        type: type,
       };
       try {
         const response = await updateToCart(cartItem);
-        if(type==1){
+        this.props.onChange(this.state.qty, this.state.data.cartId);
+        if (type == 1) {
           const qty = this.state.qty + 1;
-          this.setState({ qty:qty  });
-        }else{
+          this.setState({ qty: qty });
+        } else {
           const qty = this.state.qty - 1;
           this.setState({ qty: qty });
-        } 
+        }
       } catch (error) {
         ToastAndroid.showWithGravity(
           error,
@@ -51,21 +52,20 @@ export default class CartProduct extends React.Component {
     }
   }
 
-  onChange=(qty)=>{
-    return qty;
-  }
+  // onChange = (qty) => {
+  //   return qty;
+  // }
 
   render() {
     const {
       item,
       hostUrl,
-      onChange,
       navigation,
       index
     } = this.props;
     return (
       <>
-        <TouchableOpacity style={styles.container} key={index} onPress={this.props.onChange(this.state.qty,this.state.data.cartId)}>
+        <TouchableOpacity style={styles.container} key={index} >
           <View style={styles.subContainer} key={index}>
             {/* Image */}
             <View style={styles.productInnerView}>
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   details: {
     alignSelf: 'center',
     marginLeft: 20,
-    width:120,//140,
+    width: 120,//140,
   },
   header: {
     marginTop: 5,
@@ -197,10 +197,10 @@ const styles = StyleSheet.create({
   qtyContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    alignContent:'flex-start',
-    alignSelf:'center',
-    justifyContent:'center',
-    width:100
+    alignContent: 'flex-start',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    width: 100
   },
   priceContainer: {
     flexDirection: 'row',

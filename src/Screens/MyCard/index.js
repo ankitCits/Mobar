@@ -42,16 +42,8 @@ export default class MyCard extends Component {
     this.fetchData();
   }
 
-  componentDidUpdate() {
-
-  }
-
-  // componentWillUpdate(){
-
-  // }
-
   fetchData = async () => {
-    this.setState({ isLoading: true });
+    this.setState({ isLoading: true, isFetching: true, });
     try {
       const resp = await fetchCart();
       console.log(resp.response.result.amountData);
@@ -60,12 +52,11 @@ export default class MyCard extends Component {
         hostUrl: resp.response.result.hostUrl,
         isFetching: false,
         isLoading: false,
-        amountData: resp.response.result.amountData
+        amountData: resp.response.result.amountData,
+        totalQty: 0
       });
       if (this.state.cart.length > 0) {
         this.setState({ totalQty: this.state.cart.length });
-        // this.setState({ payableTotal: this.state.cart.reduce((x, c) => x + parseInt(c.productAmount), 0) });
-        // this.setState({ payableTotal: this.state.cart.reduce((x, c) => x + parseInt(c.productAmount), 0) });
       }
     } catch (error) {
       this.setState({ isLoading: false, isFetching: false, });
@@ -77,13 +68,8 @@ export default class MyCard extends Component {
     }
   };
 
-  onChange = (qty, id) => {
-    if (qty == 0) {
-      //this.setState({isFetching:true});
-      this.fetchData();
-      // const data=this.state.cart.filter(x => x.cartId != id);
-      // this.setState({ cart:this.state.cart.filter(x => x.cartId !== id),qty:this.state.qty-1 })
-    }
+  onChange = () => {
+    this.fetchData();
   }
 
   onRefresh = () => {
@@ -125,8 +111,8 @@ export default class MyCard extends Component {
     }
     try {
       const respCheckout = await cartCheckout(payload);
-      console.log(respCheckout.response.result.data);
-      this.props.navigation.navigate('Checkout')
+      const result = respCheckout.response.result.data;
+      this.props.navigation.navigate('Checkout', { orderDetails: result })
     } catch (e) {
       Alert.alert('Error', e);
     }
@@ -142,7 +128,7 @@ export default class MyCard extends Component {
         />
         {this.state.isLoading ?
           <>
-            <ActivityIndicator size="large" style={{}} color={ThemeColors.CLR_TAB} />
+            <ThemeFullPageLoader />
           </>
           :
           (<>
