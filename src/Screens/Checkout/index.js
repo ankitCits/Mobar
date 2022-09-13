@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Alert
+  Alert,
+  BackHandler
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { connect } from 'react-redux';
@@ -16,7 +17,7 @@ import images from '../../assets/images';
 import HeaderSide from '../Component/HeaderSide';
 import PaymentForm from '../../Component/PaymentForm';
 import { initStripe, confirmPayment } from '@stripe/stripe-react-native';
-import { fetchPaymentIntentClientSecret, placeOrder } from '../../api/order';
+import { fetchPaymentIntentClientSecret, placeOrder,fetchCart } from '../../api/order';
 // pk_test_QNBEnRDDdYq1Yc7TZjVZhhwG00JySy2oJq
 // sk_test_f1pXZRO62VZWj5xCJvqsOnLa00Kaq1E3nT
 class Checkout extends Component {
@@ -24,6 +25,7 @@ class Checkout extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loader:false,
       visibility: false,
       paymentType: 'creditDebit',
       amountData: props.route.params.orderDetails,
@@ -42,6 +44,10 @@ class Checkout extends Component {
     }
     initialize().catch(console.error);
   }
+  
+componentWillUnmount(){
+  BackHandler.removeEventListener();
+}
 
   placeOrder = async () => {
     // console.log('placeorder');
@@ -100,6 +106,7 @@ class Checkout extends Component {
         <HeaderSide
           name={'Checkout'}
           onClick={() => this.props.navigation.pop()}
+
         />
         <ScrollView>
           <View style={{ margin: 15, marginBottom: 0 }}>

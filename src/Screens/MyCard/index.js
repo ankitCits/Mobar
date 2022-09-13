@@ -19,6 +19,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { applyCoupon, cartCheckout, fetchCart } from '../../api/product';
 import images from '../../assets/images';
 import CartProduct from '../../Component/CartProduct';
+import ThemeButton from '../../Component/ThemeButton';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import { FontFamily } from '../../Theme/FontFamily';
 import { ThemeColors } from '../../Theme/ThemeColors';
@@ -34,13 +35,18 @@ export default class MyCard extends Component {
       payableTotal: 0,
       isFetching: false,
       isLoading: false,
-      couponText: ''
+      couponText: '',
+      couponLoader: false,
+      ckeckOutLoader:false
+
     };
+
   }
 
   componentDidMount() {
     this.fetchData();
   }
+  
 
   fetchData = async () => {
     this.setState({ isLoading: true, isFetching: true, });
@@ -72,9 +78,7 @@ export default class MyCard extends Component {
     this.fetchData();
   }
 
-  onRefresh = () => {
-    this.fetchData();
-  }
+  
 
   renderCartItems = (item, index) => {
     return (
@@ -85,36 +89,42 @@ export default class MyCard extends Component {
   };
 
   applyCoupon = async () => {
+    this.setState({ couponLoader: true });
     if (this.state.couponText != '') {
       const payload = {
-        coupon: this.state.couponText
+        coupon: this.state.couponText,
       }
       try {
         const respCoupon = await applyCoupon(payload);
         console.log(respCoupon.response.result);
-        this.setState({ amountData: respCoupon.response.result.data })
+        this.setState({ amountData: respCoupon.response.result.data, couponLoader: false })
       } catch (e) {
         Alert.alert('Error', e);
       }
     } else {
       Alert.alert('Error', 'Promocode cannot be empty');
+      this.setState({ couponLoader: false })
     }
   }
 
   cartCheckout = async () => {
+    this.setState({ ckeckOutLoader: true })
     const payload = {
       couponCode: this.state.couponText,
       subTotalAmount: this.state.amountData.subTotalAmount,
       couponDiscountAmount: this.state.amountData.couponDiscount,
       discountAmount: this.state.amountData.extraDiscount,
-      totalPayable: this.state.amountData.totalPayable
+      totalPayable: this.state.amountData.totalPayable,
+
     }
     try {
       const respCheckout = await cartCheckout(payload);
       const result = respCheckout.response.result.data;
-      this.props.navigation.navigate('Checkout', { orderDetails: result })
+      this.props.navigation.navigate('Checkout', { orderDetails: result, ckeckOutLoader: false })
+      this.setState({ ckeckOutLoader: false })
     } catch (e) {
       Alert.alert('Error', e);
+      this.setState({ ckeckOutLoader: false })
     }
   }
 
@@ -170,6 +180,7 @@ export default class MyCard extends Component {
                       underlineColorAndroid="transparent"
                       onChangeText={(text) => this.setState({ couponText: text })}
                     />
+
                     <TouchableOpacity
                       style={{
                         backgroundColor: '#751A2A',
@@ -181,16 +192,23 @@ export default class MyCard extends Component {
                         alignSelf: 'center',
                       }}
                       onPress={() => this.applyCoupon()}
+                      disabled={this.state.couponLoader}
                     >
-                      <Text
-                        style={{
-                          fontFamily: FontFamily.TAJAWAL_REGULAR,
-                          fontWeight: '700',
-                          fontSize: 20,
-                          color: ThemeColors.CLR_WHITE,
-                        }}>
-                        Apply
-                      </Text>
+                      {this.state.couponLoader ?
+                        (
+                          <ActivityIndicator size="small" color="#ffffff" />
+                        ) : (
+                          <Text
+                            style={{
+                              fontFamily: FontFamily.TAJAWAL_REGULAR,
+                              fontWeight: '700',
+                              fontSize: 20,
+                              color: ThemeColors.CLR_WHITE,
+                            }}>
+                            Apply
+                          </Text>
+                        )
+                      }
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -335,8 +353,17 @@ export default class MyCard extends Component {
                 <View style={{ marginTop: '10%', marginBottom: 10 }}>
                   <TouchableOpacity
                     style={styles.save}
-                    onPress={() => this.cartCheckout()}>
+                    onPress={() => this.cartCheckout()}
+                    disabled={this.state.ckeckOutLoader}  
+                    >
+                 
+                     {this.state.ckeckOutLoader ?
+                        (
+                          <ActivityIndicator size="small" color="#ffffff" />
+                        ) :(
                     <Text style={{ color: '#fff', fontSize: 18 }}>CHECKOUT</Text>
+                      )
+                   }
                   </TouchableOpacity>
                 </View>
               </View>
