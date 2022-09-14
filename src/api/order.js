@@ -62,3 +62,46 @@ export const placeOrder = (postData) => {
             });
     });
 };
+
+fetchDetail = async () => {
+    let token = await getAccessToken(token);
+    var myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append('A_Key', A_KEY);
+    myHeaders.append('Token', `${token}`);
+
+    var requestOptions = {
+      method: 'PUT',
+      headers: myHeaders,
+      redirect: 'follow',
+    };
+
+    fetch(`${BASE_URL}/orders/history`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        if (result.response) {
+          console.log(result.response.result.data);
+          this.setState({
+            data: result.response.result.data,
+            url: result.response.result.hostUrl,
+            loader: false,
+          });
+        }
+        if (result.errors) {
+          this.setState({loading: false});
+          ToastAndroid.showWithGravity(
+            result.errors[0].msg,
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+          );
+        }
+      })
+      .catch(error => {
+        console.log('error', error);
+        ToastAndroid.showWithGravity(
+          'Network Error!',
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
+        );
+      });
+  };
