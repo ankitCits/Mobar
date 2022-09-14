@@ -66,7 +66,7 @@ class Dashboard extends Component {
         this.getTabDetail();
         await this.requestLocationPermission();
         // setTimeout(() => {
-        //     console.log('loca',this.props.redux.auth.position);
+        //     console.log('loca',this.props.redux.auth.position.isLocation);
         // }, 2000);
     }
 
@@ -150,8 +150,8 @@ class Dashboard extends Component {
         }
         let raw = JSON.stringify({
             vendorId: 4,
-            latitude: this.state.position.isLocation ? this.state.position.latitude : 1.28668,
-            longitude: this.state.position.isLocation ? this.state.position.longitude : 103.853607
+            latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : 1.28668,
+            longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
         });
         let requestOptions = {
             method: 'POST',

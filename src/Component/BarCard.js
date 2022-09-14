@@ -151,7 +151,7 @@ class BarCard extends Component {
                                     style={styles.bottomIcon}
                                 />
                                 <Text style={styles.textAddress}>
-                                    {this.state.data.distance.toFixed(1)}
+                                    {this.state.data.distance.toFixed(1)}Km
                                 </Text>
                             </TouchableOpacity>
 

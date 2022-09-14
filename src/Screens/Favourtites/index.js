@@ -21,12 +21,14 @@ import { FontFamily } from '../../Theme/FontFamily';
 import Drinks from './Tabs/Drinks';
 import Bars from './Tabs/Bars';
 import { wishlist } from '../../api/wishlist';
+import { connect } from 'react-redux';
+
 const LazyPlaceholder = ({ route }) => (
   <View>
     <ThemeFullPageLoader />
   </View>
 );
-export default class Favourites extends Component {
+class Favourites extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -55,7 +57,11 @@ export default class Favourites extends Component {
 
   fetchData = async () => {
     try {
-      const response = await wishlist();
+      const postData = {
+        latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : 1.28668,
+        longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
+      }
+      const response = await wishlist(postData);
       console.log("Wishlist > Pull refresh > fetchData > response", response);
       this.setState({
         data: response.result,
@@ -211,6 +217,21 @@ export default class Favourites extends Component {
     );
   }
 }
+
+// dispatcher functions
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatch,
+  };
+}
+
+//getting props from redux
+function mapStateToProps(state) {
+  let redux = state.auth.userData;
+  return { redux };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Favourites);
 
 const styles = StyleSheet.create({
   container: {

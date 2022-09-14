@@ -55,11 +55,8 @@ export const addToWishlist = (postData) => {
     });
 };
 
-export const wishlist = async () => {
-    var raw = JSON.stringify({
-        latitude: 1.28668,
-        longitude: 103.853607,
-      });
+export const wishlist = async (postData) => {
+    var raw = JSON.stringify(postData);
     const myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('A_Key', A_KEY);

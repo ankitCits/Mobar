@@ -186,8 +186,8 @@ class MyProfile extends Component {
         dateofbirth: `${this.state.data.dateofbirth}`,
         gender: `${this.state.gender}`,
         address: `${this.state.address}`,
-        latitude: 1.28668,
-        longitude: 103.853607,
+        latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : 1.28668,
+        longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
       };
       try {
         const response = await updateProfile(raw);
@@ -550,8 +550,8 @@ const styles = StyleSheet.create({
   //   marginTop:10,
   //   borderRadius: 10,
   // },
-  adsInput:{
-    marginLeft:13
+  adsInput: {
+    marginLeft: 13
   },
   sectionStyleNext: {
     flexDirection: 'row',

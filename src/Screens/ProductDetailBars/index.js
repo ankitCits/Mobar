@@ -23,8 +23,9 @@ import { addToCart } from '../../api/product';
 import { getAccessToken } from '../../localstorage';
 import { showAlert } from '../../api/auth';
 import HTMLView from 'react-native-htmlview';
+import { connect } from 'react-redux';
 
-export default class ProductDetailBars extends Component {
+class ProductDetailBars extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -44,8 +45,8 @@ export default class ProductDetailBars extends Component {
     try {
       const postData = {
         vendorId: this.props.route.params && this.props.route.params.id ? this.props.route.params.id : 1,
-        latitude: 1.28668,
-        longitude: 103.853607,
+        latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : 1.28668,
+        longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
       };
       const data = await fetchVendorDetails(postData);
       this.setState({ data: data.response.result, loader: false });
@@ -635,6 +636,21 @@ export default class ProductDetailBars extends Component {
     );
   }
 }
+
+// dispatcher functions
+function mapDispatchToProps(dispatch) {
+  return {
+      dispatch,
+  };
+}
+
+//getting props from redux
+function mapStateToProps(state) {
+  let redux = state;
+  return { redux };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProductDetailBars);
 
 const styles = StyleSheet.create({
   productImg: {

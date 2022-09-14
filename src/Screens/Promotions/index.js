@@ -18,7 +18,9 @@ import PromotionCard from '../../Component/PromotionCard';
 import { FontFamily } from '../../Theme/FontFamily';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import styles from './styles'
-export default class Promotions extends Component {
+import { connect } from 'react-redux';
+
+class Promotions extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -41,8 +43,8 @@ export default class Promotions extends Component {
   getPromotion = async () => {
     try {
       const data = {
-        latitude: 1.28668,
-        longitude: 103.853607
+        latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : 1.28668,
+        longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
       };
       const promotion = await fetchPromotionDetails(data);
       this.setState({
@@ -121,3 +123,17 @@ export default class Promotions extends Component {
   }
 }
 
+// dispatcher functions
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatch,
+  };
+}
+
+//getting props from redux
+function mapStateToProps(state) {
+  let redux = state.auth.userData;
+  return { redux };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Promotions);

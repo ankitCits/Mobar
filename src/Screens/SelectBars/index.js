@@ -16,7 +16,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { fetchRedeemBars } from '../../api/vendor';
 import images from '../../assets/images';
 import HeaderSide from '../Component/HeaderSide';
-export default class SelectBars extends Component {
+import { connect } from 'react-redux';
+
+class SelectBars extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -41,8 +43,8 @@ export default class SelectBars extends Component {
       const data = {
         walletId: this.props.route.params.data.walletId,
         productId: this.props.route.params.data.productId,
-        latitude: 1.28668,
-        longitude: 103.853607
+        latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : 1.28668,
+        longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
       };
       console.log("router data", data);
       const response = await fetchRedeemBars(data);
@@ -802,6 +804,22 @@ export default class SelectBars extends Component {
     );
   }
 }
+
+// dispatcher functions
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatch,
+  };
+}
+
+//getting props from redux
+function mapStateToProps(state) {
+  let redux = state.auth.userData;
+  return { redux };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SelectBars);
+
 
 const styles = StyleSheet.create({
   itemQuantity: {

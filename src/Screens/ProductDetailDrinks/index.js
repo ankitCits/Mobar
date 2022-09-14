@@ -21,8 +21,9 @@ import HTMLView from 'react-native-htmlview';
 import { addToWishlist, removeToWishlist } from '../../api/wishlist';
 import { showAlert } from '../../api/auth';
 import { getAccessToken } from '../../localstorage';
+import { connect } from 'react-redux';
 
-export default class ProductDetailDrinks extends Component {
+class ProductDetailDrinks extends Component {
   constructor(props) {
     super(props);
     console.log(props.route.params.id);
@@ -74,8 +75,8 @@ export default class ProductDetailDrinks extends Component {
     try {
       const data = {
         productId: this.state.id,
-        latitude: 1.28668,
-        longitude: 103.853607,
+        latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : 1.28668,
+        longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
       }
       const resp = await fetchProductDetails(data);
       if (resp.response.result && resp.response.result.data) {
@@ -149,13 +150,13 @@ export default class ProductDetailDrinks extends Component {
 
 
   renderItem = (item) => {
-    console.log("VendorId",item.vendorId);
+    console.log("VendorId", item.vendorId);
     return (
       <View style={styles.vendorContainer}>
         <TouchableOpacity
           style={styles.vendorItem}
           onPress={() =>
-            this.props.navigation.navigate('ProductDetailBars',{ 'id': item.vendorId })
+            this.props.navigation.navigate('ProductDetailBars', { 'id': item.vendorId })
             ///console.log('go to bar details')
           }>
           <View style={styles.vendorImgContainer}>
@@ -346,7 +347,7 @@ export default class ProductDetailDrinks extends Component {
                         ADD TO CART
                       </Text>
                       <TouchableOpacity
-                      onPress={()=>{this.addCart()}}
+                        onPress={() => { this.addCart() }}
                         style={styles.cartIcon}>
                         <Image
                           resizeMode={'cover'}
@@ -365,12 +366,12 @@ export default class ProductDetailDrinks extends Component {
                         : this.addFavorite(this.state.details.productId);
                     }}>
                     <View style={styles.favContainer}>
-                    <Image
-                      resizeMode={'cover'}
-                      source={this.state.isFavorite ? images.heartFill : images.heart}
-                      defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
-                      style={styles.favIcon}
-                    />
+                      <Image
+                        resizeMode={'cover'}
+                        source={this.state.isFavorite ? images.heartFill : images.heart}
+                        defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
+                        style={styles.favIcon}
+                      />
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -462,6 +463,21 @@ export default class ProductDetailDrinks extends Component {
     );
   }
 }
+
+// dispatcher functions
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatch,
+  };
+}
+
+//getting props from redux
+function mapStateToProps(state) {
+  let redux = state;
+  return { redux };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProductDetailDrinks);
 
 const styles = StyleSheet.create({
   productDetailsContainer: {
@@ -565,7 +581,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
     marginTop: -20,
-    alignContent:'center',
+    alignContent: 'center',
     zIndex: 0,
   },
   cartContainer: {
@@ -575,8 +591,8 @@ const styles = StyleSheet.create({
     width: 192,
     borderRadius: 20,
   },
-  cartMargin: { 
-    margin: 40 
+  cartMargin: {
+    margin: 40
   },
   cartBtnContainer: {
     flexDirection: 'row',
@@ -594,19 +610,19 @@ const styles = StyleSheet.create({
   heartContainer: {
     flexDirection: 'row',
     alignContent: 'flex-end',
-    marginLeft:60,
+    marginLeft: 60,
   },
-  favContainer:{
+  favContainer: {
     width: 35,
     height: 35,
-    justifyContent:'center',
-    backgroundColor:ThemeColors.CLR_WHITE,
-    elevation:5,
-    borderRadius:25,
-},
-favIcon: {
-    alignSelf:'center',
-},
+    justifyContent: 'center',
+    backgroundColor: ThemeColors.CLR_WHITE,
+    elevation: 5,
+    borderRadius: 25,
+  },
+  favIcon: {
+    alignSelf: 'center',
+  },
   cartIcon: {
     backgroundColor: '#D46679',
     width: 61,
@@ -646,7 +662,7 @@ favIcon: {
   vendor: {
     backgroundColor: ThemeColors.CLR_WHITE,
     marginTop: 15,
-    marginBottom:10
+    marginBottom: 10
   },
   vendorContainer: {
     margin: 14,
@@ -666,7 +682,7 @@ favIcon: {
     margin: 0,
     width: '50%',
     marginLeft: 5,
-    paddingHorizontal:5,
+    paddingHorizontal: 5,
 
   },
   vendorRow: {
