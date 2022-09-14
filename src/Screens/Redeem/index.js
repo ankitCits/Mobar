@@ -1,3 +1,4 @@
+import { maxFontSizeMultiplier } from 'deprecated-react-native-prop-types/DeprecatedTextInputPropTypes';
 import React, { Component } from 'react';
 import {
   Text,
@@ -11,11 +12,15 @@ import {
   Modal,
   ToastAndroid,
 } from 'react-native';
+import HTMLView from 'react-native-htmlview';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { fetchRedeemMixerData, fetchRedeemMoreData } from '../../api/vendor';
 import images from '../../assets/images';
 import NoContentFound from '../../Component/NoContentFound';
+import SelectInput from '../../Component/SelectInput';
 import { A_KEY, BASE_URL } from '../../config';
 import { getAccessToken } from '../../localstorage';
+import { ThemeColors } from '../../Theme/ThemeColors';
 import Util from '../../utils';
 import HeaderSide from '../Component/HeaderSide';
 export default class Redeem extends Component {
@@ -23,64 +28,117 @@ export default class Redeem extends Component {
     super(props);
     this.state = {
       visibility: false,
-      visibilityQuantity: 30,
+      selectedQty: 0,
       modalVisible: false,
       itemModalVisible: false,
+      comboModelVisible:false,
+      inputQty:0,
+      mixerData:[],
+      comboData:[],
+      selectedComboData:null,
       addItemData: null,
+      data:this.props.route.params.items,
+      moreData:[]
     };
-    console.log("this.props.route.params.vendorId", this.props.route.params);
+    console.log("state Data vendor id", this.state.data);
   }
 
   componentDidMount() {
     this.fetchMore();
+    this.fetchMixerData();
+  }
+
+  fetchMixerData=async()=>{
+    try{
+      const data={
+        vendorId:this.state.data.ecom_ae_vendors.vendorId
+      };
+      const res = await fetchRedeemMixerData(data);
+      const resData = res.response.result.data;
+      const mappedData = resData.map((x,i)=>{
+        return {
+          id:x.vendorId,
+          title:x.ecom_ah_mixer.mixerName
+        }
+      });
+      this.setState({mixerData:mappedData});
+    }catch(error){
+      console.log("Redeem > fetchMixerData > catch",error);
+      ToastAndroid.showWithGravity(
+        error,
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+      );
+    }
   }
 
   fetchMore = async () => {
-    let token = await getAccessToken(token);
-    let myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append('A_Key', A_KEY);
-    myHeaders.append('Token', `${token}`);
-
-    let raw = JSON.stringify({
-      vendorId: this.props.route.params.vendorId,
-      // vendorId: 8, //this.props.route.params.vendorId,
-    });
-
-    let requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow',
+    const raw = {
+      vendorId: this.state.data.ecom_ae_vendors.vendorId,
     };
-
-    fetch(`${BASE_URL}/redeem/moreitem`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        if (result.response) {
-          console.log('xxxxxxxxx=====>>>', result.response.result.data);
-          this.setState({ addItemData: result.response.result.data });
-        }
-        if (result.errors) {
-          ToastAndroid.showWithGravity(
-            result.errors[0].msg,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
-        }
-      })
-      .catch(error => {
-        console.log('error', error);
-        ToastAndroid.showWithGravity(
-          'Network Error!',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
-      });
+    try{
+      const res = await fetchRedeemMoreData(raw);
+      this.setState({addItemData:res.response.result.data});
+      //console.log("fetchMore > state data",this.state.addItemData);
+    }catch(error){
+      ToastAndroid.showWithGravity(
+        error,
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+      );
+    }
   };
 
+  onSelectQty=(data)=>{
+    this.setState({ selectedQty: data.vendorUnitId});
+  }
+
+  onSelect=(data)=>{
+    console.log("On Select > more Data",data);
+    this.setState({selectedComboData:data})
+  }
+
+  onComboSelect=(data)=>{
+    console.log("On Select > more Data",data);
+    this.setState({selectedComboData:data})
+  }
+
+  onComboModalSubmit=()=>{
+    console.log("onComboModalVisible > Dataarray",this.state.selectedComboData);
+    this.setState({comboModelVisible:false});
+    this.state.moreData.push(this.state.selectedComboData);
+
+  }
+
+  setInputQty = (type)=>{
+    if(type ==1) { // 1 for add and 2 for sub
+      this.setState({inputQty:this.state.inputQty+1})
+    }else{
+      if(this.state.inputQty > 0){
+      this.setState({inputQty:this.state.inputQty-1})
+    }
+  }
+  }
+
+  onItemModal=(data,type)=>{
+    if(type == 'Combo'){ //if combo then open combo product modal
+      const mappedData = data.ecom_ea_combo.ecom_ac_products.map((item,index)=>{
+        return {
+          ...item,
+          id:item.productId,
+        title:item.name}
+  });
+    console.log("mappedData > onItemModel",mappedData);
+    this.setState({comboData:mappedData});
+      this.setState({comboModelVisible:true});
+    }else{ // else selected product add in product array
+    this.state.moreData.push(data);
+    this.setState({itemModalVisible:false})
+    }
+  }
+
   render() {
-    console.log('PROPS_IN_REDEEM>>', this.state.addItemData);
+    
     return (
       <SafeAreaView
         style={{
@@ -104,7 +162,7 @@ export default class Redeem extends Component {
               shadowOffset: { width: 1, height: 1 },
               shadowOpacity: 0.4,
               shadowRadius: 5,
-              elevation: 0,
+              elevation: 5,
               borderRadius: 5,
             }}>
             <View
@@ -113,17 +171,18 @@ export default class Redeem extends Component {
               }}>
               <Text
                 style={{
-                  fontSize: 21,
+                  fontSize: 17,
                   fontWeight: '700',
                   color: '#424242',
                   top: 20,
                   left: 20,
                 }}>
-                {/* {this.props.route.params.item.name} */}
-                Name
+                {this.state.data.ecom_ae_vendors.vendorShopName}
               </Text>
-
-              <Text
+              <View style={{margin:20}}>
+                <HTMLView value={this.state.data.ecom_ae_vendors.description} />
+              </View>
+              {/* <Text
                 style={{
                   fontSize: 13,
                   fontWeight: '400',
@@ -131,9 +190,8 @@ export default class Redeem extends Component {
                   top: 25,
                   left: 20,
                 }}>
-                {/* {this.props.route.params.item.description} */}
-                description
-              </Text>
+                {this.state.data.description}
+              </Text> */}
 
               <View
                 style={{
@@ -141,7 +199,7 @@ export default class Redeem extends Component {
                   flexDirection: 'row',
                   // top: 40,
                   alignItems: 'center',
-                  marginBottom: 5,
+                  marginBottom: 0,
                   marginTop: 10,
                 }}>
                 <Icon name="self-improvement" size={25} color="#851729" />
@@ -168,14 +226,18 @@ export default class Redeem extends Component {
                   borderRadius: 10,
                 }}
                 resizeMode={'cover'}
+                //source={images.product1}
                 source={{
-                  uri: `${this.props.route.params.uri + this.props.route.params.image
+                  uri: `${this.state.data.hostUrl + this.state.data.ecom_ae_vendors.images
                     }`,
                 }}
                 defaultSource={images.promotions1}
               />
             </View>
           </View>
+
+          {/* Product array */}
+          {/* {this.state.data.map((item,index)=>( */}
           <View
             style={{
               width: '95%',
@@ -187,7 +249,7 @@ export default class Redeem extends Component {
               shadowOffset: { width: 1, height: 1 },
               shadowOpacity: 0.4,
               shadowRadius: 5,
-              elevation: 0,
+              elevation: 5,
               borderRadius: 5,
             }}>
             <View
@@ -208,8 +270,8 @@ export default class Redeem extends Component {
                   }}
                   resizeMode={'cover'}
                   source={{
-                    uri: `${this.props.route.params.uri +
-                      this.props.route.params.item.images
+                    uri: `${this.state.data.hostUrl +
+                      this.state.data.images
                       }`,
                   }}
                   defaultSource={images.product2}
@@ -227,39 +289,27 @@ export default class Redeem extends Component {
                     top: 20,
                     left: 20,
                   }}>
-                  Chivas Regal 12
+                  {this.state.data.name}
                 </Text>
-
-                <Text
-                  style={{
-                    fontSize: 13,
-                    fontWeight: '400',
-                    color: '#424242',
-                    top: 25,
-                    left: 20,
-                  }}>
-                  {
-                    this.props.route.params.item.ecom_aca_product_units[0]
-                      .unitDescription
+                 
+                  <View style={{marginBottom:0,margin:20}}>
+                  {this.state.data.description ? 
+                    <HTMLView value={this.state.data.description.substr(0,40)} />
+                  :null
                   }
-                </Text>
-
+              
+                </View>
                 <Text
                   style={{
                     fontSize: 14,
                     fontWeight: '500',
                     color: '#424242',
-                    top: 25,
+                    top: 5,
                     left: 20,
                   }}>
                   Available Qty:{' '}
                   {
-                    this.props.route.params.item.ecom_aca_product_units[0]
-                      .unitQty
-                  }{' '}
-                  {
-                    this.props.route.params.item.ecom_aca_product_units[0]
-                      .unitType
+                    this.state.data.availableQty+' '+this.state.data.unitType+' '
                   }
                 </Text>
               </View>
@@ -281,69 +331,34 @@ export default class Redeem extends Component {
               <View
                 style={{
                   flexDirection: 'row',
-                  justifyContent: 'space-around',
                   top: 5,
                   width: '70%',
+                  alignSelf:'flex-start'
                 }}>
-                <TouchableOpacity
-                  onPress={() => this.setState({ visibilityQuantity: 30 })}
-                  style={
-                    this.state.visibilityQuantity == 30
+                {
+                  this.state.data.ecom_ae_vendors.ecom_acca_vendor_product_units && 
+                  this.state.data.ecom_ae_vendors.ecom_acca_vendor_product_units.map((vItem,index)=>(
+                    <TouchableOpacity key={index}
+                  onPress={() => this.onSelectQty(vItem) }
+                  style={[
+                     this.state.selectedQty == vItem.vendorUnitId
                       ? styles.itemQuantitySelected
                       : styles.itemQuantity
-                  }>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  ]}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center',width:'60%' }}>
                     <Icon name="wine-bar" size={22} color="#7B7B7B" />
                     <Text
                       style={{
                         fontSize: 15,
                         color: '#7B7B7B',
-                        marginLeft: 5,
                       }}>
-                      30ml
+                      {vItem.unitQty+' '+vItem.productUnitType}
                     </Text>
                   </View>
                 </TouchableOpacity>
+                  ))
+                }
 
-                <TouchableOpacity
-                  onPress={() => this.setState({ visibilityQuantity: 60 })}
-                  style={
-                    this.state.visibilityQuantity == 60
-                      ? styles.itemQuantitySelected
-                      : styles.itemQuantity
-                  }>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Icon name="wine-bar" size={22} color="#7B7B7B" />
-                    <Text
-                      style={{
-                        fontSize: 15,
-                        color: '#7B7B7B',
-                        marginLeft: 5,
-                      }}>
-                      60ml
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => this.setState({ visibilityQuantity: 90 })}
-                  style={
-                    this.state.visibilityQuantity == 90
-                      ? styles.itemQuantitySelected
-                      : styles.itemQuantity
-                  }>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Icon name="wine-bar" size={22} color="#7B7B7B" />
-                    <Text
-                      style={{
-                        fontSize: 15,
-                        color: '#7B7B7B',
-                        marginLeft: 5,
-                      }}>
-                      90ml
-                    </Text>
-                  </View>
-                </TouchableOpacity>
               </View>
             </View>
 
@@ -367,6 +382,7 @@ export default class Redeem extends Component {
                   marginTop: 10,
                 }}>
                 <TouchableOpacity
+                onPress={()=>this.setInputQty(2)}
                   style={{
                     padding: 4,
                     backgroundColor: '#A1172F',
@@ -381,10 +397,10 @@ export default class Redeem extends Component {
                     color: '#A1172F',
                     padding: 7,
                   }}>
-                  {' '}
-                  1{' '}
+                  {this.state.inputQty}
                 </Text>
                 <TouchableOpacity
+                onPress={()=>this.setInputQty(1)}
                   style={{
                     padding: 4,
                     backgroundColor: '#A1172F',
@@ -393,28 +409,196 @@ export default class Redeem extends Component {
                   <Icon name="add" size={20} color="#fff" />
                 </TouchableOpacity>
               </View>
+              
+              {/* <SelectInput items={this.state.mixerData} selectedItems={{id:0,title:'Select Mixer Item'}} visible={false} onChange={(item)=>{this.onSelect(item)}} /> */}
 
-              <TouchableOpacity onPress={() => { }} style={styles.sectionStyle}>
-                <TextInput
-                  style={{ flex: 1, padding: 10 }}
-                  placeholder=""
-                  underlineColorAndroid="transparent"
-                  placeholderTextColor="#424242"
-                  editable={false}
-                  selectTextOnFocus={false}
-                />
-                <Icon
-                  name={
-                    this.state.itemModalVisible ? 'expand-less' : 'expand-more'
-                  }
-                  size={28}
-                  color="#424242"
-                  style={styles.imageStyle}
-                />
-              </TouchableOpacity>
             </View>
           </View>
 
+          { this.state.moreData && this.state.moreData.length > 0 &&
+          this.state.moreData.map((item,index)=>(
+            <View
+            style={{
+              width: '95%',
+              height: 400,
+              backgroundColor: '#fff',
+              marginTop: 20,
+              alignSelf: 'center',
+              shadowColor: '#000',
+              shadowOffset: { width: 1, height: 1 },
+              shadowOpacity: 0.4,
+              shadowRadius: 5,
+              elevation: 5,
+              borderRadius: 5,
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                height: 150,
+              }}>
+              <View
+                style={{
+                  width: '40%',
+                  alignItems: 'center',
+                  alignSelf: 'center',
+                }}>
+                <Image
+                  style={{
+                    width: 60,
+                    height: 120,
+                  }}
+                  resizeMode={'cover'}
+                    source={
+                      item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
+                        { uri: `${this.state.data.hostUrl + item.ecom_aca_product_unit.ecom_ac_product.images}` } :
+                        images.product2
+                    }
+                  defaultSource={images.product2}
+                />
+              </View>
+              <View
+                style={{
+                  width: '50%',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: '700',
+                    color: '#4D4F50',
+                    top: 20,
+                    left: 20,
+                  }}>
+                  {item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product &&
+                   item.ecom_aca_product_unit.ecom_ac_product.name
+                  }
+                </Text>
+                 
+                  <View style={{marginBottom:0,margin:20}}>
+                  {item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product.description ? 
+                    <HTMLView value={item.ecom_aca_product_unit.ecom_ac_product.description.substr(0,40)} />
+                  :null
+                  }
+              
+                </View>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '500',
+                    color: '#424242',
+                    top: 5,
+                    left: 20,
+                  }}>
+                  Available Qty:{' '}
+                  {
+                    item.availableQty+' '+item.unitType+' '
+                  }
+                </Text>
+              </View>
+            </View>
+
+            <View
+              style={{
+                marginLeft: 15,
+                marginTop: 15,
+              }}>
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: '500',
+                  color: '#4D4F50',
+                }}>
+                Select Quantity:
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  top: 5,
+                  width: '70%',
+                  alignSelf:'flex-start'
+                }}>
+                {
+                  this.state.data.ecom_ae_vendors.ecom_acca_vendor_product_units && 
+                  this.state.data.ecom_ae_vendors.ecom_acca_vendor_product_units.map((vItem,index)=>(
+                    <TouchableOpacity key={index}
+                  onPress={() => this.onSelectQty(vItem) }
+                  style={[
+                     this.state.selectedQty == vItem.vendorUnitId
+                      ? styles.itemQuantitySelected
+                      : styles.itemQuantity
+                  ]}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center',width:'60%' }}>
+                    <Icon name="wine-bar" size={22} color="#7B7B7B" />
+                    <Text
+                      style={{
+                        fontSize: 15,
+                        color: '#7B7B7B',
+                      }}>
+                      {vItem.unitQty+' '+vItem.productUnitType}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+                  ))
+                }
+              </View>
+            </View>
+
+            <View
+              style={{
+                marginLeft: 15,
+                marginTop: 20,
+              }}>
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: '500',
+                  color: '#4D4F50',
+                }}>
+                Select Quantity:
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: 10,
+                }}>
+                <TouchableOpacity
+                onPress={()=>this.setInputQty(2)}
+                  style={{
+                    padding: 4,
+                    backgroundColor: '#A1172F',
+                    borderRadius: 15,
+                  }}>
+                  <Icon name="remove" size={20} color="#fff" />
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    fontSize: 25,
+                    fontWeight: '700',
+                    color: '#A1172F',
+                    padding: 7,
+                  }}>
+                  {this.state.inputQty}
+                </Text>
+                <TouchableOpacity
+                onPress={()=>this.setInputQty(1)}
+                  style={{
+                    padding: 4,
+                    backgroundColor: '#A1172F',
+                    borderRadius: 15,
+                  }}>
+                  <Icon name="add" size={20} color="#fff" />
+                </TouchableOpacity>
+              </View>
+              
+              {/* <SelectInput items={this.state.mixerData} selectedItems={{id:0,title:'Select Mixer Item'}} visible={false} onChange={(item)=>{this.onSelect(item)}} /> */}
+              
+            </View>
+          </View>
+          ))
+
+          }
+          
+          {/* Add More Items */}
           <View
             style={{
               width: '96%',
@@ -479,7 +663,7 @@ export default class Redeem extends Component {
               </View>
             </View>
           </View>
-
+          {/* {End More Items model} */}
           <View style={{ marginTop: '5%' }}>
             <TouchableOpacity
               style={styles.save}
@@ -490,164 +674,7 @@ export default class Redeem extends Component {
             </TouchableOpacity>
           </View>
 
-          {/* <View
-            style={{
-              width: '96%',
-              height: 325,
-              backgroundColor: '#fff',
-              marginTop: 20,
-              alignSelf: 'center',
-              shadowColor: '#000',
-              shadowOffset: {width: 1, height: 1},
-              shadowOpacity: 0.4,
-              shadowRadius: 5,
-              elevation: 5,
-              borderRadius: 5,
-            }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                height: 150,
-              }}>
-              <View
-                style={{
-                  width: '40%',
-                  //   top:'10%',
-                  //   left:10
-                  alignItems: 'center',
-                  alignSelf: 'center',
-                }}>
-                <Image
-                  style={{
-                    width: 59,
-                    height: 115,
-                  }}
-                  resizeMode={'cover'}
-                  source={images.product2}
-                  defaultSource={images.product2}
-                />
-              </View>
-              <View
-                style={{
-                  width: '50%',
-                }}>
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontWeight: '700',
-                    color: '#4D4F50',
-                    top: 20,
-                    left: 20,
-                  }}>
-                  Bud Lite
-                </Text>
-
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '400',
-                    color: '#424242',
-                    top: 25,
-                    left: 20,
-                  }}>
-                  Beer
-                </Text>
-
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '700',
-                    color: '#424242',
-                    top: 25,
-                    left: 20,
-                  }}>
-                  Available Qty: 150 ml
-                </Text>
-              </View>
-            </View>
-
-            <View
-              style={{
-                marginLeft: 15,
-                marginTop: 15,
-              }}>
-              <Text
-                style={{
-                  fontSize: 15,
-                  fontWeight: '500',
-                  color: '#4D4F50',
-                }}>
-                Select Quantity:
-              </Text>
-              <View
-                style={{
-                  //   flexDirection: 'row',
-                  justifyContent: 'space-around',
-                  top: 5,
-                  width: '70%',
-                }}>
-                <TouchableOpacity
-                  onPress={() => this.setState({visibilityQuantity: 30})}
-                  style={
-                    this.state.visibilityQuantity == 30
-                      ? styles.itemQuantitySelectedNew
-                      : styles.itemQuantity
-                  }>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Icon name="wine-bar" size={22} color="#7B7B7B" />
-                    <Text
-                      style={{
-                        fontSize: 15,
-                        color: '#7B7B7B',
-                        marginLeft: 5,
-                      }}>
-                      pint (500ml)
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => this.setState({visibilityQuantity: 60})}
-                  style={
-                    this.state.visibilityQuantity == 60
-                      ? styles.itemQuantitySelectedNew
-                      : styles.itemQuantity
-                  }>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Icon name="wine-bar" size={22} color="#7B7B7B" />
-                    <Text
-                      style={{
-                        fontSize: 15,
-                        color: '#7B7B7B',
-                        marginLeft: 5,
-                      }}>
-                      Pitcher (2ltr)
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => this.setState({visibilityQuantity: 90})}
-                  style={
-                    this.state.visibilityQuantity == 90
-                      ? styles.itemQuantitySelectedNew
-                      : styles.itemQuantity
-                  }>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Icon name="wine-bar" size={22} color="#7B7B7B" />
-                    <Text
-                      style={{
-                        fontSize: 15,
-                        color: '#7B7B7B',
-                        marginLeft: 5,
-                      }}>
-                      Tower (3 ltr)
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View> */}
+       
 
           <View
             style={{
@@ -655,6 +682,52 @@ export default class Redeem extends Component {
             }}
           />
         </ScrollView>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.state.comboModelVisible} >
+          
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <View style={styles.modalHeader}>
+                {/* <Text></Text> */}
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: '500',
+                    color: '#4D4F50',
+                  }}>
+                  Select Product
+                </Text>
+                <TouchableOpacity
+                  onPress={() => this.setState({ comboModelVisible: false })}>
+                  <Icon name="close" size={28} color="#4D4F50" />
+                </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  height: 0.8,
+                  backgroundColor: '#DADADA',
+                  marginTop: 8,
+                }}
+              />
+              {/* <ScrollView> */}
+              <View style={{ marginTop: 10,marginBottom:80, margin: 5 }}>
+                <SelectInput items={this.state.comboData} selectedItems={{ id: 0, title: 'Select Product' }} visible={false} onChange={(item) => { this.onComboSelect(item) }} />
+              </View>
+              {/* </ScrollView> */}
+              <View style={{ marginTop: 10, margin: 5 }}>
+                <TouchableOpacity
+                  style={styles.save}
+                  onPress={() => this.onComboModalSubmit()}>
+                  <Text style={{ color: '#fff', fontSize: 15 }}>Submit</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
 
         <Modal
           animationType="slide"
@@ -886,7 +959,7 @@ export default class Redeem extends Component {
           </View>
         </Modal>
 
-        {/* { item modal} */}
+        {/* { addMoreItem modal} */}
 
         <Modal
           animationType="slide"
@@ -919,16 +992,20 @@ export default class Redeem extends Component {
                   marginTop: 8,
                 }}
               />
+              <ScrollView>
               {this.state.addItemData && this.state.addItemData.length > 0 ? (
                 this.state.addItemData.map(item => (
-                  <View>
+                  item.ecom_aca_product_unit != null ?
+                 
+                 (
+                    <View>
                     <View
                       style={{
                         width: '95%',
                         justifyContent: 'space-between',
                         flexDirection: 'row',
                         alignSelf: 'center',
-                        height: 120,
+                        //height: 120,
                       }}>
                       <View
                         style={{
@@ -937,12 +1014,20 @@ export default class Redeem extends Component {
                         }}>
                         <Image
                           style={{
-                            width: 59,
-                            height: 115,
+                            width: 75,
+                            height: 75,
                           }}
                           resizeMode={'cover'}
-                          source={images.redeemProduct}
-                          defaultSource={images.product2}
+                          source=
+                            {
+                              item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
+                              {
+                              uri: `${this.state.data.hostUrl + item.ecom_aca_product_unit.ecom_ac_product.images}`
+                              }:
+                              images.redeemProduct
+                          }
+                          //source={images.redeemProduct}
+                          //defaultSource={images.product2}
                         />
                       </View>
 
@@ -957,7 +1042,7 @@ export default class Redeem extends Component {
                             fontWeight: '500',
                             color: '#4D4F50',
                           }}>
-                          Bud Lite
+                          {item.ecom_aca_product_unit &&  item.ecom_aca_product_unit.ecom_ac_product ? item.ecom_aca_product_unit.ecom_ac_product.name : ' '}
                         </Text>
                         <Text
                           style={{
@@ -983,6 +1068,7 @@ export default class Redeem extends Component {
                         style={{
                           width: '10%',
                           alignSelf: 'flex-end',
+                          
                         }}>
                         <TouchableOpacity
                           style={{
@@ -994,9 +1080,9 @@ export default class Redeem extends Component {
                             width: 70,
                             flexDirection: 'row',
                             justifyContent: 'space-evenly',
-                            right: '25%',
+                            right: '20%',
                           }}
-                          onPress={() => { }}>
+                          onPress={() => { this.onItemModal(item,'Product') }}>
                           <Text style={{ color: '#fff', fontSize: 14 }}>ADD</Text>
                           <Icon name="add" size={18} color="#fff" />
                         </TouchableOpacity>
@@ -1007,17 +1093,120 @@ export default class Redeem extends Component {
                       style={{
                         height: 0.8,
                         backgroundColor: '#DADADA',
-                        marginTop: 8,
+                        margin: 5,
+                        
+                      }}
+                    />
+                  </View>)
+                  :(
+                  <View>
+                    <View
+                      style={{
+                        width: '95%',
+                        justifyContent: 'space-between',
+                        flexDirection: 'row',
+                        alignSelf: 'center',
+                        //height: 120,
+                      }}>
+                      <View
+                        style={{
+                          width: '25%',
+                          alignSelf: 'center',
+                        }}>
+                        <Image
+                          style={{
+                            width: 75,
+                            height: 75,
+                          }}
+                          resizeMode={'cover'}
+                          source=
+                            {
+                              item.ecom_ea_combo  ?
+                              {
+                              uri: `${this.state.data.hostUrl + item.ecom_ea_combo.images}`
+                              }:
+                              images.redeemProduct
+                          }
+                        />
+                      </View>
+
+                      <View
+                        style={{
+                          width: '65%',
+                          marginTop: 10,
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 20,
+                            fontWeight: '500',
+                            color: '#4D4F50',
+                          }}>
+                          {item.ecom_ea_combo ? item.ecom_ea_combo.name : ' '}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            fontWeight: '500',
+                            color: '#424242',
+                            marginTop: 4,
+                          }}>
+                          Available Qty: {item.availableQty} {item.unitType}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 12,
+                            fontWeight: '400',
+                            color: '#424242',
+                            marginTop: 4,
+                          }}>
+                          Valid until: {Util.changeDateFormat(item.validTillDate)}
+                        </Text>
+                      </View>
+
+                      <View
+                        style={{
+                          width: '10%',
+                          alignSelf: 'flex-end',
+                          
+                        }}>
+                        <TouchableOpacity
+                          style={{
+                            backgroundColor: '#851729',
+                            height: 26,
+                            borderRadius: 25,
+                            alignItems: 'center',
+                            alignSelf: 'center',
+                            width: 70,
+                            flexDirection: 'row',
+                            justifyContent: 'space-evenly',
+                            right: '20%',
+                          }}
+                          onPress={() => { this.onItemModal(item,'Combo') }}>
+                          <Text style={{ color: '#fff', fontSize: 14 }}>ADD</Text>
+                          <Icon name="add" size={18} color="#fff" />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+
+                    <View
+                      style={{
+                        height: 0.8,
+                        backgroundColor: '#DADADA',
+                        margin: 5,
+                        
                       }}
                     />
                   </View>
+                  )
                 ))
               ) : (
                 <NoContentFound title="No Data Found" />
               )}
+              </ScrollView>
             </View>
           </View>
         </Modal>
+        {/* {close addMoreItemModal} */}
       </SafeAreaView>
     );
   }
@@ -1026,18 +1215,21 @@ export default class Redeem extends Component {
 const styles = StyleSheet.create({
   itemQuantity: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     marginTop: 10,
     padding: 2,
+    width:'50%'
   },
   itemQuantitySelected: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     marginTop: 10,
-    borderWidth: 1,
     padding: 2,
-    borderRadius: 10,
+    width:'50%',
+    borderWidth: 1,
+    borderRadius: 20,
     borderColor: '#A1172F',
+    
   },
   sectionStyle: {
     flexDirection: 'row',
@@ -1095,7 +1287,7 @@ const styles = StyleSheet.create({
   modalView: {
     backgroundColor: 'white',
     borderRadius: 10,
-    // alignItems: 'center',
+    
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -1105,7 +1297,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: 332,
-    height: 384,
+    height: 400,
   },
   modalHeader: {
     margin: 15,

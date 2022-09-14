@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Alert,
   ToastAndroid,
+  ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { showAlert } from '../../api/auth';
@@ -21,6 +22,7 @@ import { ThemeColors } from '../../Theme/ThemeColors';
 import NoContentFound from '../../Component/NoContentFound';
 import HTMLView from 'react-native-htmlview';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
+import CartModal from '../../Component/CartModal';
 export default class Collections extends Component {
   constructor(props) {
     super(props);
@@ -29,8 +31,8 @@ export default class Collections extends Component {
       modalVisible: false,
       isComboProduct: false,
       hostUrl: '',
-      comboProduct: null,
-      comboData: [],
+      comboProduct: {productId:0,walletId:0,text:'Select Product'},
+      comData: null,
       isToggle: false,
       isLoading: false,
       currentDate: new Date().getFullYear() + "-" + new Date().getMonth() + "-" + new Date().getDate(),
@@ -43,6 +45,10 @@ export default class Collections extends Component {
     // console.log("Token ",token);
     // if (token != null) {
     this.fetchData();
+  }
+
+  componentDidUpdate() {
+
   }
 
   fetchData = async () => {
@@ -109,71 +115,14 @@ export default class Collections extends Component {
     this.setState({ isToggle: !this.state.isToggle });
   };
 
-  onModal = (data) => {
-    this.setState({ isComboProduct: true });
-    console.log("state combo data", data);
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={true}
-      onRequestClose={() => {
-        this.setState({ isComboProduct: false });
-      }}>
-      <View style={styles.modalContainer}>
-        <View style={styles.modalView}>
-          <View style={styles.modalHeader}>
-            <Text></Text>
-            <Text
-              style={styles.modalTitle}>
-              Select Products
-            </Text>
-            <TouchableOpacity
-              onPress={() => this.setState({ isComboProduct: false })}>
-              <Icon name="close" size={28} color="#4D4F50" />
-            </TouchableOpacity>
-          </View>
-          <View
-            style={styles.modalBorder}
-          />
-
-          <View style={styles.modalItem}>
-            <View style={styles.itemTitle}>
-              <View style={styles.sectionStyle} >
-                <Text onPress={() => this.toggle()}
-                  style={styles.inputText}
-                >{this.state.comboProduct ? this.state.comboProduct : 'Select Product'}</Text>
-                <Icon
-                  name="expand-more"
-                  size={28}
-                  color="#424242"
-                  style={styles.imageStyle}
-                />
-                {
-                  data && data.length > 0 ? data.map((item, index) => (
-                    <TouchableOpacity onPress={() => this.onSelected(item)} key={index}>
-                      <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == item ? styles.selected : '']} key={index}>
-                        <Text style={styles.inputText}>{item}</Text>
-                      </View>
-                    </TouchableOpacity>)) :
-                    null
-                }
-              </View>
-            </View>
-          </View>
-          <View style={styles.cartBtnContainer}>
-            <TouchableOpacity
-              style={styles.addToCard}
-              onPress={() => this.addCart()}>
-              <Text style={styles.cartBtnText}>Submit</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </Modal>
+  onModal = (data, id) => {
+    this.setState({ isComboProduct: true, comData: data });
+    this.state.comboProduct.walletId=id;
   }
 
   onSelected = (value) => {
-    this.setState({ comboProduct: value });
+    this.state.comboProduct.productId=value.productId,
+    this.state.comboProduct.text=value.name,
     this.toggle();
   };
 
@@ -223,7 +172,7 @@ export default class Collections extends Component {
                   </View>
                 </View>
               </View>
-
+<ScrollView>
               {this.state.data && this.state.data.length > 0 ?
                 this.state.data.map((item, index) =>
                   item.ecom_aca_product_unit != null ?
@@ -326,8 +275,8 @@ export default class Collections extends Component {
                                 <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
                               </TouchableOpacity>
                               <TouchableOpacity
-                                onPress={() => this.onModal(item.ecom_ea_combo.ecom_ac_products)}
-                                //onPress={() => {this.setState({comboData:item.ecom_ea_combo.ecom_ac_products,isComboProduct:true})} }
+                                onPress={() => { this.onModal(item.ecom_ea_combo.ecom_ac_products, item.walletId) }}
+                                //onPress={()=>{this.setState({ isComboProduct: true,comboId:item.ecom_ea_combo.comboId })}}
                                 style={styles.redeemBtn}>
                                 <Text
                                   style={styles.redeemBtnText}>
@@ -341,11 +290,79 @@ export default class Collections extends Component {
                     )
                 ) : null
               }
+              </ScrollView>
             </>
           )
         }
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.state.isComboProduct}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalView}>
+              <View style={styles.modalHeader}>
+                <Text></Text>
+                <Text
+                  style={styles.modalTitle}>
+                  Select Products
+                </Text>
+                <TouchableOpacity
+                  onPress={() => this.setState({ isComboProduct: !this.state.isComboProduct })}>
+                  <Icon name="close" size={28} color="#4D4F50" />
+                </TouchableOpacity>
+              </View>
+              <View
+                style={styles.modalBorder}
+              />
 
-
+              <View style={styles.modalItem}>
+                <View style={styles.itemTitle}>
+                  <View style={styles.sectionStyle}>
+                    <View style={styles.accordianTitle}>
+                    <Text onPress={() => this.toggle()}
+                      style={styles.inputText}
+                    > {this.state.comboProduct != null ? this.state.comboProduct.text : 'Select Product'}</Text>
+                    <Icon
+                      name="expand-more"
+                      size={28}
+                      color="#424242"
+                      style={styles.imageStyle}
+                    />
+                    </View>
+                    {
+                      this.state.comData &&
+                      this.state.comData.length > 0 &&
+                      this.state.comData.map((item, index) => {
+                        return (
+                        <TouchableOpacity onPress={() => this.onSelected(item)}>
+                          <View style={[styles.sectionStyle,this.state.isToggle ? styles.collapsed : styles.hide, this.state.comboProduct.productId == item.productId ? styles.selected : '']} >
+                            <Text style={styles.inputText}>{item.name}</Text>
+                          </View>
+                        </TouchableOpacity>)}
+                        )
+                    }
+                    <View style={{ marginTop: 10,height:48,zIndex:1 }}>
+                      <TouchableOpacity
+                        style={styles.addToCard}
+                        onPress={() => this.props.navigation.navigate('SelectBars', { data: this.state.comboProduct })}
+                      >
+                        <Text style={styles.cartBtnText}>Submit</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.cartBtnContainer}>
+                {/* <TouchableOpacity
+                  style={styles.addToCard}
+                //onPress={() => this.addCart()}
+                >
+                  <Text style={styles.cartBtnText}>Submit</Text>
+                </TouchableOpacity> */}
+              </View>
+            </View>
+          </View>
+        </Modal>
 
         <Modal
           animationType="slide"
@@ -602,6 +619,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    //height: '100%',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalTitle: {
@@ -611,51 +629,59 @@ const styles = StyleSheet.create({
     color: '#4D4F50',
   },
   modalBorder: {
-    height: 0.8,
+    height: 1,
     backgroundColor: '#DADADA',
     marginTop: 8,
-    marginBottom: 8,
   },
   modalItem: {
-    flexDirection: 'row',
-    marginTop: 10
+    flexDirection: 'column',
+    alignSelf: 'center',
   },
   modalImage: {
     width: '35%',
     alignItems: 'center'
   },
   sectionStyle: {
-    flexDirection: 'row',
-    alignSelf: 'center',
+    flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: ThemeColors.CLR_WHITE,
     borderWidth: 0,
     borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     height: 48,
-    width: 324,
-    borderRadius: 5,
-    margin: 10,
+    width: 300,
+    borderTopLeftRadiusRadius:5,
+    borderTopRightRadiusRadius:5,
     elevation: 4,
   },
   collapsed: {
     flexDirection: 'row',
+    alignContent:'center',
+    alignSelf:'center',
+    alignItems:'flex-start',
     backgroundColor: ThemeColors.CLR_WHITE,
-    borderWidth: 0,
+    borderBottomWidth: 1,
+    borderBottomColor:'#c3c3c3',
     borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     height: 48,
-    width: 324,
-    marginTop: -9,
-    margin: 10,
-    marginLeft: 10,
-    alignItems: 'center',
-    //paddingHorizontal: 10,
+    width: 300,
     elevation: 4,
+  },
+  accordianTitle:{
+    flexDirection:'row',
+    alignContent:'center',
+    borderBottomWidth: 1,
+    borderBottomColor:'#c3c3c3',
+    //marginBottom:15,
+    alignItems:'center',
+    height:48,
+    alignSelf:'center'
   },
   hide: {
     height: 0
   },
   selected: {
     borderColor: "#AB1731",
+    flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'center',
     borderLeftWidth: 5,
@@ -668,7 +694,7 @@ const styles = StyleSheet.create({
     padding: 10,
     color: ThemeColors.CLR_DARK_GREY
   },
-  itemTitle: { marginTop: 10 },
+  itemTitle: { marginTop: 10,marginBottom:10, },
   itemTitleText: {
     fontFamily: FontFamily.TAJAWAL_REGULAR,
     fontSize: 25,
@@ -691,12 +717,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: ThemeColors.CLR_DARK_GREY,
   },
-  cartBtnContainer: { marginTop: '10%', marginBottom: 10 },
+  cartBtnContainer: {flexDirection:'column', marginBottom: 10 },
   addToCard: {
     backgroundColor: '#851729',
     padding: 12,
     borderRadius: 25,
     alignItems: 'center',
+
     alignSelf: 'center',
     width: 200,
   },
@@ -708,6 +735,7 @@ const styles = StyleSheet.create({
   modalView: {
     backgroundColor: 'white',
     borderRadius: 10,
+    flexDirection:'column',
     // alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {

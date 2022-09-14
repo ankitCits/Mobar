@@ -46,7 +46,7 @@ class SelectBars extends Component {
         latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : 1.28668,
         longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
       };
-      console.log("router data", data);
+      
       const response = await fetchRedeemBars(data);
       this.setState({
         hostUrl: response.response.result.hostUrl,
@@ -54,7 +54,6 @@ class SelectBars extends Component {
         collectionWallet: response.response.result.collectionWallet,
         isLoading: false
       });
-      console.log("State data ", this.state.data);
     } catch (error) {
       console.log("Select bars > catch > error", error);
       this.setState({ isLoading: false });
@@ -66,8 +65,22 @@ class SelectBars extends Component {
     }
   }
 
+  onContinue=()=>{
+    const items=this.state.data;
+    items.collectionWallet=this.state.collectionWallet
+    items.ecom_ae_vendors=this.state.itemSelected;
+    items.hostUrl=this.state.hostUrl;
+    this.props.navigation.navigate('Redeem', { items: items })
+  }
+
+  onItemSelected=(item)=>{
+    console.log("onSelected > Item",item);
+    this.setState({ itemSelected: item })
+
+
+  }
+
   render() {
-    console.log("Select bars > fetchDataResponse > stateData", this.state.data);
     return (
       <SafeAreaView
         style={{
@@ -117,7 +130,7 @@ class SelectBars extends Component {
               </View>
               <View
                 style={{
-                  width: '70%',
+                  width: '60%',
                   alignSelf: 'flex-start',
                   margin: 10,
                 }}>
@@ -134,7 +147,7 @@ class SelectBars extends Component {
                     fontSize: 18,
                     fontWeight: '500',
                     color: '#424242',
-                    top: 10,
+                    //top: 10,
                     //left: 5,
                   }}>
                   Available Qty: {this.state.collectionWallet.availableQty + this.state.collectionWallet.unitType}
@@ -167,7 +180,7 @@ class SelectBars extends Component {
           </View>
           <View
             style={{
-              width: '95%',
+              width: '90%',
               alignSelf: 'center',
               marginTop: '5%',
               marginBottom: '2%',
@@ -195,12 +208,11 @@ class SelectBars extends Component {
             (
               <TouchableOpacity
                 onPress={() => {
-                  this.setState({ itemSelected: item.vendorId })
-                  //? this.setState({itemSelected: false})
-                  //: this.setState({itemSelected: true});
+                  //this.setState({ itemSelected: item.vendorId })
+                  this.onItemSelected(item)
                 }}
                 style={{
-                  width: '96%',
+                  //width: '96%',
                   height: 154,
                   backgroundColor: '#fff',
                   marginTop: 20,
@@ -212,7 +224,7 @@ class SelectBars extends Component {
                   shadowRadius: 5,
                   elevation: 5,
                   borderRadius: 10,
-                  borderWidth: this.state.itemSelected == item.vendorId ? 2 : 0,
+                  borderWidth: this.state.itemSelected.vendorId == item.vendorId ? 2 : 0,
                   borderColor: '#B41430',
                 }}>
                 <View
@@ -251,19 +263,20 @@ class SelectBars extends Component {
                   style={{
                     width: '50%',
                     flexDirection: 'column',
-                    justifyContent: 'space-evenly',
+                    justifyContent: 'space-around',
                     alignContent: 'flex-start',
+                    alignItems:'flex-start'
                   }}>
                   <Text
                     style={{
                       fontSize: 18,
                       fontWeight: '700',
                       color: '#424242',
-                      top: 10,
+                      top: 5,
                       width: '100%',
                       left: 20,
                     }}>
-                    {item.vendorShopName}
+                    {item.vendorShopName+' '+item.vendorId}
                   </Text>
 
                   <Text
@@ -271,18 +284,19 @@ class SelectBars extends Component {
                       fontSize: 13,
                       fontWeight: '400',
                       color: '#424242',
-                      top: 10,
+                      top: 5,
+                      padding:0,
                       width: '90%',
                       left: 20,
                     }}>
-                    {item.address.substr(0, 40)}
+                    {item.address.substr(0, 30)}
                   </Text>
 
                   <View
                     style={{
                       flexDirection: 'row',
                       justifyContent: 'space-around',
-                      marginTop: 15,
+                      marginBottom: 5,
                     }}>
                     <TouchableOpacity
                       style={{
@@ -321,13 +335,14 @@ class SelectBars extends Component {
               </TouchableOpacity>
             )) : null
           }
-          {this.state.itemSelected != 0 ? (
+          {this.state.itemSelected.vendorId != 0 ? (
             <View style={{ marginTop: '5%' }}>
               <TouchableOpacity
                 style={styles.save}
                 onPress={() =>
-                  Alert.alert('Alert', 'Work in Progress')
-                  // this.props.navigation.navigate('Redeem', { vendorId: this.state.itemSelected })
+                  //Alert.alert('Alert', 'Work in Progress')
+                  this.onContinue()
+                  //this.props.navigation.navigate('Redeem', { items: this.state.itemSelected })
                 }>
                 <Text style={{ color: '#fff', fontSize: 15 }}>
                   Continue
