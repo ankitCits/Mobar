@@ -13,8 +13,6 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
-import { A_KEY, BASE_URL } from '../../config';
-import { getAccessToken } from '../../localstorage';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import { FontFamily } from '../../Theme/FontFamily';
@@ -42,6 +40,7 @@ class Favourites extends Component {
         { key: '2', name: 'Bars' },
       ],
     };
+    console.log(this.props.redux.auth.position)
   }
 
   componentDidMount() {
@@ -50,7 +49,6 @@ class Favourites extends Component {
 
   onRefresh = async () => {
     this.setState({ refreshing: true });
-    console.log("Favorites > onRefresh >", this.state.refreshing);
     this.setState({ refreshing: false });
     await this.fetchData();
   }
@@ -62,7 +60,6 @@ class Favourites extends Component {
         longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
       }
       const response = await wishlist(postData);
-      console.log("Wishlist > Pull refresh > fetchData > response", response);
       this.setState({
         data: response.result,
         loader: false,
@@ -82,7 +79,6 @@ class Favourites extends Component {
   _handleIndexChange = index => this.setState({ index });
   _renderLazyPlaceholder = ({ route }) => <LazyPlaceholder route={route} />;
   _renderScene = ({ route, jumpTo }) => {
-    console.log("Favorite > PullRefresh > Drinks render", this.state.data.drinks);
     if (route.name == 'Drinks') {
       return (
         <ScrollView refreshControl={
@@ -227,7 +223,7 @@ function mapDispatchToProps(dispatch) {
 
 //getting props from redux
 function mapStateToProps(state) {
-  let redux = state.auth.userData;
+  let redux = state;
   return { redux };
 }
 

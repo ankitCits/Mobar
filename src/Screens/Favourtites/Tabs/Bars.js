@@ -24,16 +24,12 @@ export default class Bars extends Component {
   }
 
   removeFavorite = async (id, comboId = 0, productId = 0) => {
-    console.log("Favorites > Drinks > removeFavorite > Id", id);
-    console.log("Id", id);
     const index = this.state.data.indexOf(x => x.wishlistId == id);
-    console.log("Index", index);
     try {
       const data = {
         wishlistId: id
       }
       const response = await removeToWishlist(data);
-      console.log("RemoveFavortie > response", response);
       this.setState({ data: this.state.data.filter(x => x.wishlistId != id) });
     } catch (error) {
       console.log("CategoryCard > removeFavorite > Catch", error);
@@ -50,7 +46,7 @@ export default class Bars extends Component {
       <SafeAreaView>
         <>
           {this.state.data && this.state.data.length > 0 ? (
-            this.state.data.map((item,index) => (
+            this.state.data.map((item, index) => (
               <View>
                 <TouchableOpacity
                   key={item.vendorId}
@@ -67,12 +63,12 @@ export default class Bars extends Component {
                       }}
                     >
                       <View style={styles.favContainer}>
-                      <Image
-                        resizeMode={'cover'}
-                        source={images.heartFill}
-                        defaultSource={images.heartFill}
-                        style={styles.flexCenter}
-                      />
+                        <Image
+                          resizeMode={'cover'}
+                          source={images.heartFill}
+                          defaultSource={images.heartFill}
+                          style={styles.flexCenter}
+                        />
                       </View>
                     </TouchableOpacity>
                     <Image
@@ -165,24 +161,24 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
   },
-  favContainer:{
-    width:33,
-    height:33,
-    justifyContent:'center',
-    backgroundColor:ThemeColors.CLR_WHITE,
-    elevation:4,
-    borderRadius:50,
-},
-favIcon: {
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  margin: 5,
-  zIndex: 1,
-},
+  favContainer: {
+    width: 33,
+    height: 33,
+    justifyContent: 'center',
+    backgroundColor: ThemeColors.CLR_WHITE,
+    elevation: 4,
+    borderRadius: 50,
+  },
+  favIcon: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    margin: 5,
+    zIndex: 1,
+  },
   flexCenter: {
-    alignSelf:'center',
-},
+    alignSelf: 'center',
+  },
   prodImage: {
     width: '100%',
     height: '100%',

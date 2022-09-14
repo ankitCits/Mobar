@@ -132,7 +132,7 @@ function mapDispatchToProps(dispatch) {
 
 //getting props from redux
 function mapStateToProps(state) {
-  let redux = state.auth.userData;
+  let redux = state;
   return { redux };
 }
 

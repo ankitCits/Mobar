@@ -44,8 +44,6 @@ class MyProfile extends Component {
       lblEmail: '',
       lblName: ''
     };
-
-    //this.getDetail = this.getDetail.bind(this);
   }
 
   componentDidMount() {
@@ -460,7 +458,7 @@ function mapDispatchToProps(dispatch) {
 
 //getting props from redux
 function mapStateToProps(state) {
-  let redux = state.auth.userData;
+  let redux = state;
   return { redux };
 }
 

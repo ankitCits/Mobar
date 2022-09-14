@@ -25,7 +25,6 @@ export default class Drinks extends Component {
   }
 
   removeFavorite = async (id) => {
-    console.log("Id", id);
     try {
       const data = {
         wishlistId: id
@@ -50,36 +49,34 @@ export default class Drinks extends Component {
   }
 
   addCart = async (item, index) => {
-    console.log("AddCart > item",item);
-    return;
     const token = await getAccessToken();
     if (token == null) {
-        showAlert();
+      showAlert();
     } else {
-        try {
-            const sendData = {
-                productUnitId: item.productId,
-                comboId: 0,
-                qty: item.cart + 1,
-            };
-            const response = await addToCart(sendData);
-            const data = this.state.categoryData.data;
-            data[index].cart = data[index].cart + 1;
-            this.setState({
-                categoryData: {
-                    data,
-                    hostUrl: this.state.categoryData.hostUrl,
-                },
-            });
-        } catch (error) {
-            ToastAndroid.showWithGravity(
-                error,
-                ToastAndroid.LONG,
-                ToastAndroid.BOTTOM,
-            );
-        }
+      try {
+        const sendData = {
+          productUnitId: item.productId,
+          comboId: 0,
+          qty: item.cart + 1,
+        };
+        const response = await addToCart(sendData);
+        const data = this.state.categoryData.data;
+        data[index].cart = data[index].cart + 1;
+        this.setState({
+          categoryData: {
+            data,
+            hostUrl: this.state.categoryData.hostUrl,
+          },
+        });
+      } catch (error) {
+        ToastAndroid.showWithGravity(
+          error,
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+        );
+      }
     }
-}
+  }
 
   render() {
     const {
@@ -174,12 +171,12 @@ export default class Drinks extends Component {
                     >
                       {/* <Icon name="favorite" size={25} color="#FF1405" /> */}
                       <View style={styles.favContainer}>
-                      <Image
-                        resizeMode={'cover'}
-                        source={images.heartFill}
-                        defaultSource={images.heartFill}
-                        style={styles.flexEnd}
-                      />
+                        <Image
+                          resizeMode={'cover'}
+                          source={images.heartFill}
+                          defaultSource={images.heartFill}
+                          style={styles.flexEnd}
+                        />
                       </View>
                     </TouchableOpacity>
                   </View>
@@ -312,18 +309,18 @@ const styles = StyleSheet.create({
     height: '80%',
     borderRadius: 10,
   },
-  favContainer:{
-    width:33,
-    height:33,
-    flexDirection:'row',
-    justifyContent:'center',
-    backgroundColor:ThemeColors.CLR_WHITE,
-    elevation:4,
-    borderRadius:50,
-},
+  favContainer: {
+    width: 33,
+    height: 33,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    backgroundColor: ThemeColors.CLR_WHITE,
+    elevation: 4,
+    borderRadius: 50,
+  },
   flexEnd: {
-    alignSelf:'center',
-},
+    alignSelf: 'center',
+  },
   favIcon: {
     position: 'absolute',
     top: 0,
