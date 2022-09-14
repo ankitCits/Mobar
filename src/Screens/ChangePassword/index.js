@@ -22,9 +22,12 @@ class ChangePassword extends Component {
     super(props);
     this.state = {
       visibility: false,
-      currentPassword: 'Ds@123456',
-      password: 'As@123456',
-      confirmPassword: 'As@123456',
+      currentPassword: '',
+      password: '',
+      confirmPassword: '',
+      // currentPassword: 'Ds@123456',
+      // password: 'As@123456',
+      // confirmPassword: 'As@123456',
       loader: false,
     };
   }
@@ -34,6 +37,7 @@ class ChangePassword extends Component {
     if (
       this.state.currentPassword == '' ||
       this.state.currentPassword == null
+      
     ) {
       ToastAndroid.showWithGravity(
         'Current Password Required!',

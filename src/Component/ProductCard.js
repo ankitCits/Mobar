@@ -317,6 +317,7 @@ const styles = StyleSheet.create({
     },
     itemContainer: {
         width: size - 28,
+        height:200,
         shadowColor: '#000',
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.5,
@@ -330,6 +331,7 @@ const styles = StyleSheet.create({
         backgroundColor:'#fff',
         borderRadius: 10,
         marginBottom: 12,
+        
     },
     itemDetails: {
         alignItems: 'center',

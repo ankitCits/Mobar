@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -8,17 +8,62 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
+import CartProduct from '../../Component/CartProduct';
 import HeaderSide from '../Component/HeaderSide';
 export default class OrderHistoryDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      item: props.route.params.orderData.ecom_bc_order_details,
       visibility: false,
+      orderHistory: props.route.params.orderData,
+      hostUrl: props.route.params.hostUrl,
     };
+    console.log(this.state)
   }
+
+  cartDetails = () => {
+
+  }
+
+  renderCartItems = (item, index) => {
+    console.log("renderCartItems", (this.state.hostUrl + item.productImage));
+    return (
+      <>
+        <View style={styles.productView}>
+          <Text
+            style={{
+              color: '#000',
+              fontWeight: '500',
+              marginLeft: '60%',
+            }}>
+            ${item.productPrice}
+          </Text>
+          <Image
+            style={styles.productImg}
+            resizeMode={'cover'}
+            source={{
+              uri: `${this.state.hostUrl + item.productImage}`,
+            }}
+            // defaultSource={`${this.state.hostUrl + item.productImage}`}
+          />
+          <Text
+            style={{
+              fontSize: 11,
+              fontWeight: '500',
+              color: '#4D4F50',
+            }}>
+            {item.productName}
+          </Text>
+        </View>
+        {/* <CartProduct navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl}/> */}
+      </>
+    );
+  };
 
   render() {
     // console.log('==============>>>>>>>>>', this.props.route.params);
@@ -45,11 +90,11 @@ export default class OrderHistoryDetail extends Component {
                   color: '#4D4F50',
                   fontWeight: '700',
                 }}>
-                Purchase ID : 451681664168748184
+                Purchase ID : {this.state.orderHistory.orderNumber}
               </Text>
-              <Text style={styles.innerText}>Date : 20 May 2020 7:00 PM</Text>
+              <Text style={styles.innerText}>Date : {this.state.orderHistory.orderDate}</Text>
             </View>
-            <View style={{margin: 15}}>
+            <View style={{ margin: 15 }}>
               <Image
                 style={styles.productImg}
                 resizeMode={'cover'}
@@ -70,7 +115,12 @@ export default class OrderHistoryDetail extends Component {
           </View>
 
           <View>
-            <ScrollView horizontal={true}>
+            <FlatList
+              data={this.state.item}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item, index }) => this.renderCartItems(item, index)}
+            />
+            {/* <ScrollView horizontal={true}>
               <View style={styles.productView}>
                 <Text
                   style={{
@@ -120,9 +170,9 @@ export default class OrderHistoryDetail extends Component {
                   Chivas Regal 12
                 </Text>
               </View>
-            </ScrollView>
+            </ScrollView> */}
           </View>
-
+          {this.state.orderHistory.couponCode != '' &&
           <View
             style={{
               marginTop: 50,
@@ -135,43 +185,45 @@ export default class OrderHistoryDetail extends Component {
               }}>
               Promocode Applied
             </Text>
-            <View
-              style={{
-                borderWidth: 1,
-                borderColor: '#B51D36',
-                height: 23.24,
-                width: 118,
-                borderRadius: 5,
-                flexDirection: 'row',
-                marginTop: 10,
-              }}>
-              <Image
-                style={styles.orderPercentageImg}
-                resizeMode={'cover'}
-                source={images.orderDeatilPercentage}
-                defaultSource={images.orderPercentage}
-              />
-              <Text
+          
+              <View
                 style={{
-                  marginLeft: 10,
-                  fontSize: 16,
-                  fontWeight: '400',
-                  textAlign: 'center',
+                  borderWidth: 1,
+                  borderColor: '#B51D36',
+                  height: 23.24,
+                  width: 118,
+                  borderRadius: 5,
+                  flexDirection: 'row',
+                  marginTop: 10,
                 }}>
-                MO534V6
-              </Text>
-            </View>
+                <Image
+                  style={styles.orderPercentageImg}
+                  resizeMode={'cover'}
+                  source={images.orderDeatilPercentage}
+                  defaultSource={images.orderPercentage}
+                />
+                <Text
+                  style={{
+                    marginLeft: 10,
+                    fontSize: 16,
+                    fontWeight: '400',
+                    textAlign: 'center',
+                  }}>
+                  {this.state.orderHistory.couponCode}
+                </Text>
+              </View>
+         
             <Text
               style={{
                 marginTop: 10,
                 fontWeight: '400',
                 color: '#3C3C3C',
               }}>
-              Get $99 Discount on your Purchase
+             
             </Text>
           </View>
-
-          <View style={{marginTop: '10%', flex: 1, justifyContent: 'flex-end'}}>
+        }
+          <View style={{ marginTop: '10%', flex: 1, justifyContent: 'flex-end' }}>
             <View
               style={{
                 shadowColor: '#000',
@@ -213,36 +265,37 @@ export default class OrderHistoryDetail extends Component {
                     fontWeight: '500',
                     fontSize: 20,
                   }}>
-                  $397
+                  ${this.state.orderHistory.subTotalAmount}
                 </Text>
               </View>
 
-              <View
-                style={{
-                  marginTop: 5,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <Text
+              {this.state.orderHistory.totalDiscount > 0 &&
+                <View
                   style={{
-                    marginLeft: 30,
-                    color: '#3C3C3C',
-                    fontWeight: '500',
-                    fontSize: 18,
+                    marginTop: 5,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
                   }}>
-                  Discount
-                </Text>
-                <Text
-                  style={{
-                    marginRight: 40,
-                    color: '#F01111',
-                    fontWeight: '500',
-                    fontSize: 18,
-                  }}>
-                  -$99
-                </Text>
-              </View>
-
+                  <Text
+                    style={{
+                      marginLeft: 30,
+                      color: '#3C3C3C',
+                      fontWeight: '500',
+                      fontSize: 18,
+                    }}>
+                    Discount
+                  </Text>
+                  <Text
+                    style={{
+                      marginRight: 40,
+                      color: '#F01111',
+                      fontWeight: '500',
+                      fontSize: 18,
+                    }}>
+                    -${this.state.orderHistory.totalDiscount}
+                  </Text>
+                </View>
+              }
               <View
                 style={{
                   height: 1,
@@ -274,11 +327,11 @@ export default class OrderHistoryDetail extends Component {
                     fontWeight: '700',
                     fontSize: 22,
                   }}>
-                  $262
+                  ${this.state.orderHistory.totalPayable}
                 </Text>
               </View>
             </View>
-            { this.props.route.params != undefined && this.props.route.params.home ? (
+            {this.props.route.params != undefined && this.props.route.params.home ? (
               <View
                 style={{
                   backgroundColor: '#fff',
@@ -293,7 +346,7 @@ export default class OrderHistoryDetail extends Component {
                     onPress={() =>
                       this.props.navigation.navigate('MyBottomTabs')
                     }>
-                    <Text style={{color: '#fff', fontSize: 18}}>
+                    <Text style={{ color: '#fff', fontSize: 18 }}>
                       Go To Home
                     </Text>
                   </TouchableOpacity>
@@ -322,7 +375,7 @@ const styles = StyleSheet.create({
     height: 118,
     width: 105,
     shadowColor: '#000',
-    shadowOffset: {width: 1, height: 1},
+    shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
     shadowRadius: 10,
     borderRadius: 10,

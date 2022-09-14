@@ -22,56 +22,59 @@ export default class PromotionCard extends React.Component {
       index,
       productUnit = this.props.item.ecom_ac_product.ecom_aca_product_units,
     } = this.props;
+
     return (
+
       <>
         {/* <View style={styles.container}> */}
-          <TouchableOpacity
-            onPress={() =>
-              this.props.navigation.navigate('OrderHistoryDetail')
-            }>
-            <View
-              style={styles.subContainer}>
-              <View style={styles.productInnerView}>
-                <Image
-                  resizeMode={'cover'}
-                  source={{ uri: `${hostUrl + item.images}` }}
-                />
+        {this.state}
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('ProductDetailDrinks', { id: item.productId })
+          }>
+          <View
+            style={styles.subContainer}>
+            <View style={styles.productInnerView}>
+              <Image
+                resizeMode={'cover'}
+                source={{ uri: `${hostUrl + item.images}` }}
+              />
+            </View>
+            <View style={styles.details}>
+              <View
+                style={styles.header}>
+                <Text
+                  style={styles.title}>
+                  {item.ecom_ac_product.name}
+                </Text>
               </View>
-              <View style={styles.details}>
-                <View
-                  style={styles.header}>
-                  <Text
-                    style={styles.title}>
-                    {item.ecom_ac_product.name}
-                  </Text>
-                </View>
-                <View>
-                  <Text
-                    style={styles.qty}>
-                    {productUnit[0].unitQty} {productUnit[0].unitType}
-                  </Text>
-                </View>
+              <View>
+                <Text
+                  style={styles.qty}>
+                  {productUnit[0].unitQty} {productUnit[0].unitType}
+                </Text>
+              </View>
 
-                <View
-                  style={styles.priceContainer}>
-                  {productUnit[0].unitUserPrice != " " || productUnit[0].unitUserPrice != null ?
-                    <Text
-                      style={styles.priceText}>
-                      {'$ ' + productUnit[0].unitUserPrice}
-                    </Text> :
-                    <Text></Text>
-                  }
-                  {productUnit[0].unitDiscountPrice != " " && productUnit[0].unitDiscountType != null ?
-                    <Text
-                      style={styles.discountPrice}>
-                      {productUnit[0].unitDiscountPrice + ' ' + productUnit[0].unitDiscountType}
-                    </Text> :
-                    <Text style={styles.discountPrice}></Text>
-                  }
-                </View>
+              <View
+                style={styles.priceContainer}>
+                {productUnit[0].unitUserPrice != " " || productUnit[0].unitUserPrice != null ?
+                  <Text
+                    style={styles.priceText}>
+                    {'$ ' + productUnit[0].unitUserPrice}
+                  </Text> :
+                  <Text></Text>
+                }
+                {productUnit[0].unitDiscountPrice != " " && productUnit[0].unitDiscountType != null ?
+                  <Text
+                    style={styles.discountPrice}>
+                    {productUnit[0].unitDiscountPrice + ' ' + productUnit[0].unitDiscountType}
+                  </Text> :
+                  <Text style={styles.discountPrice}></Text>
+                }
               </View>
             </View>
-          </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
         {/* </View> */}
       </>
     );
