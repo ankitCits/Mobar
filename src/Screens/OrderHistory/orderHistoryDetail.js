@@ -4,15 +4,11 @@ import {
   View,
   SafeAreaView,
   Image,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
   FlatList,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
-import CartProduct from '../../Component/CartProduct';
 import HeaderSide from '../Component/HeaderSide';
 export default class OrderHistoryDetail extends Component {
   constructor(props) {
@@ -34,7 +30,7 @@ export default class OrderHistoryDetail extends Component {
     console.log("renderCartItems", (this.state.hostUrl + item.productImage));
     return (
       <>
-        <View style={styles.productView}>
+        <View style={styles.productView} key={index}>
           <Text
             style={{
               color: '#000',
@@ -46,10 +42,8 @@ export default class OrderHistoryDetail extends Component {
           <Image
             style={styles.productImg}
             resizeMode={'cover'}
-            source={{
-              uri: `${this.state.hostUrl + item.productImage}`,
-            }}
-            // defaultSource={`${this.state.hostUrl + item.productImage}`}
+            source={{ uri: `${this.state.hostUrl + item.productImage}` }}
+          // defaultSource={`${this.state.hostUrl + item.productImage}`}
           />
           <Text
             style={{
@@ -60,13 +54,11 @@ export default class OrderHistoryDetail extends Component {
             {item.productName}
           </Text>
         </View>
-        {/* <CartProduct navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl}/> */}
       </>
     );
   };
 
   render() {
-    // console.log('==============>>>>>>>>>', this.props.route.params);
     return (
       <SafeAreaView
         style={{
@@ -173,19 +165,19 @@ export default class OrderHistoryDetail extends Component {
             </ScrollView> */}
           </View>
           {this.state.orderHistory.couponCode != '' &&
-          <View
-            style={{
-              marginTop: 50,
-              alignItems: 'center',
-            }}>
-            <Text
+            <View
               style={{
-                color: '#3C3C3C',
-                fontWeight: '400',
+                marginTop: 50,
+                alignItems: 'center',
               }}>
-              Promocode Applied
-            </Text>
-          
+              <Text
+                style={{
+                  color: '#3C3C3C',
+                  fontWeight: '400',
+                }}>
+                Promocode Applied
+              </Text>
+
               <View
                 style={{
                   borderWidth: 1,
@@ -212,17 +204,17 @@ export default class OrderHistoryDetail extends Component {
                   {this.state.orderHistory.couponCode}
                 </Text>
               </View>
-         
-            <Text
-              style={{
-                marginTop: 10,
-                fontWeight: '400',
-                color: '#3C3C3C',
-              }}>
-             
-            </Text>
-          </View>
-        }
+
+              <Text
+                style={{
+                  marginTop: 10,
+                  fontWeight: '400',
+                  color: '#3C3C3C',
+                }}>
+
+              </Text>
+            </View>
+          }
           <View style={{ marginTop: '10%', flex: 1, justifyContent: 'flex-end' }}>
             <View
               style={{
