@@ -20,16 +20,16 @@ import { getAccessToken } from '../localstorage';
 import { showAlert } from '../api/auth';
 import { FontFamily } from '../Theme/FontFamily';
 import { ThemeColors } from '../Theme/ThemeColors';
-import { screenHeight, screenWidth } from '../Theme/Matrices';
+// import { screenHeight, screenWidth } from '../Theme/Matrices';
 import HTMLView from 'react-native-htmlview';
-import { numberOfLines } from 'deprecated-react-native-prop-types/DeprecatedTextPropTypes';
+// import { numberOfLines } from 'deprecated-react-native-prop-types/DeprecatedTextPropTypes';
 
 class ProductCard extends Component {
     constructor(props) {
         super(props);
         this.state = {
             categoryData: this.props.categoryData,
-            isFavorite: false,
+            isFavorite: (this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId) ? true : false,
             data: this.props.item,
         };
     }
@@ -48,7 +48,7 @@ class ProductCard extends Component {
                     qty: 1,
                 };
                 const response = await addToCart(sendData);
-                console.log("ProductCard > addCart > response",response);
+                console.log("ProductCard > addCart > response", response);
                 const data = this.state.categoryData.data;
                 data[index].cart = data[index].cart + 1;
                 this.setState({
@@ -67,8 +67,8 @@ class ProductCard extends Component {
         }
     }
 
-    updateCart = async (item,type,index) => {
-        console.log("ProductCart > updateCart > id",item);
+    updateCart = async (item, type, index) => {
+        console.log("ProductCart > updateCart > id", item);
         const token = await getAccessToken();
         if (token == null) {
             showAlert();
@@ -79,9 +79,9 @@ class ProductCard extends Component {
                     type: type,//type 1 for add and 2 for substraction
                 };
                 const response = await updateToCart(sendData);
-                console.log("ProductCard >  updateCart > response",response);
+                console.log("ProductCard >  updateCart > response", response);
                 const data = this.state.categoryData.data;
-                data[index].cart = type == 1 ? data[index].cart + 1:data[index].cart - 1;
+                data[index].cart = type == 1 ? data[index].cart + 1 : data[index].cart - 1;
                 this.setState({
                     categoryData: {
                         data,
@@ -99,19 +99,14 @@ class ProductCard extends Component {
     }
 
     removeCart = async (cartId, index) => {
-        console.log("ProductCard > removeCart > id",cartId);
+        console.log("ProductCard > removeCart > id", cartId);
         const token = await getAccessToken();
         if (token == null) {
             showAlert();
         } else {
             try {
-                // const sendData = {
-                //     productUnitId: prodUnitId,
-                //     comboId: 0,
-                //     qty: 1,
-                // };
-                const response =  await removeFromCart(cartId);
-                console.log("response > removeCart > response",response);
+                const response = await removeFromCart(cartId);
+                console.log("response > removeCart > response", response);
                 const data = this.state.categoryData.data;
                 data[index].cart = data[index].cart - 1;
                 this.setState({
@@ -131,7 +126,6 @@ class ProductCard extends Component {
     }
 
     addFavorite = async (productId, index) => {
-        //console.log("AddFavorite State Token",this.state.token);
         const token = await getAccessToken();
         if (token == null) {
             showAlert();
@@ -143,7 +137,6 @@ class ProductCard extends Component {
                     vendorId: 4,
                 };
                 const wishlistData = await addToWishlist(sendData);
-                console.log("Product Card > addFavorite", wishlistData);
                 this.state.data.ecom_ba_wishlist = wishlistData.result.data;
                 this.setState({ isFavorite: true });
                 const data = this.state.categoryData.data;
@@ -223,7 +216,7 @@ class ProductCard extends Component {
                             }}>
                             <View style={styles.favContainer}>
                                 <Image
-                                    resizeMode={'cover'}
+                                    resizeMode={'contain'}
                                     source={this.state.isFavorite ? images.heartFill : images.heart}
                                     defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
                                     style={styles.favIcon}
@@ -233,7 +226,7 @@ class ProductCard extends Component {
                     </View>
                     <View
                         style={styles.itemDetails}>
-                        <TouchableOpacity onPress={() => navigation.navigate('ProductDetailDrinks', { id: item.productId })}>
+                        <TouchableOpacity onPress={() => navigation.navigate('ProductDetailDrinks', { id: this.state.data.productId })}>
                             <Image
                                 resizeMode={'cover'}
                                 source={{
@@ -247,7 +240,7 @@ class ProductCard extends Component {
                         </TouchableOpacity>
                         <Text
                             style={styles.prodName}>
-                            {this.state.data.name.substring(0,16)}
+                            {this.state.data.name.substring(0, 16)}
                         </Text>
                         {/* <Text
                             style={styles.prodDesText}
@@ -255,9 +248,9 @@ class ProductCard extends Component {
                             {this.state.data.shortDescription = this.state.data.shortDescription.substring(3, 1) + '.'}
                          </Text> */}
                         <View style={styles.oneLine}>
-                            <HTMLView value={this.state.data.shortDescription.substring(0,20)} />
+                            <HTMLView value={this.state.data.shortDescription.substring(0, 20) + '..'} />
                         </View>
-                         
+
                         <Text
                             style={styles.priceText}>
                             ${this.state.data.ecom_aca_product_units[0].unitUserPrice}
@@ -283,7 +276,7 @@ class ProductCard extends Component {
                             {this.state.data.cart ? (
                                 <>
                                     <TouchableOpacity
-                                        onPress={() =>item.ecom_aca_product_units[0].ecom_ba_cart ? this.updateCart(item.ecom_aca_product_units[0].ecom_ba_cart,2,index):''}
+                                        onPress={() => this.state.data.ecom_aca_product_units[0].ecom_ba_cart ? this.updateCart(this.state.data.ecom_aca_product_units[0].ecom_ba_cart, 2, index) : ''}
                                         style={styles.cartActionIcon}>
                                         <Icon
                                             name="remove"
@@ -293,12 +286,12 @@ class ProductCard extends Component {
                                     </TouchableOpacity>
                                     <Text
                                         style={styles.cartQty}>
-                                        {item.cart}
+                                        {this.state.data.cart}
                                     </Text>
                                 </>
                             ) : null}
                             <TouchableOpacity
-                                onPress={() => item.ecom_aca_product_units[0].ecom_ba_cart ? this.updateCart(item.ecom_aca_product_units[0].ecom_ba_cart,1,index) : this.addCart(item.ecom_aca_product_units[0].productUnitId, index)}
+                                onPress={() => this.state.data.ecom_aca_product_units[0].ecom_ba_cart ? this.updateCart(this.state.data.ecom_aca_product_units[0].ecom_ba_cart, 1, index) : this.addCart(this.state.data.ecom_aca_product_units[0].productUnitId, index)}
                                 style={styles.cartActionIcon}>
                                 <Icon name="add" size={18} color="#fff" />
                             </TouchableOpacity>
@@ -317,7 +310,7 @@ const styles = StyleSheet.create({
     },
     itemContainer: {
         width: size - 28,
-        height:200,
+        height: 200,
         shadowColor: '#000',
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.5,
@@ -328,16 +321,16 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginBottom: 10,
         alignSelf: 'center',
-        backgroundColor:'#fff',
+        backgroundColor: '#fff',
         borderRadius: 10,
         marginBottom: 12,
-        
+
     },
     itemDetails: {
         alignItems: 'center',
     },
-    oneLine:{
-      marginLeft:5,
+    oneLine: {
+        marginLeft: 5,
     },
     favContainer: {
         width: 30,
@@ -370,7 +363,7 @@ const styles = StyleSheet.create({
         fontFamily: FontFamily.TAJAWAL_REGULAR,
         fontSize: 15,
         fontWeight: '400',
-        
+
         color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     },
     priceText: {
@@ -411,7 +404,7 @@ const styles = StyleSheet.create({
     },
     cartActionIcon: {
         alignSelf: 'center',
-        alignItems:'center',
+        alignItems: 'center',
         backgroundColor: '#BABABA',
         borderRadius: 20,
         marginBottom: 5,
@@ -421,9 +414,9 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '700',
         alignItems: 'center',
-        alignContent:'center',
-        justifyContent:'center',
-        marginTop:-2,
+        alignContent: 'center',
+        justifyContent: 'center',
+        marginTop: -2,
         marginRight: 5,
     }
 });

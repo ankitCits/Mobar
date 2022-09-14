@@ -1,25 +1,57 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
   SafeAreaView,
-  Image,
   TextInput,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  ImageBackground,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import images from '../../assets/images';
-import HeaderSide from '../Component/HeaderSide';
-export default class BarList extends Component {
+import { connect } from 'react-redux';
+import { fetchVendorList } from '../../api/vendor';
+import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
+import BarCard from '../../Component/BarCard';
+class BarList extends Component {
   constructor(props) {
     super(props);
     this.state = {
       visibility: false,
+      data: [],
+      hostUrl: '',
+      loader: false
     };
   }
+
+  componentDidMount() {
+    this.onFetch();
+  }
+
+
+  onFetch = async () => {
+    try {
+      this.setState({ loader: true })
+
+      const postData = {
+        "type": "",
+        "Keyword": "",
+        latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : 1.28668,
+        longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
+      }
+      const res = await fetchVendorList(postData);
+      this.setState({ hostUrl: res.response.result.hostUrl, data: res.response.result.vendorList, loader: false })
+    } catch (error) {
+      this.setState({ loader: false });
+      ToastAndroid.showWithGravity(
+        error,
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+      );
+      console.log('Error_On_Data_Fetch getDetail', error);
+    }
+  }
+
 
   render() {
     return (
@@ -32,7 +64,7 @@ export default class BarList extends Component {
           style={{
             height: 165,
             shadowColor: '#000',
-            shadowOffset: {width: 1, height: 1},
+            shadowOffset: { width: 1, height: 1 },
             shadowOpacity: 0.4,
             shadowRadius: 3,
             elevation: 5,
@@ -43,23 +75,23 @@ export default class BarList extends Component {
               height: 60,
             }}>
             <View
-              style={{margin: 12, flexDirection: 'row', alignItems: 'center'}}>
+              style={{ margin: 12, flexDirection: 'row', alignItems: 'center' }}>
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate('MyBottomTabs')}>
                 <Icon name="arrow-back" size={28} color="#4D4F50" />
               </TouchableOpacity>
 
-              <View style={{marginLeft: 20}}>
+              <View style={{ marginLeft: 20 }}>
                 <Text
-                  style={{fontSize: 20, color: '#4D4F50', fontWeight: '500'}}>
+                  style={{ fontSize: 20, color: '#4D4F50', fontWeight: '500' }}>
                   Bars
                 </Text>
               </View>
             </View>
           </View>
 
-          <View style={{backgroundColor: '#fff'}}>
-            <View style={{alignSelf: 'center', marginTop: -5}}>
+          <View style={{ backgroundColor: '#fff' }}>
+            <View style={{ alignSelf: 'center', marginTop: -5 }}>
               <View style={styles.sectionStyle}>
                 <Icon
                   name="search"
@@ -68,7 +100,7 @@ export default class BarList extends Component {
                   style={styles.imageStyle}
                 />
                 <TextInput
-                  style={{flex: 1}}
+                  style={{ flex: 1 }}
                   placeholder="Search for Drinks..."
                   underlineColorAndroid="transparent"
                 />
@@ -83,7 +115,8 @@ export default class BarList extends Component {
               </View>
             </View>
           </View>
-          <View style={{backgroundColor: '#fff'}}>
+
+          <View style={{ backgroundColor: '#fff' }}>
             <View
               style={{
                 margin: 12,
@@ -91,7 +124,7 @@ export default class BarList extends Component {
                 alignItems: 'center',
                 justifyContent: 'space-between',
               }}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Icon
                   name="place"
                   size={20}
@@ -109,7 +142,7 @@ export default class BarList extends Component {
               </View>
 
               <TouchableOpacity
-                style={{flexDirection: 'row', alignItems: 'center'}}>
+                style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Text
                   style={{
                     fontSize: 10,
@@ -128,275 +161,46 @@ export default class BarList extends Component {
             </View>
           </View>
         </View>
+
+
         <ScrollView>
-          <TouchableOpacity
-            onPress={() =>
-               // this.props.navigation.navigate('ProductDetailBars')
-               console.log('go to bar details')
+          <View style={styles.container}>
+            {
+              this.state.loader ? (
+                <ThemeFullPageLoader />
+              ) : (
+                <>
+                  {
+                    this.state.data.map((item, index) => (
+                      <BarCard navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />
+                    ))
+                  }
+                </>
+              )
             }
-            style={{
-              marginTop: 20,
-              backgroundColor: '#fff',
-              shadowColor: '#000',
-              shadowOffset: {width: 1, height: 1},
-              shadowOpacity: 0.4,
-              shadowRadius: 15,
-              borderRadius: 15,
-              elevation: 5,
-              alignSelf: 'center',
-            }}>
-            <ImageBackground
-              style={styles.promotions1Img}
-              resizeMode={'cover'}
-              source={images.promotions1}
-              defaultSource={images.promotions1}>
-              <View style={{marginTop: '2%', marginRight: 10}}>
-                <TouchableOpacity
-                  style={{
-                    alignItems: 'flex-end',
-                  }}>
-                  <Icon name="favorite" size={28} color="#FF1405" />
-                </TouchableOpacity>
-
-                <View
-                  style={{
-                    //   marginLeft:10,
-                    marginTop: 20,
-                    backgroundColor: '#26B90E',
-                    width: 68,
-                    height: 20,
-                    alignItems: 'center',
-                    //   borderRadius:10
-                    borderTopRightRadius: 8,
-                    borderBottomRightRadius: 8,
-                  }}>
-                  <Text
-                    style={{
-                      color: '#fff',
-                      //   marginTop:2
-                    }}>
-                    50% Off
-                  </Text>
-                </View>
-              </View>
-            </ImageBackground>
-            <View
-              style={{
-                margin: 15,
-              }}>
-              <Text
-                style={{
-                  fontSize: 17,
-                  color: '#3C3C3C',
-                  fontWeight: '500',
-                }}>
-                Charlie’s Bar
-              </Text>
-
-              <View
-                style={{
-                  marginTop: 5,
-                  marginBottom: -10,
-                  // alignSelf: 'flex-end',
-                }}>
-                <Text>New Bar added nearby you</Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  width: '70%',
-                  justifyContent: 'space-between',
-                }}>
-                <TouchableOpacity
-                  style={{
-                    marginTop: 10,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}>
-                  <Icon
-                    name="directions-run"
-                    size={16}
-                    color="#808080"
-                    style={{marginTop: 2}}
-                  />
-                  <Text style={{color: '#3C3C3C', marginLeft: 5}}>2.8Km</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{
-                    marginTop: 10,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}>
-                  <Icon
-                    name="fiber-manual-record"
-                    size={15}
-                    color="#26B90E"
-                    style={{marginTop: 2}}
-                  />
-                  <Text style={{color: '#3C3C3C', marginLeft: 5}}>open</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{
-                    marginTop: 10,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}>
-                  <Icon
-                    name="star"
-                    size={16}
-                    color="#FAB914"
-                    style={{marginTop: 2}}
-                  />
-                  <Icon
-                    name="star"
-                    size={16}
-                    color="#FAB914"
-                    style={{marginTop: 2}}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() =>
-              // this.props.navigation.navigate('ProductDetailBars')
-              console.log('go to bar details')
-            }
-            style={{
-              marginTop: 20,
-              backgroundColor: '#fff',
-              shadowColor: '#000',
-              shadowOffset: {width: 1, height: 1},
-              shadowOpacity: 0.4,
-              shadowRadius: 15,
-              borderRadius: 15,
-              elevation: 5,
-              alignSelf: 'center',
-            }}>
-            <ImageBackground
-              style={styles.promotions1Img}
-              resizeMode={'cover'}
-              source={images.promotions1}
-              defaultSource={images.promotions1}>
-              <View style={{marginTop: '2%', marginRight: 10}}>
-                <TouchableOpacity
-                  style={{
-                    alignItems: 'flex-end',
-                  }}>
-                  <Icon name="favorite" size={28} color="#FF1405" />
-                </TouchableOpacity>
-
-                <View
-                  style={{
-                    //   marginLeft:10,
-                    marginTop: 20,
-                    backgroundColor: '#26B90E',
-                    width: 68,
-                    height: 20,
-                    alignItems: 'center',
-                    //   borderRadius:10
-                    borderTopRightRadius: 8,
-                    borderBottomRightRadius: 8,
-                  }}>
-                  <Text
-                    style={{
-                      color: '#fff',
-                      //   marginTop:2
-                    }}>
-                    50% Off
-                  </Text>
-                </View>
-              </View>
-            </ImageBackground>
-            <View
-              style={{
-                margin: 15,
-              }}>
-              <Text
-                style={{
-                  fontSize: 17,
-                  color: '#3C3C3C',
-                  fontWeight: '500',
-                }}>
-                Charlie’s Bar
-              </Text>
-
-              <View
-                style={{
-                  marginTop: 5,
-                  marginBottom: -10,
-                  // alignSelf: 'flex-end',
-                }}>
-                <Text>New Bar added nearby you</Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  width: '70%',
-                  justifyContent: 'space-between',
-                }}>
-                <TouchableOpacity
-                  style={{
-                    marginTop: 10,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}>
-                  <Icon
-                    name="directions-run"
-                    size={16}
-                    color="#808080"
-                    style={{marginTop: 2}}
-                  />
-                  <Text style={{color: '#3C3C3C', marginLeft: 5}}>2.8Km</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{
-                    marginTop: 10,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}>
-                  <Icon
-                    name="fiber-manual-record"
-                    size={15}
-                    color="#26B90E"
-                    style={{marginTop: 2}}
-                  />
-                  <Text style={{color: '#3C3C3C', marginLeft: 5}}>open</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{
-                    marginTop: 10,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}>
-                  <Icon
-                    name="star"
-                    size={16}
-                    color="#FAB914"
-                    style={{marginTop: 2}}
-                  />
-                  <Icon
-                    name="star"
-                    size={16}
-                    color="#FAB914"
-                    style={{marginTop: 2}}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </TouchableOpacity>
+          </View>
         </ScrollView>
       </SafeAreaView>
     );
   }
 }
 
+
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatch,
+  };
+}
+function mapStateToProps(state) {
+  let redux = state;
+  return { redux };
+}
+export default connect(mapStateToProps, mapDispatchToProps)(BarList);
+
 const styles = StyleSheet.create({
+  container: {
+    marginHorizontal: 15,
+  },
   promotions2Img: {
     borderBottomLeftRadius: 15,
     borderBottomRightRadius: 15,

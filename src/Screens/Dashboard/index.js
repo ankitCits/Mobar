@@ -65,9 +65,6 @@ class Dashboard extends Component {
         this.getDetail();
         this.getTabDetail();
         await this.requestLocationPermission();
-        // setTimeout(() => {
-        //     console.log('loca',this.props.redux.auth.position.isLocation);
-        // }, 2000);
     }
 
     componentDidUpdate() {
@@ -300,7 +297,7 @@ class Dashboard extends Component {
                                                     <Text style={styles.sectionTitle}>Combos</Text>
                                                     <TouchableOpacity>
                                                         <Text style={styles.ViewAll}
-                                                         onPress={() => this.props.navigation.navigate('')}>View All</Text>
+                                                            onPress={() => this.props.navigation.navigate('')}>View All</Text>
                                                     </TouchableOpacity>
                                                 </View>
                                                 <ScrollView
@@ -390,9 +387,9 @@ class Dashboard extends Component {
                                                     }}>
                                                     <Text style={styles.sectionTitle}>Bars</Text>
                                                     <TouchableOpacity
-                                                            >
+                                                    >
                                                         <Text style={styles.ViewAll}
-                                                         onPress={() => this.props.navigation.navigate('BarList')}>View All</Text>
+                                                            onPress={() => this.props.navigation.navigate('BarList')}>View All</Text>
                                                     </TouchableOpacity>
                                                 </View>
                                                 {/* <ScrollView

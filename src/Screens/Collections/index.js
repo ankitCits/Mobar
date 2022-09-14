@@ -19,10 +19,10 @@ import { FontFamily } from '../../Theme/FontFamily';
 import images from '../../assets/images';
 import { getAccessToken } from '../../localstorage';
 import { ThemeColors } from '../../Theme/ThemeColors';
-import NoContentFound from '../../Component/NoContentFound';
+// import NoContentFound from '../../Component/NoContentFound';
 import HTMLView from 'react-native-htmlview';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
-import CartModal from '../../Component/CartModal';
+// import CartModal from '../../Component/CartModal';
 export default class Collections extends Component {
   constructor(props) {
     super(props);
