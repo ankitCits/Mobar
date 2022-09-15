@@ -23,7 +23,7 @@ const numColumns = 2;
 class Product extends Component {
   constructor(props) {
     super(props);
-    console.log('Product')
+    // console.log('Product')
     this.state = {
       feature: true,
       featureValue: 0,
@@ -32,6 +32,7 @@ class Product extends Component {
       categoryData: null,
       itemIndex: (this.props.route.params && this.props.route.params.categoryIdx.key) ? this.props.route.params.categoryIdx.key : 0,
       innerLoader: false,
+      searchText: ''
     };
   }
 
@@ -55,7 +56,7 @@ class Product extends Component {
       .then(result => {
         if (result.response) {
           this.setState({ categoryList: result.response.result });
-          return this.getProductList(this.state.itemIndex);
+          this.getProductList();
         }
         if (result.errors) {
           this.setState({ loader: false });
@@ -77,22 +78,20 @@ class Product extends Component {
       });
   };
 
-  getProductList = async (cat) => {
-    this.setState({ loader: true, itemIndex: cat });
+  getProductList = async () => {
+    this.setState({ loader: true });
     try {
-      const prodData = await fetchProductData(this.state.categoryList.data[cat].name);
-      console.log("ProductScreen > getProductList > response", prodData.response.result.data);
-      let data = [];
-      for (let i = 0; i < prodData.response.result.data.length; i++) {
-        data.push({ ...prodData.response.result.data[i], cart: 0, fav: 0 });
+      const postData = {
+        searchText: this.state.searchText,
+        ids: [this.state.categoryList.data[this.state.itemIndex].categoryId]
       }
+      const prodData = await fetchProductData(postData);
       this.setState({
         categoryData: {
-          data,
+          data: prodData.response.result.data,
           hostUrl: prodData.response.result.hostUrl,
         },
       });
-      this.state.categoryData.data.filter(x => console.log("Product Screen > state Data > filter > wishlist", x));
       this.setState({ loader: false });
     } catch (error) {
       this.setState({ loader: false });
@@ -114,7 +113,10 @@ class Product extends Component {
         marginBottom: 0,
       }}>
       <TouchableOpacity
-        onPress={() => this.getProductList(index)}
+        onPress={() => {
+          this.setState({ itemIndex: index });
+          this.getProductList();
+        }}
         style={{
           shadowColor: '#fff',
           shadowOffset: { width: 1, height: 0 },
@@ -160,6 +162,11 @@ class Product extends Component {
     );
   }
 
+  onSearch = (text) => {
+    this.setState({ searchText: text });
+    this.getProductList();
+  }
+
   render() {
     return (
       <SafeAreaView style={styles.container}>
@@ -190,11 +197,13 @@ class Product extends Component {
                   size={28}
                   color="#A39B9B"
                   style={styles.imageStyle}
+
                 />
                 <TextInput
                   style={{ flex: 1 }}
                   placeholder="Search for Drinks..."
                   underlineColorAndroid="transparent"
+                  onChangeText={this.onSearch}
                 />
                 <TouchableOpacity>
                   <Icon

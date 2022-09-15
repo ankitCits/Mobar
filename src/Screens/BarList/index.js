@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import { fetchVendorList } from '../../api/vendor';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import BarCard from '../../Component/BarCard';
+import NoContentFound from '../../Component/NoContentFound';
 class BarList extends Component {
   constructor(props) {
     super(props);
@@ -20,7 +21,8 @@ class BarList extends Component {
       visibility: false,
       data: [],
       hostUrl: '',
-      loader: false
+      loader: false,
+      searchString: ''
     };
   }
 
@@ -34,8 +36,8 @@ class BarList extends Component {
       this.setState({ loader: true })
 
       const postData = {
-        "type": "",
-        "Keyword": "",
+        "type": "", // featured
+        Keyword: this.state.searchString,
         latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : 1.28668,
         longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
       }
@@ -50,6 +52,12 @@ class BarList extends Component {
       );
       console.log('Error_On_Data_Fetch getDetail', error);
     }
+  }
+
+  onSearch = (text) => {
+    console.log(text)
+    this.setState({ searchString: text });
+    this.onFetch();
   }
 
 
@@ -101,8 +109,9 @@ class BarList extends Component {
                 />
                 <TextInput
                   style={{ flex: 1 }}
-                  placeholder="Search for Drinks..."
+                  placeholder="Search for Bars..."
                   underlineColorAndroid="transparent"
+                  onChangeText={this.onSearch}
                 />
                 <TouchableOpacity>
                   <Icon
@@ -137,12 +146,17 @@ class BarList extends Component {
                     fontWeight: '500',
                     color: '#3C3C3C',
                   }}>
-                  Duxten Road, 338750
+                  {
+                    this.props.redux.auth.userData
+                      ? this.props.redux.auth.userData.address
+                      : 'Duxten Road, 338750'
+                  }
                 </Text>
               </View>
 
               <TouchableOpacity
-                style={{ flexDirection: 'row', alignItems: 'center' }}>
+                style={{ flexDirection: 'row', alignItems: 'center' }}
+              >
                 <Text
                   style={{
                     fontSize: 10,
@@ -171,9 +185,13 @@ class BarList extends Component {
               ) : (
                 <>
                   {
-                    this.state.data.map((item, index) => (
+                    this.state.data.length > 0 && this.state.data.map((item, index) => (
                       <BarCard navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />
                     ))
+                  }
+                  {
+                    this.state.data.length == 0 &&
+                    <NoContentFound title="No Data Found" />
                   }
                 </>
               )

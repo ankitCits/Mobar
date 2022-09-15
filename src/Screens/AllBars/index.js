@@ -18,6 +18,7 @@ export default class AllBars extends Component {
     super(props);
     this.state = {
       visibility: false,
+      searchString: ''
     };
   }
 
@@ -69,8 +70,9 @@ export default class AllBars extends Component {
                 />
                 <TextInput
                   style={{ flex: 1 }}
-                  placeholder="Search for Drinks..."
+                  placeholder="Search for Bars..."
                   underlineColorAndroid="transparent"
+                  onChangeText={(text) => this.setState({ searchString: text })}
                 />
                 <TouchableOpacity>
                   <Icon

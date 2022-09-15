@@ -307,8 +307,15 @@ const size = Dimensions.get('window').width / numColumns;
 const styles = StyleSheet.create({
     itemOuterContainer: {
         flex: 1,
+        marginHorizontal: 16,
+        // flexDirection: 'row',
+        // alignContent: 'flex-start',
+        // alignItems: 'flex-start',
+        // backgroundColor: 'red',
+
     },
     itemContainer: {
+        flexDirection: 'column',
         width: size - 28,
         height: 200,
         shadowColor: '#000',
@@ -320,7 +327,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginTop: 20,
         marginBottom: 10,
-        alignSelf: 'center',
+        // alignSelf: 'center',
         backgroundColor: '#fff',
         borderRadius: 10,
         marginBottom: 12,

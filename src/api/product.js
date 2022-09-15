@@ -237,8 +237,8 @@ export const fetchProductDetails = (postData) => {
 
 export const fetchProductData = (postData) => {
     const data = JSON.stringify({
-        Keyword: postData,
-        // categorys: [1, 2],
+        Keyword: postData.searchText,
+        categorys: postData.ids,
     });
     return new Promise(async (resolve, reject) => {
         const token = await getAccessToken(token);
@@ -251,7 +251,7 @@ export const fetchProductData = (postData) => {
             headers: myHeaders,
             body: data,
         };
-        console.log("request option", requestOptions);
+        // console.log("request option", requestOptions);
         fetch(`${BASE_URL}/products/alldatas`, requestOptions)
             .then(response => response.json())
             .then(result => {
