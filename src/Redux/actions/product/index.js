@@ -159,12 +159,10 @@ export const updateProfile = async (postData) => {
         fetch(`${BASE_URL}/users/updateProfile`, params)
             .then(response => response.json())
             .then(result => {
-                //console.log("Product > Update Profile > response", result);
                 if (result.response && result.response.status == 'SUCCESS') {
                     resolve(result.response)
                 }
                 if (result.errors) {
-                    console.log("Product > 400 Errors >Response", result.errors)
                     ToastAndroid.showWithGravity(
                         result.errors.find(x => x.msg).msg,
                         ToastAndroid.LONG,

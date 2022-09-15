@@ -136,3 +136,41 @@ export const showAlert = (title = 'Unauthorized User', msg = 'Sign In / Sign Up 
         ]
     );
 }
+
+export const updateProfilePic = (postData) => {
+    return new Promise(async (resolve, reject) => {
+        const token = await getAccessToken();
+        let formdata = new FormData([]);
+        formdata.append('image', {
+            uri: postData.profile,
+            name: 'profile_pic',
+            type: 'image/jpeg'
+        });
+        const myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/form-data');
+        myHeaders.append('A_Key', A_KEY);
+        myHeaders.append('Token', `${token}`);
+        const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+        };
+        console.log(JSON.stringify(formdata));
+        console.log(requestOptions);
+        fetch(`${BASE_URL}/users/updateProfilePics`, requestOptions)
+            .then(result => result.json())
+            .then(response => {
+                if (response.response) {
+                    resolve(responseDetail.response);
+                }
+                if (response.errors) {
+                    reject(responseDetail.errors[0].msg)
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                reject(error.message)
+            });
+    });
+};
+

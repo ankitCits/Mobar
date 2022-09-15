@@ -3,10 +3,15 @@ import InitialStack from './initialStack';
 import { Provider } from 'react-redux';
 
 import store from '../Redux/store';
+import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 
 const Navigation = () => (
-  <Provider store={store}>
-    <InitialStack />
-  </Provider>
+  <>
+    <ActionSheetProvider>
+      <Provider store={store}>
+        <InitialStack />
+      </Provider>
+    </ActionSheetProvider>
+  </>
 );
 export default Navigation;

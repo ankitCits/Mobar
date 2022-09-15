@@ -10,6 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@expo/react-native-action-sheet": "^3.13.0",
     "@native-html/css-processor": "^1.11.0",
     "@react-native-async-storage/async-storage": "^1.17.6",
     "@react-native-community/checkbox": "^0.5.12",
@@ -37,6 +38,7 @@
     "react-native-gesture-handler": "^1.10.3",
     "react-native-head-tab-view": "^4.0.0-rc.13",
     "react-native-htmlview": "^0.16.0",
+    "react-native-image-picker": "^4.10.0",
     "react-native-linear-gradient": "^2.5.6",
     "react-native-pager-view": "^5.4.15",
     "react-native-paper": "^4.12.1",

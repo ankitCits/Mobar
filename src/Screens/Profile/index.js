@@ -16,14 +16,26 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
 import { connect } from 'react-redux';
 import { Picker } from '@react-native-picker/picker';
-import { getAccessToken } from '../../localstorage';
-import { A_KEY, BASE_URL } from '../../config';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import { FontFamily } from '../../Theme/FontFamily';
 import { updateProfile } from '../../Redux/actions/product';
 import HelpInput from '../../Component/HelpInput';
 import Util from '../../utils';
-import { getUserDetails } from '../../api/auth';
+import { getUserDetails, updateProfilePic } from '../../api/auth';
+
+import { connectActionSheet } from '@expo/react-native-action-sheet';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { BASE_URL } from '../../config';
+
+const options = ['Camera', 'Gallery', 'Cancel'];
+const cancelButtonIndex = 2;
+const imageOptions = {
+  mediaType: 'photo',
+  maxWidth: 512,
+  maxHeight: 512,
+  cameraType: 'front',
+  quality: 1,
+};
 class MyProfile extends Component {
   constructor(props) {
     super(props);
@@ -42,9 +54,107 @@ class MyProfile extends Component {
       address: null,
       formError: null,
       lblEmail: '',
-      lblName: ''
+      lblName: '',
+      profilePic: {},
+      hostUrl: null
     };
   }
+
+  imageSelected = async (response) => {
+    if (response.assets.length) {
+      this.setState({ profilePic: { fileUri: response.assets[0].uri } });
+      const postDate = {
+        profile: response.assets[0].uri
+      }
+      try {
+        const response = await updateProfilePic(postDate);
+        if (response.status == 'SUCCESS') {
+          ToastAndroid.showWithGravity(
+            'Profile picture updated successfully..!',
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+          );
+        }
+      } catch (error) {
+        console.log("Profile > Update Profile picture> error", error);
+      }
+
+    }
+  };
+
+  captureImage = async () => {
+    try {
+      const result = await launchCamera(imageOptions);
+      this.imageSelected(result);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  pickFromGallery = async () => {
+    try {
+      const result = await launchImageLibrary(imageOptions);
+      if (result.assets.length) {
+        this.imageSelected(result);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  takePicture = () => {
+
+    this.props.showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+      },
+      (buttonIndex) => {
+        if (buttonIndex === 0) {
+          this.captureImage();
+        } else if (buttonIndex === 1) {
+          this.pickFromGallery();
+        }
+      }
+    );
+  };
+
+  renderFileUri = () => {
+    // if (this.state.profilePic) {
+    //   if (this.state.profilePic && this.state.profilePic.fileUri) {
+    //     return (
+    //       <Image
+    //         source={{
+    //           uri: this.state.profilePic.fileUri
+    //             ? this.state.profilePic.fileUri
+    //             : `${this.state.hostUrl}${this.state.profilePic}`,
+    //         }}
+    //         style={styles.userImg}
+    //       />
+    //     );
+    //   } else {
+    //     return (
+    //       <>
+    //         <Image
+    //           source={{
+    //             uri: this.state.profilePic
+    //               ? `${this.state.hostUrl}${this.state.profilePic}`
+    //               : this.state.profilePic,
+    //           }}
+    //           style={styles.userImg}
+    //         />
+    //         {/* <Text>{this.state.hostUrl + this.state.profilePic}</Text> */}
+    //       </>
+    //     );
+    //   }
+    // } else {
+    return <Image style={styles.userImg}
+      resizeMode={'cover'}
+      source={images.user}
+      defaultSource={images.user} />;
+    // }
+  };
+
 
   componentDidMount() {
     this.getDetail();
@@ -116,8 +226,10 @@ class MyProfile extends Component {
         mobileNumber: data.response.result.profile.contact,
         address: data.response.result.profile.address,
         gender: data.response.result.profile.gender,
+        profilePic: data.response.result.profile.profilePic,
+        loading: false,
+        hostUrl: data.response.result.hostUrl
       });
-      this.setState({ loading: false });
     } catch (error) {
       this.setState({ loading: false });
       ToastAndroid.showWithGravity(
@@ -245,12 +357,21 @@ class MyProfile extends Component {
                 </TouchableOpacity>
               </View>
               <View style={styles.userView}>
-                <Image
+                {/* <Image
                   style={styles.userImg}
                   resizeMode={'cover'}
                   source={images.user}
                   defaultSource={images.user}
-                />
+                /> */}
+
+                <TouchableOpacity
+                  onPress={() => this.takePicture()}>
+                  {this.renderFileUri()}
+                  <Text>
+                    Tap on image to edit image
+                  </Text>
+                </TouchableOpacity>
+
                 <View>
                   <Text style={styles.userName}>
                     {viewData ? this.state.lblName : ''}
@@ -462,7 +583,9 @@ function mapStateToProps(state) {
   return { redux };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MyProfile);
+const connectedApp = connectActionSheet(MyProfile);
+
+export default connect(mapStateToProps, mapDispatchToProps)(connectedApp);
 
 const styles = StyleSheet.create({
   container: {
@@ -485,8 +608,11 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   userImg: {
-    height: 80,
     width: 80,
+    height: 80,
+    borderRadius: 80 / 2,
+    borderColor: '#FFFFFF',
+    borderWidth: 1,
   },
   userView: {
     flex: 1,
