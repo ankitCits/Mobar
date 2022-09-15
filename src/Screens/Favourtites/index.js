@@ -40,17 +40,19 @@ class Favourites extends Component {
         { key: '2', name: 'Bars' },
       ],
     };
-    console.log(this.props.redux.auth.position)
   }
 
   componentDidMount() {
     this.fetchData();
   }
 
+  componentDidUpdate() {
+  }
+
   onRefresh = async () => {
     this.setState({ refreshing: true });
-    this.setState({ refreshing: false });
     await this.fetchData();
+    this.setState({ refreshing: false });
   }
 
   fetchData = async () => {
@@ -77,14 +79,18 @@ class Favourites extends Component {
   };
 
   _handleIndexChange = index => this.setState({ index });
+
   _renderLazyPlaceholder = ({ route }) => <LazyPlaceholder route={route} />;
+
   _renderScene = ({ route, jumpTo }) => {
     if (route.name == 'Drinks') {
       return (
         <ScrollView refreshControl={
           <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
         }>
-          <Drinks data={this.state.data.drinks} hostUrl={this.state.hostUrl} navigation={this.props.navigation} />
+          {!this.state.refreshing &&
+            <Drinks data={this.state.data.drinks} hostUrl={this.state.hostUrl} navigation={this.props.navigation} />
+          }
         </ScrollView>
       );
     } else {
@@ -92,7 +98,9 @@ class Favourites extends Component {
         <ScrollView refreshControl={
           <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
         }>
-          <Bars data={this.state.data.bars} hostUrl={this.state.hostUrl} navigation={this.props.navigation} />
+          {!this.state.refreshing &&
+            <Bars data={this.state.data.bars} hostUrl={this.state.hostUrl} navigation={this.props.navigation} />
+          }
         </ScrollView>
       );
     }
@@ -104,9 +112,7 @@ class Favourites extends Component {
         <SafeAreaView
           style={styles.container}
         >
-          {/* <ScrollView refreshControl={
-            <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
-          }> */}
+
           <View>
             <View
               style={styles.headerContainer}>
@@ -142,10 +148,7 @@ class Favourites extends Component {
               </TouchableOpacity>
             </View>
           </View>
-          {/* 
-          <ScrollView refreshControl={
-            <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
-          }> */}
+
           <View style={styles.tabContainer}>
 
             {!this.state.loader ?
@@ -207,7 +210,6 @@ class Favourites extends Component {
               <ThemeFullPageLoader />
             }
           </View>
-          {/* </ScrollView> */}
         </SafeAreaView>
       </>
     );

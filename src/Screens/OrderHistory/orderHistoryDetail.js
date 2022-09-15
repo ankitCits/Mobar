@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  Dimensions,
+  ScrollView,
 } from 'react-native';
 import images from '../../assets/images';
 import HeaderSide from '../Component/HeaderSide';
@@ -27,9 +29,10 @@ export default class OrderHistoryDetail extends Component {
   }
 
   renderCartItems = (item, index) => {
-    console.log("renderCartItems", (this.state.hostUrl + item.productImage));
+   // console.log("renderCartItems", (this.state.hostUrl + item.productImage));
     return (
       <>
+        
         <View style={styles.productView} key={index}>
           <Text
             style={{
@@ -54,6 +57,7 @@ export default class OrderHistoryDetail extends Component {
             {item.productName}
           </Text>
         </View>
+      
       </>
     );
   };
@@ -103,12 +107,14 @@ export default class OrderHistoryDetail extends Component {
               justifyContent: 'space-between',
             }}>
             <Text style={styles.innerText}>Items Purchased</Text>
-            <Text style={styles.innerText}>Total : 2</Text>
+            <Text style={styles.innerText}>Total :{this.state.item.length} </Text>
           </View>
 
           <View>
             <FlatList
               data={this.state.item}
+              numColumns={numColumns}
+              style={{ height: 300}}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item, index }) => this.renderCartItems(item, index)}
             />
@@ -351,7 +357,8 @@ export default class OrderHistoryDetail extends Component {
     );
   }
 }
-
+const numColumns = 3;
+const size = Dimensions.get('window').width / numColumns;
 const styles = StyleSheet.create({
   innerText: {
     color: '#4D4F50',
@@ -362,10 +369,13 @@ const styles = StyleSheet.create({
     marginTop: -15,
   },
   productView: {
-    margin: 15,
+    width: size - 28,
+    flexDirection:"column",
+    paddingBottom:10,
+    margin: 14,
     backgroundColor: '#fff',
     height: 118,
-    width: 105,
+    //width: 105,
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
@@ -373,6 +383,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     elevation: 5,
     alignItems: 'center',
+    
   },
   orderPercentageImg: {
     // width: 10,
