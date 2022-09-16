@@ -105,7 +105,7 @@ export default class CartProduct extends React.Component {
                     ${this.state.data.ecom_aca_product_unit.unitUserPrice}
                   </Text>
                   :
-                  <Text style={styles.priceText}>Price</Text>
+                  <Text style={styles.priceText}>Not Available</Text>
                 }
                 {this.state.data.ecom_aca_product_unit && this.state.data.ecom_aca_product_unit.unitDiscountPrice ?
                   <Text style={styles.discountPrice}>
