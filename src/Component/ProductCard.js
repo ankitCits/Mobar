@@ -157,23 +157,18 @@ class ProductCard extends Component {
         }
     };
 
-    removeFavorite = async (prodId, index) => {
+    removeFavorite = async (wishListId, index) => {
         const token = await getAccessToken();
         if (token == null) {
             showAlert();
         } else {
-            console.log("ProductCard > RemoveFavorite > item", prodId);
             try {
                 const sendData = {
-                    productId: prodId,
-                    comboId: 0,
-                    vendorId: 4,
+                    wishlistId:wishListId
                 };
                 const responseData = await removeToWishlist(sendData);
-                //console.log("ProductCard > removeFavorite > response", responseData);
                 const data = this.state.categoryData.data;
                 this.state.data.ecom_ba_wishlist = null;
-                //console.log("this.state.data.ecom_ba_wishlist on after remove", this.state.data.ecom_ba_wishlist);
                 this.setState({ isFavorite: false });
                 data[index].fav = 0;
                 this.setState({
