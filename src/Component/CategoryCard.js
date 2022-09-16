@@ -44,6 +44,8 @@ export default class CategoryCard extends React.Component {
                 this.state.data.ecom_ba_wishlist.wishlistId = null;
                 this.setState({ isFavorite: false })
             } catch (error) {
+                this.state.data.ecom_ba_wishlist.wishlistId = null;
+                this.setState({ isFavorite: false })
                 console.log("CategoryCard > removeFavorite > Catch", error);
             }
         }
@@ -66,8 +68,6 @@ export default class CategoryCard extends React.Component {
                     "wishlistFor": "Drinks"
                 }
                 this.setState({ isFavorite: true })
-                console.log();
-
             } catch (error) {
                 console.log("CategoryCard > addFavorite > Catch", error);
                 ToastAndroid.showWithGravity(
