@@ -236,16 +236,7 @@ export default class Redeem extends Component {
       }
     });
 
-    const successData = data.map(x => {
-      return {
-        name: x.productName,
-        image: x.image,
-        unitType: x.productUnitType,
-        unitQty: x.unitQty,
-        quantity: x.numberOfGlass,
-        mixerData: x.mixerName
-      }
-    });
+
     let quantityError = data.find(x => x.numberOfGlass == 0);
     let unitQuantityError = data.find(x => x.unitQty == 0);
     if (quantityError && quantityError.numberOfGlass == 0) {
@@ -278,10 +269,8 @@ export default class Redeem extends Component {
     };
     try {
       const res = await redeemOrder(payload);
-      console.log("onRedeemOreder > res > ", res.response.result.data);
       this.setState({ modalVisible: true });
       this.setState({ successOrderData: res.response.result.data });
-
     } catch (error) {
       ToastAndroid.showWithGravity(
         error,
@@ -910,7 +899,11 @@ export default class Redeem extends Component {
                               fontFamily: FontFamily.TAJAWAL_REGULAR,
                               color: '#7B7B7B',
                             }}>
-                            {item.ecom_ac_product.redeemUnitQty + item.ecom_ac_product.unitType + '  -  ' + item.ecom_ac_product.reddemQty + ''}
+                            {
+                              item.ecom_ac_product.redeemUnitQty != undefined ?
+                                item.ecom_ac_product.redeemUnitQty + item.ecom_ac_product.unitType + '  -  ' + item.ecom_ac_product.reddemQty + '' :
+                                item.redeemUnitQty + item.unitType + '  -  ' + item.reddemQty + ''
+                            }
                           </Text>
 
                           <Text
@@ -920,7 +913,7 @@ export default class Redeem extends Component {
                               fontFamily: FontFamily.TAJAWAL_REGULAR,
                               color: '#7B7B7B',
                             }}>
-                            {item.ecom_ac_product.mixerData}
+                            {item.ecom_ac_product.mixerData != undefined ? item.ecom_ac_product.mixerData : item.mixerData}
                           </Text>
                         </View>
                       </View>
