@@ -364,10 +364,10 @@ class MyProfile extends Component {
                   defaultSource={images.user}
                 /> */}
 
-                <TouchableOpacity
+                <TouchableOpacity style={{alignItems:"center"}}
                   onPress={() => this.takePicture()}>
                   {this.renderFileUri()}
-                  <Text>
+                  <Text style={{color:"#ffff"}}>
                     Tap on image to edit image
                   </Text>
                 </TouchableOpacity>
@@ -468,17 +468,34 @@ class MyProfile extends Component {
                   />
                 </View> */}
               </View>
+              <View>
+                <Text style={styles.labelText}>DOB</Text>
+                <View >
+                    <HelpInput 
+                   placeholder={viewData ? this.changeDateFormat(viewData.dateofbirth) : ''}
+                   underlineColorAndroid="transparent"
+                   page={'Profile'}
+                   icon={'date-range'}
+                   placeholderTextColor="#000"
+                   editable={false}
+                   selectTextOnFocus={false}
+                />
+                </View>
+                   
+                    
+                 
+              </View>    
               <View style={styles.row}>
-                <View>
+                {/* <View>
                   <Text style={styles.labelText}>Date of Birth</Text>
                   <View style={styles.sectionStyleNext}>
-                    <Icon
+                     <Icon
                       name="event-note"
                       size={20}
                       color="#969696"
                       style={styles.imageStyle}
-                    />
-                    <TextInput
+                    /> 
+                    <TextInput  
                       placeholder={viewData ? this.changeDateFormat(viewData.dateofbirth) : ''}
                       underlineColorAndroid="transparent"
                       placeholderTextColor="#000"
@@ -486,9 +503,9 @@ class MyProfile extends Component {
                       selectTextOnFocus={false}
                     />
                   </View>
-                </View>
+                </View> */}
 
-                <View>
+                {/* <View>
                   <Text style={styles.labelText}>Gender</Text>
                   <View
                     style={styles.selectContainer}></View>
@@ -505,7 +522,7 @@ class MyProfile extends Component {
                       <Picker.Item label="Female" value="Female" />
                     </Picker>
                   </View>
-                </View>
+                </View> */}
               </View>
               <View style={styles.adsContainer}>
                 <Text style={styles.labelText}>Address</Text>
@@ -519,7 +536,7 @@ class MyProfile extends Component {
                   error={this.state.addressError}
                 />
 
-                {/* <View style={styles.addressSectionStyle}>
+                 {/* <View style={styles.addressSectionStyle}>
                     <TextInput
                       value={this.state.address}
                       underlineColorAndroid="transparent"
@@ -708,7 +725,10 @@ const styles = StyleSheet.create({
     bottom: 55,
   },
   row: {
-    flexDirection: 'row'
+    flexDirection: 'column',
+    paddingBottom:10,
+    paddingTop:20,
+    
   },
   picker: {
     marginTop: -5

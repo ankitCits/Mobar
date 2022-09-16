@@ -10,6 +10,7 @@ export default class HelpInput extends React.Component {
         super(props);
         this.state = {
             visibility: this.props.visibility
+
         }
     }
 
@@ -19,6 +20,7 @@ export default class HelpInput extends React.Component {
             error,
             icon
         } = this.props
+       
         return (
             <>
                 {/* Input Icon */}
@@ -43,11 +45,11 @@ export default class HelpInput extends React.Component {
                         value={this.props.value}
                     />
                 </View>
-                {error &&
+                
                     <View style={styles.errorContainer}>
                         <Text style={styles.errorText}>{error}</Text>
                     </View>
-                }
+                
             </>
         );
     }
@@ -79,6 +81,7 @@ const styles = StyleSheet.create({
         fontWeight:'500',
         color:ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
         marginLeft:5,
+        width:"100%",
       },
     sectionStyleDes: {
         flexDirection: 'row',
