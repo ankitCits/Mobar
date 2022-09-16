@@ -364,7 +364,7 @@ class SelectBars extends Component {
               </TouchableOpacity>
             )) : null
           }
-          {this.state.itemSelected.vendorId != 0 ? (
+          {this.state.itemSelected != 0 ? (
             <View style={{ marginTop: '5%' }}>
               <TouchableOpacity
                 style={styles.save}
