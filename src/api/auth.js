@@ -143,7 +143,7 @@ export const updateProfilePic = (postData) => {
         let formdata = new FormData([]);
         formdata.append('image', {
             uri: postData.profile,
-            name: 'profile_pic',
+            name: 'image',
             type: 'image/jpeg'
         });
         const myHeaders = new Headers();

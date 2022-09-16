@@ -77,6 +77,11 @@ class MyProfile extends Component {
         }
       } catch (error) {
         console.log("Profile > Update Profile picture> error", error);
+        ToastAndroid.showWithGravity(
+          'Error white uploading picture!',
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
+        );
       }
 
     }
@@ -120,39 +125,39 @@ class MyProfile extends Component {
   };
 
   renderFileUri = () => {
-    // if (this.state.profilePic) {
-    //   if (this.state.profilePic && this.state.profilePic.fileUri) {
-    //     return (
-    //       <Image
-    //         source={{
-    //           uri: this.state.profilePic.fileUri
-    //             ? this.state.profilePic.fileUri
-    //             : `${this.state.hostUrl}${this.state.profilePic}`,
-    //         }}
-    //         style={styles.userImg}
-    //       />
-    //     );
-    //   } else {
-    //     return (
-    //       <>
-    //         <Image
-    //           source={{
-    //             uri: this.state.profilePic
-    //               ? `${this.state.hostUrl}${this.state.profilePic}`
-    //               : this.state.profilePic,
-    //           }}
-    //           style={styles.userImg}
-    //         />
-    //         {/* <Text>{this.state.hostUrl + this.state.profilePic}</Text> */}
-    //       </>
-    //     );
-    //   }
-    // } else {
-    return <Image style={styles.userImg}
-      resizeMode={'cover'}
-      source={images.user}
-      defaultSource={images.user} />;
-    // }
+    if (this.state.profilePic) {
+      if (this.state.profilePic && this.state.profilePic.fileUri) {
+        return (
+          <Image
+            source={{
+              uri: this.state.profilePic.fileUri
+                ? this.state.profilePic.fileUri
+                : `${this.state.hostUrl}${this.state.profilePic}`,
+            }}
+            style={styles.userImg}
+          />
+        );
+      } else {
+        return (
+          <>
+            <Image
+              source={{
+                uri: this.state.profilePic
+                  ? `${this.state.hostUrl}${this.state.profilePic}`
+                  : this.state.profilePic,
+              }}
+              style={styles.userImg}
+            />
+            {/* <Text>{this.state.hostUrl + this.state.profilePic}</Text> */}
+          </>
+        );
+      }
+    } else {
+      return <Image style={styles.userImg}
+        resizeMode={'cover'}
+        source={images.user}
+        defaultSource={images.user} />;
+    }
   };
 
 
@@ -364,10 +369,10 @@ class MyProfile extends Component {
                   defaultSource={images.user}
                 /> */}
 
-                <TouchableOpacity style={{alignItems:"center"}}
+                <TouchableOpacity style={{ alignItems: "center" }}
                   onPress={() => this.takePicture()}>
                   {this.renderFileUri()}
-                  <Text style={{color:"#ffff"}}>
+                  <Text style={{ color: "#ffff" }}>
                     Tap on image to edit image
                   </Text>
                 </TouchableOpacity>
@@ -471,20 +476,20 @@ class MyProfile extends Component {
               <View>
                 <Text style={styles.labelText}>DOB</Text>
                 <View >
-                    <HelpInput 
-                   placeholder={viewData ? this.changeDateFormat(viewData.dateofbirth) : ''}
-                   underlineColorAndroid="transparent"
-                   page={'Profile'}
-                   icon={'date-range'}
-                   placeholderTextColor="#000"
-                   editable={false}
-                   selectTextOnFocus={false}
-                />
+                  <HelpInput
+                    placeholder={viewData ? this.changeDateFormat(viewData.dateofbirth) : ''}
+                    underlineColorAndroid="transparent"
+                    page={'Profile'}
+                    icon={'date-range'}
+                    placeholderTextColor="#000"
+                    editable={false}
+                    selectTextOnFocus={false}
+                  />
                 </View>
-                   
-                    
-                 
-              </View>    
+
+
+
+              </View>
               <View style={styles.row}>
                 {/* <View>
                   <Text style={styles.labelText}>Date of Birth</Text>
@@ -536,7 +541,7 @@ class MyProfile extends Component {
                   error={this.state.addressError}
                 />
 
-                 {/* <View style={styles.addressSectionStyle}>
+                {/* <View style={styles.addressSectionStyle}>
                     <TextInput
                       value={this.state.address}
                       underlineColorAndroid="transparent"
@@ -726,9 +731,9 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'column',
-    paddingBottom:10,
-    paddingTop:20,
-    
+    paddingBottom: 10,
+    paddingTop: 20,
+
   },
   picker: {
     marginTop: -5

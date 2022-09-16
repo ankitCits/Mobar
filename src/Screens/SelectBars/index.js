@@ -11,7 +11,6 @@ import {
   Modal,
   Alert,
 } from 'react-native';
-import HTMLView from 'react-native-htmlview';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { fetchRedeemBars } from '../../api/vendor';
 import images from '../../assets/images';
@@ -46,7 +45,7 @@ class SelectBars extends Component {
         latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : 1.28668,
         longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
       };
-      
+
       const response = await fetchRedeemBars(data);
       this.setState({
         hostUrl: response.response.result.hostUrl,
@@ -65,45 +64,45 @@ class SelectBars extends Component {
     }
   }
 
-  onContinue=()=>{
-    const items=this.state.data;
-    items.collectionWallet=this.state.collectionWallet
-    items.ecom_ae_vendors=this.state.itemSelected;
-    items.hostUrl=this.state.hostUrl;
+  onContinue = () => {
+    const items = this.state.data;
+    items.collectionWallet = this.state.collectionWallet
+    items.ecom_ae_vendors = this.state.itemSelected;
+    items.hostUrl = this.state.hostUrl;
     this.state.data.selectedQty = 0;
     this.state.data.inputQty = 0;
     const data = {
-      walletId:this.state.collectionWallet.walletId,
-      availableQty:this.state.collectionWallet.availableQty,
-      unitType:this.state.collectionWallet.unitType,
-      vendorShopName:this.state.itemSelected.vendorShopName,
-      description:this.state.itemSelected.description,
-      images:this.state.itemSelected.images,
-      vendorId:this.state.itemSelected.vendorId,
-      hostUrl:this.state.hostUrl,
-      ecom_aca_product_unit:{
-        productUnitId:this.state.collectionWallet.ecom_aca_product_unit.productUnitId,
-        unitType:this.state.collectionWallet.ecom_aca_product_unit.unitType,
-        unitQty:this.state.collectionWallet.ecom_aca_product_unit.unitQty,
-        unitUserPrice:this.state.collectionWallet.ecom_aca_product_unit.unitUserPrice,
-        ecom_ac_product:{
-          selectedUnitQty:0,
-          inputQty:0,
-          selectedMixerData:"",
-          quantity:0,
-          productId:this.state.data.productId,
-          name:this.state.data.name,
-          images:this.state.data.images,
-          description:this.state.data.shortDescription,
-          ecom_acca_vendor_product_units:this.state.itemSelected.ecom_acca_vendor_product_units,
+      walletId: this.state.collectionWallet.walletId,
+      availableQty: this.state.collectionWallet.availableQty,
+      unitType: this.state.collectionWallet.unitType,
+      vendorShopName: this.state.itemSelected.vendorShopName,
+      description: this.state.itemSelected.description,
+      images: this.state.itemSelected.images,
+      vendorId: this.state.itemSelected.vendorId,
+      hostUrl: this.state.hostUrl,
+      ecom_aca_product_unit: {
+        productUnitId: this.state.collectionWallet.ecom_aca_product_unit.productUnitId,
+        unitType: this.state.collectionWallet.ecom_aca_product_unit.unitType,
+        unitQty: this.state.collectionWallet.ecom_aca_product_unit.unitQty,
+        unitUserPrice: this.state.collectionWallet.ecom_aca_product_unit.unitUserPrice,
+        ecom_ac_product: {
+          selectedUnitQty: 0,
+          inputQty: 0,
+          selectedMixerData: "",
+          quantity: 0,
+          productId: this.state.data.productId,
+          name: this.state.data.name,
+          images: this.state.data.images,
+          description: this.state.data.shortDescription,
+          ecom_acca_vendor_product_units: this.state.itemSelected.ecom_acca_vendor_product_units,
         }
       }
     };
     this.props.navigation.navigate('Redeem', { items: data })
   }
 
-  onItemSelected=(item)=>{
-    console.log("onSelected > Item",item);
+  onItemSelected = (item) => {
+    console.log("onSelected > Item", item);
     this.setState({ itemSelected: item })
 
 
@@ -294,7 +293,7 @@ class SelectBars extends Component {
                     flexDirection: 'column',
                     justifyContent: 'space-around',
                     alignContent: 'flex-start',
-                    alignItems:'flex-start'
+                    alignItems: 'flex-start'
                   }}>
                   <Text
                     style={{
@@ -305,7 +304,7 @@ class SelectBars extends Component {
                       width: '100%',
                       left: 20,
                     }}>
-                    {item.vendorShopName+' '+item.vendorId}
+                    {item.vendorShopName + ' ' + item.vendorId}
                   </Text>
 
                   <Text
@@ -314,7 +313,7 @@ class SelectBars extends Component {
                       fontWeight: '400',
                       color: '#424242',
                       top: 5,
-                      padding:0,
+                      padding: 0,
                       width: '90%',
                       left: 20,
                     }}>

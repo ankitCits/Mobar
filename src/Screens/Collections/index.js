@@ -31,7 +31,7 @@ export default class Collections extends Component {
       modalVisible: false,
       isComboProduct: false,
       hostUrl: '',
-      comboProduct: {productId:0,walletId:0,text:'Select Product'},
+      comboProduct: { productId: 0, walletId: 0, text: 'Select Product' },
       comData: null,
       isToggle: false,
       isLoading: false,
@@ -78,11 +78,11 @@ export default class Collections extends Component {
     }
   }
 
-  addCart = async (prodUnitId) => {
+  addCart = async (prodUnitId, type) => {
     try {
       const cartItem = {
-        productUnitId: prodUnitId,
-        comboId: 0,
+        productUnitId: (type == 'product') ? prodUnitId : 0,
+        comboId: (type == 'combo') ? prodUnitId : 0,
         qty: 1
       }
       const cartResponse = await addToCart(cartItem);
@@ -117,13 +117,13 @@ export default class Collections extends Component {
 
   onModal = (data, id) => {
     this.setState({ isComboProduct: true, comData: data });
-    this.state.comboProduct.walletId=id;
+    this.state.comboProduct.walletId = id;
   }
 
   onSelected = (value) => {
-    this.state.comboProduct.productId=value.productId,
-    this.state.comboProduct.text=value.name,
-    this.toggle();
+    this.state.comboProduct.productId = value.productId,
+      this.state.comboProduct.text = value.name,
+      this.toggle();
   };
 
   render() {
@@ -172,79 +172,20 @@ export default class Collections extends Component {
                   </View>
                 </View>
               </View>
-<ScrollView>
-              {this.state.data && this.state.data.length > 0 ?
-                this.state.data.map((item, index) =>
-                  item.ecom_aca_product_unit != null ?
-                    (<>
-                      <TouchableOpacity
-                        key={index}
-                        style={styles.productView}
-                        onPress={() =>
-                          this.props.navigation.navigate('OrderHistoryDetail')
-                        }>
-                        <View style={styles.productInnerView} key={index}>
-                          <Image
-                            source={{ uri: `${this.state.hostUrl + item.ecom_aca_product_unit.ecom_ac_product.images}` }}
-                            style={styles.prodImg}
-                          />
-                        </View>
-                        <View style={styles.item}>
-                          <View
-                            style={styles.itemHeader}>
-                            <Text
-                              style={styles.title}>
-                              {item.ecom_aca_product_unit.ecom_ac_product.name}
-                            </Text>
-                          </View>
-                          <View style={styles.itemDes}>
-                            <HTMLView
-                              value={item.ecom_aca_product_unit.ecom_ac_product.shortDescription.substr(0, 28)} />
-                          </View>
-                          <View>
-                            <Text
-                              style={styles.itemDes}>
-                              Qty: {item.ecom_aca_product_unit.unitQty + ' ' + item.ecom_aca_product_unit.unitType}
-                            </Text>
-                          </View>
-                          <View>
-                            <Text
-                              style={[styles.validDate, styles.itemDes]}>
-                              Valid until: {item.validTillDate}
-                            </Text>
-                          </View>
-                        </View>
-                        <View
-                          style={styles.cartContainer}>
-                          <View style={styles.cart}>
-                            <TouchableOpacity
-                              onPress={() => this.addCart(item.ecom_aca_product_unit.productUnitId)}
-                              style={styles.cartIcon}>
-                              <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                              onPress={() => this.props.navigation.navigate('SelectBars', { data: { walletId: item.walletId, productId: item.ecom_aca_product_unit.ecom_ac_product.productId } })}
-                              style={styles.redeemBtn}>
-                              <Text
-                                style={styles.redeemBtnText}>
-                                Redeem
-                              </Text>
-                            </TouchableOpacity>
-                          </View>
-                        </View>
-                      </TouchableOpacity>
-                    </>) : (
-                      <>
+              <ScrollView>
+                {this.state.data && this.state.data.length > 0 ?
+                  this.state.data.map((item, index) =>
+                    item.ecom_aca_product_unit != null ?
+                      (<>
                         <TouchableOpacity
                           key={index}
                           style={styles.productView}
-                          // onPress={() =>
-                          //   //this.props.navigation.navigate('OrderHistoryDetail')
-                          // }
-                          >
+                          onPress={() =>
+                            this.props.navigation.navigate('OrderHistoryDetail')
+                          }>
                           <View style={styles.productInnerView} key={index}>
                             <Image
-                              source={{ uri: `${this.state.hostUrl + item.ecom_ea_combo.images}` }}
+                              source={{ uri: `${this.state.hostUrl + item.ecom_aca_product_unit.ecom_ac_product.images}` }}
                               style={styles.prodImg}
                             />
                           </View>
@@ -253,12 +194,18 @@ export default class Collections extends Component {
                               style={styles.itemHeader}>
                               <Text
                                 style={styles.title}>
-                                {item.ecom_ea_combo.name}
+                                {item.ecom_aca_product_unit.ecom_ac_product.name}
                               </Text>
                             </View>
                             <View style={styles.itemDes}>
                               <HTMLView
-                                value={item.ecom_ea_combo.description.substr(0, 28)} />
+                                value={item.ecom_aca_product_unit.ecom_ac_product.shortDescription.substr(0, 28)} />
+                            </View>
+                            <View>
+                              <Text
+                                style={styles.itemDes}>
+                                Qty: {item.ecom_aca_product_unit.unitQty + ' ' + item.ecom_aca_product_unit.unitType}
+                              </Text>
                             </View>
                             <View>
                               <Text
@@ -271,13 +218,12 @@ export default class Collections extends Component {
                             style={styles.cartContainer}>
                             <View style={styles.cart}>
                               <TouchableOpacity
-                                onPress={() => this.addCart(item.ecom_ea_combo.comboId)}
+                                onPress={() => this.addCart(item.ecom_aca_product_unit.productUnitId, 'product')}
                                 style={styles.cartIcon}>
                                 <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
                               </TouchableOpacity>
                               <TouchableOpacity
-                                onPress={() => { this.onModal(item.ecom_ea_combo.ecom_ac_products, item.walletId) }}
-                                //onPress={()=>{this.setState({ isComboProduct: true,comboId:item.ecom_ea_combo.comboId })}}
+                                onPress={() => this.props.navigation.navigate('SelectBars', { data: { walletId: item.walletId, productId: item.ecom_aca_product_unit.ecom_ac_product.productId } })}
                                 style={styles.redeemBtn}>
                                 <Text
                                   style={styles.redeemBtnText}>
@@ -287,10 +233,64 @@ export default class Collections extends Component {
                             </View>
                           </View>
                         </TouchableOpacity>
-                      </>
-                    )
-                ) : null
-              }
+                      </>) : (
+                        <>
+                          <TouchableOpacity
+                            key={index}
+                            style={styles.productView}
+                          // onPress={() =>
+                          //   //this.props.navigation.navigate('OrderHistoryDetail')
+                          // }
+                          >
+                            <View style={styles.productInnerView} key={index}>
+                              <Image
+                                source={{ uri: `${this.state.hostUrl + item.ecom_ea_combo.images}` }}
+                                style={styles.prodImg}
+                              />
+                            </View>
+                            <View style={styles.item}>
+                              <View
+                                style={styles.itemHeader}>
+                                <Text
+                                  style={styles.title}>
+                                  {item.ecom_ea_combo.name}
+                                </Text>
+                              </View>
+                              <View style={styles.itemDes}>
+                                <HTMLView
+                                  value={item.ecom_ea_combo.description.substr(0, 28)} />
+                              </View>
+                              <View>
+                                <Text
+                                  style={[styles.validDate, styles.itemDes]}>
+                                  Valid until: {item.validTillDate}
+                                </Text>
+                              </View>
+                            </View>
+                            <View
+                              style={styles.cartContainer}>
+                              <View style={styles.cart}>
+                                <TouchableOpacity
+                                  onPress={() => this.addCart(item.ecom_ea_combo.comboId, 'combo')}
+                                  style={styles.cartIcon}>
+                                  <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                  onPress={() => { this.onModal(item.ecom_ea_combo.ecom_ac_products, item.walletId) }}
+                                  //onPress={()=>{this.setState({ isComboProduct: true,comboId:item.ecom_ea_combo.comboId })}}
+                                  style={styles.redeemBtn}>
+                                  <Text
+                                    style={styles.redeemBtnText}>
+                                    Redeem
+                                  </Text>
+                                </TouchableOpacity>
+                              </View>
+                            </View>
+                          </TouchableOpacity>
+                        </>
+                      )
+                  ) : null
+                }
               </ScrollView>
             </>
           )
@@ -320,29 +320,30 @@ export default class Collections extends Component {
                 <View style={styles.itemTitle}>
                   <View style={styles.sectionStyle}>
                     <View style={styles.accordianTitle}>
-                    <Text onPress={() => this.toggle()}
-                      style={styles.inputText}
-                    > {this.state.comboProduct != null ? this.state.comboProduct.text : 'Select Product'}</Text>
-                    <Icon
-                      name="expand-more"
-                      size={28}
-                      color="#424242"
-                      style={styles.imageStyle}
-                    />
+                      <Text onPress={() => this.toggle()}
+                        style={styles.inputText}
+                      > {this.state.comboProduct != null ? this.state.comboProduct.text : 'Select Product'}</Text>
+                      <Icon
+                        name="expand-more"
+                        size={28}
+                        color="#424242"
+                        style={styles.imageStyle}
+                      />
                     </View>
                     {
                       this.state.comData &&
                       this.state.comData.length > 0 &&
                       this.state.comData.map((item, index) => {
                         return (
-                        <TouchableOpacity onPress={() => this.onSelected(item)}>
-                          <View style={[styles.sectionStyle,this.state.isToggle ? styles.collapsed : styles.hide, this.state.comboProduct.productId == item.productId ? styles.selected : '']} >
-                            <Text style={styles.inputText}>{item.name}</Text>
-                          </View>
-                        </TouchableOpacity>)}
-                        )
+                          <TouchableOpacity onPress={() => this.onSelected(item)}>
+                            <View style={[styles.sectionStyle, this.state.isToggle ? styles.collapsed : styles.hide, this.state.comboProduct.productId == item.productId ? styles.selected : '']} >
+                              <Text style={styles.inputText}>{item.name}</Text>
+                            </View>
+                          </TouchableOpacity>)
+                      }
+                      )
                     }
-                    <View style={{ marginTop: 10,height:48,zIndex:1 }}>
+                    <View style={{ marginTop: 10, height: 48, zIndex: 1 }}>
                       <TouchableOpacity
                         style={styles.addToCard}
                         onPress={() => this.props.navigation.navigate('SelectBars', { data: this.state.comboProduct })}
@@ -650,32 +651,32 @@ const styles = StyleSheet.create({
     borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     height: 48,
     width: 300,
-    borderTopLeftRadiusRadius:5,
-    borderTopRightRadiusRadius:5,
+    borderTopLeftRadiusRadius: 5,
+    borderTopRightRadiusRadius: 5,
     elevation: 4,
   },
   collapsed: {
     flexDirection: 'row',
-    alignContent:'center',
-    alignSelf:'center',
-    alignItems:'flex-start',
+    alignContent: 'center',
+    alignSelf: 'center',
+    alignItems: 'flex-start',
     backgroundColor: ThemeColors.CLR_WHITE,
     borderBottomWidth: 1,
-    borderBottomColor:'#c3c3c3',
+    borderBottomColor: '#c3c3c3',
     borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     height: 48,
     width: 300,
     elevation: 4,
   },
-  accordianTitle:{
-    flexDirection:'row',
-    alignContent:'center',
+  accordianTitle: {
+    flexDirection: 'row',
+    alignContent: 'center',
     borderBottomWidth: 1,
-    borderBottomColor:'#c3c3c3',
+    borderBottomColor: '#c3c3c3',
     //marginBottom:15,
-    alignItems:'center',
-    height:48,
-    alignSelf:'center'
+    alignItems: 'center',
+    height: 48,
+    alignSelf: 'center'
   },
   hide: {
     height: 0
@@ -695,7 +696,7 @@ const styles = StyleSheet.create({
     padding: 10,
     color: ThemeColors.CLR_DARK_GREY
   },
-  itemTitle: { marginTop: 10,marginBottom:10, },
+  itemTitle: { marginTop: 10, marginBottom: 10, },
   itemTitleText: {
     fontFamily: FontFamily.TAJAWAL_REGULAR,
     fontSize: 25,
@@ -718,7 +719,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: ThemeColors.CLR_DARK_GREY,
   },
-  cartBtnContainer: {flexDirection:'column', marginBottom: 10 },
+  cartBtnContainer: { flexDirection: 'column', marginBottom: 10 },
   addToCard: {
     backgroundColor: '#851729',
     padding: 12,
@@ -736,7 +737,7 @@ const styles = StyleSheet.create({
   modalView: {
     backgroundColor: 'white',
     borderRadius: 10,
-    flexDirection:'column',
+    flexDirection: 'column',
     // alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
