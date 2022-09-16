@@ -1,47 +1,73 @@
 import React, { Component } from 'react';
 import {
     View,
-    SafeAreaView,
     Image,
     TextInput,
     TouchableOpacity,
     StyleSheet,
     Dimensions,
-    Platform,
+    ToastAndroid,
+
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
 import Carousel from 'react-native-snap-carousel';
 import { connect } from 'react-redux';
 import { screenHeight } from '../../Theme/Matrices';
+import { fetchBanner } from '../../api/common';
+import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 
-// const { width: screenWidth } = Dimensions.get('window')
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
-const data2 = [
-    {
-        id: 1,
-        name: 'React JS',
-        url: 'https://icon-library.com/images/react-icon/react-icon-29.jpg',
-    },
-    {
-        id: 2,
-        name: 'JavaScript',
-        url: 'https://upload.wikimedia.org/wikipedia/commons/3/3b/Javascript_Logo.png',
-    },
-    {
-        id: 3,
-        name: 'Node JS',
-        url: 'https://upload.wikimedia.org/wikipedia/commons/6/67/NodeJS.png',
-    },
-];
+// const data = [
+//     {
+//         id: 1,
+//         name: 'React JS',
+//         url: 'https://icon-library.com/images/react-icon/react-icon-29.jpg',
+//     },
+//     {
+//         id: 2,
+//         name: 'JavaScript',
+//         url: 'https://upload.wikimedia.org/wikipedia/commons/3/3b/Javascript_Logo.png',
+//     },
+//     {
+//         id: 3,
+//         name: 'Node JS',
+//         url: 'https://upload.wikimedia.org/wikipedia/commons/6/67/NodeJS.png',
+//     },
+// ];
 class PageHeader extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            data: [],
+            hostUrl: ''
+        }
+    }
+
+    componentDidMount = async () => {
+        await this.getBanners();
+    }
+
+    getBanners = async () => {
+        try {
+            const re = await fetchBanner();
+            console.log(re.response.result.data)
+            this.setState({ data: re.response.result.data, hostUrl: re.response.result.hostUrl })
+        } catch (error) {
+            this.setState({ loader: false });
+            ToastAndroid.showWithGravity(
+                error,
+                ToastAndroid.LONG,
+                ToastAndroid.TOP,
+            );
+            console.log('getBanners', error);
+        }
     }
 
 
     renderSliderImage = ({ item }) => {
+        console.log(`${this.state.hostUrl + item.slider}`);
         return (
             <View
                 style={{
@@ -49,7 +75,11 @@ class PageHeader extends Component {
                     backgroundColor: 'white',
                     marginTop: 10,
                 }}>
-                <Image source={images.Dashboard} />
+                <Image
+                    defaultSource={images.Dashboard}
+                    // source={images.Dashboard} 
+                    source={{ uri: this.state.hostUrl + item.slider }}
+                />
             </View>
 
         );
@@ -93,19 +123,26 @@ class PageHeader extends Component {
                 </View>
 
                 {/* Slider */}
-                <View style={{ alignItems: 'center', marginTop: -15, height: screenHeight(26) }}>
-                    <View style={{ marginVertical: 10 }}>
-                        <Carousel
-                            ref={(c) => { this._carousel = c; }}
-                            data={data2}
-                            renderItem={this.renderSliderImage}
-                            sliderWidth={viewportWidth}
-                            sliderHeight={viewportWidth}
-                            itemWidth={viewportWidth}
-                            inactiveSlideOpacity={0}
-                        />
+                {this.state.data.length == 0 &&
+                    <ThemeFullPageLoader />
+                }
+
+                {this.state.data.length > 0 &&
+                    <View style={{ alignItems: 'center', marginTop: -15, height: screenHeight(26) }}>
+                        <View style={{ marginVertical: 10 }}>
+                            <Carousel
+                                ref={(c) => { this._carousel = c; }}
+                                data={this.state.data}
+                                renderItem={this.renderSliderImage}
+                                sliderWidth={viewportWidth}
+                                sliderHeight={viewportWidth}
+                                itemWidth={viewportWidth}
+                                inactiveSlideOpacity={0}
+                            />
+                        </View>
                     </View>
-                </View>
+                }
+
             </View>
         );
     }
