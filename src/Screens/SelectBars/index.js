@@ -70,7 +70,36 @@ class SelectBars extends Component {
     items.collectionWallet=this.state.collectionWallet
     items.ecom_ae_vendors=this.state.itemSelected;
     items.hostUrl=this.state.hostUrl;
-    this.props.navigation.navigate('Redeem', { items: items })
+    this.state.data.selectedQty = 0;
+    this.state.data.inputQty = 0;
+    const data = {
+      walletId:this.state.collectionWallet.walletId,
+      availableQty:this.state.collectionWallet.availableQty,
+      unitType:this.state.collectionWallet.unitType,
+      vendorShopName:this.state.itemSelected.vendorShopName,
+      description:this.state.itemSelected.description,
+      images:this.state.itemSelected.images,
+      vendorId:this.state.itemSelected.vendorId,
+      hostUrl:this.state.hostUrl,
+      ecom_aca_product_unit:{
+        productUnitId:this.state.collectionWallet.ecom_aca_product_unit.productUnitId,
+        unitType:this.state.collectionWallet.ecom_aca_product_unit.unitType,
+        unitQty:this.state.collectionWallet.ecom_aca_product_unit.unitQty,
+        unitUserPrice:this.state.collectionWallet.ecom_aca_product_unit.unitUserPrice,
+        ecom_ac_product:{
+          selectedUnitQty:0,
+          inputQty:0,
+          selectedMixerData:"",
+          quantity:0,
+          productId:this.state.data.productId,
+          name:this.state.data.name,
+          images:this.state.data.images,
+          description:this.state.data.shortDescription,
+          ecom_acca_vendor_product_units:this.state.itemSelected.ecom_acca_vendor_product_units,
+        }
+      }
+    };
+    this.props.navigation.navigate('Redeem', { items: data })
   }
 
   onItemSelected=(item)=>{

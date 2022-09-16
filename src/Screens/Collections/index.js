@@ -238,9 +238,10 @@ export default class Collections extends Component {
                         <TouchableOpacity
                           key={index}
                           style={styles.productView}
-                          onPress={() =>
-                            this.props.navigation.navigate('OrderHistoryDetail')
-                          }>
+                          // onPress={() =>
+                          //   //this.props.navigation.navigate('OrderHistoryDetail')
+                          // }
+                          >
                           <View style={styles.productInnerView} key={index}>
                             <Image
                               source={{ uri: `${this.state.hostUrl + item.ecom_ea_combo.images}` }}

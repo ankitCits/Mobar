@@ -19,16 +19,17 @@ export default class SelectInput extends React.Component {
 
     toggle = () => {
         this.setState({ isToggle: !this.state.isToggle });
-      };
+    };
 
-      onSelected = (value) => {
-        console.log("Select > onSelected",value);
-        this.state.selectedItem.id=value.id,
-        this.state.selectedItem.title=value.title,
-        console.log("Selected item",this.state.selectedItem);
+    onSelected = (value) => {
+        const selectedItem = {
+            id: value.id,
+            title: value.title,
+        }
+        this.setState({ selectedItem: selectedItem });
         this.props.onChange(value);
         this.toggle();
-      };
+    };
 
     render() {
         return (
@@ -50,11 +51,15 @@ export default class SelectInput extends React.Component {
                         this.props.items.length > 0 &&
                         this.props.items.map((item, index) => {
                             return (
-                                <TouchableOpacity onPress={() => this.onSelected(item)} key={index}>
-                                    <View style={[styles.sectionStyle, this.state.isToggle ? styles.collapsed : styles.hide, this.state.selectedItem.title == item.title ? styles.selected : '']} key={index}>
-                                        <Text style={styles.inputText}>{item.title}</Text>
-                                    </View>
-                                </TouchableOpacity>)
+                                <>
+                                    <TouchableOpacity onPress={() => this.onSelected(item)} key={index} style={{ zIndex: 1 }}>
+                                        <View style={[styles.sectionStyle, this.state.isToggle ? styles.collapsed : styles.hide, this.state.selectedItem.title == item.title ? styles.selected : '']} key={index}>
+                                            <Text style={styles.inputText}>{item.title}</Text>
+                                        </View>
+                                    </TouchableOpacity>
+
+                                </>
+                            )
                         }
                         )
                     }
@@ -77,6 +82,7 @@ const styles = StyleSheet.create({
         borderTopLeftRadiusRadius: 10,
         borderTopRightRadiusRadius: 10,
         elevation: 4,
+        zIndex: 5
     },
     collapsed: {
         flexDirection: 'row',
