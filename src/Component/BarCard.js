@@ -34,18 +34,17 @@ class BarCard extends Component {
         if (token == null) {
             showAlert();
         } else {
-            console.log("BarCard > removeFavorite > WId", id);
-            console.log("object before remove fav", this.state.data.ecom_ba_wishlist);
             const data = {
                 wishlistId: id
             }
             try {
                 const response = await removeToWishlist(data);
                 this.setState({ isFavorite: false });
-                this.state.data.ecom_ba_wishlist = null,
-                    console.log("BarCard > removeFavorite > Response", response);
-                console.log("object after remove fav", this.state.data.ecom_ba_wishlist);
+                this.state.data.ecom_ba_wishlist = null;
+                console.log("BarCard > removeFavorite > Response", response);
             } catch (error) {
+                this.setState({ isFavorite: false });
+                this.state.data.ecom_ba_wishlist = null;
                 console.log("BarCard > removeFavorite > Error", error);
             }
         }
@@ -53,13 +52,9 @@ class BarCard extends Component {
 
     addFavorite = async (id, index) => {
         const token = await getAccessToken();
-        console.log("AddFavorites > BarCard >Token", token);
         if (token == null) {
             showAlert();
         } else {
-            console.log("BarCard > addFav > ItemID", id);
-            console.log("BarCard > addFav > this.state.data.ecom_ba_wishlist", this.state.data.ecom_ba_wishlist);
-
             const data = {
                 productId: 0,
                 comboId: 0,
@@ -135,7 +130,7 @@ class BarCard extends Component {
                         <View>
                             {/* numberOfLines={2} ellipsizeMode='tail' */}
                             <Text style={styles.textAddress}
-                             numberOfLines={2}
+                                numberOfLines={2}
                             >{this.state.data.address}</Text>
                         </View>
                         <View style={styles.footer}>

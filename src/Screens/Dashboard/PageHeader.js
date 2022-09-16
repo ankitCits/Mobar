@@ -67,7 +67,6 @@ class PageHeader extends Component {
 
 
     renderSliderImage = ({ item }) => {
-        console.log(`${this.state.hostUrl + item.slider}`);
         return (
             <View
                 style={{

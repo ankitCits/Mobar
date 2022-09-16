@@ -1,4 +1,4 @@
-import React, { Component, useRef } from 'react';
+import React, { Component } from 'react';
 import {
     View,
     StyleSheet,
@@ -8,7 +8,6 @@ import {
     TouchableOpacity,
     Text,
     ScrollView,
-    Animated,
     ImageBackground,
     RefreshControl,
     PermissionsAndroid,
@@ -16,7 +15,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import Header from '../Component/Header';
-import { A_KEY, BASE_URL, MY_HEADER } from '../../config';
+import { A_KEY, BASE_URL } from '../../config';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import { TabView, TabBar } from 'react-native-tab-view';
 
@@ -83,7 +82,6 @@ class Dashboard extends Component {
                 }
             );
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                console.log("You can use the location");
                 this.setState({ locationPermission: true });
                 this.getLatLong();
             } else {
@@ -96,7 +94,6 @@ class Dashboard extends Component {
 
     getLatLong = async () => {
         Geolocation.getCurrentPosition((position) => {
-            console.log('>>>>position', position)
             this.setState({ position: { longitude: position.coords.longitude, latitude: position.coords.latitude, isLocation: true } });
             this.props.dispatch(setUserLocationDetail(this.state.position));
         }, (error) => {
