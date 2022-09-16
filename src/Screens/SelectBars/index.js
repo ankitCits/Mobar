@@ -53,6 +53,7 @@ class SelectBars extends Component {
         collectionWallet: response.response.result.collectionWallet,
         isLoading: false
       });
+
     } catch (error) {
       console.log("Select bars > catch > error", error);
       this.setState({ isLoading: false });
@@ -81,10 +82,10 @@ class SelectBars extends Component {
       vendorId: this.state.itemSelected.vendorId,
       hostUrl: this.state.hostUrl,
       ecom_aca_product_unit: {
-        productUnitId: this.state.collectionWallet.ecom_aca_product_unit.productUnitId,
-        unitType: this.state.collectionWallet.ecom_aca_product_unit.unitType,
-        unitQty: this.state.collectionWallet.ecom_aca_product_unit.unitQty,
-        unitUserPrice: this.state.collectionWallet.ecom_aca_product_unit.unitUserPrice,
+        productUnitId: this.state.collectionWallet.ecom_aca_product_unit ? this.state.collectionWallet.ecom_aca_product_unit.productUnitId : 0,
+        unitType: this.state.collectionWallet.ecom_aca_product_unit ? this.state.collectionWallet.ecom_aca_product_unit.unitType : '',
+        unitQty: this.state.collectionWallet.ecom_aca_product_unit ? this.state.collectionWallet.ecom_aca_product_unit.unitQty : 0,
+        unitUserPrice: this.state.collectionWallet.ecom_aca_product_unit ? this.state.collectionWallet.ecom_aca_product_unit.unitUserPrice : 0,
         ecom_ac_product: {
           selectedUnitQty: 0,
           inputQty: 0,
