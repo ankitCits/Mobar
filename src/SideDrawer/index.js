@@ -28,7 +28,6 @@ class SideDrawer extends Component {
 
 
   onPressFun = async (screen) => {
-    console.log("drawer Index", screen);
     if (screen == 'InviteFriends') {
       this.setState({ drawerIndex: 4 });
     }
@@ -61,7 +60,6 @@ class SideDrawer extends Component {
         this.reStart();
       }
     } catch (error) {
-      console.log("Password > Update PAssword > error", error);
       ToastAndroid.showWithGravity(
         'Internet Issue!',
         ToastAndroid.LONG,
@@ -77,7 +75,6 @@ class SideDrawer extends Component {
 
   render() {
     var drawerIndex = this.state.drawerIndex;
-    // console.log("========>>>>", this.props.redux)
     return (
       <>
         <StatusBar

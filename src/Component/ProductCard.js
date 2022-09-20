@@ -15,16 +15,13 @@ import {
 import images from '../assets/images';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { connect } from 'react-redux';
-import { addToCart, removeFromCart, addToFav, removeToFav, updateToCart } from '../api/product';
+import { addToCart, removeFromCart, updateToCart } from '../api/product';
 import { addToWishlist, removeToWishlist } from '../api/wishlist';
 import { getAccessToken } from '../localstorage';
 import { showAlert } from '../api/auth';
 import { FontFamily } from '../Theme/FontFamily';
 import { ThemeColors } from '../Theme/ThemeColors';
-// import { screenHeight, screenWidth } from '../Theme/Matrices';
 import HTMLView from 'react-native-htmlview';
-import { createToken } from '@stripe/stripe-react-native';
-// import { numberOfLines } from 'deprecated-react-native-prop-types/DeprecatedTextPropTypes';
 
 class ProductCard extends Component {
     constructor(props) {
@@ -37,7 +34,7 @@ class ProductCard extends Component {
         };
     }
 
-    addCart = async (productUnitId, index) => {
+    addCart = async (productUnitId) => {
         const token = await getAccessToken();
         if (token == null) {
             showAlert();
@@ -63,7 +60,6 @@ class ProductCard extends Component {
     }
 
     updateCart = async (item, type, index) => {
-        console.log("ProductCart > updateCart > id", item, type, index);
         const token = await getAccessToken();
         if (token == null) {
             showAlert();
@@ -94,7 +90,6 @@ class ProductCard extends Component {
     }
 
     removeCart = async (cartId, index) => {
-        console.log("ProductCard > removeCart > id", cartId, index);
         const token = await getAccessToken();
         if (token == null) {
             showAlert();
@@ -163,12 +158,10 @@ class ProductCard extends Component {
 
     render() {
         const {
-            item,
             hostUrl,
             navigation,
             index
         } = this.props;
-        //console.log("ProductCard > Item",item);
         return (
             <View style={styles.itemOuterContainer}>
                 <View style={styles.itemContainer}>
@@ -263,7 +256,7 @@ class ProductCard extends Component {
                             ) : null}
                             <TouchableOpacity
                                 onPress={() => this.state.data.ecom_aca_product_units[0].ecom_ba_cart &&
-                                    this.state.cart 
+                                    this.state.cart
                                     ? this.updateCart(this.state.data.ecom_aca_product_units[0].ecom_ba_cart, 1, index) : this.addCart(this.state.data.ecom_aca_product_units[0].productUnitId, index)}
                                 style={styles.cartActionIcon}>
                                 <Icon name="add" size={18} color="#fff" />
@@ -281,10 +274,6 @@ const styles = StyleSheet.create({
     itemOuterContainer: {
         flex: 1,
         marginHorizontal: 16,
-        // flexDirection: 'row',
-        // alignContent: 'flex-start',
-        // alignItems: 'flex-start',
-        // backgroundColor: 'red',
 
     },
     itemContainer: {
@@ -300,7 +289,6 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginTop: 20,
         marginBottom: 10,
-        // alignSelf: 'center',
         backgroundColor: '#fff',
         borderRadius: 10,
         marginBottom: 12,

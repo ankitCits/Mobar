@@ -20,7 +20,6 @@ import Drinks from './Tabs/Drinks';
 import Bars from './Tabs/Bars';
 import { wishlist } from '../../api/wishlist';
 import { connect } from 'react-redux';
-import { ForceTouchGestureHandler } from 'react-native-gesture-handler';
 
 const LazyPlaceholder = ({ route }) => (
   <View>
@@ -46,7 +45,6 @@ class Favourites extends Component {
 
   componentDidMount() {
     this.state._unsubscribe = this.props.navigation.addListener('focus', async () => {
-      // do something
       await this.fetchData();
     });
 
