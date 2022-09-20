@@ -39,7 +39,6 @@ export default class Redeem extends Component {
       successOrderData: [],
       moreData: [this.props.route.params.items]
     };
-    console.log("state more data", this.state.data);
   }
 
   componentDidMount() {
@@ -189,9 +188,9 @@ export default class Redeem extends Component {
       data.ecom_aca_product_unit.ecom_ac_product.quantity = 0;
       data.ecom_aca_product_unit.ecom_ac_product.selectedMixerData = "";
       const ifExist = this.state.moreData.find(x =>
-        x.ecom_aca_product_unit.ecom_ac_product.productId == data.ecom_aca_product_unit.ecom_ac_product.productId
+        x.ecom_aca_product_unit && x.ecom_aca_product_unit.ecom_ac_product.productId == data.ecom_aca_product_unit.ecom_ac_product.productId
       );
-      console.log("check ifExist Product", ifExist);
+      
       if (ifExist && ifExist.ecom_aca_product_unit.ecom_ac_product.productId) {
         ToastAndroid.showWithGravity(
           'This product already exists',
@@ -480,12 +479,11 @@ export default class Redeem extends Component {
                     }}>
                     Select Unit Quantity:
                   </Text>
-
+                  <ScrollView horizontal={true}>
                   <View
                     style={{
                       flexDirection: 'row',
-                      top: 5,
-                      width: '70%',
+                      //width: '100%',
                       alignSelf: 'flex-start'
                     }}>
 
@@ -520,7 +518,11 @@ export default class Redeem extends Component {
                                 : styles.itemQuantity
                             ]}>
 
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }} key={vIndex}>
+                            <View style={{ 
+                              flexDirection: 'row', 
+                              alignItems: 'center',
+                              
+                              }} key={vIndex}>
                               <Icon name="wine-bar" size={22} color="#7B7B7B" />
                               <Text
                                 style={{
@@ -535,7 +537,7 @@ export default class Redeem extends Component {
                         ))
                     }
                   </View>
-
+                  </ScrollView>
                 </View>
 
                 <View
@@ -1212,13 +1214,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 10,
     padding: 2,
-    width: '40%'
+    marginHorizontal:5
   },
   itemQuantitySelected: {
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 10,
-    width: '40%',
+    paddingHorizontal:10,
     borderWidth: 1,
     borderRadius: 20,
     borderColor: '#A1172F',
