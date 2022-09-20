@@ -58,7 +58,7 @@ export default class HelpSupport extends Component {
     switch (fieldName) {
       case 'name':
         if (this.state.name == null || this.state.name.trim() == '') {
-          this.setState({ nameError: 'Please provide your name', loader: false, formError: 'Name fields are mandatory' });
+          this.setState({ nameError: 'Please provide your name', loader: false, formError: 'Please provide your name' });
           return;
         } else {
           this.setState({ nameError: '' });
@@ -66,10 +66,10 @@ export default class HelpSupport extends Component {
         break;
       case 'email':
         if (this.state.email == null || this.state.email.trim() == '') {
-          this.setState({ emailError: 'Email address is mandatory', loader: false, formError: 'Email fields are mandatory' });
+          this.setState({ emailError: 'Email address is mandatory', loader: false, formError: 'Email address is mandatory' });
           return;
         } else if (!Util.validEmail(this.state.email)) {
-          this.setState({ emailError: 'Invalid email id', formError: 'Invalid email id', loader: false });
+          this.setState({ emailError: 'Invalid email address', formError: 'Invalid email address', loader: false });
           return;
         } else {
           this.setState({ emailError: null });
@@ -78,7 +78,7 @@ export default class HelpSupport extends Component {
       case 'mobileNumber':
         const zero = this.state.mobileNumber && this.state.mobileNumber.startsWith('0');
         if (this.state.mobileNumber == null || this.state.mobileNumber.trim() == '') {
-          this.setState({ mobileError: 'Mobile number is mandatory', loader: false, formError: 'Mobile fields are mandatory' });
+          this.setState({ mobileError: 'Mobile number is mandatory', loader: false, formError: 'Mobile number is mandatory' });
           return;
         } else if (!Util.validMobile(this.state.mobileNumber)) {
           this.setState({ mobileError: '* Invalid mobile number', formError: '* Invalid mobile number', loader: false });
@@ -93,7 +93,7 @@ export default class HelpSupport extends Component {
         break;
       case 'description':
         if (this.state.description == null || this.state.description.trim() == '') {
-          this.setState({ descriptionError: 'Please describe your query / issue you are facing', loader: false, formError: 'Description fields are mandatory' });
+          this.setState({ descriptionError: 'Please describe your query / issue you are facing', loader: false, formError: 'Please describe your query / issue you are facing' });
           return;
         } else {
           this.setState({ descriptionError: null });
@@ -107,7 +107,7 @@ export default class HelpSupport extends Component {
           this.setState({ categoryError: null });
         }
         break;
-       default:
+      default:
         break;
     }
   }
@@ -226,21 +226,21 @@ export default class HelpSupport extends Component {
               placeholder={'Name'}
               value={this.state.name}
               onChangeText={text => this.handleUserInput('name', text)}
-            error={this.state.nameError}
+              error={this.state.nameError}
             />
 
             <HelpInput
               placeholder={'Email'}
               value={this.state.email}
               onChangeText={text => this.handleUserInput('email', text)}
-            error={this.state.emailError}
+              error={this.state.emailError}
             />
 
             <HelpInput
               placeholder={'Mobile Number'}
               value={this.state.mobileNumber}
               onChangeText={text => this.handleUserInput('mobileNumber', text)}
-            error={this.state.mobileError}
+              error={this.state.mobileError}
             />
 
             <View style={styles.sectionStyle} >
@@ -262,7 +262,7 @@ export default class HelpSupport extends Component {
                     <Text style={styles.inputText}>{item}</Text>
                   </View>
                 </TouchableOpacity>
-                )
+              )
               )
             }
             {this.state.categoryError &&
@@ -275,14 +275,14 @@ export default class HelpSupport extends Component {
               value={this.state.description}
               multiline={true}
               onChangeText={text => this.handleUserInput('description', text)}
-           error={this.state.descriptionError}
+              error={this.state.descriptionError}
             />
 
-              
-              <Text style={styles.errorText}>
-                {this.state.formError}
-              </Text>
-            
+
+            <Text style={styles.errorText}>
+              {this.state.formError}
+            </Text>
+
             {/* {this.state.formError =='' ?  
             (<View style={styles.errorContainer}>
               <Text style={styles.errorText}>All fields are mandatory</Text>

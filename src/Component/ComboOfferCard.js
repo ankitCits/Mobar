@@ -24,7 +24,7 @@ class ComboOfferCard extends Component {
                 <TouchableOpacity
                     key={index}
                     onPress={() => {
-                        navigation.navigate('Product');
+                        navigation.navigate('Product', { categoryIdx: { key: 3 } })
                     }}
                     style={{
                         marginTop: 28,
