@@ -37,7 +37,8 @@ export default class MyCard extends Component {
       isLoading: false,
       couponText: '',
       couponLoader: false,
-      checkoutLoader: false
+      checkoutLoader: false,
+
     };
 
   }
@@ -347,12 +348,12 @@ export default class MyCard extends Component {
                 </View>
 
                 <View style={{ marginTop: '10%', marginBottom: 10 }}>
+                  {/* {this.state.totalQty > 0 &&  */}
                   <TouchableOpacity
                     style={styles.save}
                     onPress={() => this.cartCheckout()}
-                    disabled={this.state.checkoutLoader}
+                    disabled={!this.state.totalQty}
                   >
-
                     {this.state.checkoutLoader ?
                       (
                         <ActivityIndicator size="small" color="#ffffff" />
@@ -361,6 +362,7 @@ export default class MyCard extends Component {
                       )
                     }
                   </TouchableOpacity>
+                  {/* } */}
                 </View>
               </View>
             </View>

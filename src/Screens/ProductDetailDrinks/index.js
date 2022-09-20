@@ -338,12 +338,12 @@ class ProductDetailDrinks extends Component {
             <View style={styles.cart}>
               <View style={styles.cartMargin}>
                 <View style={styles.cartBtnContainer}>
-                  <View />
-                  <View>
                     <View
                       style={styles.cartContainer}>
                       <Text
-                        style={styles.cartText}>
+                        style={styles.cartText}
+                        onPress={() => { this.addCart() }}
+                        >
                         ADD TO CART
                       </Text>
                       <TouchableOpacity
@@ -357,7 +357,8 @@ class ProductDetailDrinks extends Component {
                         />
                       </TouchableOpacity>
                     </View>
-                  </View>
+                    <View/>
+                  
                   <TouchableOpacity
                     style={styles.heartContainer}
                     onPress={() => {
@@ -581,6 +582,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
     marginTop: -20,
+    //paddingLeft:35,
     alignContent: 'center',
     zIndex: 0,
   },
@@ -590,14 +592,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#AD1832',
     width: 192,
     borderRadius: 20,
+    
   },
   cartMargin: {
-    margin: 40
+    margin: 40,
+    
   },
   cartBtnContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     marginTop: 10,
+    alignContent:"center",
+    paddingLeft:40,
+    //backgroundColor:"powderblue"
   },
   cartText: {
     fontSize: 15,
@@ -625,7 +632,7 @@ const styles = StyleSheet.create({
   },
   cartIcon: {
     backgroundColor: '#D46679',
-    width: 61,
+    width: 80,
     height: 44,
     borderRadius: 20,
     justifyContent: 'center',

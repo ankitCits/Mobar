@@ -49,6 +49,7 @@ class ProductDetailBars extends Component {
         longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
       };
       const data = await fetchVendorDetails(postData);
+      //console.log(data);
       this.setState({ data: data.response.result, loader: false });
       this.setState({
         isFavorite: this.state.data.vendorDetail[0].ecom_ba_wishlist &&

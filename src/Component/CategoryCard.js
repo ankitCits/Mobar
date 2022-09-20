@@ -14,6 +14,8 @@ import { getAccessToken } from '../localstorage';
 import { showAlert } from '../api/auth';
 import { ThemeColors } from '../Theme/ThemeColors';
 import { screenHeight, screenWidth } from '../Theme/Matrices';
+import { Colors } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export default class CategoryCard extends React.Component {
     constructor(props) {
@@ -171,7 +173,7 @@ export default class CategoryCard extends React.Component {
                         </View>
                     </ImageBackground>
                 </TouchableOpacity>
-                {index == totalItems - 1 &&
+                          {index == totalItems - 1 &&
                     <TouchableOpacity
                         key={index}
                         onPress={() => {
@@ -182,8 +184,32 @@ export default class CategoryCard extends React.Component {
                             marginBottom: 30,
                             marginLeft: 10,
                         }}>
+                        
 
-                        <Text>View All</Text>
+                         <View style={{backgroundColor:Colors.blueGrey100,width: 147,height: 180,alignItems:"center",justifyContent:"center"}}>
+                        <View>
+                            <TouchableOpacity>
+                            <Icon name="arrow-forward-ios" size={28} color="#4D4F50" />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.productHeader}>
+                        </View>
+                         <Image
+                            style={styles.boxOuter}
+                            resizeMode={'cover'}
+                            source={currImage.innerBox}
+                            defaultSource={currImage.innerBox}
+                        />    
+                        {/* <Text>View All</Text> */}
+                        <View style={styles.innerBottom}>
+                            <View>
+                                <Text style={styles.innerViewAll}>
+                                    View All
+                                </Text>
+                            </View>
+                            </View>
+                        </View>
+                       
                     </TouchableOpacity>
                 }
             </>
@@ -210,6 +236,10 @@ const styles = StyleSheet.create({
         height: 145,
         zIndex: 0,
         alignSelf: 'center'
+    },
+    productHeader:{
+        marginTop:'40%',
+        
     },
     favContainer: {
         width: 30,
@@ -254,4 +284,10 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '500',
     },
+    innerViewAll:{
+        color: '#fff',
+        fontSize: 15,
+        fontWeight: '400',
+        height: 20,
+    }
 });

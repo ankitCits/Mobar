@@ -58,6 +58,7 @@ class Promotions extends Component {
   }
 
   renderPromotion = (item, index) => {
+   // console.log(item);
     if (item.type == 1) {
       return (
         <View style={{ marginHorizontal: 15, }}>
