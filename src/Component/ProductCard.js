@@ -9,7 +9,8 @@ import {
     View,
     Image,
     Dimensions,
-    ToastAndroid
+    ToastAndroid,
+    Alert
 } from 'react-native';
 import images from '../assets/images';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -22,6 +23,7 @@ import { FontFamily } from '../Theme/FontFamily';
 import { ThemeColors } from '../Theme/ThemeColors';
 // import { screenHeight, screenWidth } from '../Theme/Matrices';
 import HTMLView from 'react-native-htmlview';
+import { createToken } from '@stripe/stripe-react-native';
 // import { numberOfLines } from 'deprecated-react-native-prop-types/DeprecatedTextPropTypes';
 
 class ProductCard extends Component {
@@ -31,12 +33,11 @@ class ProductCard extends Component {
             categoryData: this.props.categoryData,
             isFavorite: (this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId) ? true : false,
             data: this.props.item,
+            cart: this.props.item.ecom_aca_product_units[0].ecom_ba_cart ? parseInt(this.props.item.ecom_aca_product_units[0].ecom_ba_cart.qty) : 0,
         };
     }
 
     addCart = async (productUnitId, index) => {
-        console.log("ProductCard >  addToCart > id", productUnitId);
-        // console.log("ProductCard >  addToCart > Item", item.cart);
         const token = await getAccessToken();
         if (token == null) {
             showAlert();
@@ -48,15 +49,9 @@ class ProductCard extends Component {
                     qty: 1,
                 };
                 const response = await addToCart(sendData);
-                console.log("ProductCard > addCart > response", response);
-                const data = this.state.categoryData.data;
-                data[index].cart = data[index].cart + 1;
-                this.setState({
-                    categoryData: {
-                        data,
-                        hostUrl: this.state.categoryData.hostUrl,
-                    },
-                });
+                // const cart = this.state.data.item.ecom_aca_product_units[0].ecom_ba_cart.qty;
+                // this.props.item.ecom_aca_product_units[0].ecom_ba_cart.qty = cart -1;
+                this.setState({ cart: this.state.cart + 1 });
             } catch (error) {
                 ToastAndroid.showWithGravity(
                     error,
@@ -68,7 +63,7 @@ class ProductCard extends Component {
     }
 
     updateCart = async (item, type, index) => {
-        console.log("ProductCart > updateCart > id", item);
+        console.log("ProductCart > updateCart > id", item, type, index);
         const token = await getAccessToken();
         if (token == null) {
             showAlert();
@@ -79,15 +74,15 @@ class ProductCard extends Component {
                     type: type,//type 1 for add and 2 for substraction
                 };
                 const response = await updateToCart(sendData);
-                console.log("ProductCard >  updateCart > response", response);
-                const data = this.state.categoryData.data;
-                data[index].cart = type == 1 ? data[index].cart + 1 : data[index].cart - 1;
-                this.setState({
-                    categoryData: {
-                        data,
-                        hostUrl: this.state.categoryData.hostUrl,
-                    },
-                });
+                if (type == 2) {
+                    let removeCart = this.state.cart;
+                    removeCart = removeCart - 1;
+                    this.setState({ cart: removeCart });
+                } else {
+                    const cart = this.state.cart + 1;
+                    console.log("after update", cart);
+                    this.setState({ cart: cart });
+                }
             } catch (error) {
                 ToastAndroid.showWithGravity(
                     error,
@@ -99,22 +94,17 @@ class ProductCard extends Component {
     }
 
     removeCart = async (cartId, index) => {
-        console.log("ProductCard > removeCart > id", cartId);
+        console.log("ProductCard > removeCart > id", cartId, index);
         const token = await getAccessToken();
         if (token == null) {
             showAlert();
         } else {
             try {
                 const response = await removeFromCart(cartId);
-                console.log("response > removeCart > response", response);
-                const data = this.state.categoryData.data;
-                data[index].cart = data[index].cart - 1;
-                this.setState({
-                    categoryData: {
-                        data,
-                        hostUrl: this.state.categoryData.hostUrl,
-                    },
-                });
+                // const cart = this.state.data.ecom_aca_product_units[0].ecom_ba_cart.qty;
+                // this.state.data.ecom_aca_product_units[0].ecom_ba_cart.qty = cart - 1;
+                this.setState({ cart: this.state.cart - 1 });
+
             } catch (error) {
                 ToastAndroid.showWithGravity(
                     error,
@@ -139,14 +129,6 @@ class ProductCard extends Component {
                 const wishlistData = await addToWishlist(sendData);
                 this.state.data.ecom_ba_wishlist = wishlistData.result.data;
                 this.setState({ isFavorite: true });
-                const data = this.state.categoryData.data;
-                data[index].fav = 1;
-                this.setState({
-                    categoryData: {
-                        data,
-                        hostUrl: this.state.categoryData.hostUrl,
-                    },
-                });
             } catch (error) {
                 ToastAndroid.showWithGravity(
                     error,
@@ -164,19 +146,11 @@ class ProductCard extends Component {
         } else {
             try {
                 const sendData = {
-                    wishlistId:wishListId
+                    wishlistId: wishListId
                 };
                 const responseData = await removeToWishlist(sendData);
-                const data = this.state.categoryData.data;
                 this.state.data.ecom_ba_wishlist = null;
                 this.setState({ isFavorite: false });
-                data[index].fav = 0;
-                this.setState({
-                    categoryData: {
-                        data,
-                        hostUrl: this.state.categoryData.hostUrl,
-                    },
-                });
             } catch (error) {
                 ToastAndroid.showWithGravity(
                     error,
@@ -268,10 +242,12 @@ class ProductCard extends Component {
                         }
                         <View
                             style={styles.cartRow}>
-                            {this.state.data.cart ? (
+                            {this.state.cart != 0 ? (
                                 <>
                                     <TouchableOpacity
-                                        onPress={() => this.state.data.ecom_aca_product_units[0].ecom_ba_cart ? this.updateCart(this.state.data.ecom_aca_product_units[0].ecom_ba_cart, 2, index) : ''}
+                                        onPress={() => this.state.data.ecom_aca_product_units[0].ecom_ba_cart &&
+                                            this.state.cart > 0 ?
+                                            this.updateCart(this.state.data.ecom_aca_product_units[0].ecom_ba_cart, 2, index) : Alert.alert('', 'Work in progress')}
                                         style={styles.cartActionIcon}>
                                         <Icon
                                             name="remove"
@@ -281,12 +257,14 @@ class ProductCard extends Component {
                                     </TouchableOpacity>
                                     <Text
                                         style={styles.cartQty}>
-                                        {this.state.data.cart}
+                                        {this.state.cart}
                                     </Text>
                                 </>
                             ) : null}
                             <TouchableOpacity
-                                onPress={() => this.state.data.ecom_aca_product_units[0].ecom_ba_cart ? this.updateCart(this.state.data.ecom_aca_product_units[0].ecom_ba_cart, 1, index) : this.addCart(this.state.data.ecom_aca_product_units[0].productUnitId, index)}
+                                onPress={() => this.state.data.ecom_aca_product_units[0].ecom_ba_cart &&
+                                    this.state.cart 
+                                    ? this.updateCart(this.state.data.ecom_aca_product_units[0].ecom_ba_cart, 1, index) : this.addCart(this.state.data.ecom_aca_product_units[0].productUnitId, index)}
                                 style={styles.cartActionIcon}>
                                 <Icon name="add" size={18} color="#fff" />
                             </TouchableOpacity>

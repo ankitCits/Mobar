@@ -11,15 +11,12 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RNRestart from 'react-native-restart';
 import { connect } from 'react-redux';
-import { getAccessToken, removeAccessToken } from '../localstorage';
-import { A_KEY, BASE_URL } from '../config';
+import { removeAccessToken } from '../localstorage';
 import LoginButton from '../Component/LoginButton';
 import { FontFamily } from '../Theme/FontFamily';
 import { ThemeColors } from '../Theme/ThemeColors';
 import { setUserDetail } from '../Redux/actions/auth';
 import { loggedOut } from '../Redux/actions/product';
-import Share from 'react-native-share';
-import { inviteShare } from '../api/common';
 
 class SideDrawer extends Component {
   constructor(props) {
@@ -32,24 +29,8 @@ class SideDrawer extends Component {
 
   onPressFun = async (screen) => {
     console.log("drawer Index", screen);
-    if (screen == 'Share') {
-      try {
-        const res = await inviteShare();
-        const regex = /(<([^>]+)>)/ig;
-
-        const options = Platform.select({
-          default: {
-            title: res.response.result.pageData.title,
-            subject: res.response.result.pageData.title,
-            message: res.response.result.referLink,
-            // message: `${res.response.result.pageData.content.replace(regex, '').replace('&nbsp;', ' ')}`,
-          },
-        });
-        await Share.open(options);
-      } catch (error) {
-        console.log(error);
-      }
-      return;
+    if (screen == 'InviteFriends') {
+      this.setState({ drawerIndex: 4 });
     }
     if (screen == 'MyBottomTabs') {
       this.setState({ drawerIndex: 0 });
@@ -195,7 +176,7 @@ class SideDrawer extends Component {
                 <View style={[drawerIndex == 4 ? styles.selectedItem : '']}>
                   <TouchableOpacity
                     style={styles.menuItem}
-                    onPress={() => this.onPressFun('Share')}
+                    onPress={() => this.onPressFun('InviteFriends')}
                   >
                     <Icon name="share" size={26} color={drawerIndex == 4 ? ThemeColors.CLR_WHITE : ThemeColors.CLR_TAB} />
                     <Text style={[styles.listText, drawerIndex == 4 ? styles.selectedTextColor : '']}>

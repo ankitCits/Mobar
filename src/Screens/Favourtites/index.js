@@ -20,6 +20,7 @@ import Drinks from './Tabs/Drinks';
 import Bars from './Tabs/Bars';
 import { wishlist } from '../../api/wishlist';
 import { connect } from 'react-redux';
+import { ForceTouchGestureHandler } from 'react-native-gesture-handler';
 
 const LazyPlaceholder = ({ route }) => (
   <View>
@@ -30,7 +31,8 @@ class Favourites extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loader: true,
+      subscribe: null,
+      loader: false,
       data: [],
       hostUrl: null,
       index: 0,
@@ -43,10 +45,19 @@ class Favourites extends Component {
   }
 
   componentDidMount() {
-    this.fetchData();
+    this.state._unsubscribe = this.props.navigation.addListener('focus', async () => {
+      // do something
+      await this.fetchData();
+    });
+
+  }
+
+  componentWillUnmount() {
+    this.state._unsubscribe();
   }
 
   componentDidUpdate() {
+
   }
 
   onRefresh = async () => {
@@ -242,7 +253,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   header: { marginLeft: 10 },
-  titleText: { fontStyle: FontFamily.ROBOTO_REGULAR, fontSize: 20, color: '#4D4F50', fontWeight: '500' },
+  titleText: { fontFamily: FontFamily.ROBOTO_REGULAR, fontSize: 20, color: '#4D4F50', fontWeight: '500' },
   searchContainer: { alignSelf: 'center', marginTop: -5 },
   sectionStyle: {
     flexDirection: 'row',

@@ -45,8 +45,8 @@ export default class Bars extends Component {
     return (
       <SafeAreaView>
         <>
-          {this.state.data && this.state.data.length > 0 ? (
-            this.state.data.map((item, index) => (
+          {this.props.data && this.props.data.length > 0 ?
+            this.props.data.map((item, index) => (
               <View>
                 <TouchableOpacity
                   key={item.vendorId}
@@ -120,10 +120,10 @@ export default class Bars extends Component {
                   </View>
                 </TouchableOpacity>
               </View>
-            ))
-          ) : (
-            <NoContentFound title="No Data Found" />
-          )}
+            )
+            ) : (
+              <NoContentFound title="No Data Found" />
+            )}
         </>
       </SafeAreaView>
     );

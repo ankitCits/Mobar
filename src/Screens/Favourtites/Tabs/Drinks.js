@@ -30,7 +30,6 @@ export default class Drinks extends Component {
         wishlistId: id
       }
       const response = await removeToWishlist(data);
-      console.log("RemoveFavortie > response", response);
       this.setState({ data: this.state.data.filter(x => x.wishlistId != id) });
     } catch (error) {
       console.log("CategoryCard > removeFavorite > Catch", error);
@@ -85,13 +84,12 @@ export default class Drinks extends Component {
       index
     } = this.props;
     //this.state.data.filter(x=>console.log("Favorite > Drinks  Filter > Item",x.wishlistId));
-
     return (
       <SafeAreaView
         style={styles.container}>
         <>
-          {this.state.data && this.state.data.length > 0 ? (
-            this.state.data.map(item => (
+          {this.props.data && this.props.data.length > 0 ? (
+            this.props.data.map(item => (
               <View>
                 <TouchableOpacity
                   key={index}

@@ -10,6 +10,7 @@ import About from '../Screens/About';
 import OrderHistory from '../Screens/OrderHistory';
 import OrderHistoryDetail from '../Screens/OrderHistory/orderHistoryDetail';
 import MyCard from '../Screens/MyCard';
+import InviteFriends from '../Screens/InviteFriends';
 import Checkout from '../Screens/Checkout';
 import ProductDetailBars from '../Screens/ProductDetailBars';
 import ProductDetailDrinks from '../Screens/ProductDetailDrinks';
@@ -69,6 +70,7 @@ const DrawerScreen = () => {
       <Stack.Screen name="OrderHistory" component={OrderHistory} />
       <Stack.Screen name="OrderHistoryDetail" component={OrderHistoryDetail} />
       <Stack.Screen name="MyCard" component={MyCard} />
+      <Stack.Screen name="InviteFriends" component={InviteFriends} />
       <Stack.Screen name="Checkout" component={Checkout} />
       <Stack.Screen name="ProductDetailBars" component={ProductDetailBars} />
       <Stack.Screen name="ProductDetailDrinks" component={ProductDetailDrinks} />

@@ -18,7 +18,7 @@ import images from '../../assets/images';
 import HeaderSide from '../Component/HeaderSide';
 import PaymentForm from '../../Component/PaymentForm';
 import { initStripe, confirmPayment } from '@stripe/stripe-react-native';
-import { fetchPaymentIntentClientSecret, placeOrder, fetchCart } from '../../api/order';
+import { fetchPaymentIntentClientSecret, placeOrder, fetchCart, cancelOrder } from '../../api/order';
 
 import moment from 'moment'
 // pk_test_QNBEnRDDdYq1Yc7TZjVZhhwG00JySy2oJq
@@ -35,7 +35,6 @@ class Checkout extends Component {
       userData: props.redux.auth.userData
     };
     // console.log(this.props.route.params)
-    // console.log(this.props.redux.auth.userData)
   }
 
 
@@ -50,6 +49,19 @@ class Checkout extends Component {
 
   componentWillUnmount() {
     BackHandler.removeEventListener();
+  }
+
+  onCancelOrder = async () => {
+    try {
+      const data = {
+        orderId: this.state.amountData.orderId
+      }
+      const res = await cancelOrder(data);
+      this.props.navigation.navigate('MyBottomTabs');
+    } catch (error) {
+      Alert.alert('Error', error);
+      console.log("checkout > onCancelOrder > catch >", error);
+    }
   }
 
   placeOrder = async () => {
@@ -563,7 +575,7 @@ class Checkout extends Component {
                           onPress: () => console.log("Cancel Pressed"),
                           style: "cancel"
                         },
-                        { text: "OK", onPress: () => this.props.navigation.navigate('MyBottomTabs') }
+                        { text: "OK", onPress: () => this.onCancelOrder() }
                       ]
                     )
                     // this.props.navigation.navigate('MyBottomTabs')

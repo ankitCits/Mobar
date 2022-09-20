@@ -74,7 +74,9 @@ export default function MyBottomTabs() {
       <Tab.Screen
         name="Favourites"
         component={Favourites}
+        
         options={{
+          unmountOnBlur: true,
           tabBarLabel: 'Favourites',
           tabBarIcon: ({ focused }) => (
             <Image
