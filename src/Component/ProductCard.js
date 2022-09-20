@@ -46,6 +46,11 @@ class ProductCard extends Component {
                     qty: 1,
                 };
                 const response = await addToCart(sendData);
+                ToastAndroid.showWithGravity(
+                    'Product Added to Cart',
+                    ToastAndroid.LONG,
+                    ToastAndroid.BOTTOM,
+                );
                 // const cart = this.state.data.item.ecom_aca_product_units[0].ecom_ba_cart.qty;
                 // this.props.item.ecom_aca_product_units[0].ecom_ba_cart.qty = cart -1;
                 this.setState({ cart: this.state.cart + 1 });
@@ -70,13 +75,17 @@ class ProductCard extends Component {
                     type: type,//type 1 for add and 2 for substraction
                 };
                 const response = await updateToCart(sendData);
+                ToastAndroid.showWithGravity(
+                    'Product Added to Cart',
+                    ToastAndroid.LONG,
+                    ToastAndroid.BOTTOM,
+                );
                 if (type == 2) {
                     let removeCart = this.state.cart;
                     removeCart = removeCart - 1;
                     this.setState({ cart: removeCart });
                 } else {
                     const cart = this.state.cart + 1;
-                    console.log("after update", cart);
                     this.setState({ cart: cart });
                 }
             } catch (error) {
@@ -125,11 +134,11 @@ class ProductCard extends Component {
                 this.state.data.ecom_ba_wishlist = wishlistData.result.data;
                 this.setState({ isFavorite: true });
             } catch (error) {
-                ToastAndroid.showWithGravity(
-                    error,
-                    ToastAndroid.LONG,
-                    ToastAndroid.BOTTOM,
-                );
+                // ToastAndroid.showWithGravity(
+                //     error,
+                //     ToastAndroid.LONG,
+                //     ToastAndroid.BOTTOM,
+                // );
             }
         }
     };
@@ -147,11 +156,13 @@ class ProductCard extends Component {
                 this.state.data.ecom_ba_wishlist = null;
                 this.setState({ isFavorite: false });
             } catch (error) {
-                ToastAndroid.showWithGravity(
-                    error,
-                    ToastAndroid.LONG,
-                    ToastAndroid.BOTTOM,
-                );
+                this.state.data.ecom_ba_wishlist = null;
+                this.setState({ isFavorite: false });
+                // ToastAndroid.showWithGravity(
+                //     error,
+                //     ToastAndroid.LONG,
+                //     ToastAndroid.BOTTOM,
+                // );
             }
         }
     };
@@ -237,7 +248,7 @@ class ProductCard extends Component {
                             style={styles.cartRow}>
                             {this.state.cart != 0 ? (
                                 <>
-                                    <TouchableOpacity
+                                    {/* <TouchableOpacity
                                         onPress={() => this.state.data.ecom_aca_product_units[0].ecom_ba_cart &&
                                             this.state.cart > 0 ?
                                             this.updateCart(this.state.data.ecom_aca_product_units[0].ecom_ba_cart, 2, index) : Alert.alert('', 'Work in progress')}
@@ -251,7 +262,7 @@ class ProductCard extends Component {
                                     <Text
                                         style={styles.cartQty}>
                                         {this.state.cart}
-                                    </Text>
+                                    </Text> */}
                                 </>
                             ) : null}
                             <TouchableOpacity

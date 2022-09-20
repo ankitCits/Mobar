@@ -91,7 +91,6 @@ export default class Redeem extends Component {
       this.state.data.selectedQty = data.vendorUnitId;
       this.setState({ data: this.state.data });
     } else {
-      console.log();
       if (isComboProduct) {
         this.state.moreData[index].selectedUnitQty = data.vendorUnitId
         this.setState({ moreData: this.state.moreData })
@@ -109,7 +108,6 @@ export default class Redeem extends Component {
       if (isComboProduct) { // if isComboProduct is true the update selectedMixerData within  combo Product
         this.state.moreData[index].selectedMixerData = data.title;
       } else {
-        console.log("onSelectedMixerData", data.title);
         this.state.moreData[index].ecom_aca_product_unit.ecom_ac_product.selectedMixerData = data.title;
       }
       this.setState({ moreData: this.state.moreData });
@@ -125,17 +123,14 @@ export default class Redeem extends Component {
     this.setState({ comboModelVisible: false });
     this.state.selectedComboData.quantity = 0;
     this.state.selectedComboData.selectedMixerData = 'mixerData';
-    console.log("selected Mixer data", this.state.selectedComboData.productId);
     this.state.moreData.push(this.state.selectedComboData);
   }
 
   setInputQty = (isRemove, type, isComboProduct, index) => {
-    console.log(type);
     if (type == 'Object') {
       if (isRemove) { // isRemove is true then minus otherwise plus
         if (this.state.data.inputQty > 0) {
           this.state.data.inputQty = this.state.data.inputQty - 1;
-          console.log("set inputQty", this.state.data.inputQty);
           this.setState({ data: this.state.data })
         }
       } else {
@@ -143,7 +138,6 @@ export default class Redeem extends Component {
         this.setState({ data: this.state.data })
       }
     } else {
-      console.log("setInputQty  > array > index", isComboProduct);
       if (isComboProduct) { // if this true then minus or plus from combo Product
         if (isRemove) { // isRemove is true then minus otherwise plus
           if (this.state.moreData[index].quantity > 0) {
@@ -190,7 +184,7 @@ export default class Redeem extends Component {
       const ifExist = this.state.moreData.find(x =>
         x.ecom_aca_product_unit && x.ecom_aca_product_unit.ecom_ac_product.productId == data.ecom_aca_product_unit.ecom_ac_product.productId
       );
-      
+
       if (ifExist && ifExist.ecom_aca_product_unit.ecom_ac_product.productId) {
         ToastAndroid.showWithGravity(
           'This product already exists',
@@ -480,63 +474,63 @@ export default class Redeem extends Component {
                     Select Unit Quantity:
                   </Text>
                   <ScrollView horizontal={true}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      //width: '100%',
-                      alignSelf: 'flex-start'
-                    }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        //width: '100%',
+                        alignSelf: 'flex-start'
+                      }}>
 
-                    {
-                      item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product.ecom_acca_vendor_product_units ?
-                        item.ecom_aca_product_unit.ecom_ac_product.ecom_acca_vendor_product_units.map((vItem, vIndex) => (
-                          <TouchableOpacity key={vIndex}
-                            onPress={() => this.onSelectQty(vItem, index, 'Array', false)}
-                            style={[
-                              item.ecom_aca_product_unit.ecom_ac_product.selectedUnitQty == vItem.vendorUnitId
-                                ? styles.itemQuantitySelected
-                                : styles.itemQuantity
-                            ]}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }} key={vIndex}>
-                              <Icon name="wine-bar" size={22} color="#7B7B7B" />
-                              <Text
-                                style={{
-                                  fontSize: 15,
-                                  color: '#7B7B7B',
-                                }}>
-                                {vItem.unitQty + ' ' + vItem.productUnitType}
-                              </Text>
-                            </View>
-                          </TouchableOpacity>
-                        )) :
-                        item.ecom_acca_vendor_product_units.map((vItem, vIndex) => (
-                          <TouchableOpacity key={vIndex}
-                            onPress={() => this.onSelectQty(vItem, index, 'Array', true)}
-                            style={[
-                              item.selectedUnitQty == vItem.vendorUnitId
-                                ? styles.itemQuantitySelected
-                                : styles.itemQuantity
-                            ]}>
+                      {
+                        item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product.ecom_acca_vendor_product_units ?
+                          item.ecom_aca_product_unit.ecom_ac_product.ecom_acca_vendor_product_units.map((vItem, vIndex) => (
+                            <TouchableOpacity key={vIndex}
+                              onPress={() => this.onSelectQty(vItem, index, 'Array', false)}
+                              style={[
+                                item.ecom_aca_product_unit.ecom_ac_product.selectedUnitQty == vItem.vendorUnitId
+                                  ? styles.itemQuantitySelected
+                                  : styles.itemQuantity
+                              ]}>
+                              <View style={{ flexDirection: 'row', alignItems: 'center' }} key={vIndex}>
+                                <Icon name="wine-bar" size={22} color="#7B7B7B" />
+                                <Text
+                                  style={{
+                                    fontSize: 15,
+                                    color: '#7B7B7B',
+                                  }}>
+                                  {vItem.unitQty + ' ' + vItem.productUnitType}
+                                </Text>
+                              </View>
+                            </TouchableOpacity>
+                          )) :
+                          item.ecom_acca_vendor_product_units.map((vItem, vIndex) => (
+                            <TouchableOpacity key={vIndex}
+                              onPress={() => this.onSelectQty(vItem, index, 'Array', true)}
+                              style={[
+                                item.selectedUnitQty == vItem.vendorUnitId
+                                  ? styles.itemQuantitySelected
+                                  : styles.itemQuantity
+                              ]}>
 
-                            <View style={{ 
-                              flexDirection: 'row', 
-                              alignItems: 'center',
-                              
+                              <View style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+
                               }} key={vIndex}>
-                              <Icon name="wine-bar" size={22} color="#7B7B7B" />
-                              <Text
-                                style={{
-                                  fontSize: 15,
-                                  color: '#7B7B7B',
-                                }}>
-                                {vItem.unitQty + ' ' + vItem.productUnitType}
-                              </Text>
-                            </View>
+                                <Icon name="wine-bar" size={22} color="#7B7B7B" />
+                                <Text
+                                  style={{
+                                    fontSize: 15,
+                                    color: '#7B7B7B',
+                                  }}>
+                                  {vItem.unitQty + ' ' + vItem.productUnitType}
+                                </Text>
+                              </View>
 
-                          </TouchableOpacity>
-                        ))
-                    }
-                  </View>
+                            </TouchableOpacity>
+                          ))
+                      }
+                    </View>
                   </ScrollView>
                 </View>
 
@@ -1214,13 +1208,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 10,
     padding: 2,
-    marginHorizontal:5
+    marginHorizontal: 5
   },
   itemQuantitySelected: {
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 10,
-    paddingHorizontal:10,
+    paddingHorizontal: 10,
     borderWidth: 1,
     borderRadius: 20,
     borderColor: '#A1172F',
