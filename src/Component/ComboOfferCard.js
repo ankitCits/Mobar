@@ -12,7 +12,6 @@ class ComboOfferCard extends Component {
     constructor(props) {
         super(props);
     }
-
     render() {
         const {
             item,
@@ -31,7 +30,6 @@ class ComboOfferCard extends Component {
                         marginTop: 28,
                         marginBottom: 30,
                     }}>
-
                     <ImageBackground
                         key={index}
                         style={{ alignSelf: 'center', }}

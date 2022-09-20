@@ -294,7 +294,9 @@ class Dashboard extends Component {
                                                     <Text style={styles.sectionTitle}>Combos</Text>
                                                     <TouchableOpacity>
                                                         <Text style={styles.ViewAll}
-                                                            onPress={() => this.props.navigation.navigate('')}>View All</Text>
+                                                            onPress={() => this.props.navigation.navigate('Product', { categoryIdx: { key: 3 } })}>
+                                                            View All
+                                                        </Text>
                                                     </TouchableOpacity>
                                                 </View>
                                                 <ScrollView

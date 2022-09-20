@@ -92,7 +92,7 @@ class Checkout extends Component {
             // console.log(orderData)
             await placeOrder(orderData); // Call api to submit order
             this.setState({ loader: false });
-            this.props.navigation.navigate('OrderHistoryDetail', { home: true }) // navigate to order history page
+            this.props.navigation.navigate('OrderHistory', { home: true }) // navigate to order history page
           } catch (e) {
             console.log(e)
             this.setState({ loader: false });

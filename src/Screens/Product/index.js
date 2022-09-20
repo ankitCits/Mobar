@@ -114,8 +114,7 @@ class Product extends Component {
       }}>
       <TouchableOpacity
         onPress={() => {
-          this.setState({ itemIndex: index });
-          this.getProductList();
+          this.setState({ itemIndex: index }, () => { this.getProductList(); });
         }}
         style={{
           shadowColor: '#fff',

@@ -27,8 +27,6 @@ export default class CategoryCard extends React.Component {
                 { innerBox: images.boxInnerPurple, outerBox: images.boxOuterPurple },
             ],
         }
-
-
     }
 
     removeFavorite = async (id) => {
@@ -40,7 +38,7 @@ export default class CategoryCard extends React.Component {
                 const data = {
                     wishlistId: id
                 }
-                const response = await removeToWishlist(data);
+                await removeToWishlist(data);
                 this.state.data.ecom_ba_wishlist.wishlistId = null;
                 this.setState({ isFavorite: false })
             } catch (error) {
@@ -86,10 +84,11 @@ export default class CategoryCard extends React.Component {
 
     render() {
         const {
-            item,
             hostUrl,
             navigation,
             index,
+            totalItems,
+            categoryIdx
         } = this.props;
         const currImage = this.state.images[index % 3]
         return (
@@ -172,6 +171,21 @@ export default class CategoryCard extends React.Component {
                         </View>
                     </ImageBackground>
                 </TouchableOpacity>
+                {index == totalItems - 1 &&
+                    <TouchableOpacity
+                        key={index}
+                        onPress={() => {
+                            navigation.navigate('Product', { categoryIdx: categoryIdx });
+                        }}
+                        style={{
+                            marginTop: 28,
+                            marginBottom: 30,
+                            marginLeft: 10,
+                        }}>
+
+                        <Text>View All</Text>
+                    </TouchableOpacity>
+                }
             </>
         );
     }

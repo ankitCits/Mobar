@@ -11,7 +11,7 @@ export default class PaymentForm extends Component {
         return (
             <View>
                 <CardField
-                    postalCodeEnabled={true}
+                    postalCodeEnabled={false}
                     placeholders={{
                         number: '4242 4242 4242 4242',
                     }}

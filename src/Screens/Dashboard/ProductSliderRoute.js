@@ -17,7 +17,7 @@ export default class ProductSliderRoute extends Component {
     renderProducts = (item, index) => {
         return (
             <>
-                <CategoryCard navigation={this.props.navigation} item={item} index={index} hostUrl={this.props.hostUrl} />
+                <CategoryCard navigation={this.props.navigation} item={item} totalItems={this.props.route.ecom_ac_products.length} index={index} hostUrl={this.props.hostUrl} categoryIdx={this.props.route} />
             </>
         );
     }
