@@ -19,29 +19,12 @@ import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
-// const data = [
-//     {
-//         id: 1,
-//         name: 'React JS',
-//         url: 'https://icon-library.com/images/react-icon/react-icon-29.jpg',
-//     },
-//     {
-//         id: 2,
-//         name: 'JavaScript',
-//         url: 'https://upload.wikimedia.org/wikipedia/commons/3/3b/Javascript_Logo.png',
-//     },
-//     {
-//         id: 3,
-//         name: 'Node JS',
-//         url: 'https://upload.wikimedia.org/wikipedia/commons/6/67/NodeJS.png',
-//     },
-// ];
 class PageHeader extends Component {
     constructor(props) {
         super(props);
         this.state = {
             data: [],
-            hostUrl: ''
+            hostUrl: '',
         }
     }
 
@@ -52,10 +35,8 @@ class PageHeader extends Component {
     getBanners = async () => {
         try {
             const re = await fetchBanner();
-            console.log(re.response.result.data)
             this.setState({ data: re.response.result.data, hostUrl: re.response.result.hostUrl })
         } catch (error) {
-            this.setState({ loader: false });
             ToastAndroid.showWithGravity(
                 error,
                 ToastAndroid.LONG,
@@ -66,18 +47,22 @@ class PageHeader extends Component {
     }
 
 
-    renderSliderImage = ({ item }) => {
+    renderSliderImage = ({ item, index }) => {
         return (
             <View
+                key={index}
                 style={{
                     alignItems: 'center',
                     backgroundColor: 'white',
                     marginTop: 10,
                 }}>
                 <Image
+                    resizeMode="cover"
+                    resizeMethod="resize"
+                    style={{ width: viewportWidth, height: 200 }}
                     defaultSource={images.Dashboard}
                     // source={images.Dashboard} 
-                    source={{ uri: this.state.hostUrl + item.slider }}
+                    source={{ uri: `${this.state.hostUrl + item.slider}` }}
                 />
             </View>
 
