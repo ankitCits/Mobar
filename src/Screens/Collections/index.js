@@ -523,7 +523,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 3,
     elevation: 5,
-    borderTopWidth: 0
+    borderTopWidth: 0,
+    marginBottom:10
+
   },
   sort: {
     margin: 12,
@@ -556,7 +558,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     alignSelf: 'center',
     flexDirection: 'row',
-    marginTop: 25,
+    margin:10,
   },
   productInnerView: {
     width: '28%',
