@@ -20,9 +20,8 @@ class ComboOfferCard extends Component {
             index
         } = this.props
         return (
-            <>
+            <View key={index}>
                 <TouchableOpacity
-                    key={index}
                     onPress={() => {
                         navigation.navigate('Product', { categoryIdx: { key: 3 } })
                     }}
@@ -31,7 +30,6 @@ class ComboOfferCard extends Component {
                         marginBottom: 30,
                     }}>
                     <ImageBackground
-                        key={index}
                         style={{ alignSelf: 'center', }}
                         resizeMode={'cover'}
                         source={images.combo}
@@ -51,7 +49,6 @@ class ComboOfferCard extends Component {
                                         marginLeft: 10
                                     }}>
                                     <Image
-                                        key={index}
                                         resizeMode={'cover'}
                                         source={images.king}
                                         defaultSource={images.king}
@@ -102,7 +99,6 @@ class ComboOfferCard extends Component {
                                         right: 5,
                                     }}>
                                     <Image
-                                        key={index}
                                         resizeMode={'cover'}
                                         source={images.Fivestar}
                                         defaultSource={images.Fivestar}
@@ -114,7 +110,6 @@ class ComboOfferCard extends Component {
                             <View>
                                 {item.images == '' || item.images == null ? (
                                     <Image
-                                        key={index}
                                         resizeMode={'cover'}
                                         source={images.MixCombo}
                                         defaultSource={images.MixCombo}
@@ -140,7 +135,7 @@ class ComboOfferCard extends Component {
                     </ImageBackground>
 
                 </TouchableOpacity>
-            </>
+            </View>
         );
     }
 }

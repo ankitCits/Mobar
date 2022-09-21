@@ -56,15 +56,30 @@ class Dashboard extends Component {
                 longitude: 0,
                 latitude: 0,
                 isLocation: false
-            }
+            },
+            subscribe: null,
         };
     }
 
     async componentDidMount() {
-        this.getDetail();
-        this.getTabDetail();
+        this.state._unsubscribe = this.props.navigation.addListener('focus', async () => {
+            this.getDetail();
+            this.getTabDetail();
+        });
         await this.requestLocationPermission();
+
+
     }
+
+    componentWillUnmount() {
+        this.state._unsubscribe();
+    }
+
+    // async componentDidMount() {
+    // this.getDetail();
+    // this.getTabDetail();
+    // await this.requestLocationPermission();
+    // }
 
     componentDidUpdate() {
     }

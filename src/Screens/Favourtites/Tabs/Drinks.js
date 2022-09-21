@@ -87,7 +87,7 @@ export default class Drinks extends Component {
         <>
           {this.props.data && this.props.data.length > 0 ? (
             this.props.data.map(item => (
-              <View key={item.vendorId}>
+              <View key={index}>
                 <TouchableOpacity
                   key={index}
                   style={styles.productView}

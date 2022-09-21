@@ -66,6 +66,7 @@ class Favourites extends Component {
 
   fetchData = async () => {
     try {
+      this.setState({ loader: true });
       const postData = {
         latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : 1.28668,
         longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,

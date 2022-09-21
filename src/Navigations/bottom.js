@@ -32,6 +32,7 @@ export default function MyBottomTabs() {
         name="Dashboard"
         component={Dashboard}
         options={{
+          unmountOnBlur: true,
           tabBarIcon: ({ focused }) => (
             <Icon name="home" size={28} color={focused ? '#711323' : '#000'} />
           ),
@@ -74,7 +75,7 @@ export default function MyBottomTabs() {
       <Tab.Screen
         name="Favourites"
         component={Favourites}
-        
+
         options={{
           unmountOnBlur: true,
           tabBarLabel: 'Favourites',

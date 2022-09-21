@@ -107,7 +107,6 @@ export default class CategoryCard extends React.Component {
                     }}>
 
                     <ImageBackground
-                        key={index}
                         style={styles.boxInner}
                         resizeMode={'cover'}
                         source={currImage.outerBox}
@@ -175,7 +174,6 @@ export default class CategoryCard extends React.Component {
                 </TouchableOpacity>
                           {index == totalItems - 1 &&
                     <TouchableOpacity
-                        key={index}
                         onPress={() => {
                             navigation.navigate('Product', { categoryIdx: categoryIdx });
                         }}
