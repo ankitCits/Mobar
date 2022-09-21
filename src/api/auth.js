@@ -143,11 +143,13 @@ export const updateProfilePic = (postData) => {
         let formdata = new FormData([]);
         formdata.append('image', {
             uri: postData.profile,
-            name: 'image',
-            type: 'image/jpeg'
+            name: 'image.jpg',
+            type: 'image/jpeg',
+            // contentType: 'application/octet-stream',
+            // mimeType: 'application/octet-stream'
         });
         const myHeaders = new Headers();
-        myHeaders.append('Content-Type', 'application/form-data');
+        myHeaders.append('Content-Type', 'multipart/form-data');
         myHeaders.append('A_Key', A_KEY);
         myHeaders.append('Token', `${token}`);
         const requestOptions = {
@@ -160,11 +162,12 @@ export const updateProfilePic = (postData) => {
         fetch(`${BASE_URL}/users/updateProfilePics`, requestOptions)
             .then(result => result.json())
             .then(response => {
+                console.log('=====> ', response);
                 if (response.response) {
-                    resolve(responseDetail.response);
+                    resolve(response.response);
                 }
                 if (response.errors) {
-                    reject(responseDetail.errors[0].msg)
+                    reject(response.errors[0].msg)
                 }
             })
             .catch(error => {

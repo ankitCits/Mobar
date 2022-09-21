@@ -45,8 +45,8 @@ class ProductDetailBars extends Component {
     try {
       const postData = {
         vendorId: this.props.route.params && this.props.route.params.id ? this.props.route.params.id : 1,
-        latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : 1.28668,
-        longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
+        latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : '',
+        longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
       };
       const data = await fetchVendorDetails(postData);
       //console.log(data);

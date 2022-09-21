@@ -151,7 +151,7 @@ export default class Collections extends Component {
             <ThemeFullPageLoader />
           ) : (
             <>
-              <View style={styles.filterRow}>
+              {/* <View style={styles.filterRow}>
                 <View style={styles.filterView}>
                   <View
                     style={styles.sort}>
@@ -171,7 +171,7 @@ export default class Collections extends Component {
                     </TouchableOpacity>
                   </View>
                 </View>
-              </View>
+              </View> */}
               <ScrollView>
                 {this.state.data && this.state.data.length > 0 ?
                   this.state.data.map((item, index) =>
@@ -181,7 +181,8 @@ export default class Collections extends Component {
                           key={index}
                           style={styles.productView}
                           onPress={() =>
-                            this.props.navigation.navigate('OrderHistoryDetail')
+                            // this.props.navigation.navigate('OrderHistoryDetail')
+                            console.log('No Redirection')
                           }>
                           <View style={styles.productInnerView} key={index}>
                             <Image
@@ -524,7 +525,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 5,
     borderTopWidth: 0,
-    marginBottom:10
+    marginBottom: 10
 
   },
   sort: {
@@ -558,7 +559,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     alignSelf: 'center',
     flexDirection: 'row',
-    margin:10,
+    margin: 10,
   },
   productInnerView: {
     width: '28%',

@@ -248,7 +248,7 @@ class ProductCard extends Component {
                             style={styles.cartRow}>
                             {this.state.cart != 0 ? (
                                 <>
-                                    {/* <TouchableOpacity
+                                    <TouchableOpacity
                                         onPress={() => this.state.data.ecom_aca_product_units[0].ecom_ba_cart &&
                                             this.state.cart > 0 ?
                                             this.updateCart(this.state.data.ecom_aca_product_units[0].ecom_ba_cart, 2, index) : Alert.alert('', 'Work in progress')}
@@ -262,7 +262,7 @@ class ProductCard extends Component {
                                     <Text
                                         style={styles.cartQty}>
                                         {this.state.cart}
-                                    </Text> */}
+                                    </Text>
                                 </>
                             ) : null}
                             <TouchableOpacity

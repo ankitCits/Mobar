@@ -109,6 +109,7 @@ class Dashboard extends Component {
 
     getLatLong = async () => {
         Geolocation.getCurrentPosition((position) => {
+            console.log(position);
             this.setState({ position: { longitude: position.coords.longitude, latitude: position.coords.latitude, isLocation: true } });
             this.props.dispatch(setUserLocationDetail(this.state.position));
         }, (error) => {
@@ -128,6 +129,7 @@ class Dashboard extends Component {
     }
 
     getDetail = async () => {
+        console.log('getDetail')
         const token = await getAccessToken(token);
         if (!token) {
             return this.setState({ loader: false });
@@ -150,6 +152,7 @@ class Dashboard extends Component {
     }
 
     getTabDetail = async () => {
+        console.log('getTabDetail')
         let myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
         myHeaders.append('A_Key', A_KEY);
@@ -159,8 +162,8 @@ class Dashboard extends Component {
         }
         let raw = JSON.stringify({
             vendorId: 4,
-            latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : 1.28668,
-            longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
+            latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : '',
+            longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
         });
         let requestOptions = {
             method: 'POST',

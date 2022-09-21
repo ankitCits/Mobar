@@ -42,8 +42,8 @@ class SelectBars extends Component {
       const data = {
         walletId: this.props.route.params.data.walletId,
         productId: this.props.route.params.data.productId,
-        latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : 1.28668,
-        longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
+        latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : '',
+        longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
       };
 
       const response = await fetchRedeemBars(data);
@@ -103,10 +103,8 @@ class SelectBars extends Component {
   }
 
   onItemSelected = (item) => {
-    console.log("onSelected > Item", item);
     this.setState({ itemSelected: item })
-
-
+    console.log("onSelected > Item", item, this.state.data);
   }
 
   render() {
@@ -143,8 +141,6 @@ class SelectBars extends Component {
               <View
                 style={{
                   width: '40%',
-                  //   top:'10%',
-                  //   left:10
                   alignItems: 'center',
                   alignSelf: 'center',
                 }}>
@@ -155,7 +151,6 @@ class SelectBars extends Component {
                   }}
                   source={{ uri: `${this.state.hostUrl + this.state.data.images}` }}
                 />
-                {/* <Text>{this.state.hostUrl + this.state.data.images}</Text> */}
               </View>
               <View
                 style={{
@@ -236,6 +231,7 @@ class SelectBars extends Component {
             this.state.data.ecom_ae_vendors.map((item, index) =>
             (
               <TouchableOpacity
+                key={index}
                 onPress={() => {
                   //this.setState({ itemSelected: item.vendorId })
                   this.onItemSelected(item)
@@ -365,13 +361,13 @@ class SelectBars extends Component {
             )) : null
           }
           {this.state.itemSelected != 0 ? (
-            <View style={{ marginTop: '5%' }}>
+            <View style={{
+              marginTop: '5%',
+            }}>
               <TouchableOpacity
                 style={styles.save}
                 onPress={() =>
-                  //Alert.alert('Alert', 'Work in Progress')
                   this.onContinue()
-                  //this.props.navigation.navigate('Redeem', { items: this.state.itemSelected })
                 }>
                 <Text style={{ color: '#fff', fontSize: 15 }}>
                   Continue

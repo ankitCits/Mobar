@@ -18,11 +18,11 @@ import ForgetEnterPassword from '../Screens/ForgetPassword/forgetEnterPassword';
 import PasswordSuccessFullyChanged from '../Screens/ForgetPassword/passwordSuccessFullyChanged';
 import Drawer from './drawer';
 import Info from '../Screens/Info';
+// import LoginModal from '../Component/LoginModal';
 
 const Stack = createStackNavigator();
 
 const AuthNavigator = (props) => {
-  // console.log('AuthNavigator', props)
   return (
     <Stack.Navigator
       initialRouteName={props.initialRouteName}
@@ -42,14 +42,14 @@ const AuthNavigator = (props) => {
       
     </Stack.Navigator>
   );
-}
-
-
+};
 class InitialStack extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      loading: true
+      loading: true,
+      // loginModal: (this.props.loginModal) ? true : false,
+      // initRoute: null
     }
   }
 
@@ -70,6 +70,7 @@ class InitialStack extends Component {
     } else {
       this.setState({ loading: false });
     }
+    // this.setState({ initRoute: this.props.redux && this.props.redux.auth.userData != null ? 'Drawer' : 'SignIn' });
   }
 
   componentDidMount() {
@@ -80,16 +81,26 @@ class InitialStack extends Component {
   componentDidUpdate() {
   }
 
+  // handleRedirect = () => {
+  //   console.log('handleRedirect', this.props)
+  //   // this.props.navigation.navigate('SignIn');
+  // }
+
   render() {
     const initRoute = this.props.redux && this.props.redux.auth.userData != null ? 'Drawer' : 'SignIn';
-    // console.log('initRoute', initRoute, this.props.redux, this.state.loading);
     return (
       <NavigationContainer>
-        {this.state.loading ?
-          <ThemeFullPageLoader />
-          :
-          <AuthNavigator initialRouteName={initRoute} />
+        {
+          this.state.loading ?
+            <ThemeFullPageLoader />
+            :
+            <>
+              <AuthNavigator initialRouteName={initRoute} />
+              {/* <LoginModal loginModal={this.state.loginModal} handleRedirect={this.handleRedirect} props={this.props} /> */}
+            </>
+
         }
+
       </NavigationContainer >
     );
   }

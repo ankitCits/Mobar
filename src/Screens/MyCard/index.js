@@ -49,7 +49,7 @@ export default class MyCard extends Component {
 
 
   fetchData = async () => {
-    this.setState({ isLoading: true, isFetching: true, });
+    this.setState({ isLoading: false, isFetching: true, });
     try {
       const resp = await fetchCart();
       console.log(resp.response.result.amountData);

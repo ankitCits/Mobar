@@ -29,10 +29,10 @@ export default class OrderHistoryDetail extends Component {
   }
 
   renderCartItems = (item, index) => {
-   // console.log("renderCartItems", (this.state.hostUrl + item.productImage));
+    // console.log("renderCartItems", (this.state.hostUrl + item.productImage));
     return (
       <>
-        
+
         <View style={styles.productView} key={index}>
           <Text
             style={{
@@ -57,7 +57,7 @@ export default class OrderHistoryDetail extends Component {
             {item.productName}
           </Text>
         </View>
-      
+
       </>
     );
   };
@@ -114,7 +114,7 @@ export default class OrderHistoryDetail extends Component {
             <FlatList
               data={this.state.item}
               numColumns={numColumns}
-              style={{ height: 300}}
+              style={{ height: 300 }}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item, index }) => this.renderCartItems(item, index)}
             />
@@ -367,11 +367,13 @@ const styles = StyleSheet.create({
   },
   productImg: {
     marginTop: -15,
+    height: 100,
+    width: 100
   },
   productView: {
     width: size - 28,
-    flexDirection:"column",
-    paddingBottom:10,
+    flexDirection: "column",
+    paddingBottom: 10,
     margin: 14,
     backgroundColor: '#fff',
     height: 118,
@@ -383,7 +385,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     elevation: 5,
     alignItems: 'center',
-    
+
   },
   orderPercentageImg: {
     // width: 10,

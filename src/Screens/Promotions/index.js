@@ -43,8 +43,8 @@ class Promotions extends Component {
   getPromotion = async () => {
     try {
       const data = {
-        latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : 1.28668,
-        longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
+        latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : '',
+        longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
       };
       const promotion = await fetchPromotionDetails(data);
       this.setState({

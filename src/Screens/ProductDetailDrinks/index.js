@@ -75,10 +75,11 @@ class ProductDetailDrinks extends Component {
     try {
       const data = {
         productId: this.state.id,
-        latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : 1.28668,
-        longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : 103.853607,
+        latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : '',
+        longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
       }
       const resp = await fetchProductDetails(data);
+      console.log('productDetails =>', resp.response.result.data)
       if (resp.response.result && resp.response.result.data) {
         this.setState({ details: resp.response.result.data });
         this.setState({ vendors: resp.response.result.data.ecom_ae_vendors });
@@ -338,27 +339,27 @@ class ProductDetailDrinks extends Component {
             <View style={styles.cart}>
               <View style={styles.cartMargin}>
                 <View style={styles.cartBtnContainer}>
-                    <View
-                      style={styles.cartContainer}>
-                      <Text
-                        style={styles.cartText}
-                        onPress={() => { this.addCart() }}
-                        >
-                        ADD TO CART
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => { this.addCart() }}
-                        style={styles.cartIcon}>
-                        <Image
-                          resizeMode={'cover'}
-                          source={images.cart}
-                          defaultSource={images.cart}
-                          style={styles.cartImage}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                    <View/>
-                  
+                  <View
+                    style={styles.cartContainer}>
+                    <Text
+                      style={styles.cartText}
+                      onPress={() => { this.addCart() }}
+                    >
+                      ADD TO CART
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => { this.addCart() }}
+                      style={styles.cartIcon}>
+                      <Image
+                        resizeMode={'cover'}
+                        source={images.cart}
+                        defaultSource={images.cart}
+                        style={styles.cartImage}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <View />
+
                   <TouchableOpacity
                     style={styles.heartContainer}
                     onPress={() => {
@@ -592,18 +593,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#AD1832',
     width: 192,
     borderRadius: 20,
-    
+
   },
   cartMargin: {
     margin: 40,
-    
+
   },
   cartBtnContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 10,
-    alignContent:"center",
-    paddingLeft:40,
+    alignContent: "center",
+    paddingLeft: 40,
     //backgroundColor:"powderblue"
   },
   cartText: {
