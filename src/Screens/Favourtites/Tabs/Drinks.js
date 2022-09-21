@@ -29,10 +29,11 @@ export default class Drinks extends Component {
       const data = {
         wishlistId: id
       }
-      const response = await removeToWishlist(data);
-      this.setState({ data: this.state.data.filter(x => x.wishlistId != id) });
+      await removeToWishlist(data);
+      const updatedData = this.props.data.filter(x => x.wishlistId != id);
+      this.props.onClick(updatedData, 'Drinks');
     } catch (error) {
-      console.log("CategoryCard > removeFavorite > Catch", error);
+      console.log("favorites > Drinks > removeFavorite > Catch", error);
       ToastAndroid.showWithGravity(
         error,
         ToastAndroid.LONG,
@@ -56,17 +57,14 @@ export default class Drinks extends Component {
         const sendData = {
           productUnitId: item.productId,
           comboId: 0,
-          qty: item.cart + 1,
+          qty: 1,
         };
-        const response = await addToCart(sendData);
-        const data = this.state.categoryData.data;
-        data[index].cart = data[index].cart + 1;
-        this.setState({
-          categoryData: {
-            data,
-            hostUrl: this.state.categoryData.hostUrl,
-          },
-        });
+        await addToCart(sendData);
+        ToastAndroid.showWithGravity(
+          'Product Added to Cart',
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+        );
       } catch (error) {
         ToastAndroid.showWithGravity(
           error,
@@ -83,14 +81,13 @@ export default class Drinks extends Component {
       navigation,
       index
     } = this.props;
-    //this.state.data.filter(x=>console.log("Favorite > Drinks  Filter > Item",x.wishlistId));
     return (
       <SafeAreaView
         style={styles.container}>
         <>
           {this.props.data && this.props.data.length > 0 ? (
             this.props.data.map(item => (
-              <View>
+              <View key={item.vendorId}>
                 <TouchableOpacity
                   key={index}
                   style={styles.productView}

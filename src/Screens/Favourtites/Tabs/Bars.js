@@ -29,10 +29,11 @@ export default class Bars extends Component {
       const data = {
         wishlistId: id
       }
-      const response = await removeToWishlist(data);
-      this.setState({ data: this.state.data.filter(x => x.wishlistId != id) });
+      await removeToWishlist(data);
+      const updatedData = this.props.data.filter(x => x.wishlistId != id);
+      this.props.onClick(updatedData, 'Bars');
     } catch (error) {
-      console.log("CategoryCard > removeFavorite > Catch", error);
+      console.log("Favorites > Bars > removeFavorite > Catch", error);
       ToastAndroid.showWithGravity(
         error,
         ToastAndroid.LONG,
@@ -47,9 +48,9 @@ export default class Bars extends Component {
         <>
           {this.props.data && this.props.data.length > 0 ?
             this.props.data.map((item, index) => (
-              <View>
+              <View key={item.vendorId}>
                 <TouchableOpacity
-                  key={item.vendorId}
+                  key={index}
                   style={styles.productView}
                   onPress={() =>
                     this.props.navigation.navigate('ProductDetailBars', { id: item.ecom_ae_vendor.vendorId })

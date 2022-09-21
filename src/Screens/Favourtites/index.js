@@ -31,7 +31,7 @@ class Favourites extends Component {
     super(props);
     this.state = {
       subscribe: null,
-      loader: false,
+      loader: true,
       data: [],
       hostUrl: null,
       index: 0,
@@ -87,6 +87,16 @@ class Favourites extends Component {
     }
   };
 
+  onClick = async (data, type) => {
+    if (type == 'Drinks') {
+      this.state.data.drinks = data;
+      this.setState({ data: this.state.data });
+    } else {
+      this.state.data.bars = data;
+      this.setState({ data: this.state.data });
+    }
+  }
+
   _handleIndexChange = index => this.setState({ index });
 
   _renderLazyPlaceholder = ({ route }) => <LazyPlaceholder route={route} />;
@@ -98,7 +108,7 @@ class Favourites extends Component {
           <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
         }>
           {!this.state.refreshing &&
-            <Drinks data={this.state.data.drinks} hostUrl={this.state.hostUrl} navigation={this.props.navigation} />
+            <Drinks data={this.state.data.drinks} onClick={this.onClick} hostUrl={this.state.hostUrl} navigation={this.props.navigation} />
           }
         </ScrollView>
       );
@@ -108,7 +118,7 @@ class Favourites extends Component {
           <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
         }>
           {!this.state.refreshing &&
-            <Bars data={this.state.data.bars} hostUrl={this.state.hostUrl} navigation={this.props.navigation} />
+            <Bars data={this.state.data.bars} onClick={this.onClick} hostUrl={this.state.hostUrl} navigation={this.props.navigation} />
           }
         </ScrollView>
       );
