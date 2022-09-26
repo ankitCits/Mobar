@@ -277,9 +277,7 @@ export default class Redeem extends Component {
   }
 
   onCloseModal = () => {
-    this.setState({ modalVisible: false },
-      this.props.navigation.navigate('Dashboard')
-    );
+    this.setState({ modalVisible: false }, this.props.navigation.navigate('OrderHistory'));
   }
 
   render() {
@@ -775,8 +773,7 @@ export default class Redeem extends Component {
                 <TouchableOpacity
                   style={styles.save}
                   onPress={() => {
-                    this.setState({ modalVisible: false });
-                    this.props.navigation.navigate('OrderHistory');
+                    this.onCloseModal();
                   }}>
                   <Text style={styles.redeemFooterContainer}>View Orders</Text>
                 </TouchableOpacity>
