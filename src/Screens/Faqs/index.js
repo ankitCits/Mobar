@@ -21,6 +21,13 @@ export default class FAQs extends Component {
         this.setState({ isCollapsed: !this.state.isCollapsed, selectedItem: index });
     }
 
+    changeFAQCategory = (data, selectedItem) => {
+        this.setState({
+            faqData: data,
+            data: selectedItem
+        })
+    }
+
     render() {
         return (
             <SafeAreaView
@@ -72,12 +79,12 @@ export default class FAQs extends Component {
                     </View>
                     <View style={styles.otherFaqs}>
                         {
-                            this.state.faqData.map((item,) => (
+                            this.state.faqData.map((item, index) => (
                                 <>
                                     <TouchableOpacity
                                         key={index}
                                         onPress={() => {
-                                            this.props.navigation.push('FAQs', { data: this.state.faqData, selectedItem: item })
+                                            this.changeFAQCategory(this.state.faqData, item);
                                         }}
                                         style={styles.helpBottomList}>
                                         <Text style={styles.helpBottomListText}>{item.CategoryName}</Text>
