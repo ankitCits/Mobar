@@ -1,25 +1,20 @@
-import { loadPartialConfig } from '@babel/core';
 import React, { Component } from 'react';
 import {
   Text,
   View,
   SafeAreaView,
-  Image,
   TextInput,
   TouchableOpacity,
   StyleSheet,
   FlatList,
   ToastAndroid,
   ActivityIndicator,
-  ScrollView,
   Alert,
+  ScrollView
 } from 'react-native';
-import { set } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { applyCoupon, cartCheckout, fetchCart } from '../../api/product';
-import images from '../../assets/images';
 import CartProduct from '../../Component/CartProduct';
-import ThemeButton from '../../Component/ThemeButton';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import { FontFamily } from '../../Theme/FontFamily';
 import { ThemeColors } from '../../Theme/ThemeColors';
@@ -33,39 +28,40 @@ export default class MyCard extends Component {
       amountData: {},
       totalQty: 0,
       payableTotal: 0,
-      isFetching: false,
       isLoading: false,
       couponText: '',
       couponLoader: false,
       checkoutLoader: false,
-
+      isFetching: false
     };
 
   }
 
-  componentDidMount() {
-    this.fetchData();
+  async componentDidMount() {
+    this.setState({ isLoading: true });
+    await this.fetchData();
+    this.setState({ isLoading: false });
+
   }
 
 
   fetchData = async () => {
-    this.setState({ isLoading: false, isFetching: true, });
     try {
+      // this.setState({ isFetching: true });
       const resp = await fetchCart();
-      console.log(resp.response.result.amountData);
+      console.log(resp.response.result.data);
       this.setState({
         cart: resp.response.result.data,
         hostUrl: resp.response.result.hostUrl,
-        isFetching: false,
-        isLoading: false,
         amountData: resp.response.result.amountData,
-        totalQty: 0
+        totalQty: 0,
+        isFetching: false
       });
       if (this.state.cart.length > 0) {
         this.setState({ totalQty: this.state.cart.length });
       }
     } catch (error) {
-      this.setState({ isLoading: false, isFetching: false, });
+      this.setState({ isLoading: false, isFetching: false });
       ToastAndroid.showWithGravity(
         error,
         ToastAndroid.LONG,
@@ -74,8 +70,13 @@ export default class MyCard extends Component {
     }
   };
 
-  onChange = () => {
-    this.fetchData();
+  onChange = (qty, id) => {
+    console.log("Item", qty, id);
+    if (qty == 0) {
+      const data = this.state.cart.filter(x => x.cartId != id);
+      this.setState({ cart: data, totalQty: data.length })
+      this.fetchData();
+    }
   }
 
   renderCartItems = (item, index) => {
@@ -146,22 +147,22 @@ export default class MyCard extends Component {
               </Text>
             </View>
 
-            <FlatList
+            {/* <FlatList
               data={this.state.cart}
               keyExtractor={(item, index) => index.toString()}
               // onRefresh={this.onRefresh}
-              // refreshing={this.state.isFetching}
               renderItem={({ item, index }) => this.renderCartItems(item, index)}
-            />
-            {/* <View style={{height:'46%'}}>
-          <ScrollView>
-            {
-              this.state.cart && this.state.cart.length > 0 && this.state.cart.map((cartItem, index)=>(
-                <CartProduct navigation={this.props.navigation} index={index} item={cartItem} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item, qty) }} />
-                ))
-            }
-            </ScrollView>
-          </View> */}
+              extraData={this.props.isFetching}
+            /> */}
+            <View style={{ height: '46%' }}>
+              <ScrollView>
+                {
+                  this.state.cart && this.state.cart.length > 0 && this.state.cart.map((cartItem, index) => (
+                    <CartProduct navigation={this.props.navigation} index={index} item={cartItem} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item, qty) }} />
+                  ))
+                }
+              </ScrollView>
+            </View>
 
 
             <View style={styles.bottomContainer}>
@@ -401,7 +402,7 @@ const styles = StyleSheet.create({
     shadowOffset: {
       width: 0,
       height: 5,
-      
+
     },
     shadowOpacity: 1,
     shadowRadius: 10,

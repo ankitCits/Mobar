@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -7,18 +7,12 @@ import {
   StatusBar,
   TouchableOpacity,
   StyleSheet,
-  TextInput,
   ScrollView,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import images from '../../assets/images';
 export default class PasswordSuccessFullyChanged extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      password: '',
-    };
   }
 
   render() {
@@ -35,7 +29,7 @@ export default class PasswordSuccessFullyChanged extends Component {
         />
         <ScrollView>
           <View style={styles.createView}>
-            <Text style={styles.createText}>Password Changed !</Text>
+            <Text style={styles.createText}>Password Changed!</Text>
           </View>
           <View
             style={{
@@ -49,8 +43,8 @@ export default class PasswordSuccessFullyChanged extends Component {
             />
           </View>
           <View style={styles.emailView}>
-            <Text style={{fontSize: 20, fontWeight: '400', color: '#000',textAlign:'center'}}>
-            You have changed your password Successfully !
+            <Text style={{ fontSize: 20, fontWeight: '400', color: '#000', textAlign: 'center' }}>
+              You have changed your password Successfully !
             </Text>
           </View>
           <View style={styles.viewInput}>
@@ -60,7 +54,7 @@ export default class PasswordSuccessFullyChanged extends Component {
                 style={styles.signupInner}
                 onPress={() => this.props.navigation.navigate('SignIn')}>
                 <Text
-                  style={{color: '#fff', fontSize: 18, fontWeight: '700'}}>
+                  style={{ color: '#fff', fontSize: 18, fontWeight: '700' }}>
                   LOGIN
                 </Text>
               </TouchableOpacity>
@@ -81,10 +75,6 @@ const styles = StyleSheet.create({
     marginTop: '10%',
     alignItems: 'center',
   },
-  otpView: {
-    marginTop: '5%',
-    alignItems: 'center',
-  },
   createText: {
     fontSize: 25,
     color: '#7C7C7C',
@@ -94,54 +84,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     marginTop: '10%',
-  },
-  input: {
-    height: 50,
-    width: '80%',
-    margin: 12,
-    borderRadius: 10,
-    padding: 10,
-    shadowColor: '#470000',
-    shadowOpacity: 1,
-    // elevation: 1,
-    borderWidth: 1,
-    flex: 1,
-  },
-  inputView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  inputIcon: {
-    left: '70%',
-  },
-  sectionStyle: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderWidth: 0,
-    borderColor: '#000',
-    height: 44,
-    width: 320,
-    borderRadius: 5,
-    margin: 10,
-    elevation: 2,
-  },
-  imageStyle: {
-    margin: 5,
-    resizeMode: 'stretch',
-    alignItems: 'center',
-  },
-  term: {
-    //   flexDirection:'row',
-    // alignItems: 'center',
-    marginTop: '5%',
-    // alignSelf:'flex-start',
-  },
-  termInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
   },
   signup: {
     marginTop: '5%',
@@ -157,22 +99,5 @@ const styles = StyleSheet.create({
     width: 300,
     alignSelf: 'center',
     borderRadius: 20,
-  },
-
-  signin: {
-    marginTop: '5%',
-    width: '80%',
-    height: 44,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  otpCell: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    elevation: 2,
-  },
-  otpCellFocus: {
-    borderColor: '#741728',
-    borderWidth: 1,
   },
 });

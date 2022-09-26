@@ -15,8 +15,6 @@ export default class FAQs extends Component {
             selectedItem: 0,
             isCollapsed: false,
         }
-        console.log("faq consctructor >  data > ", props.route.params.data);
-        console.log("selected item > ", props.route.params.selectedItem);
     }
 
     toggle = (index) => {
@@ -74,10 +72,10 @@ export default class FAQs extends Component {
                     </View>
                     <View style={styles.otherFaqs}>
                         {
-                            this.state.faqData.map((item, index) => (
+                            this.state.faqData.map((item,) => (
                                 <>
-
                                     <TouchableOpacity
+                                        key={index}
                                         onPress={() => {
                                             this.props.navigation.push('FAQs', { data: this.state.faqData, selectedItem: item })
                                         }}
@@ -91,7 +89,6 @@ export default class FAQs extends Component {
                                         />
                                     </TouchableOpacity>
                                     <View style={styles.underLine} />
-
                                 </>
                             ))}
                     </View>
@@ -109,8 +106,8 @@ const styles = StyleSheet.create({
     title: {
         marginHorizontal: 15,
         flexDirection: 'row',
-        alignItems:'center',
-        alignContent:'flex-end',
+        alignItems: 'center',
+        alignContent: 'flex-end',
         paddingVertical: 15,
         margin: 0,
     },
@@ -139,11 +136,10 @@ const styles = StyleSheet.create({
     helpBottomList: {
         margin: 9,
         flexDirection: 'row',
-        //alignItems:'center',
         justifyContent: 'space-between',
     },
     helpBottomListText: {
-        fontSize: 16, // ravi sir said
+        fontSize: 16,
         fontFamily: FontFamily.TAJAWAL_REGULAR,
         fontWeight: '500',
         padding: 5,
@@ -159,14 +155,14 @@ const styles = StyleSheet.create({
     answerText: {
         fontFamily: FontFamily.TAJAWAL_REGULAR,
         fontWeight: '500',
-        fontSize: 12, // ravi sir said
+        fontSize: 12,
         color: '#4D4F50'
     },
     otherFaqs: {
         borderRadius: 15,
         backgroundColor: '#FFFFFF',
         width: 365,
-        marginHorizontal:15,
+        marginHorizontal: 15,
         marginBottom: 15,
         alignSelf: 'center'
     }

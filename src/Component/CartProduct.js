@@ -5,7 +5,8 @@ import {
   View,
   Image,
   TouchableOpacity,
-  ToastAndroid
+  ToastAndroid,
+  ScrollView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { showAlert } from '../api/auth';
@@ -21,6 +22,7 @@ export default class CartProduct extends React.Component {
       data: this.props.item,
       qty: parseInt(this.props.item.qty)
     };
+    console.log('Called')
   }
 
   updateCart = async (type) => {
@@ -34,17 +36,19 @@ export default class CartProduct extends React.Component {
       };
       try {
         const response = await updateToCart(cartItem);
-        this.props.onChange(this.state.qty, this.state.data.cartId);
+        let qty;
         if (type == 1) {
-          const qty = this.state.qty + 1;
+          qty = this.state.qty + 1;
           this.setState({ qty: qty });
         } else {
-          const qty = this.state.qty - 1;
+          qty = this.state.qty - 1;
           this.setState({ qty: qty });
         }
+        this.props.onChange(qty, this.state.data.cartId);
       } catch (error) {
+        console.log(error)
         ToastAndroid.showWithGravity(
-          error,
+          error ?? 'Error while performing action',
           ToastAndroid.LONG,
           ToastAndroid.BOTTOM,
         );
@@ -144,7 +148,7 @@ export default class CartProduct extends React.Component {
 const styles = StyleSheet.create({
   container: {
     margin: 10,
-    marginBottom: 5,
+    marginBottom: 0,
     //paddingBottom:8,
     //backgroundColor:"powderblue"
   },
@@ -159,7 +163,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     alignSelf: 'center',
     flexDirection: 'row',
-    marginTop: 15,
+    marginTop: 5,
     // marginBottom:15,
   },
   productInnerView: {
