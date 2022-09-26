@@ -20,8 +20,9 @@ class ComboOfferCard extends Component {
             index
         } = this.props
         return (
-            <View key={index}>
+            <>
                 <TouchableOpacity
+                    key={index}
                     onPress={() => {
                         navigation.navigate('Product', { categoryIdx: { key: 3 } })
                     }}
@@ -135,7 +136,7 @@ class ComboOfferCard extends Component {
                     </ImageBackground>
 
                 </TouchableOpacity>
-            </View>
+            </>
         );
     }
 }

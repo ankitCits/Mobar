@@ -48,7 +48,7 @@ export default class Drinks extends Component {
     }
   }
 
-  addCart = async (item, index) => {
+  addCart = async (item) => {
     const token = await getAccessToken();
     if (token == null) {
       showAlert();
@@ -79,14 +79,13 @@ export default class Drinks extends Component {
     const {
       hostUrl,
       navigation,
-      index
     } = this.props;
     return (
       <SafeAreaView
         style={styles.container}>
         <>
           {this.props.data && this.props.data.length > 0 ? (
-            this.props.data.map(item => (
+            this.props.data.map((item, index) => (
               <View key={index}>
                 <TouchableOpacity
                   key={index}
@@ -102,7 +101,7 @@ export default class Drinks extends Component {
                           style={styles.title}>
                           {item.ecom_ac_product.name}
                         </Text> :
-                        <Text></Text>
+                        null
                       }
                     </View>
 
@@ -134,7 +133,7 @@ export default class Drinks extends Component {
                     </View>
 
                     <TouchableOpacity
-                      onPress={() => this.addCart(item, index)}
+                      onPress={() => this.addCart(item)}
                       style={styles.cartButton}>
                       <Text
                         style={styles.cartText}>

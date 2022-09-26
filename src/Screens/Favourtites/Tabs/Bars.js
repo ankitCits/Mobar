@@ -57,7 +57,6 @@ export default class Bars extends Component {
                   }>
                   <View style={styles.productInnerView}>
                     <TouchableOpacity
-                      key={index}
                       style={styles.favIcon}
                       onPress={() => {
                         this.removeFavorite(item.wishlistId);
@@ -134,7 +133,6 @@ export default class Bars extends Component {
 const styles = StyleSheet.create({
   productView: {
     backgroundColor: ThemeColors.CLR_WHITE,
-    //width: '90%',
     margin: 15,
     shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     shadowOffset: { width: 1, height: 1 },
@@ -144,7 +142,6 @@ const styles = StyleSheet.create({
     elevation: 5,
     alignSelf: 'center',
     flexDirection: 'row',
-    //marginTop: 15,
   },
   productInnerView: {
     backgroundColor: ThemeColors.CLR_WHITE,
@@ -154,7 +151,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.5,
     shadowRadius: 5,
-    //borderWidth:1,
     borderRadius: 10,
     elevation: 5,
     alignItems: 'center',
