@@ -10,12 +10,14 @@ import {
   ScrollView,
   Modal,
   Alert,
+  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { fetchRedeemBars } from '../../api/vendor';
 import images from '../../assets/images';
 import HeaderSide from '../Component/HeaderSide';
 import { connect } from 'react-redux';
+import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 
 class SelectBars extends Component {
   constructor(props) {
@@ -27,6 +29,8 @@ class SelectBars extends Component {
       collectionWallet: {},
       itemSelected: 0,
       hostUrl: '',
+      vendorData:[],
+      isLoading:'false',
       data: {}
     };
     console.log("route data", props.route.params.data);
@@ -50,6 +54,7 @@ class SelectBars extends Component {
       this.setState({
         hostUrl: response.response.result.hostUrl,
         data: response.response.result.productWithBar,
+        vendorData:response.response.result.productWithBar.ecom_ae_vendors,
         collectionWallet: response.response.result.collectionWallet,
         isLoading: false
       });
@@ -104,7 +109,145 @@ class SelectBars extends Component {
 
   onItemSelected = (item) => {
     this.setState({ itemSelected: item })
+    //console.log("onSelected > Item", item, this.state.data);
+  }
+
+  renderProducts = (item, index) =>{
     console.log("onSelected > Item", item, this.state.data);
+    return(
+      <View>
+    <TouchableOpacity
+    key={index}
+    onPress={() => {
+      //this.setState({ itemSelected: item.vendorId })
+      this.onItemSelected(item)
+    }}
+    style={{
+      //width: '96%',
+      height: 154,
+      backgroundColor: '#fff',
+      
+      marginVertical:10,
+      alignSelf: 'center',
+      flexDirection: 'row',
+      shadowColor: '#000',
+      shadowOffset: { width: 1, height: 1 },
+      shadowOpacity: 0.4,
+      shadowRadius: 5,
+      elevation: 5,
+      borderRadius: 10,
+      borderWidth: this.state.itemSelected.vendorId == item.vendorId ? 2 : 0,
+      borderColor: '#B41430',
+    }}>
+    <View
+      style={{
+        alignSelf: 'center',
+        // left: 10,
+      }}>
+      <ImageBackground
+        style={{
+          width: 165,
+          height: 153,
+        }}
+        imageStyle={{
+          borderRadius: 10
+        }}
+        resizeMode={'cover'}
+        source={{ uri: `${this.state.hostUrl + item.images}` }}
+      >
+        <View style={{
+          backgroundColor: '#B41430',
+          marginTop: 128,
+          height: 25,
+          borderBottomLeftRadius: 10,
+          borderBottomRightRadius: 10
+        }}>
+          <Text style={{
+            fontSize: 18,
+            fontWeight: '700',
+            color: '#fff',
+            alignSelf: 'center'
+          }}>Featured</Text>
+        </View>
+      </ImageBackground>
+    </View>
+    <View
+      style={{
+        width: '50%',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+        alignContent: 'flex-start',
+        alignItems: 'flex-start',
+
+      }}>
+      <Text
+        style={{
+          fontSize: 18,
+          fontWeight: '700',
+          color: '#424242',
+          top: 5,
+          width: '75%',
+          left: 20,
+        }}>
+        {item.vendorShopName + ' ' + item.vendorId}
+      </Text>
+
+      <Text
+        style={{
+          fontSize: 13,
+          fontWeight: '400',
+          color: '#424242',
+          top: 5,
+          padding: 0,
+          width: '90%',
+          left: 20,
+        }}>
+        {item.address.substr(0, 30)}
+      </Text>
+
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          marginBottom: 5,
+        }}>
+        <TouchableOpacity
+          style={{
+            marginTop: 10,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+          <Icon
+            name="fiber-manual-record"
+            size={15}
+            color="#26B90E"
+            style={{ marginTop: 2, marginLeft: 20 }}
+          />
+          {item.ecom_acc_vendor_product.vendorProductStatus == 'Available' ?
+            <Text style={{ color: '#3C3C3C', marginLeft: 5 }}>open</Text> :
+            <Text style={{ color: 'red', marginLeft: 5 }}>close</Text>
+          }
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{
+            marginTop: 10,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+          <Icon
+            name="directions-run"
+            size={16}
+            color="#808080"
+            style={{ marginTop: 2 }}
+          />
+          <Text style={{ color: '#3C3C3C', marginLeft: 5 }}>{item.distance.toFixed(1)}Km</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </TouchableOpacity>
+  </View>
+    );
   }
 
   render() {
@@ -116,253 +259,138 @@ class SelectBars extends Component {
         }}>
         <HeaderSide
           name={'Select Bars'}
-          onClick={() => this.props.navigation.pop()}
+          onClick={() => this.props.navigation.goBack()}
         />
-        <ScrollView>
+       {
+        this.state.isLoading ?
+        (<ThemeFullPageLoader  />)
+      :       
+        (
+          <>
+        <View
+          style={{
+            width: '96%',
+            height: 150,
+            backgroundColor: '#fff',
+            marginTop: 20,
+            alignSelf: 'center',
+            shadowColor: '#000',
+            shadowOffset: { width: 1, height: 1 },
+            shadowOpacity: 0.4,
+            shadowRadius: 5,
+            elevation: 5,
+            borderRadius: 5,
+          }}>
           <View
             style={{
-              width: '96%',
+              flexDirection: 'row',
               height: 150,
-              backgroundColor: '#fff',
-              marginTop: 20,
-              alignSelf: 'center',
-              shadowColor: '#000',
-              shadowOffset: { width: 1, height: 1 },
-              shadowOpacity: 0.4,
-              shadowRadius: 5,
-              elevation: 5,
-              borderRadius: 5,
             }}>
             <View
               style={{
-                flexDirection: 'row',
-                height: 150,
+                width: '40%',
+                alignItems: 'center',
+                alignSelf: 'center',
               }}>
-              <View
+              <Image
                 style={{
-                  width: '40%',
-                  alignItems: 'center',
-                  alignSelf: 'center',
-                }}>
-                <Image
-                  style={{
-                    width: 75,
-                    height: 75,
-                  }}
-                  source={{ uri: `${this.state.hostUrl + this.state.data.images}` }}
-                />
-              </View>
-              <View
+                  width: 75,
+                  height: 75,
+                }}
+                source={{ uri: `${this.state.hostUrl + this.state.data.images}` }}
+              />
+            </View>
+            <View
+              style={{
+                width: '60%',
+                alignSelf: 'flex-start',
+                margin: 10,
+              }}>
+              <Text
                 style={{
-                  width: '60%',
-                  alignSelf: 'flex-start',
-                  margin: 10,
+                  fontSize: 20,
+                  fontWeight: '700',
+                  color: '#4D4F50',
                 }}>
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontWeight: '700',
-                    color: '#4D4F50',
-                  }}>
-                  {this.state.data.name}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: '500',
-                    color: '#424242',
-                    //top: 10,
-                    //left: 5,
-                  }}>
-                  Available Qty: {this.state.collectionWallet.availableQty + this.state.collectionWallet.unitType}
-                </Text>
+                {this.state.data.name}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: '500',
+                  color: '#424242',
+                  //top: 10,
+                  //left: 5,
+                }}>
+                Available Qty: {this.state.collectionWallet.availableQty + this.state.collectionWallet.unitType}
+              </Text>
 
-                <View
+              <View
+                style={{
+                  top: 15,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <Icon
+                  name="more-time"
+                  size={25}
+                  color="#A39B9B"
+                // style={styles.imageStyle}
+                />
+                <Text
                   style={{
-                    top: 15,
-                    flexDirection: 'row',
-                    alignItems: 'center',
+                    fontSize: 14,
+                    fontWeight: '400',
+                    color: '#424242',
+                    left: 5,
                   }}>
-                  <Icon
-                    name="more-time"
-                    size={25}
-                    color="#A39B9B"
-                  // style={styles.imageStyle}
-                  />
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      fontWeight: '400',
-                      color: '#424242',
-                      left: 5,
-                    }}>
-                    Valid until: {this.state.collectionWallet.validTillDate}
-                  </Text>
-                </View>
+                  Valid until: {this.state.collectionWallet.validTillDate}
+                </Text>
               </View>
             </View>
           </View>
-          <View
+        </View>
+        <View
+          style={{
+            width: '90%',
+            alignSelf: 'center',
+            marginTop: '5%',
+            marginBottom: '2%',
+          }}>
+          <Text
             style={{
-              width: '90%',
-              alignSelf: 'center',
-              marginTop: '5%',
-              marginBottom: '2%',
+              fontSize: 18,
+              fontWeight: '500',
+              color: '#4D4F50',
             }}>
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: '500',
-                color: '#4D4F50',
-              }}>
-              Redeemable in Bars
-            </Text>
-            <Text
-              style={{
-                fontSize: 15,
-                fontWeight: '400',
-                color: '#ACACAC',
-                marginTop: 5,
-              }}>
-              Select your nearest bar and redeem your drink
-            </Text>
-          </View>
-          {this.state.data.ecom_ae_vendors && this.state.data.ecom_ae_vendors.length > 0 ?
-            this.state.data.ecom_ae_vendors.map((item, index) =>
-            (
-              <TouchableOpacity
-                key={index}
-                onPress={() => {
-                  //this.setState({ itemSelected: item.vendorId })
-                  this.onItemSelected(item)
-                }}
-                style={{
-                  //width: '96%',
-                  height: 154,
-                  backgroundColor: '#fff',
-                  marginTop: 20,
-                  alignSelf: 'center',
-                  flexDirection: 'row',
-                  shadowColor: '#000',
-                  shadowOffset: { width: 1, height: 1 },
-                  shadowOpacity: 0.4,
-                  shadowRadius: 5,
-                  elevation: 5,
-                  borderRadius: 10,
-                  borderWidth: this.state.itemSelected.vendorId == item.vendorId ? 2 : 0,
-                  borderColor: '#B41430',
-                }}>
-                <View
-                  style={{
-                    alignSelf: 'center',
-                    // left: 10,
-                  }}>
-                  <ImageBackground
-                    style={{
-                      width: 165,
-                      height: 153,
-                    }}
-                    imageStyle={{
-                      borderRadius: 10
-                    }}
-                    resizeMode={'cover'}
-                    source={{ uri: `${this.state.hostUrl + item.images}` }}
-                  >
-                    <View style={{
-                      backgroundColor: '#B41430',
-                      marginTop: 128,
-                      height: 25,
-                      borderBottomLeftRadius: 10,
-                      borderBottomRightRadius: 10
-                    }}>
-                      <Text style={{
-                        fontSize: 18,
-                        fontWeight: '700',
-                        color: '#fff',
-                        alignSelf: 'center'
-                      }}>Featured</Text>
-                    </View>
-                  </ImageBackground>
-                </View>
-                <View
-                  style={{
-                    width: '50%',
-                    flexDirection: 'column',
-                    justifyContent: 'space-around',
-                    alignContent: 'flex-start',
-                    alignItems: 'flex-start'
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      fontWeight: '700',
-                      color: '#424242',
-                      top: 5,
-                      width: '100%',
-                      left: 20,
-                    }}>
-                    {item.vendorShopName + ' ' + item.vendorId}
-                  </Text>
+            Redeemable in Bars
+          </Text>
+          <Text
+            style={{
+              fontSize: 15,
+              fontWeight: '400',
+              color: '#ACACAC',
+              marginTop: 5,
+            }}>
+            Select your nearest bar and redeem your drink
+          </Text>
+        </View>
 
-                  <Text
-                    style={{
-                      fontSize: 13,
-                      fontWeight: '400',
-                      color: '#424242',
-                      top: 5,
-                      padding: 0,
-                      width: '90%',
-                      left: 20,
-                    }}>
-                    {item.address.substr(0, 30)}
-                  </Text>
-
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-around',
-                      marginBottom: 5,
-                    }}>
-                    <TouchableOpacity
-                      style={{
-                        marginTop: 10,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                      }}>
-                      <Icon
-                        name="fiber-manual-record"
-                        size={15}
-                        color="#26B90E"
-                        style={{ marginTop: 2, marginLeft: 20 }}
-                      />
-                      {item.ecom_acc_vendor_product.vendorProductStatus == 'Available' ?
-                        <Text style={{ color: '#3C3C3C', marginLeft: 5 }}>open</Text> :
-                        <Text style={{ color: 'red', marginLeft: 5 }}>close</Text>
-                      }
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={{
-                        marginTop: 10,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                      }}>
-                      <Icon
-                        name="directions-run"
-                        size={16}
-                        color="#808080"
-                        style={{ marginTop: 2 }}
-                      />
-                      <Text style={{ color: '#3C3C3C', marginLeft: 5 }}>{item.distance.toFixed(1)}Km</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            )) : null
-          }
+        <FlatList
+          nestedScrollEnabled={true}
+          showsHorizontalScrollIndicator={false}
+          data={this.state.vendorData} //{this.state.data.ecom_ae_vendors && this.state.data.ecom_ae_vendors.length > 0 ? this.state.data.ecom_ae_vendors : []}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => this.renderProducts(item, index)}
+        />
+        </>
+        )
+      }
+          
+        
           {this.state.itemSelected != 0 ? (
             <View style={{
-              marginTop: '5%',
+              marginVertical:5,
             }}>
               <TouchableOpacity
                 style={styles.save}
@@ -376,244 +404,7 @@ class SelectBars extends Component {
             </View>
           ) : null}
 
-          {/* <View
-            style={{
-              width: '96%',
-              height: 325,
-              backgroundColor: '#fff',
-              marginTop: 20,
-              alignSelf: 'center',
-              shadowColor: '#000',
-              shadowOffset: {width: 1, height: 1},
-              shadowOpacity: 0.4,
-              shadowRadius: 5,
-              elevation: 5,
-              borderRadius: 5,
-            }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                height: 150,
-              }}>
-              <View
-                style={{
-                  width: '40%',
-                  //   top:'10%',
-                  //   left:10
-                  alignItems: 'center',
-                  alignSelf: 'center',
-                }}>
-                <Image
-                  style={{
-                    width: 59,
-                    height: 115,
-                  }}
-                  resizeMode={'cover'}
-                  source={images.product2}
-                  defaultSource={images.product2}
-                />
-              </View>
-              <View
-                style={{
-                  width: '50%',
-                }}>
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontWeight: '700',
-                    color: '#4D4F50',
-                    top: 20,
-                    left: 20,
-                  }}>
-                  Bud Lite
-                </Text>
-
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '400',
-                    color: '#424242',
-                    top: 25,
-                    left: 20,
-                  }}>
-                  Beer
-                </Text>
-
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '700',
-                    color: '#424242',
-                    top: 25,
-                    left: 20,
-                  }}>
-                  Available Qty: 150 ml
-                </Text>
-              </View>
-            </View>
-
-            <View
-              style={{
-                marginLeft: 15,
-                marginTop: 15,
-              }}>
-              <Text
-                style={{
-                  fontSize: 15,
-                  fontWeight: '500',
-                  color: '#4D4F50',
-                }}>
-                Select Quantity:
-              </Text>
-              <View
-                style={{
-                  //   flexDirection: 'row',
-                  justifyContent: 'space-around',
-                  top: 5,
-                  width: '70%',
-                }}>
-                <TouchableOpacity
-                  onPress={() => this.setState({visibilityQuantity: 30})}
-                  style={
-                    this.state.visibilityQuantity == 30
-                      ? styles.itemQuantitySelectedNew
-                      : styles.itemQuantity
-                  }>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Icon name="wine-bar" size={22} color="#7B7B7B" />
-                    <Text
-                      style={{
-                        fontSize: 15,
-                        color: '#7B7B7B',
-                        marginLeft: 5,
-                      }}>
-                      pint (500ml)
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => this.setState({visibilityQuantity: 60})}
-                  style={
-                    this.state.visibilityQuantity == 60
-                      ? styles.itemQuantitySelectedNew
-                      : styles.itemQuantity
-                  }>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Icon name="wine-bar" size={22} color="#7B7B7B" />
-                    <Text
-                      style={{
-                        fontSize: 15,
-                        color: '#7B7B7B',
-                        marginLeft: 5,
-                      }}>
-                      Pitcher (2ltr)
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => this.setState({visibilityQuantity: 90})}
-                  style={
-                    this.state.visibilityQuantity == 90
-                      ? styles.itemQuantitySelectedNew
-                      : styles.itemQuantity
-                  }>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Icon name="wine-bar" size={22} color="#7B7B7B" />
-                    <Text
-                      style={{
-                        fontSize: 15,
-                        color: '#7B7B7B',
-                        marginLeft: 5,
-                      }}>
-                      Tower (3 ltr)
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View> */}
-
-          {/* <View
-            style={{
-              width: '96%',
-              height: 240,
-              backgroundColor: '#fff',
-              marginTop: 20,
-              alignSelf: 'center',
-              shadowColor: '#000',
-              shadowOffset: {width: 1, height: 1},
-              shadowOpacity: 0.4,
-              shadowRadius: 5,
-              elevation: 5,
-              borderRadius: 5,
-            }}>
-            <View
-              style={{
-                margin: 15,
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: 20,
-              }}>
-              <TouchableOpacity
-                style={{
-                  padding: 0,
-                  backgroundColor: '#939393',
-                  borderRadius: 20,
-                }}
-                onPress={() => this.setState({modalVisible: true})}>
-                <Icon name="add" size={28} color="#fff" />
-              </TouchableOpacity>
-
-              <View style={{marginLeft: 20}}>
-                <Text
-                  style={{fontSize: 20, color: '#969696', fontWeight: '700'}}>
-                  Add More Items
-                </Text>
-              </View>
-            </View>
-
-            <View
-              style={{
-                margin: 15,
-                // alignItems: 'center',
-                marginTop: 20,
-              }}>
-              <Text
-                style={{
-                  fontSize: 15,
-                  fontWeight: '500',
-                  color: '#4D4F50',
-                }}>
-                Table No:
-              </Text>
-
-              <View style={styles.sectionStyleTable}>
-                <TextInput
-                  style={{flex: 1}}
-                  placeholder="Table No"
-                  underlineColorAndroid="transparent"
-                  placeholderTextColor={'#DADADA'}
-                />
-              </View>
-            </View>
-
-            <View style={{marginTop: 5, marginBottom: 10}}>
-              <TouchableOpacity
-                style={styles.save}
-                onPress={() => this.props.navigation.navigate('MyCard')}>
-                <Text style={{color: '#fff', fontSize: 15}}>REDEEM</Text>
-              </TouchableOpacity>
-            </View>
-          </View> */}
-
-          <View
-            style={{
-              marginBottom: '5%',
-            }}
-          />
-        </ScrollView>
+    
 
         <Modal
           animationType="slide"

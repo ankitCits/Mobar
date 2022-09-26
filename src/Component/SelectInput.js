@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
 
     sectionStyle: {
         flexDirection: 'column',
-        //alignItems: 'center',
+        alignSelf: 'center',
         backgroundColor: ThemeColors.CLR_WHITE,
         borderWidth: 0,
         borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
         borderTopLeftRadiusRadius: 10,
         borderTopRightRadiusRadius: 10,
         elevation: 4,
-        zIndex: 5
+        zIndex: 15
     },
     collapsed: {
         flexDirection: 'row',

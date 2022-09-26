@@ -343,6 +343,7 @@ export default class Redeem extends Component {
                 }}>
                 <Icon name="self-improvement" size={25} color="#851729" />
                 <Text
+                onPress={()=>{this.props.navigation.goBack()}}
                   style={{
                     fontSize: 14,
                     fontWeight: '700',
@@ -440,7 +441,9 @@ export default class Redeem extends Component {
                       {item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product.description ?
                         <HTMLView value={item.ecom_aca_product_unit.ecom_ac_product.description.substr(0, 40)} />
                         :
-                        <HTMLView value={item.description.substr(0, 40)} />
+                        item.description ?
+                        <HTMLView value={item.description.substr(0, 40)} /> :
+                        null
                       }
 
                     </View>

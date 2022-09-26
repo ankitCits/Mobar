@@ -54,3 +54,56 @@ export const fetchBanner = () => {
             });
     })
 }
+
+export const fetchFAQData = () => {
+    return new Promise(async (resolve, reject) => {
+        const myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+        myHeaders.append('A_Key', A_KEY);
+        const requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+        };
+
+        fetch(`${BASE_URL}/common/faq`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                if (result.errors) {
+                    reject(result.errors[0].msg);
+                } else {
+                    resolve(result);
+                }
+            })
+            .catch(error => {
+                console.log('Api > common > slider > catch > error', error);
+                reject(error.message);
+            });
+    })
+}
+
+export const getNotification = () => {
+    return new Promise(async (resolve, reject) => {
+        const myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+        myHeaders.append('A_Key', A_KEY);
+        const requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+        };
+
+        fetch(`${BASE_URL}/app/notification`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                if (result.errors) {
+                    reject(result.errors[0].msg);
+                } else {
+                    resolve(result);
+                }
+            })
+            .catch(error => {
+                console.log('Api > common > slider > catch > error', error);
+                reject(error.message);
+            });
+    })
+}
+

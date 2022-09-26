@@ -11,6 +11,7 @@ import {
   ToastAndroid,
   FlatList,
   Alert,
+  Modal,
 } from 'react-native';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -22,6 +23,7 @@ import { addToWishlist, removeToWishlist } from '../../api/wishlist';
 import { showAlert } from '../../api/auth';
 import { getAccessToken } from '../../localstorage';
 import { connect } from 'react-redux';
+import { set } from 'immer/dist/internal';
 
 class ProductDetailDrinks extends Component {
   constructor(props) {
@@ -33,6 +35,9 @@ class ProductDetailDrinks extends Component {
       hostUrl: '',
       id: props.route.params.id,
       vendors: [],
+      cartQty:0,
+      modalVisible:false,
+      selectedQty:0,
       isFavorite: false
     };
   }
@@ -55,11 +60,13 @@ class ProductDetailDrinks extends Component {
       };
       try {
         const cartResponse = await addToCart(cartItem);
-        ToastAndroid.showWithGravity(
-          'Item added to cart successfully',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
+        console.log("add Cart > response >",cartResponse);
+        this.setState({cartQty:this.state.cartQty + 1})
+        // ToastAndroid.showWithGravity(
+        //   'Item added to cart successfully',
+        //   ToastAndroid.LONG,
+        //   ToastAndroid.TOP,
+        // );
       } catch (error) {
         console.log("Details Bars > addCart > catch", error);
         ToastAndroid.showWithGravity(
@@ -73,6 +80,7 @@ class ProductDetailDrinks extends Component {
 
   productDetails = async () => {
     try {
+      console.log("product Id >",this.state.id);
       const data = {
         productId: this.state.id,
         latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : '',
@@ -85,6 +93,7 @@ class ProductDetailDrinks extends Component {
         this.setState({ vendors: resp.response.result.data.ecom_ae_vendors });
         this.setState({ hostUrl: resp.response.result.hostUrl });
         this.setState({ isFavorite: (resp.response.result.data.ecom_ba_wishlist && resp.response.result.data.ecom_ba_wishlist.wishlistId) ? true : false });
+        this.setState({selectedQty:0});
       }
     } catch (error) {
       ToastAndroid.showWithGravity(
@@ -214,12 +223,20 @@ class ProductDetailDrinks extends Component {
     );
   }
 
-  renderQuantity = (item) => {
+  setQty = (index) => {
+    this.setState({ selectedQty: index });
+    console.log("this.setState({ selectedQty: index })",index);
+    console.log("selected qty",this.state.selectedQty);
+    this.setState({ selectedQty: index })
+  }
+  
+
+  renderQuantity = (item,index) => {
     return (
       <TouchableOpacity
-        onPress={() => this.setState({ visibilityQuantity: item.unitQty })}
+        onPress={() => this.setQty(index)}
         style={
-          item.unitQty == item.unitQty
+          index == this.state.selectedQty
             ? styles.itemQuantitySelected
             : styles.itemQuantity
         }
@@ -239,7 +256,7 @@ class ProductDetailDrinks extends Component {
   render() {
     return (
       <SafeAreaView>
-        <ScrollView>
+     <ScrollView>
           <View>
             <View style={styles.productDetailsContainer}>
               <View
@@ -247,24 +264,7 @@ class ProductDetailDrinks extends Component {
                 <TouchableOpacity onPress={() => this.props.navigation.pop()}>
                   <Icon name="arrow-back" size={28} color={ThemeColors.CLR_DARK_GREY} />
                 </TouchableOpacity>
-
-                {/* <TouchableOpacity
-                  onPress={() => {
-                    this.state.details.ecom_ba_wishlist && this.state.details.ecom_ba_wishlist.wishlistId
-                      ? this.removeFavorite(this.state.details.ecom_ba_wishlist.wishlistId)
-                      : this.addFavorite(this.state.details.productId);
-                  }}>
-                  <Image
-                    resizeMode={'cover'}
-                    // source={this.state.details.ecom_ba_wishlist && this.state.details.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
-                    // defaultSource={this.state.details.ecom_ba_wishlist && this.state.details.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
-                    source={this.state.isFavorite ? images.heartFill : images.heart}
-                    defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
-                    style={styles.favIcon}
-                  />
-                </TouchableOpacity> */}
               </View>
-
               <View
                 style={styles.productDetails}>
                 <View
@@ -276,7 +276,7 @@ class ProductDetailDrinks extends Component {
                   {this.state.details.ecom_aca_product_units ?
                     <Text
                       style={styles.priceText}>
-                      {'$ ' + this.state.details.ecom_aca_product_units[0].unitUserPrice}
+                      {'$ ' + this.state.details.ecom_aca_product_units[this.state.selectedQty].unitUserPrice}
                     </Text>
                     :
                     <Text></Text>
@@ -284,9 +284,9 @@ class ProductDetailDrinks extends Component {
 
                   <Text
                     style={styles.detailsText}>
-                    {this.state.details.ecom_aca_product_units ? this.state.details.ecom_aca_product_units[0].unitDescription : ''}
+                    {this.state.details.ecom_aca_product_units ? this.state.details.ecom_aca_product_units[this.state.selectedQty].unitDescription : ''}
                   </Text>
-                  {this.state.details.ecom_aca_product_units && this.state.details.ecom_aca_product_units[0].savedPrices != null ?
+                  {this.state.details.ecom_aca_product_units && this.state.details.ecom_aca_product_units[this.state.selectedQty].savedPrices != null ?
                     <ImageBackground
                       style={styles.discountContainer}
                       resizeMode={'cover'}
@@ -301,7 +301,7 @@ class ProductDetailDrinks extends Component {
                         <Text
                           style={styles.discountText}>
                           {' '}
-                          {this.state.details.ecom_aca_product_units[0].savedPrices}
+                          {this.state.details.ecom_aca_product_units[this.state.selectedQty].savedPrices}
                         </Text>
                       </View>
                     </ImageBackground>
@@ -320,7 +320,7 @@ class ProductDetailDrinks extends Component {
                         horizontal
                         showsHorizontalScrollIndicator={true}
                         keyExtractor={(item, index) => index.toString()}
-                        renderItem={({ item, index }) => this.renderQuantity(item)}
+                        renderItem={({ item, index }) => this.renderQuantity(item,index)}
                       />
                     </View>
                   </View>
@@ -343,7 +343,9 @@ class ProductDetailDrinks extends Component {
                     style={styles.cartContainer}>
                     <Text
                       style={styles.cartText}
-                      onPress={() => { this.addCart() }}
+                      onPress={() => { 
+                        this.setState({modalVisible:true})
+                        this.addCart() }}
                     >
                       ADD TO CART
                     </Text>
@@ -399,69 +401,129 @@ class ProductDetailDrinks extends Component {
                 Select your nearest bar and redeem your drink
               </Text>
             </View>
-
-            {this.state.vendors && this.state.vendors.length > 0 &&
-              <View
-                style={styles.vendor}>
-                <FlatList
-                  data={this.state.vendors}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  style={styles.categoryFlatList}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item, index }) => this.renderItem(item, index)}
-                />
-              </View>
-            }
-          </View>
-          {/* <View
-            style={styles.bottomContainer}>
             <View
-              style={styles.bottomSubContainer}>
-              <View style={styles.textMsg}>
-                <View>
-                  <Text
-                    style={styles.textDetails}>
-                    Item added to cart successfully
-                  </Text>
-                </View>
-                <View style={styles.textMsg}>
-                  <View
-                    style={styles.header}>
-                    <Text
-                      style={styles.productText}>
-                      {this.state.details.name}
-                    </Text>
-                    <View style={styles.cartQuantity}>
-                      <TouchableOpacity>
-                        <Icon name="remove" size={20} color="#4D4F50" />
-                      </TouchableOpacity>
-                      <Text
-                        style={styles.qty}>
-                        {' '}
-                        1{' '}
-                      </Text>
-                      <TouchableOpacity>
-                        <Icon name="add" size={20} color="#4D4F50" />
-                      </TouchableOpacity>
+                style={styles.vendor}>
+            {this.state.vendors && this.state.vendors.length > 0 ?
+              this.state.vendors.map((item, index) => {
+                return (<View style={styles.vendorContainer}>
+                  <TouchableOpacity
+                    style={styles.vendorItem}
+                    onPress={() =>
+                      this.props.navigation.navigate('ProductDetailBars', { 'id': item.vendorId })
+                      ///console.log('go to bar details')
+                    }>
+                    <View style={styles.vendorImgContainer}>
+                      <Image
+                        style={styles.vendorImage}
+                        resizeMode={'cover'}
+                        source={{ uri: this.state.hostUrl + item.images }}
+                        defaultSource={images.barProduct}
+                      />
                     </View>
-                  </View>
 
-                  <View style={styles.cartButton}>
-                    <TouchableOpacity
-                      style={styles.save}
-                      onPress={() => this.props.navigation.navigate('MyCard')}>
-                      <Text style={styles.cartBtnText}>
-                        VIEW CART
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
+                    <View style={styles.vendorDetails}>
+                      <View
+                        style={styles.vendorRow}>
+                        <Icon name="wine-bar" size={20} color={ThemeColors.CLR_TAB} />
+                        <Text
+                          style={styles.vendorTitle}>
+                          {item.name}
+                        </Text>
+                      </View>
+
+                      <View
+                        style={styles.vendorRow}>
+                        <Icon name="place" size={20} color={ThemeColors.CLR_TAB} />
+                        <Text
+                          style={styles.vendorText}>
+                          {item.address}
+                        </Text>
+                      </View>
+
+                      <View
+                        style={styles.vendorRow}>
+                        <Icon name="directions-run" size={20} color={ThemeColors.CLR_TAB} />
+                        <Text
+                          style={styles.vendorText}>
+                          {item.distance}
+                        </Text>
+                      </View>
+                    </View>
+                    <View
+                      style={styles.vendorProductStatus}>
+                      <View
+                        style={styles.vendorRow}>
+                        <Icon
+                          name="fiber-manual-record"
+                          size={18}
+                          color={item.ecom_acc_vendor_product && item.ecom_acc_vendor_product.vendorProductStatus == 'Available' ? '#38C720' : '#FF2121' } 
+                        />
+                        {item.ecom_acc_vendor_product && item.ecom_acc_vendor_product.vendorProductStatus == 'Available' ? <Text style={[styles.productStatusText, styles.open]}>Open</Text> : <Text style={[styles.productStatusText, styles.close]}>Close</Text>}
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                )
+
+              }) :
+        null}
+            </View>
+          </View>
+        </ScrollView>
+      <Modal
+      animationType="slide"
+      transparent={true}
+      visible={this.state.modalVisible}>
+         <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+              <Text
+                style={styles.modalTitle}>
+                Item added to cart successfully
+              </Text>
+            </View>
+            
+              <View
+                style={styles.modalBody}>
+                <Text
+                  style={styles.modalTextDetail}>
+                  {this.state.details.name}
+                </Text>
+                <View style={styles.modalCartQty}>
+                  <TouchableOpacity
+                  onPress={()=>{
+                    this.setState({modalVisible:false})
+                    alert('work in progress')}}  
+                  >
+                    <Icon name="remove" size={20} color="#4D4F50" />
+                  </TouchableOpacity>
+                  <Text
+                    style={styles.modalTextDetail}>
+                    {' '+  this.state.cartQty +' '}
+                  </Text>
+                  <TouchableOpacity
+                  onPress={()=>this.addCart()}
+                  >
+                    <Icon name="add" size={20} color="#4D4F50" />
+                  </TouchableOpacity>
                 </View>
               </View>
-            </View>
-          </View> */}
-        </ScrollView>
-      </SafeAreaView >
+              <TouchableOpacity
+                style={styles.save}
+                onPress={() => {
+                  this.setState({modalVisible:false}),
+                this.props.navigation.navigate('MyCard')}}>
+                <Text style={{
+                  fontFamily:FontFamily.TAJAWAL_REGULAR,
+                  fontWeight:'700',
+                  fontSize:18,
+                  color:ThemeColors.CLR_WHITE
+                  }}>
+                  VIEW CART
+                </Text>
+              </TouchableOpacity>
+        </View>
+    </Modal>
+    </SafeAreaView>
     );
   }
 }
@@ -545,7 +607,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   quantity: {
-    marginTop: '40%',
+    marginTop: '15%',
 
   },
   qtyText: {
@@ -570,7 +632,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   prodImage: {
-    width: '30%',
+    //width: '30%',
+    height:'30%',
     alignItems: 'center',
     marginTop: '5%',
   },
@@ -669,17 +732,26 @@ const styles = StyleSheet.create({
   },
   vendor: {
     backgroundColor: ThemeColors.CLR_WHITE,
-    marginTop: 15,
-    marginBottom: 10
+    borderTopLeftRadius:20,
+    borderTopRightRadius:20,
+    elevation:2,
+    //marginTop: 15,
+    //marginBottom: 10
   },
   vendorContainer: {
-    margin: 14,
+    //margin: 10,
+    marginHorizontal:10,
+    marginVertical:10,
+    paddingBottom:10,
     flexDirection: 'row',
+    borderBottomColor:'#E5E5E5',
+    borderBottomWidth:1,
   },
-  vendorImgContainer: { alignSelf: "center" },
+  vendorImgContainer: { alignSelf: "flex-start", },
   vendorImage: {
-    width: 65,
-    height: 50,
+    width: 95,
+    height: 95,
+    borderRadius:10,
     flexDirection: 'column',
     alignItems: 'center',
     alignContent: 'center',
@@ -691,7 +763,6 @@ const styles = StyleSheet.create({
     width: '50%',
     marginLeft: 5,
     paddingHorizontal: 5,
-
   },
   vendorRow: {
     flexDirection: 'row',
@@ -759,6 +830,42 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },
+  modalContainer:{
+    position:'absolute',
+    bottom:0,
+    left:0,
+    right:0,
+    elevation:4,
+    backgroundColor:'#FFFFFF',
+    paddingHorizontal:20,
+    paddingVertical:10,
+    borderRadius:20
+    },
+    modalHeader:{
+      paddingVertical:10
+    },
+  modalTitle:{
+    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    fontWeight:'500',
+    fontSize:14,
+    color:'#ACACAC'
+  },
+  modalBody:{
+    flexDirection:'row',
+    paddingVertical:15
+  },
+  modalTextDetail:{
+    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    fontWeight:'500',
+    fontSize:15,
+    color:ThemeColors.CLR_SIGN_IN_TEXT_COLOR
+  },
+  modalCartQty:{
+    flexDirection:'row',
+    flex:1,
+    justifyContent:'flex-end'
+  },
+  
   // bottomContainer: {
   //   marginTop: '10%',
   // },

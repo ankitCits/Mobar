@@ -10,6 +10,7 @@ import {
   ScrollView,
   ActivityIndicator,
   ToastAndroid,
+  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
@@ -20,6 +21,8 @@ import Util from '../../utils'
 import { helpSupport } from '../../Redux/actions/product';
 import TextInputField from '../../Component/TextInputField';
 import HelpInput from '../../Component/HelpInput';
+import SelectInput from '../../Component/SelectInput';
+import { fetchFAQData } from '../../api/common';
 export default class HelpSupport extends Component {
   constructor(props) {
     super(props);
@@ -38,20 +41,25 @@ export default class HelpSupport extends Component {
       categoryError: null,
       descriptionError: null,
       formError: '',
+      faqData:[],
       categoryData: [
-        'Enquiry',
-        'Complaint',
-        'Order Related',
-        'Account Related',
-        'Product Related',
-        'Payment Related',
-        'Bar Related'
+        {id:1,title:'Enquiry'},
+        {id:2,title:'Complaint'},
+        {id:3,title:'Order Related'},
+        {id:4,title:'Account Related'},
+        {id:5,title:'Product Related'},
+        {id:6,title:'Payment Related'},
+        {id:7,title:'Bar Related'}
       ]
     };
   }
 
   handleUserInput = (name, value) => {
     this.setState({ [name]: value }, () => { this.validateField(name, value) });
+  }
+
+  componentDidMount = ()=>{
+    this.getFAQData();
   }
 
   validateField = (fieldName) => {
@@ -119,6 +127,7 @@ export default class HelpSupport extends Component {
     this.validateField('mobileNumber');
     this.validateField('description');
     this.validateField('category');
+    console.log("selected category",this.state.category);
     if (this.state.nameError == null && this.state.emailError == null &&
       this.state.mobileError == null && this.state.descriptionError == null &&
       this.state.categoryError == null) {
@@ -147,12 +156,39 @@ export default class HelpSupport extends Component {
     }
   };
 
+  getFAQData = async ()=>{
+    try{
+    const res = await fetchFAQData();
+    console.log("HelpSupport > getFAQData > res >",res.response.result.faq);
+    this.setState({faqData:res.response.result.faq});
+    console.log("HelpSupport > getFAQData > state data>",res.response.result.faq);
+    
+    }catch(error){
+      console.log("HelpSupport > getFAQData > catch >",error);
+    }
+  }
+
+  renderFaqCategory = (item,index) => {
+    (
+     <View style={styles.helpBottomList} key={index}>
+          <Text style={styles.helpBottomListText}>Account</Text>
+          <Icon
+            name="navigate-next"
+            size={30}
+            color={ThemeColors.CLR_DARK_GREY}
+            style={styles.imageStyle}
+          />
+        </View>
+    )
+  }
+
   toggle = () => {
     this.setState({ isToggle: !this.state.isToggle });
   };
 
   onSelected = (value) => {
-    this.setState({ category: value });
+    console.log("value",value);
+    this.setState({ category: value.title });
     this.toggle();
   };
 
@@ -242,29 +278,14 @@ export default class HelpSupport extends Component {
               onChangeText={text => this.handleUserInput('mobileNumber', text)}
               error={this.state.mobileError}
             />
-
-            <View style={styles.sectionStyle} >
-              <Text onPress={() => this.toggle()}
-                style={styles.inputText}
-              >{this.state.category ? this.state.category : 'Select Category'}
-              </Text>
-              <Icon
-                name="expand-more"
-                size={28}
-                color="#424242"
-                style={styles.imageStyle}
-              />
-            </View>
-            {
-              this.state.categoryData.map((item, index) => (
-                <TouchableOpacity onPress={() => this.onSelected(item)} key={index}>
-                  <View style={[this.state.isToggle ? styles.collapsed : styles.hide, this.state.category == item ? styles.selected : '']} key={index}>
-                    <Text style={styles.inputText}>{item}</Text>
+            <View style={styles.dropdown} >
+              <SelectInput items={this.state.categoryData}
+                  selectedItems={{ id: 0, title: 'Select Category' }}
+                  visible={false}
+                  onChange={
+                    (item) => { this.onSelected(item) }
+                  } />
                   </View>
-                </TouchableOpacity>
-              )
-              )
-            }
             {this.state.categoryError &&
               <View style={styles.errorContainer}>
                 <Text style={styles.errorText}>{this.state.categoryError}</Text>
@@ -277,20 +298,9 @@ export default class HelpSupport extends Component {
               onChangeText={text => this.handleUserInput('description', text)}
               error={this.state.descriptionError}
             />
-
-
             <Text style={styles.errorText}>
               {this.state.formError}
             </Text>
-
-            {/* {this.state.formError =='' ?  
-            (<View style={styles.errorContainer}>
-              <Text style={styles.errorText}>All fields are mandatory</Text>
-            </View>):(
-            <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>{this.state.formError}</Text>
-            </View>
-            )} */}
           </View>
           <View>
             <View style={styles.btnContainer}>
@@ -315,7 +325,42 @@ export default class HelpSupport extends Component {
               />
             </View>
 
+            {/* <FlatList
+                  //nestedScrollEnabled={true}
+                  //showsHorizontalScrollIndicator={false}
+                  data={this.state.faqData}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item, index }) => this.renderFaqCategory(item,index)}
+                /> */}
+
             <View style={styles.helpBottom}>
+              {
+                this.state.faqData.length > 0 &&
+                this.state.faqData.map((item, index) => 
+                  (
+                    <>
+                      <TouchableOpacity 
+                      onPress={()=>{
+                        this.props.navigation.navigate('FAQs',{data:this.state.faqData,selectedItem:item})
+                      }}
+                      style={styles.helpBottomList} key={index}>
+                        <Text style={styles.helpBottomListText}>{item.CategoryName}</Text>
+                        <Icon
+                          name="navigate-next"
+                          size={30}
+                          color={ThemeColors.CLR_DARK_GREY}
+                          style={styles.imageStyle}
+                        />
+                      </TouchableOpacity>
+                      <View style={styles.underLine} />
+                    </>
+                  )
+                )
+              }
+
+            </View>
+
+            {/* <View style={styles.helpBottom}>
               <View style={styles.helpBottomList}>
                 <Text style={styles.helpBottomListText}>Account</Text>
                 <Icon
@@ -359,7 +404,7 @@ export default class HelpSupport extends Component {
               </View>
 
               <View style={styles.underLine} />
-            </View>
+            </View> */}
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -408,62 +453,7 @@ const styles = StyleSheet.create({
     color: '#4D4F50',
     textAlign: 'center'
   },
-  sectionStyle: {
-    flexDirection: 'row',
-    alignSelf: 'center',
-    alignItems: 'center',
-    backgroundColor: ThemeColors.CLR_WHITE,
-    borderWidth: 0,
-    borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
-    height: 48,
-    width: 324,
-    borderRadius: 5,
-    margin: 10,
-    elevation: 4,
-  },
-  collapsed: {
-    flexDirection: 'row',
-    backgroundColor: ThemeColors.CLR_WHITE,
-    borderWidth: 0,
-    borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
-    height: 48,
-    width: 324,
-    marginTop: -9,
-    margin: 10,
-    marginLeft: 10,
-    alignItems: 'center',
-    //paddingHorizontal: 10,
-    elevation: 4,
-  },
-  hide: {
-    height: 0
-  },
-  selected: {
-    borderColor: "#AB1731",
-    alignItems: 'center',
-    alignSelf: 'center',
-    borderLeftWidth: 5,
-  },
-  inputText: {
-    fontFamily: FontFamily.TAJAWAL_REGULAR,
-    fontWeight: '400',
-    fontSize: 15,
-    flex: 1,
-    padding: 10,
-    color: ThemeColors.CLR_DARK_GREY
-  },
-  sectionStyleDes: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: ThemeColors.CLR_WHITE,
-    borderWidth: 0,
-    borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
-    height: 112,
-    width: 324,
-    borderRadius: 5,
-    margin: 10,
-    elevation: 4,
-  },
+  dropdown:{marginBottom:25},
   imageStyle: {
     resizeMode: 'stretch',
     alignSelf: 'center',
@@ -472,7 +462,8 @@ const styles = StyleSheet.create({
   },
   btnContainer: {
     marginTop: '7%',
-    marginBottom: '6%'
+    marginBottom: '6%',
+    zIndex:-1,
   },
   save: {
     backgroundColor: '#851729',
@@ -481,6 +472,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     width: 300,
+    zIndex:0,
   },
   btnText: {
     color: ThemeColors.CLR_WHITE,
@@ -492,6 +484,7 @@ const styles = StyleSheet.create({
     marginLeft: '7%',
     marginBottom: 0,
     flexDirection: 'row',
+    zIndex:-1,
     alignItems: 'center'
   },
   faqs: {

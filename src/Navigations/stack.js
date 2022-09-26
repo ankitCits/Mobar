@@ -20,6 +20,7 @@ import BarList from '../Screens/BarList';
 import Notification from '../Screens/Notification';
 import SelectBars from '../Screens/SelectBars';
 import Product from '../Screens/Product';
+import FAQs from '../Screens/Faqs';
 const Stack = createStackNavigator();
 
 
@@ -80,6 +81,8 @@ const DrawerScreen = () => {
       <Stack.Screen name="Notification" component={Notification} />
       <Stack.Screen name="SelectBars" component={SelectBars} />
       <Stack.Screen name="Product" component={Product} />
+      <Stack.Screen name="FAQs" component={FAQs} />
+
     </Stack.Navigator>
   );
 };

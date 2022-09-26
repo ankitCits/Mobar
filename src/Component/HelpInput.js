@@ -23,7 +23,6 @@ export default class HelpInput extends React.Component {
        
         return (
             <>
-                {/* Input Icon */}
                 <View style={[this.props.multiline ? styles.sectionStyleDes : styles.sectionStyle,page == 'Profile' ? styles.isProfile : '']}>
                     { page == 'Profile' ?
                         <Icon
@@ -45,11 +44,9 @@ export default class HelpInput extends React.Component {
                         value={this.props.value}
                     />
                 </View>
-                
                     <View style={styles.errorContainer}>
                         <Text style={styles.errorText}>{error}</Text>
                     </View>
-                
             </>
         );
     }
@@ -64,6 +61,7 @@ const styles = StyleSheet.create({
         borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
         height: 48,
         width: 324,
+        zIndex:1,
         margin: 10,
         elevation: 4,
     },
@@ -73,7 +71,6 @@ const styles = StyleSheet.create({
         alignItems:'center',
         paddingLeft:10,
         borderColor:ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
-        //backgroundColor:'yellow'
     },
     profileText:{
         fontFamily:FontFamily.TAJAWAL_REGULAR,
@@ -92,6 +89,7 @@ const styles = StyleSheet.create({
         width: 324,
         borderRadius: 5,
         margin: 10,
+        zIndex:1,
         elevation: 4,
     },
     inputText: {
