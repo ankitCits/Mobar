@@ -271,7 +271,7 @@ class ProductDetailBars extends Component {
                         fontSize: 14,
                         fontWeight: '400',
                       }}>
-                      {this.state.data.vendorDetail[0].distance.toFixed(2)}Km
+                      {this.state.data.vendorDetail[0].distance.toFixed(1)}Km
                     </Text>
                   </View>
                 </View>

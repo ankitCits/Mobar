@@ -53,11 +53,13 @@ export default class Redeem extends Component {
       };
       const res = await fetchRedeemMixerData(data);
       const resData = res.response.result.data;
+      
       const mappedData = resData.map((x, i) => {
         return {
           id: x.vendorId,
           title: x.ecom_ah_mixer.mixerName
         }
+        
       });
       this.setState({ mixerData: mappedData });
     } catch (error) {
@@ -289,33 +291,13 @@ export default class Redeem extends Component {
         <ScrollView>
           {/* vendor details */}
           <View
-            style={{
-              width: '95%',
-              // height: 154,
-              backgroundColor: '#fff',
-              marginTop: 20,
-              alignSelf: 'center',
-              flexDirection: 'row',
-              shadowColor: '#000',
-              shadowOffset: { width: 1, height: 1 },
-              shadowOpacity: 0.4,
-              shadowRadius: 5,
-              elevation: 5,
-              zIndex: -1,
-              borderRadius: 5,
-            }}>
+            style={styles.topContainer}>
             <View
               style={{
                 width: '50%',
               }}>
               <Text
-                style={{
-                  fontSize: 17,
-                  fontWeight: '700',
-                  color: '#424242',
-                  top: 20,
-                  left: 20,
-                }}>
+                style={styles.topSubContainer}>
                 {this.state.data.vendorShopName}
               </Text>
               <View style={{ margin: 20 }}>
@@ -331,25 +313,13 @@ export default class Redeem extends Component {
                 }}>
                 {this.state.data.description}
               </Text> */}
-
               <View
-                style={{
-                  left: 15,
-                  flexDirection: 'row',
-                  // top: 40,
-                  alignItems: 'center',
-                  marginBottom: 0,
-                  marginTop: 10,
-                }}>
+                style={styles.topFooterContainer}>
                 <Icon name="self-improvement" size={25} color="#851729" />
                 <Text
                 onPress={()=>{this.props.navigation.goBack()}}
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '700',
-                    color: '#851729',
-                    left: 10,
-                  }}>
+                style={styles.topSubText}>
+                  
                   Select Other Bar
                 </Text>
               </View>
@@ -380,20 +350,7 @@ export default class Redeem extends Component {
           {this.state.moreData && this.state.moreData.length > 0 &&
             this.state.moreData.map((item, index) => (
               <View
-                style={{
-                  width: '95%',
-                  height: 400,
-                  backgroundColor: '#fff',
-                  marginTop: 20,
-                  alignSelf: 'center',
-                  shadowColor: '#000',
-                  shadowOffset: { width: 1, height: 1 },
-                  shadowOpacity: 0.4,
-                  shadowRadius: 5,
-                  zIndex: -1,
-                  elevation: 5,
-                  borderRadius: 5,
-                }}>
+                style={styles.middleContainer}>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -420,17 +377,9 @@ export default class Redeem extends Component {
                     />
                   </View>
                   <View
-                    style={{
-                      width: '50%',
-                    }}>
+                    style={{width: '50%',}}>
                     <Text
-                      style={{
-                        fontSize: 20,
-                        fontWeight: '700',
-                        color: '#4D4F50',
-                        top: 20,
-                        left: 20,
-                      }}>
+                      style={styles.middleContainerText}>
                       {item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
                         item.ecom_aca_product_unit.ecom_ac_product.name :
                         item.name
@@ -469,11 +418,7 @@ export default class Redeem extends Component {
                     marginTop: 15,
                   }}>
                   <Text
-                    style={{
-                      fontSize: 15,
-                      fontWeight: '500',
-                      color: '#4D4F50',
-                    }}>
+                    style={styles.middleContainerSubText1}>
                     Select Unit Quantity:
                   </Text>
                   <ScrollView horizontal={true}>
@@ -494,7 +439,7 @@ export default class Redeem extends Component {
                                   ? styles.itemQuantitySelected
                                   : styles.itemQuantity
                               ]}>
-                              <View style={{ flexDirection: 'row', alignItems: 'center' }} key={vIndex}>
+                              <View style={styles.middleContainerIcon} key={vIndex}>
                                 <Icon name="wine-bar" size={22} color="#7B7B7B" />
                                 <Text
                                   style={{
@@ -543,19 +488,11 @@ export default class Redeem extends Component {
                     marginTop: 20,
                   }}>
                   <Text
-                    style={{
-                      fontSize: 15,
-                      fontWeight: '500',
-                      color: '#4D4F50',
-                    }}>
+                    style={styles.middleContainerSubText2}>
                     Select Quantity:
                   </Text>
                   <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginTop: 10,
-                    }}>
+                    style={styles.middleContainerSubTextIcon}>
                     <TouchableOpacity
                       onPress={() =>
                         item.quantity != undefined ?
@@ -570,12 +507,7 @@ export default class Redeem extends Component {
                       <Icon name="remove" size={20} color="#fff" />
                     </TouchableOpacity>
                     <Text
-                      style={{
-                        fontSize: 25,
-                        fontWeight: '700',
-                        color: '#A1172F',
-                        padding: 7,
-                      }}>
+                      style={styles.middleContainerCounter}>
                       {item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
                         item.ecom_aca_product_unit.ecom_ac_product.quantity : item.quantity
                       }
@@ -595,6 +527,7 @@ export default class Redeem extends Component {
                       <Icon name="add" size={20} color="#fff" />
                     </TouchableOpacity>
                   </View>
+                  {this.state.mixerData !='' && 
                   <SelectInput items={this.state.mixerData}
                     selectedItems={{ id: 0, title: 'Select Mixer Item' }}
                     visible={false}
@@ -604,6 +537,7 @@ export default class Redeem extends Component {
                         this.onSelect(sItem, 'Array', true, index)
                     }
                     } />
+                  }
                 </View>
               </View>
             ))
@@ -612,42 +546,23 @@ export default class Redeem extends Component {
 
           {/* Add More Items */}
           <View
-            style={{
-              width: '96%',
-              height: 180,
-              backgroundColor: '#fff',
-              marginTop: 20,
-              alignSelf: 'center',
-              shadowColor: '#000',
-              shadowOffset: { width: 1, height: 1 },
-              shadowOpacity: 0.4,
-              shadowRadius: 5,
-              elevation: 5,
-              zIndex: -1,
-              borderRadius: 5,
-            }}>
+            style={styles.bottomContainer}>
             <View
-              style={{
-                margin: 15,
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: 20,
-              }}>
+              style={styles.bottomContainerHeaderText}>
               <TouchableOpacity
-                style={{
-                  padding: 0,
-                  backgroundColor: '#939393',
-                  borderRadius: 20,
-                }}
+                style={styles.bottomContainerIcon}
                 onPress={() => this.setState({ itemModalVisible: true })}>
                 <Icon name="add" size={28} color="#fff" />
               </TouchableOpacity>
 
               <View style={{ marginLeft: 20 }}>
+                <TouchableOpacity
+                onPress={() => this.setState({ itemModalVisible: true })}>
                 <Text
                   style={{ fontSize: 20, color: '#969696', fontWeight: '700' }}>
                   Add More Items
                 </Text>
+                </TouchableOpacity>
               </View>
             </View>
 
@@ -658,14 +573,9 @@ export default class Redeem extends Component {
                 marginTop: 20,
               }}>
               <Text
-                style={{
-                  fontSize: 15,
-                  fontWeight: '500',
-                  color: '#4D4F50',
-                }}>
+                style={styles.bottomContainerSubText}>
                 Table No:
               </Text>
-
               <View style={styles.sectionStyleTable}>
                 <TextInput
                   style={{ flex: 1 }}
@@ -688,8 +598,6 @@ export default class Redeem extends Component {
             </TouchableOpacity>
           </View>
 
-
-
           <View
             style={{
               marginBottom: '5%',
@@ -700,8 +608,8 @@ export default class Redeem extends Component {
         <Modal
           animationType="slide"
           transparent={true}
-          visible={this.state.comboModelVisible} >
-
+          visible={this.state.comboModelVisible}
+             >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <View style={styles.modalHeader}>
@@ -778,126 +686,56 @@ export default class Redeem extends Component {
                   </TouchableOpacity>
                 </View>
                 <View
-                  style={{
-                    width: '93%',
-                    height: 130,
-                    marginVertical: '5%',
-                    backgroundColor: '#fff',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignSelf: 'center',
-                    shadowColor: '#000',
-                    shadowOffset: { width: 1, height: 1 },
-                    shadowOpacity: 0.4,
-                    shadowRadius: 5,
-                    elevation: 5,
-                    borderRadius: 5,
-                  }}>
+                  style={styles.redeemDetailsHeader}>
                   <View
                     style={{
                       width: '50%',
                     }}>
                     <Text
-                      style={{
-                        fontSize: 22,
-                        fontWeight: '500',
-                        color: '#C11331',
-                        fontFamily: FontFamily.ROBOTO_REGULAR,
-                        top: 20,
-                        left: 20,
-                      }}>
+                      style={styles.redeemDetailsText}>
                       Redeemed
                     </Text>
                     <Text
-                      style={{
-                        fontSize: 18,
-                        fontWeight: '700',
-                        color: '#7B7B7B',
-                        fontFamily: FontFamily.TAJAWAL_REGULAR,
-                        top: 20,
-                        left: 20,
-                      }}>
+                      style={styles.redeemDetailsSubText}>
                       {this.state.successOrderData.length > 0 ? this.state.successOrderData[0].ecom_ae_vendor.vendorShopName : ''}
                     </Text>
                     <Text
-                      style={{
-                        fontSize: 12,
-                        fontWeight: '400',
-                        color: '#424242',
-                        fontFamily: FontFamily.TAJAWAL_REGULAR,
-                        top: 20,
-                        left: 20,
-                      }}>
+                      style={styles.redeemDetailsSubText1}>
                       20 june 2021 10:00 Am
                     </Text>
-
-
                   </View>
-
                 </View>
               </View>
 
               {this.state.successOrderData.length > 0 ? this.state.successOrderData.map((item, index) => (
                 <View key={index} style={{}}>
 
-
                   <View
-                    style={{
-                      // height: 108,
-                      width: 330,
-                      backgroundColor: '#fff',
-                      //marginTop: '32%',
-                      elevation: 5,
-                      alignSelf: 'center',
-                      borderRadius: 5,
-                    }}>
+                    style={styles.redeemDetailsContainer}>
                     <View>
                       <View
-                        style={{
-                          flexDirection: 'row',
-                        }}>
+                        style={{flexDirection: 'row',}}>
                         <View
-                          style={{
-                            width: '35%',
-                            height: 130,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}>
+                          style={styles.redeemDetailsContainerLeft}>
                           <Image
-                            style={{
-                              width: 60,
-                              height: 60,
-                            }}
+                            style={styles.redeemDetailsContainerImage}
                             resizeMode={'cover'}
                             source={
                               { uri: `${this.state.data.hostUrl + item.ecom_ac_product.images}` }
-                            }
-                          />
-
+                            }/>
                         </View>
-
                         <View
                           style={{
                             width: '65%',
                             marginTop: 10,
                           }}>
                           <Text
-                            style={{
-                              fontSize: 22,
-                              fontWeight: '700',
-                              fontFamily: FontFamily.TAJAWAL_REGULAR,
-                              color: '#4D4F50',
-                            }}>
+                            style={styles.redeemDetailsContainerText}>
                             {item.ecom_ac_product.name}
                           </Text>
 
                           <Text
-                            style={{
-                              fontSize: 19,
-                              fontWeight: '500',
-                              fontFamily: FontFamily.TAJAWAL_REGULAR,
-                              color: '#7B7B7B',
-                            }}>
+                            style={styles.redeemDetailsContainerSubText}>
                             {
                               item.ecom_ac_product.redeemUnitQty != undefined ?
                                 item.ecom_ac_product.redeemUnitQty + item.ecom_ac_product.unitType + '  -  ' + item.ecom_ac_product.reddemQty + '' :
@@ -906,12 +744,7 @@ export default class Redeem extends Component {
                           </Text>
 
                           <Text
-                            style={{
-                              fontSize: 19,
-                              fontWeight: '500',
-                              fontFamily: FontFamily.TAJAWAL_REGULAR,
-                              color: '#7B7B7B',
-                            }}>
+                            style={styles.redeemDetailsContainerSubText1}>
                             {item.ecom_ac_product.mixerData != undefined ? item.ecom_ac_product.mixerData : item.mixerData}
                           </Text>
                         </View>
@@ -923,30 +756,26 @@ export default class Redeem extends Component {
                         width: 330,
                         alignSelf: 'center',
                         backgroundColor: '#4D4F50',
-                      }}
-                    />
-
+                      }}/>
                     <View
                       style={{
                         height: 0.7,
                         width: 330,
                         alignSelf: 'center',
                         backgroundColor: '#4D4F50',
-                      }}
-                    />
+                      }} />
                   </View>
                 </View>
               )) : null
               }
-
               <View style={{ marginTop: '20%' }}>
                 <TouchableOpacity
                   style={styles.save}
                   onPress={() => {
                     this.setState({ modalVisible: false });
-                    this.props.navigation.navigate('MyCard');
+                    this.props.navigation.navigate('OrderHistory');
                   }}>
-                  <Text style={{ color: '#fff', fontSize: 15 }}>View Orders</Text>
+                  <Text style={styles.redeemFooterContainer}>View Orders</Text>
                 </TouchableOpacity>
               </View>
             </ScrollView>
@@ -1076,7 +905,7 @@ export default class Redeem extends Component {
                                   right: '20%',
                                 }}
                                 onPress={() => { this.onItemModal(item, 'Product') }}>
-                                <Text style={{ color: '#fff', fontSize: 14 }}>ADD</Text>
+                                <Text style={{ color: '#fff', fontSize: 14,paddingLeft:5, }}>ADD</Text>
                                 <Icon name="add" size={18} color="#fff" />
                               </TouchableOpacity>
                             </View>
@@ -1221,7 +1050,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 20,
     borderColor: '#A1172F',
-
   },
   sectionStyle: {
     flexDirection: 'row',
@@ -1263,12 +1091,13 @@ const styles = StyleSheet.create({
     // marginRight:'15%'
   },
   save: {
-    backgroundColor: '#851729',
+    backgroundColor: '#AF1731',
     padding: 12,
     borderRadius: 25,
     alignItems: 'center',
     alignSelf: 'center',
     width: 300,
+    
   },
   centeredView: {
     flex: 1,
@@ -1279,7 +1108,7 @@ const styles = StyleSheet.create({
   modalView: {
     backgroundColor: 'white',
     borderRadius: 10,
-
+    
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -1288,12 +1117,213 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: 332,
-    height: 400,
+    width: 380,
+    height: 420,
   },
   modalHeader: {
     margin: 15,
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  topContainer:{
+    width: '95%',
+    // height: 154,
+    backgroundColor: '#fff',
+    marginTop: 20,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
+    elevation: 5,
+    zIndex: -1,
+    borderRadius: 5,
+  },
+  topSubContainer:{
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#424242',
+    top: 20,
+    left: 20,
+  },
+  topSubText:{
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#851729',
+    left: 10,
+  },
+  topFooterContainer:{
+    left: 15,
+    flexDirection: 'row',
+    // top: 40,
+    alignItems: 'center',
+    marginBottom: 0,
+    marginTop: 10,
+  },
+  middleContainer:{
+    width: '95%',
+    height: 400,
+    backgroundColor: '#fff',
+    marginTop: 20,
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
+    zIndex: -1,
+    elevation: 5,
+    borderRadius: 5,
+  },
+  middleContainerSubText1:{
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#4D4F50',
+  },
+  middleContainerSubText2:{
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#4D4F50',
+  },
+  middleContainerCounter:{
+    fontSize: 25,
+    fontWeight: '700',
+    color: '#A1172F',
+    padding: 7,
+                        
+  },
+  middleContainerSubTextIcon:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  middleContainerText:{
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#4D4F50',
+    top: 20,
+    left: 20,
+  },
+  middleContainerIcon:{
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  bottomContainer:{
+    width: '96%',
+    height: 180,
+    backgroundColor: '#fff',
+    marginTop: 20,
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
+    elevation: 5,
+    zIndex: -1,
+    borderRadius: 5,
+  },
+  bottomContainerHeaderText:{
+    margin: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  bottomContainerIcon:{
+    padding: 0,
+    backgroundColor: '#939393',
+    borderRadius: 20,
+  },
+  bottomContainerSubText:{
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#4D4F50',
+  },
+  redeemDetailsHeader:{
+    width: '93%',
+    height: 130,
+    marginVertical: '5%',
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
+    elevation: 5,
+    borderRadius: 15,
+    margin:10,
+    //marginTop:65,
+    //paddingBottom:20 
+  },
+  redeemDetailsText:{
+    fontSize: 22,
+    fontWeight: '500',
+    color: '#C11331',
+    fontFamily: FontFamily.ROBOTO_REGULAR,
+    top: 20,
+    left: 20,
+  },
+  redeemDetailsSubText:{
+      fontSize: 18,
+      fontWeight: '700',
+      color: '#7B7B7B',
+      fontFamily: FontFamily.TAJAWAL_REGULAR,
+      top: 20,
+      left: 20,
+      paddingTop:5,
+  },
+  redeemDetailsSubText1:{
+    fontSize: 12,
+    fontWeight: '400',
+    color: '#424242',
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    top: 20,
+    left: 20,
+    paddingTop:5,   
+  },
+  redeemDetailsContainer:{
+  // height: 108,
+  width: 330,
+  backgroundColor: '#fff',
+  //marginTop: '15%',
+  elevation: 5,
+  alignSelf: 'center',
+  borderRadius: 5,   
+  },
+  redeemDetailsContainerImage:{
+    width: 80,
+    height: 95,
+  },
+  redeemDetailsContainerLeft:{
+    width: '35%',
+    height: 130,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  redeemDetailsContainerText:{
+    fontSize: 22,
+    fontWeight: '700',
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    color: '#4D4F50',
+    margin:3,  
+  },
+  redeemDetailsContainerSubText:{
+    fontSize: 19,
+    fontWeight: '500',
+    paddingTop:5,
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    color: '#7B7B7B',   
+  },
+  redeemDetailsContainerSubText1:{
+    fontSize: 19,
+    fontWeight: '500',
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    color: '#7B7B7B',   
+  },
+  redeemFooterContainer:{
+    color: '#fff',
+     fontSize: 15,
+    fontWeight:'600',   
   },
 });

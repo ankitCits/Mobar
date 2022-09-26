@@ -91,11 +91,12 @@ class ChangePassword extends Component {
       const response = await changePassword(raw);
       console.log("response",response);
       if (response.status == 'SUCCESS') {
-        ToastAndroid.showWithGravity(
-          'Password updated successfully..!',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
+          this.props.navigation.navigate('PasswordChanged');
+        // ToastAndroid.showWithGravity(
+        //   'Password updated successfully..!',
+        //   ToastAndroid.LONG,
+        //   ToastAndroid.TOP,
+        // );
       }
       this.setState({
           loader: false,

@@ -167,8 +167,9 @@ export default class OrderHistory extends Component {
                               Purchased On : {this.formatDDMMM(item.orderDate)}
                             </Text>
                           </View>
-
+                          {this.state.data.couponCode == '' &&
                           <View style={{ marginTop: 10, flexDirection: 'row' }}>
+                            
                             <View
                               style={{
                                 borderWidth: 1,
@@ -188,13 +189,15 @@ export default class OrderHistory extends Component {
                                 {item.couponCode}
                               </Text>
                             </View>
-
+                           
                             <Text style={{ marginLeft: 10, fontSize: 13 }}>
                               Applied
                             </Text>
                           </View>
+                             }
                         </View>
-                        <View style={{ marginTop: 5 }}>
+                      
+                        <View style={{ marginTop: 5,paddingLeft:30 }}>
                           <Text
                             style={{
                               fontSize: 12,

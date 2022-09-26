@@ -114,7 +114,7 @@ export default class Bars extends Component {
                       <View style={styles.distanceContainer}>
                         <Icon name="directions-run" size={20} color="#A1172F" />
                         <Text style={styles.distanceText}>
-                          {(item.ecom_ae_vendor.distance).toFixed(2)}Km
+                          {(item.ecom_ae_vendor.distance).toFixed(1)}Km
                         </Text>
                       </View>
                     </View>

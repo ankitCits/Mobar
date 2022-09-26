@@ -184,7 +184,7 @@ export const changePassword = async (postData) => {
         fetch(`${BASE_URL}/users/changePassword`, params)
             .then(response => response.json())
             .then(result => {
-                //console.log("Product > Change Password > response", result);
+                console.log("Product > Change Password > response", result);
                 if (result.response && result.response.status == 'SUCCESS') {
                     resolve(result.response)
                 }

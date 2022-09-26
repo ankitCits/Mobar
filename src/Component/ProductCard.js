@@ -176,6 +176,8 @@ class ProductCard extends Component {
         return (
             <View style={styles.itemOuterContainer}>
                 <View style={styles.itemContainer}>
+                    <TouchableOpacity
+                     onPress={() => navigation.navigate('ProductDetailDrinks', { id: this.state.data.productId })}>
                     <View style={styles.topBar}>
                         <Text style={styles.item}>
                             {this.state.data.ecom_aca_product_units[0].unitQty}{' '}
@@ -274,6 +276,7 @@ class ProductCard extends Component {
                             </TouchableOpacity>
                         </View>
                     </View>
+                    </TouchableOpacity>
                 </View>
             </View>
         );
@@ -303,7 +306,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 10,
         marginBottom: 12,
-
+        //backgroundColor:"red"
     },
     itemDetails: {
         alignItems: 'center',

@@ -102,9 +102,10 @@ export default class OrderHistoryDetail extends Component {
 
           <View
             style={{
-              margin: 15,
+              margin:15,
               flexDirection: 'row',
               justifyContent: 'space-between',
+              
             }}>
             <Text style={styles.innerText}>Items Purchased</Text>
             <Text style={styles.innerText}>Total :{this.state.item.length} </Text>
@@ -175,6 +176,7 @@ export default class OrderHistoryDetail extends Component {
               style={{
                 marginTop: 50,
                 alignItems: 'center',
+                
               }}>
               <Text
                 style={{
@@ -221,7 +223,7 @@ export default class OrderHistoryDetail extends Component {
               </Text>
             </View>
           }
-          <View style={{ marginTop: '10%', flex: 1, justifyContent: 'flex-end' }}>
+          <View style={{ marginTop: '0%', flex: 0, justifyContent: 'flex-end',}}>
             <View
               style={{
                 shadowColor: '#000',
@@ -231,7 +233,6 @@ export default class OrderHistoryDetail extends Component {
                 },
                 shadowOpacity: 1,
                 shadowRadius: 10,
-
                 elevation: 5,
                 backgroundColor: '#fff',
                 height: 180,
@@ -242,7 +243,7 @@ export default class OrderHistoryDetail extends Component {
               }}>
               <View
                 style={{
-                  marginTop: 20,
+                  marginTop: 10,
                   marginLeft: 20,
                   flexDirection: 'row',
                   justifyContent: 'space-between',
@@ -266,7 +267,6 @@ export default class OrderHistoryDetail extends Component {
                   ${this.state.orderHistory.subTotalAmount}
                 </Text>
               </View>
-
               {this.state.orderHistory.totalDiscount > 0 &&
                 <View
                   style={{
@@ -338,6 +338,7 @@ export default class OrderHistoryDetail extends Component {
                   style={{
                     marginTop: '-2%',
                     marginBottom: '2%',
+                    
                   }}>
                   <TouchableOpacity
                     style={styles.save}
@@ -366,9 +367,9 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   productImg: {
-    marginTop: -15,
-    height: 100,
-    width: 100
+    //marginTop: -15,
+    height: 60,
+    width: 60,
   },
   productView: {
     width: size - 28,

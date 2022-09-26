@@ -232,7 +232,7 @@ export default class MyCard extends Component {
                 </View>
                 <View
                   style={{
-                    marginTop: 20,
+                    marginTop: 10,
                     marginLeft: 20,
                     flexDirection: 'row',
                     justifyContent: 'space-between',
@@ -347,7 +347,7 @@ export default class MyCard extends Component {
                   </Text>
                 </View>
 
-                <View style={{ marginTop: '10%', marginBottom: 10 }}>
+                <View style={{ marginTop: '5%', marginBottom: 10 }}>
                   {/* {this.state.totalQty > 0 &&  */}
                   <TouchableOpacity
                     style={styles.save}
@@ -392,13 +392,16 @@ const styles = StyleSheet.create({
   bottomContainer: {
     marginTop: 0,
     //flex:1,
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    //backgroundColor:"red"
+    //height:90,
   },
   subContainer: {
     shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     shadowOffset: {
       width: 0,
       height: 5,
+      
     },
     shadowOpacity: 1,
     shadowRadius: 10,

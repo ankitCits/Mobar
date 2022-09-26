@@ -65,7 +65,7 @@ export default class CartProduct extends React.Component {
     } = this.props;
     return (
       <>
-        <TouchableOpacity style={styles.container} key={index} >
+        <View style={styles.container} key={index} >
           <View style={styles.subContainer} key={index}>
             {/* Image */}
             <View style={styles.productInnerView}>
@@ -121,7 +121,7 @@ export default class CartProduct extends React.Component {
               <TouchableOpacity
                 onPress={() => { this.updateCart(2) }}
                 style={styles.icon}>
-                <Icon name="remove" size={18} color="#fff" />
+                <Icon name="remove" size={20} color="#fff" />
               </TouchableOpacity>
 
               <Text
@@ -131,11 +131,11 @@ export default class CartProduct extends React.Component {
               <TouchableOpacity
                 onPress={() => { this.updateCart(1) }}
                 style={styles.icon}>
-                <Icon name="add" size={18} color="#fff" />
+                <Icon name="add" size={20} color="#fff" />
               </TouchableOpacity>
             </View>
           </View>
-        </TouchableOpacity>
+        </View>
       </>
     );
   }
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     marginTop: 15,
-    //marginBottom:15,
+    // marginBottom:15,
   },
   productInnerView: {
     width: '28%',

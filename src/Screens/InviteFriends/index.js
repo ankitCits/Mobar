@@ -10,6 +10,8 @@ import { FontFamily } from '../../Theme/FontFamily';
 import Share from 'react-native-share';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import HeaderSide from '../Component/HeaderSide';
+import { Linking } from 'react-native';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 export default class InviteFriends extends Component {
     constructor(props) {
@@ -19,6 +21,7 @@ export default class InviteFriends extends Component {
             isLoading: true,
             title: null,
             shareLink: null,
+            referLink:null,
         };
     }
 
@@ -50,6 +53,7 @@ export default class InviteFriends extends Component {
                 shareLink: res.response.result.referLink,
                 pageData: res.response.result.pageData.content
             })
+            console.log(res);
         } catch (error) {
             ToastAndroid.showWithGravity(
                 error[0],
@@ -61,6 +65,7 @@ export default class InviteFriends extends Component {
     }
 
     render() {
+        
         return (
             <SafeAreaView style={styles.container}>
                 <HeaderSide
@@ -76,6 +81,13 @@ export default class InviteFriends extends Component {
                         <HTMLView value={this.state.pageData} />
 
                     }
+                    <View style={{fontSize:20,fontWeight:500,padding:15,paddingTop:15,flexDirection:"row",justifyContent:"center"}}>
+                        <Text //onPress={()=>Linking.openURL(this.state.shareLink)}
+                         >
+                            Your Referal link is : 
+                        </Text>
+                        <Text style={{borderBottomColor:"brown",borderBottomWidth:1}}>{this.state.shareLink}</Text>
+                    </View>
                     {!this.state.isLoading &&
                         <TouchableOpacity
                             style={styles.btnInvite}
@@ -99,6 +111,7 @@ export default class InviteFriends extends Component {
 
 }
 
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -115,5 +128,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         borderRadius: 20,
         alignSelf: 'center',
-    }
+    },
+    link:{
+        fontSize:20,
+        fontWeight:500,
+        padding:15,
+        paddingTop:15,
+        flexDirection:"row",
+        justifyContent:"center"      
+    },
 });

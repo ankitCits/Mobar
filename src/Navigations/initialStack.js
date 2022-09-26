@@ -16,6 +16,7 @@ import ForgetPassword from '../Screens/ForgetPassword';
 import forgetPasswordOtp from '../Screens/ForgetPassword/forgetPasswordOtp';
 import ForgetEnterPassword from '../Screens/ForgetPassword/forgetEnterPassword';
 import PasswordSuccessFullyChanged from '../Screens/ForgetPassword/passwordSuccessFullyChanged';
+import PasswordChanged from '../Screens/PasswordChanged'
 import Drawer from './drawer';
 import Info from '../Screens/Info';
 // import LoginModal from '../Component/LoginModal';
@@ -37,6 +38,7 @@ const AuthNavigator = (props) => {
       <Stack.Screen name="forgetPasswordOtp" component={forgetPasswordOtp} />
       <Stack.Screen name="ForgetEnterPassword" component={ForgetEnterPassword} />
       <Stack.Screen name="PasswordSuccessFullyChanged" component={PasswordSuccessFullyChanged} />
+      <Stack.Screen name="PasswordChanged" component={PasswordChanged} />
       <Stack.Screen name="Drawer" component={Drawer} />
       <Stack.Screen name="Info" component={Info} />
       
