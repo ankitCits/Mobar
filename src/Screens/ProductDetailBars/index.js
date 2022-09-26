@@ -9,7 +9,6 @@ import {
   StyleSheet,
   ScrollView,
   ToastAndroid,
-  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
@@ -49,7 +48,6 @@ class ProductDetailBars extends Component {
         longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
       };
       const data = await fetchVendorDetails(postData);
-      //console.log(data);
       this.setState({ data: data.response.result, loader: false });
       this.setState({
         isFavorite: this.state.data.vendorDetail[0].ecom_ba_wishlist &&
@@ -98,8 +96,6 @@ class ProductDetailBars extends Component {
           wishlistId: id,
         };
         const response = await removeToWishlist(data);
-        console.log("Wishlist Remove > Bar", response);
-        console.log("Wishlist Remove > w object", this.state.data.vendorDetail[0].ecom_ba_wishlist);
         this.state.data.vendorDetail[0].ecom_ba_wishlist = null;
         this.setState({ isFavorite: false })
       } catch (error) {
@@ -118,7 +114,7 @@ class ProductDetailBars extends Component {
   }
 
 
-  addCart = async (prodUnitId, qty) => {
+  addCart = async (prodUnitId) => {
     const token = await getAccessToken();
     if (token == null) {
       showAlert();
@@ -130,7 +126,6 @@ class ProductDetailBars extends Component {
       };
       try {
         const cartResponse = await addToCart(cartItem);
-        //console.log("DetailBar > addToCart > response",cartResponse);
         ToastAndroid.showWithGravity(
           'Item added to cart successfully',
           ToastAndroid.LONG,
@@ -190,14 +185,14 @@ class ProductDetailBars extends Component {
                         ? this.wishListRemove(this.state.data.vendorDetail[0].ecom_ba_wishlist.wishlistId)
                         : this.wishListAdd(this.state.data.vendorDetail[0].vendorId);
                     }}>
-                      <View style={styles.favContainer}>
-                        <Image
-                          resizeMode={'cover'}
-                          source={this.state.isFavorite ? images.heartFill : images.heart}
-                          defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
-                          style={styles.favIcon}
-                        />
-                      </View>
+                    <View style={styles.favContainer}>
+                      <Image
+                        resizeMode={'cover'}
+                        source={this.state.isFavorite ? images.heartFill : images.heart}
+                        defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
+                        style={styles.favIcon}
+                      />
+                    </View>
                   </TouchableOpacity>
                 </View>
 
@@ -263,7 +258,7 @@ class ProductDetailBars extends Component {
                       name="directions-run"
                       size={25}
                       color="#C11331"
-                      style={{ marginRight: 7 }}
+                      style={{ marginRight: 5 }}
                     />
                     <Text
                       style={{
@@ -403,55 +398,56 @@ class ProductDetailBars extends Component {
 
               {this.state.data && this.state.data.vendorDetail.length && this.state.data.vendorDetail[0].ecom_ac_products
                 ? this.state.data.vendorDetail[0].ecom_ac_products.map((item, index) => (
-                  <TouchableOpacity 
-                  onPress={() => {
-                    this.props.navigation.navigate('ProductDetailDrinks', { id: item.productId });
-                }}>
-                  <View
-                    style={styles.productView}
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => {
+                      this.props.navigation.navigate('ProductDetailDrinks', { id: item.productId });
+                    }}>
+                    <View
+                      style={styles.productView}
                     // onPress={() =>
                     //   this.props.navigation.navigate('OrderHistoryDetail')
                     // }
                     >
-                    <View style={styles.productInnerView}>
-                      <Image
-                        key={index}
-                        style={{
-                          width: 75,
-                          height: 75,
-                        }}
-                        resizeMode={'cover'}
-                        source={{
-                          uri: `${this.state.data.hostUrl + item.images}`,
-                        }}
-                        defaultSource={images.product2}
-                      />
-                    </View>
-                    <View style={{ margin: 5, marginLeft: 10, width: '60%' }}>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          marginTop: 5,
-                        }}>
-                        <Text
+                      <View style={styles.productInnerView}>
+                        <Image
+                          key={index}
                           style={{
-                            fontSize: 16,
-                            fontWeight: '500',
-                            width: '75%',
-                            color: '#4D4F50',
-                            paddingHorizontal: 5,
-                          }}>
-                          {item.name}
-                        </Text>
+                            width: 75,
+                            height: 75,
+                          }}
+                          resizeMode={'cover'}
+                          source={{
+                            uri: `${this.state.data.hostUrl + item.images}`,
+                          }}
+                          defaultSource={images.product2}
+                        />
                       </View>
-                      <View style={{
-                            fontSize: 14,
-                            color: '#4D4F50',
-                            fontWeight: '400',
+                      <View style={{ margin: 5, marginLeft: 10, width: '60%' }}>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginTop: 5,
                           }}>
-                        {/* <Text
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: '500',
+                              width: '75%',
+                              color: '#4D4F50',
+                              paddingHorizontal: 5,
+                            }}>
+                            {item.name}
+                          </Text>
+                        </View>
+                        <View style={{
+                          fontSize: 14,
+                          color: '#4D4F50',
+                          fontWeight: '400',
+                        }}>
+                          {/* <Text
                           style={{
                             fontSize: 14,
                             color: '#4D4F50',
@@ -459,46 +455,46 @@ class ProductDetailBars extends Component {
                           }}>
                           {item.shortDescription}
                         </Text> */}
-                        <HTMLView value={item.shortDescription} />
-                      </View>
+                          <HTMLView value={item.shortDescription} />
+                        </View>
 
-                      <View
-                        style={{
-                          marginTop: 1,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                        }}>
-                        <Text
+                        <View
                           style={{
-                            marginLeft: 5,
-                            fontSize: 18,
-                            color: '#424242',
-                            fontWeight: '700',
+                            marginTop: 1,
+                            flexDirection: 'row',
+                            alignItems: 'center',
                           }}>
-                          ${item.ecom_aca_product_units[0].unitUserPrice}
-                        </Text>
-
-                        {item.ecom_aca_product_units[0].unitDiscountPrice ? (
                           <Text
                             style={{
-                              marginLeft: 10,
-                              fontSize: 15,
-                              color: '#969696',
-                              textDecorationLine: 'line-through',
+                              marginLeft: 5,
+                              fontSize: 18,
+                              color: '#424242',
+                              fontWeight: '700',
                             }}>
-                            $
-                            {item.ecom_aca_product_units[0].unitDiscountPrice}
+                            ${item.ecom_aca_product_units[0].unitUserPrice}
                           </Text>
-                        ) : null}
-                      </View>
-                      <View
-                        style={{
-                          // top: '15%',
-                          marginLeft: '60%',
-                          flex: 1,
-                          justifyContent: 'flex-end',
-                        }}>
-                        {/* <TouchableOpacity
+
+                          {item.ecom_aca_product_units[0].unitDiscountPrice ? (
+                            <Text
+                              style={{
+                                marginLeft: 10,
+                                fontSize: 15,
+                                color: '#969696',
+                                textDecorationLine: 'line-through',
+                              }}>
+                              $
+                              {item.ecom_aca_product_units[0].unitDiscountPrice}
+                            </Text>
+                          ) : null}
+                        </View>
+                        <View
+                          style={{
+                            // top: '15%',
+                            marginLeft: '60%',
+                            flex: 1,
+                            justifyContent: 'flex-end',
+                          }}>
+                          {/* <TouchableOpacity
                           onPress={
                             () =>
                               this.props.navigation.navigate('Redeem', {
@@ -527,22 +523,22 @@ class ProductDetailBars extends Component {
                             Redeem
                           </Text>
                         </TouchableOpacity> */}
+                        </View>
                       </View>
+                      <View style={{ marginTop: 17, marginRight: 12, }}>
+                        <TouchableOpacity
+                          onPress={() => { this.addCart(item.ecom_aca_product_units[0].productUnitId) }}
+                          key={index}
+                          style={{
+                            backgroundColor: '#BABABA',
+                            padding: 2,
+                            borderRadius: 20,
+                          }}>
+                          <Icon name="add" size={18} color="#fff" key={index} />
+                        </TouchableOpacity>
+                      </View>
+                      {/* <CartModal itemName={'Product'} modalVisible={this.state.modalVisible} /> */}
                     </View>
-                    <View style={{ marginTop: 17, marginRight: 12, }}>
-                      <TouchableOpacity
-                        onPress={() => { this.addCart(item.ecom_aca_product_units[0].productUnitId, 2) }}
-                        key={index}
-                        style={{
-                          backgroundColor: '#BABABA',
-                          padding: 2,
-                          borderRadius: 20,
-                        }}>
-                        <Icon name="add" size={18} color="#fff" key={index} />
-                      </TouchableOpacity>
-                    </View>
-                    {/* <CartModal itemName={'Product'} modalVisible={this.state.modalVisible} /> */}
-                  </View>
                   </TouchableOpacity>
                 ))
                 : null}
@@ -641,7 +637,7 @@ class ProductDetailBars extends Component {
 // dispatcher functions
 function mapDispatchToProps(dispatch) {
   return {
-      dispatch,
+    dispatch,
   };
 }
 
@@ -680,17 +676,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginLeft: 10,
   },
-  favContainer:{
+  favContainer: {
     width: 35,
     height: 35,
-    justifyContent:'center',
-    backgroundColor:ThemeColors.CLR_WHITE,
-    elevation:4,
-    borderRadius:25,
-},
-favIcon: {
-    alignSelf:'center',
-},
+    justifyContent: 'center',
+    backgroundColor: ThemeColors.CLR_WHITE,
+    elevation: 4,
+    borderRadius: 25,
+  },
+  favIcon: {
+    alignSelf: 'center',
+  },
   msgContainer: {
     flex: 1,
     flexDirection: 'row',
