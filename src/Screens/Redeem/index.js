@@ -53,13 +53,13 @@ export default class Redeem extends Component {
       };
       const res = await fetchRedeemMixerData(data);
       const resData = res.response.result.data;
-      
+
       const mappedData = resData.map((x, i) => {
         return {
           id: x.vendorId,
           title: x.ecom_ah_mixer.mixerName
         }
-        
+
       });
       this.setState({ mixerData: mappedData });
     } catch (error) {
@@ -276,6 +276,12 @@ export default class Redeem extends Component {
     //this.setState({ modalVisible: true })
   }
 
+  onCloseModal = () => {
+    this.setState({ modalVisible: false },
+      this.props.navigation.navigate('Dashboard')
+    );
+  }
+
   render() {
 
     return (
@@ -317,9 +323,9 @@ export default class Redeem extends Component {
                 style={styles.topFooterContainer}>
                 <Icon name="self-improvement" size={25} color="#851729" />
                 <Text
-                onPress={()=>{this.props.navigation.goBack()}}
-                style={styles.topSubText}>
-                  
+                  onPress={() => { this.props.navigation.goBack() }}
+                  style={styles.topSubText}>
+
                   Select Other Bar
                 </Text>
               </View>
@@ -377,7 +383,7 @@ export default class Redeem extends Component {
                     />
                   </View>
                   <View
-                    style={{width: '50%',}}>
+                    style={{ width: '50%', }}>
                     <Text
                       style={styles.middleContainerText}>
                       {item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
@@ -391,8 +397,8 @@ export default class Redeem extends Component {
                         <HTMLView value={item.ecom_aca_product_unit.ecom_ac_product.description.substr(0, 40)} />
                         :
                         item.description ?
-                        <HTMLView value={item.description.substr(0, 40)} /> :
-                        null
+                          <HTMLView value={item.description.substr(0, 40)} /> :
+                          null
                       }
 
                     </View>
@@ -527,16 +533,16 @@ export default class Redeem extends Component {
                       <Icon name="add" size={20} color="#fff" />
                     </TouchableOpacity>
                   </View>
-                  {this.state.mixerData !='' && 
-                  <SelectInput items={this.state.mixerData}
-                    selectedItems={{ id: 0, title: 'Select Mixer Item' }}
-                    visible={false}
-                    onChange={(sItem) => {
-                      item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
-                        this.onSelect(sItem, 'Array', false, index) :
-                        this.onSelect(sItem, 'Array', true, index)
-                    }
-                    } />
+                  {this.state.mixerData != '' &&
+                    <SelectInput items={this.state.mixerData}
+                      selectedItems={{ id: 0, title: 'Select Mixer Item' }}
+                      visible={false}
+                      onChange={(sItem) => {
+                        item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
+                          this.onSelect(sItem, 'Array', false, index) :
+                          this.onSelect(sItem, 'Array', true, index)
+                      }
+                      } />
                   }
                 </View>
               </View>
@@ -557,11 +563,11 @@ export default class Redeem extends Component {
 
               <View style={{ marginLeft: 20 }}>
                 <TouchableOpacity
-                onPress={() => this.setState({ itemModalVisible: true })}>
-                <Text
-                  style={{ fontSize: 20, color: '#969696', fontWeight: '700' }}>
-                  Add More Items
-                </Text>
+                  onPress={() => this.setState({ itemModalVisible: true })}>
+                  <Text
+                    style={{ fontSize: 20, color: '#969696', fontWeight: '700' }}>
+                    Add More Items
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -609,7 +615,7 @@ export default class Redeem extends Component {
           animationType="slide"
           transparent={true}
           visible={this.state.comboModelVisible}
-             >
+        >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <View style={styles.modalHeader}>
@@ -656,7 +662,7 @@ export default class Redeem extends Component {
           transparent={true}
           visible={this.state.modalVisible}
           onRequestClose={() => {
-            this.setState({ modalVisible: false });
+            this.onCloseModal();
           }}>
           <View style={{ flex: 1, backgroundColor: '#E5E5E5' }}>
             <ScrollView>
@@ -681,7 +687,7 @@ export default class Redeem extends Component {
                     Redeem Details
                   </Text>
                   <TouchableOpacity style={{ flexDirection: 'row', flex: 1, alignSelf: 'flex-end', justifyContent: 'flex-end' }}
-                    onPress={() => this.setState({ modalVisible: false })}>
+                    onPress={() => this.onCloseModal()}>
                     <Icon name="close" size={32} color="#fff" />
                   </TouchableOpacity>
                 </View>
@@ -708,63 +714,60 @@ export default class Redeem extends Component {
               </View>
 
               {this.state.successOrderData.length > 0 ? this.state.successOrderData.map((item, index) => (
-                <View key={index} style={{}}>
-
-                  <View
-                    style={styles.redeemDetailsContainer}>
-                    <View>
+                <View key={index}
+                  style={styles.redeemDetailsContainer}>
+                  <View>
+                    <View
+                      style={{ flexDirection: 'row', }}>
                       <View
-                        style={{flexDirection: 'row',}}>
-                        <View
-                          style={styles.redeemDetailsContainerLeft}>
-                          <Image
-                            style={styles.redeemDetailsContainerImage}
-                            resizeMode={'cover'}
-                            source={
-                              { uri: `${this.state.data.hostUrl + item.ecom_ac_product.images}` }
-                            }/>
-                        </View>
-                        <View
-                          style={{
-                            width: '65%',
-                            marginTop: 10,
-                          }}>
-                          <Text
-                            style={styles.redeemDetailsContainerText}>
-                            {item.ecom_ac_product.name}
-                          </Text>
+                        style={styles.redeemDetailsContainerLeft}>
+                        <Image
+                          style={styles.redeemDetailsContainerImage}
+                          resizeMode={'cover'}
+                          source={
+                            { uri: `${this.state.data.hostUrl + item.ecom_ac_product.images}` }
+                          } />
+                      </View>
+                      <View
+                        style={{
+                          width: '65%',
+                          marginTop: 10,
+                        }}>
+                        <Text
+                          style={styles.redeemDetailsContainerText}>
+                          {item.ecom_ac_product.name}
+                        </Text>
 
-                          <Text
-                            style={styles.redeemDetailsContainerSubText}>
-                            {
-                              item.ecom_ac_product.redeemUnitQty != undefined ?
-                                item.ecom_ac_product.redeemUnitQty + item.ecom_ac_product.unitType + '  -  ' + item.ecom_ac_product.reddemQty + '' :
-                                item.redeemUnitQty + item.unitType + '  -  ' + item.reddemQty + ''
-                            }
-                          </Text>
+                        <Text
+                          style={styles.redeemDetailsContainerSubText}>
+                          {
+                            item.ecom_ac_product.redeemUnitQty != undefined ?
+                              item.ecom_ac_product.redeemUnitQty + item.ecom_ac_product.unitType + '  -  ' + item.ecom_ac_product.reddemQty + '' :
+                              item.redeemUnitQty + item.unitType + '  -  ' + item.reddemQty + ''
+                          }
+                        </Text>
 
-                          <Text
-                            style={styles.redeemDetailsContainerSubText1}>
-                            {item.ecom_ac_product.mixerData != undefined ? item.ecom_ac_product.mixerData : item.mixerData}
-                          </Text>
-                        </View>
+                        <Text
+                          style={styles.redeemDetailsContainerSubText1}>
+                          {item.ecom_ac_product.mixerData != undefined ? item.ecom_ac_product.mixerData : item.mixerData}
+                        </Text>
                       </View>
                     </View>
-                    <View
-                      style={{
-                        height: 0.7,
-                        width: 330,
-                        alignSelf: 'center',
-                        backgroundColor: '#4D4F50',
-                      }}/>
-                    <View
-                      style={{
-                        height: 0.7,
-                        width: 330,
-                        alignSelf: 'center',
-                        backgroundColor: '#4D4F50',
-                      }} />
                   </View>
+                  <View
+                    style={{
+                      height: 0.7,
+                      width: 330,
+                      alignSelf: 'center',
+                      backgroundColor: '#4D4F50',
+                    }} />
+                  <View
+                    style={{
+                      height: 0.7,
+                      width: 330,
+                      alignSelf: 'center',
+                      backgroundColor: '#4D4F50',
+                    }} />
                 </View>
               )) : null
               }
@@ -905,7 +908,7 @@ export default class Redeem extends Component {
                                   right: '20%',
                                 }}
                                 onPress={() => { this.onItemModal(item, 'Product') }}>
-                                <Text style={{ color: '#fff', fontSize: 14,paddingLeft:5, }}>ADD</Text>
+                                <Text style={{ color: '#fff', fontSize: 14, paddingLeft: 5, }}>ADD</Text>
                                 <Icon name="add" size={18} color="#fff" />
                               </TouchableOpacity>
                             </View>
@@ -1097,7 +1100,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     width: 300,
-    
+
   },
   centeredView: {
     flex: 1,
@@ -1108,7 +1111,7 @@ const styles = StyleSheet.create({
   modalView: {
     backgroundColor: 'white',
     borderRadius: 10,
-    
+
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -1125,7 +1128,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  topContainer:{
+  topContainer: {
     width: '95%',
     // height: 154,
     backgroundColor: '#fff',
@@ -1140,20 +1143,20 @@ const styles = StyleSheet.create({
     zIndex: -1,
     borderRadius: 5,
   },
-  topSubContainer:{
+  topSubContainer: {
     fontSize: 17,
     fontWeight: '700',
     color: '#424242',
     top: 20,
     left: 20,
   },
-  topSubText:{
+  topSubText: {
     fontSize: 14,
     fontWeight: '700',
     color: '#851729',
     left: 10,
   },
-  topFooterContainer:{
+  topFooterContainer: {
     left: 15,
     flexDirection: 'row',
     // top: 40,
@@ -1161,7 +1164,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     marginTop: 10,
   },
-  middleContainer:{
+  middleContainer: {
     width: '95%',
     height: 400,
     backgroundColor: '#fff',
@@ -1175,40 +1178,40 @@ const styles = StyleSheet.create({
     elevation: 5,
     borderRadius: 5,
   },
-  middleContainerSubText1:{
+  middleContainerSubText1: {
     fontSize: 15,
     fontWeight: '500',
     color: '#4D4F50',
   },
-  middleContainerSubText2:{
+  middleContainerSubText2: {
     fontSize: 15,
     fontWeight: '500',
     color: '#4D4F50',
   },
-  middleContainerCounter:{
+  middleContainerCounter: {
     fontSize: 25,
     fontWeight: '700',
     color: '#A1172F',
     padding: 7,
-                        
+
   },
-  middleContainerSubTextIcon:{
+  middleContainerSubTextIcon: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 10,
   },
-  middleContainerText:{
+  middleContainerText: {
     fontSize: 20,
     fontWeight: '700',
     color: '#4D4F50',
     top: 20,
     left: 20,
   },
-  middleContainerIcon:{
+  middleContainerIcon: {
     flexDirection: 'row',
     alignItems: 'center'
   },
-  bottomContainer:{
+  bottomContainer: {
     width: '96%',
     height: 180,
     backgroundColor: '#fff',
@@ -1222,23 +1225,23 @@ const styles = StyleSheet.create({
     zIndex: -1,
     borderRadius: 5,
   },
-  bottomContainerHeaderText:{
+  bottomContainerHeaderText: {
     margin: 15,
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 20,
   },
-  bottomContainerIcon:{
+  bottomContainerIcon: {
     padding: 0,
     backgroundColor: '#939393',
     borderRadius: 20,
   },
-  bottomContainerSubText:{
+  bottomContainerSubText: {
     fontSize: 15,
     fontWeight: '500',
     color: '#4D4F50',
   },
-  redeemDetailsHeader:{
+  redeemDetailsHeader: {
     width: '93%',
     height: 130,
     marginVertical: '5%',
@@ -1252,11 +1255,11 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
     borderRadius: 15,
-    margin:10,
+    margin: 10,
     //marginTop:65,
     //paddingBottom:20 
   },
-  redeemDetailsText:{
+  redeemDetailsText: {
     fontSize: 22,
     fontWeight: '500',
     color: '#C11331',
@@ -1264,66 +1267,66 @@ const styles = StyleSheet.create({
     top: 20,
     left: 20,
   },
-  redeemDetailsSubText:{
-      fontSize: 18,
-      fontWeight: '700',
-      color: '#7B7B7B',
-      fontFamily: FontFamily.TAJAWAL_REGULAR,
-      top: 20,
-      left: 20,
-      paddingTop:5,
+  redeemDetailsSubText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#7B7B7B',
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    top: 20,
+    left: 20,
+    paddingTop: 5,
   },
-  redeemDetailsSubText1:{
+  redeemDetailsSubText1: {
     fontSize: 12,
     fontWeight: '400',
     color: '#424242',
     fontFamily: FontFamily.TAJAWAL_REGULAR,
     top: 20,
     left: 20,
-    paddingTop:5,   
+    paddingTop: 5,
   },
-  redeemDetailsContainer:{
-  // height: 108,
-  width: 330,
-  backgroundColor: '#fff',
-  //marginTop: '15%',
-  elevation: 5,
-  alignSelf: 'center',
-  borderRadius: 5,   
+  redeemDetailsContainer: {
+    // height: 108,
+    width: 330,
+    backgroundColor: '#fff',
+    //marginTop: '15%',
+    elevation: 5,
+    alignSelf: 'center',
+    borderRadius: 5,
   },
-  redeemDetailsContainerImage:{
+  redeemDetailsContainerImage: {
     width: 80,
     height: 95,
   },
-  redeemDetailsContainerLeft:{
+  redeemDetailsContainerLeft: {
     width: '35%',
     height: 130,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  redeemDetailsContainerText:{
+  redeemDetailsContainerText: {
     fontSize: 22,
     fontWeight: '700',
     fontFamily: FontFamily.TAJAWAL_REGULAR,
     color: '#4D4F50',
-    margin:3,  
+    margin: 3,
   },
-  redeemDetailsContainerSubText:{
+  redeemDetailsContainerSubText: {
     fontSize: 19,
     fontWeight: '500',
-    paddingTop:5,
+    paddingTop: 5,
     fontFamily: FontFamily.TAJAWAL_REGULAR,
-    color: '#7B7B7B',   
+    color: '#7B7B7B',
   },
-  redeemDetailsContainerSubText1:{
+  redeemDetailsContainerSubText1: {
     fontSize: 19,
     fontWeight: '500',
     fontFamily: FontFamily.TAJAWAL_REGULAR,
-    color: '#7B7B7B',   
+    color: '#7B7B7B',
   },
-  redeemFooterContainer:{
+  redeemFooterContainer: {
     color: '#fff',
-     fontSize: 15,
-    fontWeight:'600',   
+    fontSize: 15,
+    fontWeight: '600',
   },
 });

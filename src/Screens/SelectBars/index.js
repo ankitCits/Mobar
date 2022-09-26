@@ -25,12 +25,11 @@ class SelectBars extends Component {
     this.state = {
       visibility: false,
       visibilityQuantity: 30,
-      modalVisible: false,
       collectionWallet: {},
       itemSelected: 0,
       hostUrl: '',
-      vendorData:[],
-      isLoading:'false',
+      vendorData: [],
+      isLoading: 'false',
       data: {}
     };
     console.log("route data", props.route.params.data);
@@ -54,7 +53,7 @@ class SelectBars extends Component {
       this.setState({
         hostUrl: response.response.result.hostUrl,
         data: response.response.result.productWithBar,
-        vendorData:response.response.result.productWithBar.ecom_ae_vendors,
+        vendorData: response.response.result.productWithBar.ecom_ae_vendors,
         collectionWallet: response.response.result.collectionWallet,
         isLoading: false
       });
@@ -109,144 +108,138 @@ class SelectBars extends Component {
 
   onItemSelected = (item) => {
     this.setState({ itemSelected: item })
-    //console.log("onSelected > Item", item, this.state.data);
   }
 
-  renderProducts = (item, index) =>{
-    console.log("onSelected > Item", item, this.state.data);
-    return(
+  renderProducts = (item, index) => {
+    return (
       <View>
-    <TouchableOpacity
-    key={index}
-    onPress={() => {
-      //this.setState({ itemSelected: item.vendorId })
-      this.onItemSelected(item)
-    }}
-    style={{
-      //width: '96%',
-      height: 154,
-      backgroundColor: '#fff',
-      
-      marginVertical:10,
-      alignSelf: 'center',
-      flexDirection: 'row',
-      shadowColor: '#000',
-      shadowOffset: { width: 1, height: 1 },
-      shadowOpacity: 0.4,
-      shadowRadius: 5,
-      elevation: 5,
-      borderRadius: 10,
-      borderWidth: this.state.itemSelected.vendorId == item.vendorId ? 2 : 0,
-      borderColor: '#B41430',
-    }}>
-    <View
-      style={{
-        alignSelf: 'center',
-        // left: 10,
-      }}>
-      <ImageBackground
-        style={{
-          width: 165,
-          height: 153,
-        }}
-        imageStyle={{
-          borderRadius: 10
-        }}
-        resizeMode={'cover'}
-        source={{ uri: `${this.state.hostUrl + item.images}` }}
-      >
-        <View style={{
-          backgroundColor: '#B41430',
-          marginTop: 128,
-          height: 25,
-          borderBottomLeftRadius: 10,
-          borderBottomRightRadius: 10
-        }}>
-          <Text style={{
-            fontSize: 18,
-            fontWeight: '700',
-            color: '#fff',
-            alignSelf: 'center'
-          }}>Featured</Text>
-        </View>
-      </ImageBackground>
-    </View>
-    <View
-      style={{
-        width: '50%',
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-        alignContent: 'flex-start',
-        alignItems: 'flex-start',
-
-      }}>
-      <Text
-        style={{
-          fontSize: 18,
-          fontWeight: '700',
-          color: '#424242',
-          top: 5,
-          width: '75%',
-          left: 20,
-        }}>
-        {item.vendorShopName + ' ' + item.vendorId}
-      </Text>
-
-      <Text
-        style={{
-          fontSize: 13,
-          fontWeight: '400',
-          color: '#424242',
-          top: 5,
-          padding: 0,
-          width: '90%',
-          left: 20,
-        }}>
-        {item.address.substr(0, 30)}
-      </Text>
-
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-          marginBottom: 5,
-        }}>
         <TouchableOpacity
+          key={index}
+          onPress={() => {
+            this.onItemSelected(item)
+          }}
           style={{
-            marginTop: 10,
+            height: 154,
+            backgroundColor: '#fff',
+            marginVertical: 10,
+            alignSelf: 'center',
             flexDirection: 'row',
-            alignItems: 'center',
+            shadowColor: '#000',
+            shadowOffset: { width: 1, height: 1 },
+            shadowOpacity: 0.4,
+            shadowRadius: 5,
+            elevation: 5,
+            borderRadius: 10,
+            borderWidth: this.state.itemSelected.vendorId == item.vendorId ? 2 : 0,
+            borderColor: '#B41430',
           }}>
-          <Icon
-            name="fiber-manual-record"
-            size={15}
-            color="#26B90E"
-            style={{ marginTop: 2, marginLeft: 20 }}
-          />
-          {item.ecom_acc_vendor_product.vendorProductStatus == 'Available' ?
-            <Text style={{ color: '#3C3C3C', marginLeft: 5 }}>open</Text> :
-            <Text style={{ color: 'red', marginLeft: 5 }}>close</Text>
-          }
-        </TouchableOpacity>
+          <View
+            style={{
+              alignSelf: 'center',
+            }}>
+            <ImageBackground
+              style={{
+                width: 165,
+                height: 153,
+              }}
+              imageStyle={{
+                borderRadius: 10
+              }}
+              resizeMode={'cover'}
+              source={{ uri: `${this.state.hostUrl + item.images}` }}
+            >
+              <View style={{
+                backgroundColor: '#B41430',
+                marginTop: 128,
+                height: 25,
+                borderBottomLeftRadius: 10,
+                borderBottomRightRadius: 10
+              }}>
+                <Text style={{
+                  fontSize: 18,
+                  fontWeight: '700',
+                  color: '#fff',
+                  alignSelf: 'center'
+                }}>Featured</Text>
+              </View>
+            </ImageBackground>
+          </View>
+          <View
+            style={{
+              width: '50%',
+              flexDirection: 'column',
+              justifyContent: 'space-around',
+              alignContent: 'flex-start',
+              alignItems: 'flex-start',
 
-        <TouchableOpacity
-          style={{
-            marginTop: 10,
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <Icon
-            name="directions-run"
-            size={16}
-            color="#808080"
-            style={{ marginTop: 2 }}
-          />
-          <Text style={{ color: '#3C3C3C', marginLeft: 5 }}>{item.distance.toFixed(1)}Km</Text>
+            }}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: '700',
+                color: '#424242',
+                top: 5,
+                width: '75%',
+                left: 20,
+              }}>
+              {item.vendorShopName + ' ' + item.vendorId}
+            </Text>
+
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: '400',
+                color: '#424242',
+                top: 5,
+                padding: 0,
+                width: '90%',
+                left: 20,
+              }}>
+              {item.address.substr(0, 30)}
+            </Text>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                marginBottom: 5,
+              }}>
+              <TouchableOpacity
+                style={{
+                  marginTop: 10,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <Icon
+                  name="fiber-manual-record"
+                  size={15}
+                  color="#26B90E"
+                  style={{ marginTop: 2, marginLeft: 20 }}
+                />
+                {item.ecom_acc_vendor_product.vendorProductStatus == 'Available' ?
+                  <Text style={{ color: '#3C3C3C', marginLeft: 5 }}>Open</Text> :
+                  <Text style={{ color: 'red', marginLeft: 5 }}>Close</Text>
+                }
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  marginTop: 10,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <Icon
+                  name="directions-run"
+                  size={16}
+                  color="#808080"
+                  style={{ marginTop: 2,marginLeft:5 }}
+                />
+                <Text style={{ color: '#3C3C3C' }}>{item.distance.toFixed(1)}Km</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </TouchableOpacity>
       </View>
-    </View>
-  </TouchableOpacity>
-  </View>
     );
   }
 
@@ -261,376 +254,148 @@ class SelectBars extends Component {
           name={'Select Bars'}
           onClick={() => this.props.navigation.goBack()}
         />
-       {
-        this.state.isLoading ?
-        (<ThemeFullPageLoader  />)
-      :       
-        (
-          <>
-        <View
-          style={{
-            width: '96%',
-            height: 150,
-            backgroundColor: '#fff',
-            marginTop: 20,
-            alignSelf: 'center',
-            shadowColor: '#000',
-            shadowOffset: { width: 1, height: 1 },
-            shadowOpacity: 0.4,
-            shadowRadius: 5,
-            elevation: 5,
-            borderRadius: 5,
-          }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              height: 150,
-            }}>
-            <View
-              style={{
-                width: '40%',
-                alignItems: 'center',
-                alignSelf: 'center',
-              }}>
-              <Image
-                style={{
-                  width: 75,
-                  height: 75,
-                }}
-                source={{ uri: `${this.state.hostUrl + this.state.data.images}` }}
-              />
-            </View>
-            <View
-              style={{
-                width: '60%',
-                alignSelf: 'flex-start',
-                margin: 10,
-              }}>
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontWeight: '700',
-                  color: '#4D4F50',
-                }}>
-                {this.state.data.name}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: '500',
-                  color: '#424242',
-                  //top: 10,
-                  //left: 5,
-                }}>
-                Available Qty: {this.state.collectionWallet.availableQty + this.state.collectionWallet.unitType}
-              </Text>
-
-              <View
-                style={{
-                  top: 15,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <Icon
-                  name="more-time"
-                  size={25}
-                  color="#A39B9B"
-                // style={styles.imageStyle}
-                />
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '400',
-                    color: '#424242',
-                    left: 5,
-                  }}>
-                  Valid until: {this.state.collectionWallet.validTillDate}
-                </Text>
-              </View>
-            </View>
-          </View>
-        </View>
-        <View
-          style={{
-            width: '90%',
-            alignSelf: 'center',
-            marginTop: '5%',
-            marginBottom: '2%',
-          }}>
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: '500',
-              color: '#4D4F50',
-            }}>
-            Redeemable in Bars
-          </Text>
-          <Text
-            style={{
-              fontSize: 15,
-              fontWeight: '400',
-              color: '#ACACAC',
-              marginTop: 5,
-            }}>
-            Select your nearest bar and redeem your drink
-          </Text>
-        </View>
-
-        <FlatList
-          nestedScrollEnabled={true}
-          showsHorizontalScrollIndicator={false}
-          data={this.state.vendorData} //{this.state.data.ecom_ae_vendors && this.state.data.ecom_ae_vendors.length > 0 ? this.state.data.ecom_ae_vendors : []}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item, index }) => this.renderProducts(item, index)}
-        />
-        </>
-        )
-      }
-          
-        
-          {this.state.itemSelected != 0 ? (
-            <View style={{
-              marginVertical:5,
-            }}>
-              <TouchableOpacity
-                style={styles.save}
-                onPress={() =>
-                  this.onContinue()
-                }>
-                <Text style={{ color: '#fff', fontSize: 15 }}>
-                  Continue
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ) : null}
-
-    
-
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={this.state.modalVisible}
-          onRequestClose={() => {
-            this.setState({ modalVisible: false });
-          }}>
-          <View style={{ flex: 1, backgroundColor: '#fff' }}>
-            <ScrollView>
-              <View
-                style={{
-                  height: 118,
-                  backgroundColor: '#AF1731',
-                }}>
+        {
+          this.state.isLoading ?
+            (<ThemeFullPageLoader />)
+            :
+            (
+              <>
                 <View
                   style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    margin: 15,
+                    width: '96%',
+                    height: 150,
+                    backgroundColor: '#fff',
+                    marginTop: 20,
+                    alignSelf: 'center',
+                    shadowColor: '#000',
+                    shadowOffset: { width: 1, height: 1 },
+                    shadowOpacity: 0.4,
+                    shadowRadius: 5,
+                    elevation: 5,
+                    borderRadius: 5,
                   }}>
-                  <Text
+                  <View
                     style={{
-                      fontSize: 20,
-                      fontWeight: '500',
-                      color: '#fff',
+                      flexDirection: 'row',
+                      height: 150,
                     }}>
-                    Redeem Details
-                  </Text>
-                  <TouchableOpacity>
-                    <Icon name="close" size={32} color="#fff" />
-                  </TouchableOpacity>
+                    <View
+                      style={{
+                        width: '40%',
+                        alignItems: 'center',
+                        alignSelf: 'center',
+                      }}>
+                      <Image
+                        style={{
+                          width: 75,
+                          height: 75,
+                        }}
+                        source={{ uri: `${this.state.hostUrl + this.state.data.images}` }}
+                      />
+                    </View>
+                    <View
+                      style={{
+                        width: '60%',
+                        alignSelf: 'flex-start',
+                        margin: 10,
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: '700',
+                          color: '#4D4F50',
+                        }}>
+                        {this.state.data.name}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          fontWeight: '500',
+                          color: '#424242',
+                          //top: 10,
+                          //left: 5,
+                        }}>
+                        Available Qty: {this.state.collectionWallet.availableQty + this.state.collectionWallet.unitType}
+                      </Text>
+
+                      <View
+                        style={{
+                          top: 15,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}>
+                        <Icon
+                          name="more-time"
+                          size={25}
+                          color="#A39B9B"
+                        // style={styles.imageStyle}
+                        />
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            fontWeight: '400',
+                            color: '#424242',
+                            left: 5,
+                          }}>
+                          Valid until: {this.state.collectionWallet.validTillDate}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
                 </View>
-              </View>
-
-              <View
-                style={{
-                  height: 108,
-                  width: 330,
-                  backgroundColor: '#fff',
-                  marginTop: -20,
-                  alignSelf: 'center',
-                  borderRadius: 10,
-                }}>
                 <View
                   style={{
-                    marginTop: 5,
-                    alignItems: 'center',
+                    width: '90%',
+                    alignSelf: 'center',
+                    marginTop: '5%',
+                    marginBottom: '2%',
                   }}>
                   <Text
                     style={{
-                      fontSize: 25,
+                      fontSize: 18,
                       fontWeight: '500',
-                      color: '#C11331',
+                      color: '#4D4F50',
                     }}>
-                    Redeemed
+                    Redeemable in Bars
                   </Text>
-
                   <Text
                     style={{
-                      fontSize: 24,
-                      fontWeight: '700',
-                      color: '#7B7B7B',
+                      fontSize: 15,
+                      fontWeight: '400',
+                      color: '#ACACAC',
                       marginTop: 5,
                     }}>
-                    NewTown Bar
-                  </Text>
-
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      fontWeight: '400',
-                      color: '#424242',
-                      marginTop: 10,
-                    }}>
-                    20 Jun 2021 10:00 PM
+                    Select your nearest bar and redeem your drink
                   </Text>
                 </View>
-              </View>
 
-              <View
-                style={{
-                  // height: 108,
-                  width: 330,
-                  backgroundColor: '#fff',
-                  marginTop: '10%',
-                  alignSelf: 'center',
-                  borderRadius: 5,
-                }}>
-                <View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                    }}>
-                    <View
-                      style={{
-                        width: '35%',
-                        height: 130,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <Image
-                        // style={styles.productImg}
-                        resizeMode={'cover'}
-                        source={images.product2}
-                        defaultSource={images.product2}
-                      />
-                    </View>
-
-                    <View
-                      style={{
-                        width: '65%',
-                        marginTop: 10,
-                      }}>
-                      <Text
-                        style={{
-                          fontSize: 25,
-                          fontWeight: '700',
-                          color: '#4D4F50',
-                        }}>
-                        Chivas Regal 12
-                      </Text>
-
-                      <Text
-                        style={{
-                          fontSize: 20,
-                          fontWeight: '500',
-                          color: '#7B7B7B',
-                        }}>
-                        60ml - 2 Glass
-                      </Text>
-
-                      <Text
-                        style={{
-                          fontSize: 20,
-                          fontWeight: '500',
-                          color: '#7B7B7B',
-                        }}>
-                        Pepsi
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-                <View
-                  style={{
-                    height: 0.7,
-                    width: 330,
-                    alignSelf: 'center',
-                    backgroundColor: '#4D4F50',
-                  }}
+                <FlatList
+                  nestedScrollEnabled={true}
+                  showsHorizontalScrollIndicator={false}
+                  data={this.state.vendorData} //{this.state.data.ecom_ae_vendors && this.state.data.ecom_ae_vendors.length > 0 ? this.state.data.ecom_ae_vendors : []}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item, index }) => this.renderProducts(item, index)}
                 />
+              </>
+            )
+        }
 
-                <View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                    }}>
-                    <View
-                      style={{
-                        width: '35%',
-                        height: 120,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <Image
-                        // style={styles.productImg}
-                        resizeMode={'cover'}
-                        source={images.product2}
-                        defaultSource={images.product2}
-                      />
-                    </View>
 
-                    <View
-                      style={{
-                        width: '65%',
-                        marginTop: 10,
-                      }}>
-                      <Text
-                        style={{
-                          fontSize: 25,
-                          fontWeight: '700',
-                          color: '#4D4F50',
-                        }}>
-                        Chivas Regal 12
-                      </Text>
-
-                      <Text
-                        style={{
-                          fontSize: 20,
-                          fontWeight: '500',
-                          color: '#7B7B7B',
-                        }}>
-                        60ml - 2 Glass
-                      </Text>
-
-                      <Text
-                        style={{
-                          fontSize: 20,
-                          fontWeight: '500',
-                          color: '#7B7B7B',
-                        }}>
-                        Pepsi
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-                <View
-                  style={{
-                    height: 0.7,
-                    width: 330,
-                    alignSelf: 'center',
-                    backgroundColor: '#4D4F50',
-                  }}
-                />
-              </View>
-
-              <View style={{ marginTop: '20%' }}>
-                <TouchableOpacity
-                  style={styles.save}
-                  onPress={() => this.props.navigation.navigate('MyCard')}>
-                  <Text style={{ color: '#fff', fontSize: 15 }}>REDEEM</Text>
-                </TouchableOpacity>
-              </View>
-            </ScrollView>
+        {this.state.itemSelected != 0 ? (
+          <View style={{
+            marginVertical: 5,
+          }}>
+            <TouchableOpacity
+              style={styles.save}
+              onPress={() =>
+                this.onContinue()
+              }>
+              <Text style={{ color: '#fff', fontSize: 15 }}>
+                Continue
+              </Text>
+            </TouchableOpacity>
           </View>
-        </Modal>
+        ) : null}
       </SafeAreaView>
     );
   }

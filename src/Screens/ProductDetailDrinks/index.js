@@ -10,7 +10,6 @@ import {
   ScrollView,
   ToastAndroid,
   FlatList,
-  Alert,
   Modal,
 } from 'react-native';
 import { ThemeColors } from '../../Theme/ThemeColors';
@@ -23,7 +22,6 @@ import { addToWishlist, removeToWishlist } from '../../api/wishlist';
 import { showAlert } from '../../api/auth';
 import { getAccessToken } from '../../localstorage';
 import { connect } from 'react-redux';
-import { set } from 'immer/dist/internal';
 
 class ProductDetailDrinks extends Component {
   constructor(props) {
@@ -374,7 +372,7 @@ class ProductDetailDrinks extends Component {
                 <View style={styles.descriptionContainer}>
                   <HTMLView
                     value={this.state.details.description}
-                    stylesheet={styles.descriptionText}
+                    // stylesheet={styles.descriptionText}
                   />
                 </View>
               </View>
@@ -907,7 +905,7 @@ const styles = StyleSheet.create({
   //   marginTop: 30,
   //   marginBottom: 10
   // },
-  descriptionContainer: { marginTop: 30 },
+  descriptionContainer: { marginTop: 20 },
   // cartBtnText: {
   //   color: ThemeColors.CLR_WHITE,
   //   fontFamily: FontFamily.TAJAWAL_REGULAR,

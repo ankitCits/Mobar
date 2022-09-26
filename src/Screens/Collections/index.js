@@ -32,7 +32,7 @@ export default class Collections extends Component {
       hostUrl: '',
       comboProduct: { productId: 0, walletId: 0, text: 'Select Product' },
       comData: null,
-      comboProducts:[],
+      comboProducts: [],
       isToggle: false,
       isLoading: false,
       refreshing: false,
@@ -46,7 +46,6 @@ export default class Collections extends Component {
   }
 
   componentDidUpdate() {
-
   }
 
   onRefresh = async () => {
@@ -98,8 +97,8 @@ export default class Collections extends Component {
 
   onSelect = (value) => {
     this.state.comboProduct.productId = value.id,
-    this.state.comboProduct.text = value.title,
-    this.toggle();
+      this.state.comboProduct.text = value.title,
+      this.toggle();
   }
 
   showModal = async () => {
@@ -117,80 +116,77 @@ export default class Collections extends Component {
   };
 
   onModal = (data, id) => {
-    const comboData = data.map(x=>{
+    const comboData = data.map(x => {
       return {
-        id:x.productId,
-        title:x.name
+        id: x.productId,
+        title: x.name
       }
     });
-    this.setState({ isComboProduct: true, comData: data,comboProducts:comboData });
+    this.setState({ isComboProduct: true, comData: data, comboProducts: comboData });
     this.state.comboProduct.walletId = id;
   }
 
   renderProducts = (item, index) => {
-    console.log("Iem on render product >",item);
     return (
       item.ecom_aca_product_unit != null ?
-      <>
-        <TouchableOpacity
-          key={index}
-          style={styles.productView}
-          onPress={() =>
-            this.props.navigation.navigate('OrderHistoryDetail')
-          }>
-          <View style={styles.productInnerView} key={index}>
-            <Image
-              source={{ uri: `${this.state.hostUrl + item.ecom_aca_product_unit.ecom_ac_product.images}` }}
-              style={styles.prodImg}
-            />
-          </View>
-          <View style={styles.item}>
-            <View
-              style={styles.itemHeader}>
-              <Text
-                style={styles.title}>
-                {item.ecom_aca_product_unit.ecom_ac_product.name}
-              </Text>
-            </View>
-            <View style={styles.itemDes}>
-              <HTMLView
-                value={item.ecom_aca_product_unit.ecom_ac_product.shortDescription.substr(0, 28)} />
-            </View>
-            <View>
-              <Text
-                style={styles.itemDes}>
-                Qty: {item.ecom_aca_product_unit.unitQty + ' ' + item.ecom_aca_product_unit.unitType}
-              </Text>
-            </View>
-            <View>
-              <Text
-                style={[styles.validDate, styles.itemDes]}>
-                Valid until: {item.validTillDate}
-              </Text>
-            </View>
-          </View>
-          <View
-            style={styles.cartContainer}>
-            <View style={styles.cart}>
-              <TouchableOpacity
-                onPress={() => this.addCart(item.ecom_aca_product_unit.productUnitId, 'product')}
-                style={styles.cartIcon}>
-                <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => this.props.navigation.navigate('SelectBars', { data: { walletId: item.walletId, productId: item.ecom_aca_product_unit.ecom_ac_product.productId } })}
-                style={styles.redeemBtn}>
-                <Text
-                  style={styles.redeemBtnText}>
-                  Redeem
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </TouchableOpacity>
-      </> : 
         <>
-          <TouchableOpacity
+          <View
+            key={index}
+            style={styles.productView}
+          >
+            <View style={styles.productInnerView} >
+              <Image
+                source={{ uri: `${this.state.hostUrl + item.ecom_aca_product_unit.ecom_ac_product.images}` }}
+                style={styles.prodImg}
+              />
+            </View>
+            <View style={styles.item}>
+              <View
+                style={styles.itemHeader}>
+                <Text
+                  style={styles.title}>
+                  {item.ecom_aca_product_unit.ecom_ac_product.name}
+                </Text>
+              </View>
+              <View style={styles.itemDes}>
+                <HTMLView
+                  value={item.ecom_aca_product_unit.ecom_ac_product.shortDescription.substr(0, 28)} />
+              </View>
+              <View>
+                <Text
+                  style={styles.itemDes}>
+                  Qty: {item.ecom_aca_product_unit.unitQty + ' ' + item.ecom_aca_product_unit.unitType}
+                </Text>
+              </View>
+              <View>
+                <Text
+                  style={[styles.validDate, styles.itemDes]}>
+                  Valid until: {item.validTillDate}
+                </Text>
+              </View>
+            </View>
+            <View
+              style={styles.cartContainer}>
+              <View style={styles.cart}>
+                <TouchableOpacity
+                  onPress={() => this.addCart(item.ecom_aca_product_unit.productUnitId, 'product')}
+                  style={styles.cartIcon}>
+                  <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => this.props.navigation.navigate('SelectBars', { data: { walletId: item.walletId, productId: item.ecom_aca_product_unit.ecom_ac_product.productId } })}
+                  style={styles.redeemBtn}>
+                  <Text
+                    style={styles.redeemBtnText}>
+                    Redeem
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </> :
+        <>
+          <View
             key={index}
             style={styles.productView}
           >
@@ -237,16 +233,22 @@ export default class Collections extends Component {
                 </TouchableOpacity>
               </View>
             </View>
-          </TouchableOpacity>
+          </View>
         </>
     );
-}
+  }
 
   onSelected = (value) => {
     this.state.comboProduct.productId = value.productId,
       this.state.comboProduct.text = value.name,
       this.toggle();
   };
+
+  onSelectComboProduct = () => {
+    this.setState({ isComboProduct: !this.state.isComboProduct },
+      this.props.navigation.navigate('SelectBars', { data: this.state.comboProduct }));
+
+  }
 
   render() {
     const { modalVisible } = this.state;
@@ -293,18 +295,18 @@ export default class Collections extends Component {
                   </View>
                 </View>
               </View>
-            
+
               {/* </View> */}
-                <FlatList
-                  nestedScrollEnabled={true}
-                  showsHorizontalScrollIndicator={false}
-                  data={this.state.data}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item, index }) => this.renderProducts(item, index)}
-                  refreshControl={
-                    <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
-                  }
-                />
+              <FlatList
+                nestedScrollEnabled={true}
+                showsHorizontalScrollIndicator={false}
+                data={this.state.data}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item, index }) => this.renderProducts(item, index)}
+                refreshControl={
+                  <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+                }
+              />
             </>
           )
         }
@@ -337,13 +339,13 @@ export default class Collections extends Component {
                   } />
               </View>
               <View style={{ marginTop: 50, height: 48, zIndex: 1 }}>
-                  <TouchableOpacity
-                    style={styles.addToCard}
-                    onPress={() => this.props.navigation.navigate('SelectBars', { data: this.state.comboProduct })}
-                  >
-                    <Text style={styles.cartBtnText}>Submit</Text>
-                  </TouchableOpacity>
-                </View>
+                <TouchableOpacity
+                  style={styles.addToCard}
+                  onPress={() => this.onSelectComboProduct()}
+                >
+                  <Text style={styles.cartBtnText}>Submit</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </Modal>
