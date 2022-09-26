@@ -438,7 +438,7 @@ class ProductDetailDrinks extends Component {
                             <Icon name="directions-run" size={20} color={ThemeColors.CLR_TAB} />
                             <Text
                               style={styles.vendorText}>
-                              {item.distance}
+                              {item.distance.toFixed(1)}Km
                             </Text>
                           </View>
                         </View>
