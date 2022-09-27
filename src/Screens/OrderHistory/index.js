@@ -9,11 +9,12 @@ import {
   ActivityIndicator,
   ToastAndroid,
   StatusBar,
+  ScrollView
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { orderHistory } from '../../api/order';
 import images from '../../assets/images';
 import NoContentFound from '../../Component/NoContentFound';
+import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import HeaderSide from '../Component/HeaderSide';
 export default class OrderHistory extends Component {
   constructor(props) {
@@ -68,188 +69,153 @@ export default class OrderHistory extends Component {
           name={'Order History'}
           onClick={() => this.props.navigation.openDrawer()}
         />
-        <View style={{ flexDirection: 'row' }}>
-          <View style={styles.filterView}>
-            <View
-              style={{
-                margin: 12,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-around',
-              }}>
-              <TouchableOpacity style={styles.filterInnerView}>
-                <Icon name="swap-vert" size={28} color="#4D4F50" />
-                <Text style={styles.filterInnerText}>Sort</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
 
-          <View style={styles.filterView}>
-            <View
-              style={{
-                margin: 12,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-around',
-              }}>
-              <TouchableOpacity style={styles.filterInnerView}>
-                <Icon name="filter-list-alt" size={24} color="#4D4F50" />
-                <Text style={styles.filterInnerText}>Filter</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-        {this.state.loader ? (
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignSelf: 'center',
-            }}>
-            <ActivityIndicator size="small" color="#B51D36" />
-          </View>
-        ) : (
-          <View style={{ backgroundColor: '#fff', flex: 1 }}>
-            {/* <View style={{margin: 15}}>
+        <ScrollView>
+          {this.state.loader ? (
+            <ThemeFullPageLoader />
+          ) : (
+            <View style={{ backgroundColor: '#fff', flex: 1 }}>
+              {/* <View style={{margin: 15}}>
               <Text style={styles.productList}>Today</Text>
             </View> */}
 
-            <>
-              {this.state.data && this.state.data.length > 0 ? (
-                this.state.data.map(item => {
-                  return (
-                    <>
-                      <TouchableOpacity
-                        style={styles.productView}
-                        onPress={() =>
-                          this.props.navigation.navigate('OrderHistoryDetail', { orderData: item, hostUrl: this.state.url })
-                        }>
-                        <View style={styles.productInnerView}>
-                          <Image
-                            style={{
-                              height: 90,
-                              width: 100,
-                            }}
-                            resizeMode={'cover'}
-                            source={{
-                              uri: `${this.state.url +
-                                item.ecom_bc_order_details[0].productImage
-                                }`,
-                            }}
-                          />
-                        </View>
-
-                        <View style={{ margin: 5, marginLeft: 10 }}>
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                              marginTop: 5,
-                            }}>
-                            <Text
+              <>
+                {this.state.data && this.state.data.length > 0 ? (
+                  this.state.data.map(item => {
+                    return (
+                      <>
+                        <TouchableOpacity
+                          style={styles.productView}
+                          onPress={() =>
+                            this.props.navigation.navigate('OrderHistoryDetail', { orderData: item, hostUrl: this.state.url })
+                          }>
+                          <View style={styles.productInnerView}>
+                            <Image
                               style={{
-                                fontSize: 12,
-                                fontWeight: '700',
-                                color: '#4D4F50',
-                              }}>
-                              Purchase Id :{item.orderNumber}
-                            </Text>
+                                height: 90,
+                                width: 100,
+                              }}
+                              resizeMode={'cover'}
+                              source={{
+                                uri: `${this.state.url +
+                                  item.ecom_bc_order_details[0].productImage
+                                  }`,
+                              }}
+                            />
                           </View>
 
-                          <View>
+                          <View style={{ margin: 5, marginLeft: 10 }}>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginTop: 5,
+                              }}>
+                              <Text
+                                style={{
+                                  fontSize: 12,
+                                  fontWeight: '700',
+                                  color: '#4D4F50',
+                                }}>
+                                Purchase Id :{item.orderNumber}
+                              </Text>
+                            </View>
+
+                            <View>
+                              <Text
+                                style={{
+                                  fontSize: 12,
+                                  color: '#4D4F50',
+                                  fontWeight: '400',
+                                }}>
+                                Purchased On : {this.formatDDMMM(item.orderDate)}
+                              </Text>
+                            </View>
+                            {this.state.data.couponCode == '' &&
+                              <View style={{ marginTop: 10, flexDirection: 'row' }}>
+
+                                <View
+                                  style={{
+                                    borderWidth: 1,
+                                    borderColor: '#B51D36',
+                                    height: 20,
+                                    width: 90,
+                                    borderRadius: 5,
+                                    flexDirection: 'row',
+                                  }}>
+                                  <Image
+                                    style={styles.orderPercentageImg}
+                                    resizeMode={'cover'}
+                                    source={images.orderPercentage}
+                                    defaultSource={images.orderPercentage}
+                                  />
+                                  <Text style={{ marginLeft: 5, fontSize: 12 }}>
+                                    {item.couponCode}
+                                  </Text>
+                                </View>
+
+                                <Text style={{ marginLeft: 10, fontSize: 13 }}>
+                                  Applied
+                                </Text>
+                              </View>
+                            }
+                          </View>
+
+                          <View style={{ marginTop: 5, paddingLeft: 30 }}>
                             <Text
                               style={{
                                 fontSize: 12,
+                                marginLeft: 20,
                                 color: '#4D4F50',
                                 fontWeight: '400',
                               }}>
-                              Purchased On : {this.formatDDMMM(item.orderDate)}
+                              {item.ecom_bc_order_details[0].productUnitType}
                             </Text>
-                          </View>
-                          {this.state.data.couponCode == '' &&
-                          <View style={{ marginTop: 10, flexDirection: 'row' }}>
-                            
-                            <View
-                              style={{
-                                borderWidth: 1,
-                                borderColor: '#B51D36',
-                                height: 20,
-                                width: 90,
-                                borderRadius: 5,
-                                flexDirection: 'row',
-                              }}>
-                              <Image
-                                style={styles.orderPercentageImg}
-                                resizeMode={'cover'}
-                                source={images.orderPercentage}
-                                defaultSource={images.orderPercentage}
-                              />
-                              <Text style={{ marginLeft: 5, fontSize: 12 }}>
-                                {item.couponCode}
-                              </Text>
-                            </View>
-                           
-                            <Text style={{ marginLeft: 10, fontSize: 13 }}>
-                              Applied
-                            </Text>
-                          </View>
-                             }
-                        </View>
-                      
-                        <View style={{ marginTop: 5,paddingLeft:30 }}>
-                          <Text
-                            style={{
-                              fontSize: 12,
-                              marginLeft: 20,
-                              color: '#4D4F50',
-                              fontWeight: '400',
-                            }}>
-                            {item.ecom_bc_order_details[0].productUnitType}
-                          </Text>
 
-                          <Text
-                            style={{
-                              fontSize: 20,
-                              marginLeft: 20,
-                              color: '#4D4F50',
-                              fontWeight: '500',
-                              marginTop: 5,
-                            }}>
-                            ${item.subTotalAmount}
-                          </Text>
-
-                          <View
-                            style={{
-                              backgroundColor: '#26B90E',
-                              // height:30,
-                              // width:90,
-                              // right:15,
-                              padding: 5,
-                              marginTop: 10,
-                              marginLeft: 5,
-                              borderRadius: 10,
-                            }}>
                             <Text
                               style={{
-                                fontSize: 12,
-                                color: '#fff',
+                                fontSize: 20,
+                                marginLeft: 20,
+                                color: '#4D4F50',
                                 fontWeight: '500',
+                                marginTop: 5,
                               }}>
-                              Purchased
+                              ${item.subTotalAmount}
                             </Text>
+
+                            <View
+                              style={{
+                                backgroundColor: '#26B90E',
+                                // height:30,
+                                // width:90,
+                                // right:15,
+                                padding: 5,
+                                marginTop: 10,
+                                marginLeft: 5,
+                                borderRadius: 10,
+                              }}>
+                              <Text
+                                style={{
+                                  fontSize: 12,
+                                  color: '#fff',
+                                  fontWeight: '500',
+                                }}>
+                                Purchased
+                              </Text>
+                            </View>
                           </View>
-                        </View>
-                      </TouchableOpacity>
-                    </>
-                  );
-                })
-              ) : (
-                <NoContentFound title="No Data Found" />
-              )}
-            </>
-          </View>
-        )}
+                        </TouchableOpacity>
+                      </>
+                    );
+                  })
+                ) : (
+                  <NoContentFound title="No Data Found" />
+                )}
+              </>
+            </View>
+          )}
+        </ScrollView>
       </SafeAreaView>
     );
   }

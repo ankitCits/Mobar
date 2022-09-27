@@ -28,8 +28,8 @@ class SignIn extends Component {
       password: null,
       // mobileError: null,
       // passwordError: null,
-      mobileNumber: '99887766',
-      password: "Ankit@2261",
+      // mobileNumber: '99887766',
+      // password: "Ankit@2261",
       formError: null,
       loader: false,
     };
