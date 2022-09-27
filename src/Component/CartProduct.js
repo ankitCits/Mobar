@@ -22,7 +22,6 @@ export default class CartProduct extends React.Component {
       data: this.props.item,
       qty: parseInt(this.props.item.qty)
     };
-    console.log('Called')
   }
 
   updateCart = async (type) => {
@@ -35,16 +34,21 @@ export default class CartProduct extends React.Component {
         type: type,
       };
       try {
-        const response = await updateToCart(cartItem);
-        let qty;
+        const res = await updateToCart(cartItem);
+        let amount = res.response.amountData;
+        const cartQty = this.state.qty;
         if (type == 1) {
-          qty = this.state.qty + 1;
-          this.setState({ qty: qty });
+          this.state.qty = cartQty + 1;
         } else {
-          qty = this.state.qty - 1;
-          this.setState({ qty: qty });
+          this.state.qty = cartQty - 1;
         }
-        this.props.onChange(qty, this.state.data.cartId);
+        this.setState({ qty: this.state.qty });
+        const data = {
+          qty: this.state.qty,
+          data: amount,
+          id: this.props.item.cartId
+        }
+        this.props.onChange(data);
       } catch (error) {
         console.log(error)
         ToastAndroid.showWithGravity(
@@ -73,11 +77,11 @@ export default class CartProduct extends React.Component {
           <View style={styles.subContainer} key={index}>
             {/* Image */}
             <View style={styles.productInnerView}>
-              {this.state.data.ecom_aca_product_unit && this.state.data.ecom_aca_product_unit.ecom_ac_product ?
+              {this.props.item.ecom_aca_product_unit && this.props.item.ecom_aca_product_unit.ecom_ac_product ?
                 <Image
                   style={styles.prodImage}
                   resizeMode={'cover'}
-                  source={{ uri: `${hostUrl + this.state.data.ecom_aca_product_unit.ecom_ac_product.images}` }}
+                  source={{ uri: `${hostUrl + this.props.item.ecom_aca_product_unit.ecom_ac_product.images}` }}
                 /> :
                 <Image
                   style={styles.prodImage}
@@ -88,9 +92,9 @@ export default class CartProduct extends React.Component {
             </View>
             <View style={styles.details}>
               <View style={styles.header}>
-                {this.state.data.ecom_aca_product_unit && this.state.data.ecom_aca_product_unit.ecom_ac_product ?
+                {this.props.item.ecom_aca_product_unit && this.props.item.ecom_aca_product_unit.ecom_ac_product ?
                   <Text style={styles.title}>
-                    {this.state.data.ecom_aca_product_unit.ecom_ac_product.name}
+                    {this.props.item.ecom_aca_product_unit.ecom_ac_product.name}
                   </Text>
                   :
                   <Text style={styles.title}>Not Available</Text>}
@@ -98,22 +102,22 @@ export default class CartProduct extends React.Component {
               <View>
                 <Text
                   style={styles.qty}>
-                  {this.state.data.unitQty + ' ' + this.state.data.unitType}
+                  {this.props.item.unitQty + ' ' + this.props.item.unitType}
                 </Text>
               </View>
               <View
                 style={styles.priceContainer}>
-                {this.state.data.ecom_aca_product_unit ?
+                {this.props.item.ecom_aca_product_unit ?
                   <Text
                     style={styles.priceText}>
-                    ${this.state.data.ecom_aca_product_unit.unitUserPrice}
+                    ${this.props.item.ecom_aca_product_unit.unitUserPrice}
                   </Text>
                   :
                   <Text style={styles.priceText}>Not Available</Text>
                 }
-                {this.state.data.ecom_aca_product_unit && this.state.data.ecom_aca_product_unit.unitDiscountPrice ?
+                {this.props.item.ecom_aca_product_unit && this.props.item.ecom_aca_product_unit.unitDiscountPrice ?
                   <Text style={styles.discountPrice}>
-                    ${this.state.data.ecom_aca_product_unit.unitDiscountType}
+                    ${this.props.item.ecom_aca_product_unit.unitDiscountType}
                   </Text>
                   :
                   <Text style={styles.discountPrice}></Text>

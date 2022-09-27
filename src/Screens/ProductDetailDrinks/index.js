@@ -33,6 +33,7 @@ class ProductDetailDrinks extends Component {
       vendors: [],
       cartQty: 0,
       modalVisible: false,
+      index:0,
       selectedQty: 0,
       isFavorite: false
     };
@@ -48,14 +49,16 @@ class ProductDetailDrinks extends Component {
       showAlert();
       return;
     } else {
+      console.log("selected quantity >",this.state.selectedQty.productUnitId);
       try {
         const cartItem = {
-          productUnitId: this.state.details.ecom_aca_product_units[0].productUnitId,
+          productUnitId: this.state.selectedQty.productUnitId,
           comboId: 0,
           qty: 1,
         };
         const cartResponse = await addToCart(cartItem);
-        this.setState({ cartQty: this.state.cartQty + 1 })
+        this.state.selectedQty.qty = this.state.selectedQty.qty + 1;
+        this.setState({ selectedQty: this.state.selectedQty })
         // ToastAndroid.showWithGravity(
         //   'Item added to cart successfully',
         //   ToastAndroid.LONG,
@@ -81,11 +84,20 @@ class ProductDetailDrinks extends Component {
       }
       const resp = await fetchProductDetails(data);
       if (resp.response.result && resp.response.result.data) {
-        this.setState({ details: resp.response.result.data });
+        console.log("Data >>>>>>>>",resp.response.result.data);
+        this.setState({ details: resp.response.result.data,index:0 });
         this.setState({ vendors: resp.response.result.data.ecom_ae_vendors });
         this.setState({ hostUrl: resp.response.result.hostUrl });
         this.setState({ isFavorite: (resp.response.result.data.ecom_ba_wishlist && resp.response.result.data.ecom_ba_wishlist.wishlistId) ? true : false });
-        this.setState({ selectedQty: 0 });
+        const defaultSelectedData = {
+          productUnitId:this.state.details.ecom_aca_product_units[0].productUnitId,
+          unitQty:this.state.details.ecom_aca_product_units[0].unitQty,
+          unitType:this.state.details.ecom_aca_product_units[0].unitType,
+          qty:0
+        }
+        this.setState({ selectedQty: defaultSelectedData });
+        //console.log("this.state.se.details.ecom_aca_product_units >>>",this.state.details.ecom_aca_product_units);
+        console.log("price > ",this.state.details.ecom_aca_product_units[this.state.index].unitUserPrice);
       }
     } catch (error) {
       ToastAndroid.showWithGravity(
@@ -211,20 +223,27 @@ class ProductDetailDrinks extends Component {
     );
   }
 
-  setQty = (index) => {
-    this.setState({ selectedQty: index });
-    console.log("this.setState({ selectedQty: index })", index);
-    console.log("selected qty", this.state.selectedQty);
-    this.setState({ selectedQty: index })
+  setQty = (itemIndex,item) => {
+    //console.log("this.setState({ selectedQty: index })", itemIndex,item);
+    console.log("default selected quantity >>> ",item.qty,itemIndex);
+    if(item.qty == undefined)
+    {
+      item.qty = 0;
+      console.log("after update item qty >>",item);
+      this.state.details.ecom_aca_product_units[itemIndex]=item
+      this.setState({index:itemIndex, selectedQty: item,details:this.state.details });
+    }
+    
   }
 
 
   renderQuantity = (item, index) => {
+    //console.log("render Item >",item.qty);
     return (
       <TouchableOpacity
-        onPress={() => this.setQty(index)}
+        onPress={() => this.setQty(index,item)}
         style={
-          index == this.state.selectedQty
+          index == this.state.index
             ? styles.itemQuantitySelected
             : styles.itemQuantity
         }
@@ -261,10 +280,10 @@ class ProductDetailDrinks extends Component {
                     style={styles.headerText}>
                     {this.state.details.name}
                   </Text>
-                  {this.state.details.ecom_aca_product_units ?
+                  {this.state.details.ecom_aca_product_units && this.state.details.ecom_aca_product_units[this.state.index]?
                     <Text
                       style={styles.priceText}>
-                      {'$ ' + this.state.details.ecom_aca_product_units[this.state.selectedQty].unitUserPrice}
+                      {'$ ' + this.state.details.ecom_aca_product_units[this.state.index].unitUserPrice}
                     </Text>
                     :
                     <Text></Text>
@@ -272,10 +291,10 @@ class ProductDetailDrinks extends Component {
 
                   <Text
                     style={styles.detailsText}>
-                    {this.state.details.ecom_aca_product_units ? this.state.details.ecom_aca_product_units[this.state.selectedQty].unitDescription : ''}
+                    {this.state.details.ecom_aca_product_units ? this.state.details.ecom_aca_product_units[this.state.index].unitDescription : ''}
                   </Text>
 
-                  {this.state.details.ecom_aca_product_units && this.state.details.ecom_aca_product_units[this.state.selectedQty].savedPrices != null ?
+                  {this.state.details.ecom_aca_product_units && this.state.details.ecom_aca_product_units[this.state.index].savedPrices != null ?
                     <ImageBackground
                       style={styles.discountContainer}
                       resizeMode={'cover'}
@@ -290,7 +309,7 @@ class ProductDetailDrinks extends Component {
                         <Text
                           style={styles.discountText}>
                           {' '}
-                          {this.state.details.ecom_aca_product_units[this.state.selectedQty].savedPrices}
+                          {this.state.details.ecom_aca_product_units[this.state.index].savedPrices}
                         </Text>
                       </View>
                     </ImageBackground>
@@ -477,7 +496,7 @@ class ProductDetailDrinks extends Component {
               style={styles.modalBody}>
               <Text
                 style={styles.modalTextDetail}>
-                {this.state.details.name}
+                {this.state.details.name} {this.state.selectedQty.unitQty+this.state.selectedQty.unitType}
               </Text>
               <View style={styles.modalCartQty}>
                 <TouchableOpacity
@@ -490,7 +509,8 @@ class ProductDetailDrinks extends Component {
                 </TouchableOpacity>
                 <Text
                   style={styles.modalTextDetail}>
-                  {' ' + this.state.cartQty + ' '}
+                    {' ' + this.state.selectedQty.qty +' '}
+                  {/* {' ' + this.state.cartQty + ' '} */}
                 </Text>
                 <TouchableOpacity
                   onPress={() => this.addCart()}

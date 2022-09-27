@@ -295,7 +295,7 @@ class SelectBars extends Component {
                     </View>
                     <View
                       style={{
-                        width: '60%',
+                        width: '55%',
                         alignSelf: 'flex-start',
                         margin: 10,
                       }}>

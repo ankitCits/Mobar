@@ -1,3 +1,4 @@
+import { LongFloatNumberCSSPropertyValidator } from '@native-html/css-processor/lib/typescript/validators/LongFloatNumberCSSPropertyValidator';
 import React, { Component } from 'react';
 import {
   Text,
@@ -47,9 +48,7 @@ export default class MyCard extends Component {
 
   fetchData = async () => {
     try {
-      // this.setState({ isFetching: true });
       const resp = await fetchCart();
-      console.log(resp.response.result.data);
       this.setState({
         cart: resp.response.result.data,
         hostUrl: resp.response.result.hostUrl,
@@ -70,22 +69,18 @@ export default class MyCard extends Component {
     }
   };
 
-  onChange = (qty, id) => {
-    console.log("Item", qty, id);
-    if (qty == 0) {
-      const data = this.state.cart.filter(x => x.cartId != id);
-      this.setState({ cart: data, totalQty: data.length })
-      this.fetchData();
+  onChange = (item) => {
+    if (item.qty == 0) {
+      this.state.cart.filter(x =>{
+        if(x.cartId == item.id){
+          x.qty = parseInt(item.qty)
+        }
+      });
+    const length = this.state.cart.filter(x =>x.qty != 0).length;
+     this.setState({ cart: this.state.cart, totalQty: length });
     }
+    this.setState({ amountData: item.data });
   }
-
-  renderCartItems = (item, index) => {
-    return (
-      <>
-        <CartProduct navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} onChange={this.onChange} />
-      </>
-    );
-  };
 
   applyCoupon = async () => {
     this.setState({ couponLoader: true });
@@ -146,19 +141,14 @@ export default class MyCard extends Component {
                 {this.state.totalQty} items in your cart
               </Text>
             </View>
-
-            {/* <FlatList
-              data={this.state.cart}
-              keyExtractor={(item, index) => index.toString()}
-              // onRefresh={this.onRefresh}
-              renderItem={({ item, index }) => this.renderCartItems(item, index)}
-              extraData={this.props.isFetching}
-            /> */}
-            <View style={{ height: '46%' }}>
+            
+            <View style={{ height: '47%' }}>
               <ScrollView>
                 {
                   this.state.cart && this.state.cart.length > 0 && this.state.cart.map((cartItem, index) => (
-                    <CartProduct navigation={this.props.navigation} index={index} item={cartItem} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item, qty) }} />
+                    cartItem.qty != 0 ?
+                    <CartProduct navigation={this.props.navigation} index={index} item={cartItem} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item) }} /> :
+                    null
                   ))
                 }
               </ScrollView>
@@ -391,7 +381,7 @@ const styles = StyleSheet.create({
     color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
   },
   bottomContainer: {
-    marginTop: 0,
+    marginTop: 10,
     //flex:1,
     justifyContent: 'flex-end',
     //backgroundColor:"red"

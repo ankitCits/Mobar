@@ -34,7 +34,7 @@ export default class SelectInput extends React.Component {
     render() {
         return (
             <>
-                <View style={styles.sectionStyle}>
+                <View style={styles.sectionStyle} key={this.state.selectedItem.id}>
                     <View style={styles.accordianTitle}>
                         <Text onPress={() => this.toggle()}
                             style={styles.inputText}
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
         borderTopLeftRadiusRadius: 10,
         borderTopRightRadiusRadius: 10,
         elevation: 4,
-        zIndex: 15
+        zIndex: 5
     },
     collapsed: {
         flexDirection: 'row',

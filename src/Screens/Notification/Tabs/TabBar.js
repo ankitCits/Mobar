@@ -100,7 +100,11 @@ const inactiveTab = label => {
 };
 
 const MyTabBar = ({state, descriptors, navigation, position}) => (
-  <View style={{height: 50, marginBottom: 10}}>
+  <View style={{
+    flexDirection:'column',
+    height: 56,
+    //alignSelf:'center'
+  }}>
     <ScrollView horizontal={true} style={styles.topTab}>
       <View style={styles.parentTab}>
         {state.routes.map((route, index) => {
@@ -147,9 +151,7 @@ const MyTabBar = ({state, descriptors, navigation, position}) => (
               style={{
                 backgroundColor: 'transparent',
                 borderRadius: 80,
-                paddingLeft: 10,
                 justifyContent: 'space-between',
-                paddingLeft: 20,
               }}>
               <View>{isFocused ? activeTab(label) : inactiveTab(label)}</View>
             </TouchableOpacity>
@@ -172,23 +174,23 @@ const styles = StyleSheet.create({
     margin: 0,
     padding: 5,
     borderRadius: 20,
-    // alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: 'transparent',
-    alignSelf: 'center',
+    //alignSelf: 'center',
     width: 80,
   },
   parentTab: {
+    flex:1,
     flexDirection: 'row',
+    alignItems:'center',
+    paddingHorizontal:40,
     backgroundColor: '#fff',
     shadowRadius: 20,
     elevation: 2,
-    justifyContent: 'center',
   },
   underlinePicker: {
-    backgroundColor: '#711323',
-    height: 3,
-    top: '75%',
+    backgroundColor: 'transparent',
+    // /height: 3,
+    //top: '75%',
     // width: 100,
     // left: 20,
   },
