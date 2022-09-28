@@ -32,6 +32,9 @@ class ProductCard extends Component {
             data: this.props.item,
             cart: this.props.item.ecom_aca_product_units[0].ecom_ba_cart ? parseInt(this.props.item.ecom_aca_product_units[0].ecom_ba_cart.qty) : 0,
         };
+        console.log();
+        console.log("this.state.data.ecom_aca_product_units.savedPrices", this.state.data.ecom_aca_product_units);
+
     }
 
     addCart = async (productUnitId) => {
@@ -177,105 +180,113 @@ class ProductCard extends Component {
             <View style={styles.itemOuterContainer}>
                 <View style={styles.itemContainer}>
                     <TouchableOpacity
-                     onPress={() => navigation.navigate('ProductDetailDrinks', { id: this.state.data.productId })}>
-                    <View style={styles.topBar}>
-                        <Text style={styles.item}>
-                            {this.state.data.ecom_aca_product_units[0].unitQty}{' '}
-                            {this.state.data.ecom_aca_product_units[0].unitType}
-                        </Text>
-                        <TouchableOpacity
-                            onPress={() => {
-                                this.state.isFavorite
-                                    ? this.removeFavorite(this.state.data.ecom_ba_wishlist.wishlistId, index)
-                                    : this.addFavorite(this.state.data.productId, index);
-                            }}>
-                            <View style={styles.favContainer}>
+                        onPress={() => navigation.navigate('ProductDetailDrinks', { id: this.state.data.productId })}>
+                        <View style={styles.topBar}>
+                            <Text style={styles.item}>
+                                {this.state.data.ecom_aca_product_units[0].unitQty}{' '}
+                                {this.state.data.ecom_aca_product_units[0].unitType}
+                            </Text>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    this.state.isFavorite
+                                        ? this.removeFavorite(this.state.data.ecom_ba_wishlist.wishlistId, index)
+                                        : this.addFavorite(this.state.data.productId, index);
+                                }}>
+                                <View style={styles.favContainer}>
+                                    <Image
+                                        resizeMode={'contain'}
+                                        source={this.state.isFavorite ? images.heartFill : images.heart}
+                                        defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
+                                        style={styles.favIcon}
+                                    />
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                        <View
+                            style={styles.itemDetails}>
+                            <TouchableOpacity onPress={() => navigation.navigate('ProductDetailDrinks', { id: this.state.data.productId })}>
                                 <Image
-                                    resizeMode={'contain'}
-                                    source={this.state.isFavorite ? images.heartFill : images.heart}
-                                    defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
-                                    style={styles.favIcon}
+                                    resizeMode={'cover'}
+                                    source={{
+                                        uri: this.state.data.images
+                                            ? `${hostUrl + this.state.data.images}`
+                                            : images.wine,
+                                    }}
+                                    defaultSource={images.wine}
+                                    style={styles.prodImage}
                                 />
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                    <View
-                        style={styles.itemDetails}>
-                        <TouchableOpacity onPress={() => navigation.navigate('ProductDetailDrinks', { id: this.state.data.productId })}>
-                            <Image
-                                resizeMode={'cover'}
-                                source={{
-                                    uri: this.state.data.images
-                                        ? `${hostUrl + this.state.data.images}`
-                                        : images.wine,
-                                }}
-                                defaultSource={images.wine}
-                                style={styles.prodImage}
-                            />
-                        </TouchableOpacity>
-                        <Text
-                            style={styles.prodName}>
-                            {this.state.data.name.substring(0, 16)}
-                        </Text>
-                        {/* <Text
+                            </TouchableOpacity>
+                            <Text
+                                style={styles.prodName}>
+                                {this.state.data.name.substring(0, 16)}
+                            </Text>
+                            {/* <Text
                             style={styles.prodDesText}
                              >
                             {this.state.data.shortDescription = this.state.data.shortDescription.substring(3, 1) + '.'}
                          </Text> */}
-                        <View style={styles.oneLine}>
-                            <HTMLView value={this.state.data.shortDescription.substring(0, 20) + '..'} />
-                        </View>
+                            <View style={styles.oneLine}>
+                                <HTMLView value={this.state.data.shortDescription.substring(0, 20) + '..'} />
+                            </View>
 
-                        <Text
-                            style={styles.priceText}>
-                            ${this.state.data.ecom_aca_product_units[0].unitUserPrice}
-                        </Text>
-                    </View>
-                    <View
-                        style={styles.savedPrices}>
-                        {this.state.data.ecom_aca_product_units.savedPrices ? (
-                            <ImageBackground
-                                resizeMode={'cover'}
-                                source={images.saveTemplate}
-                                defaultSource={images.saveTemplate}
-                                style={styles.savedPriceImg}>
-                                <Text
-                                    style={styles.savedPriceText}>
-                                    Save $50{this.state.data.ecom_aca_product_units.savedPrices}
-                                </Text>
-                            </ImageBackground>
-                        ) : (<ImageBackground></ImageBackground>)
-                        }
-                        <View
-                            style={styles.cartRow}>
-                            {this.state.cart != 0 ? (
-                                <>
-                                    <TouchableOpacity
-                                        onPress={() => this.state.data.ecom_aca_product_units[0].ecom_ba_cart &&
-                                            this.state.cart > 0 ?
-                                            this.updateCart(this.state.data.ecom_aca_product_units[0].ecom_ba_cart, 2, index) : Alert.alert('', 'Work in progress')}
-                                        style={styles.cartActionIcon}>
-                                        <Icon
-                                            name="remove"
-                                            size={18}
-                                            color="#fff"
-                                        />
-                                    </TouchableOpacity>
-                                    <Text
-                                        style={styles.cartQty}>
-                                        {this.state.cart}
-                                    </Text>
-                                </>
-                            ) : null}
-                            <TouchableOpacity
-                                onPress={() => this.state.data.ecom_aca_product_units[0].ecom_ba_cart &&
-                                    this.state.cart
-                                    ? this.updateCart(this.state.data.ecom_aca_product_units[0].ecom_ba_cart, 1, index) : this.addCart(this.state.data.ecom_aca_product_units[0].productUnitId, index)}
-                                style={styles.cartActionIcon}>
-                                <Icon name="add" size={18} color="#fff" />
-                            </TouchableOpacity>
+                            <Text
+                                style={styles.priceText}>
+                                ${this.state.data.ecom_aca_product_units[0].unitUserPrice}
+                            </Text>
                         </View>
-                    </View>
+                        <View style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignContent: 'flex-end',
+                        }}
+
+                        >
+                            <View
+                                style={styles.savedPrices}>
+                                {this.state.data.ecom_aca_product_units[0].savedPrices ? (
+                                    <ImageBackground
+                                        resizeMode={'cover'}
+                                        source={images.saveTemplate}
+                                        defaultSource={images.saveTemplate}
+                                        style={styles.savedPriceImg}>
+                                        <Text
+                                            style={styles.savedPriceText}>
+                                            Save $50{this.state.data.ecom_aca_product_units.savedPrices}
+                                        </Text>
+                                    </ImageBackground>
+                                ) : (<ImageBackground></ImageBackground>)
+                                }
+                            </View>
+                            <View
+                                style={styles.cartRow}>
+                                {this.state.cart != 0 ? (
+                                    <>
+                                        <TouchableOpacity
+                                            onPress={() => this.state.data.ecom_aca_product_units[0].ecom_ba_cart &&
+                                                this.state.cart > 0 ?
+                                                this.updateCart(this.state.data.ecom_aca_product_units[0].ecom_ba_cart, 2, index) : Alert.alert('', 'Work in progress')}
+                                            style={styles.cartActionIcon}>
+                                            <Icon
+                                                name="remove"
+                                                size={18}
+                                                color="#fff"
+                                            />
+                                        </TouchableOpacity>
+                                        <Text
+                                            style={styles.cartQty}>
+                                            {this.state.cart}
+                                        </Text>
+                                    </>
+                                ) : null}
+                                <TouchableOpacity
+                                    onPress={() => this.state.data.ecom_aca_product_units[0].ecom_ba_cart &&
+                                        this.state.cart
+                                        ? this.updateCart(this.state.data.ecom_aca_product_units[0].ecom_ba_cart, 1, index) : this.addCart(this.state.data.ecom_aca_product_units[0].productUnitId, index)}
+                                    style={styles.cartActionIcon}>
+                                    <Icon name="add" size={18} color="#fff" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -293,7 +304,7 @@ const styles = StyleSheet.create({
     itemContainer: {
         flexDirection: 'column',
         width: size - 28,
-        height: 200,
+        //height: 200,
         shadowColor: '#000',
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.5,
@@ -356,7 +367,9 @@ const styles = StyleSheet.create({
     },
     savedPrices: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        flex: 1,
+        marginTop: 10,
+        alignItems: 'flex-end',
     },
     savedPriceImg: {
         width: 76,
@@ -371,7 +384,9 @@ const styles = StyleSheet.create({
         marginLeft: 5,
     },
     cartRow: {
+        marginHorizontal: 5,
         flexDirection: 'row',
+        alignSelf: 'center',
     },
     topBar: {
         flexDirection: 'row',

@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { addToCart, fetchProductDetails } from '../../api/product';
+import { addToCart, fetchProductDetails, updateToCart } from '../../api/product';
 import images from '../../assets/images';
 import { FontFamily } from '../../Theme/FontFamily';
 import HTMLView from 'react-native-htmlview';
@@ -33,7 +33,7 @@ class ProductDetailDrinks extends Component {
       vendors: [],
       cartQty: 0,
       modalVisible: false,
-      index:0,
+      index: 0,
       selectedQty: 0,
       isFavorite: false
     };
@@ -43,13 +43,40 @@ class ProductDetailDrinks extends Component {
     this.productDetails();
   }
 
+  productDetails = async () => {
+    try {
+      const data = {
+        productId: this.state.id,
+        latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : '',
+        longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
+      }
+      let resp = await fetchProductDetails(data);
+      if (resp.response.result && resp.response.result.data) {
+        resp.response.result.data.ecom_aca_product_units.map(item => {
+          item.qty = 0
+        });
+
+        this.setState({ details: resp.response.result.data, index: 0 });
+        this.setState({ vendors: resp.response.result.data.ecom_ae_vendors });
+        this.setState({ hostUrl: resp.response.result.hostUrl });
+        this.setState({ isFavorite: (resp.response.result.data.ecom_ba_wishlist && resp.response.result.data.ecom_ba_wishlist.wishlistId) ? true : false });
+        this.setState({ selectedQty: this.state.details.ecom_aca_product_units[0] });
+      }
+    } catch (error) {
+      ToastAndroid.showWithGravity(
+        error,
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+      );
+    }
+  }
+
   addCart = async () => {
     const token = await getAccessToken();
     if (token == null) {
       showAlert();
       return;
     } else {
-      console.log("selected quantity >",this.state.selectedQty.productUnitId);
       try {
         const cartItem = {
           productUnitId: this.state.selectedQty.productUnitId,
@@ -57,13 +84,8 @@ class ProductDetailDrinks extends Component {
           qty: 1,
         };
         const cartResponse = await addToCart(cartItem);
-        this.state.selectedQty.qty = this.state.selectedQty.qty + 1;
-        this.setState({ selectedQty: this.state.selectedQty })
-        // ToastAndroid.showWithGravity(
-        //   'Item added to cart successfully',
-        //   ToastAndroid.LONG,
-        //   ToastAndroid.TOP,
-        // );
+        this.state.selectedQty.qty = this.state.selectedQty.qty + 1
+        this.setState({ selectedQty: this.state.selectedQty });
       } catch (error) {
         console.log("Details Bars > addCart > catch", error);
         ToastAndroid.showWithGravity(
@@ -75,38 +97,31 @@ class ProductDetailDrinks extends Component {
     }
   }
 
-  productDetails = async () => {
-    try {
-      const data = {
-        productId: this.state.id,
-        latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : '',
-        longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
-      }
-      const resp = await fetchProductDetails(data);
-      if (resp.response.result && resp.response.result.data) {
-        console.log("Data >>>>>>>>",resp.response.result.data);
-        this.setState({ details: resp.response.result.data,index:0 });
-        this.setState({ vendors: resp.response.result.data.ecom_ae_vendors });
-        this.setState({ hostUrl: resp.response.result.hostUrl });
-        this.setState({ isFavorite: (resp.response.result.data.ecom_ba_wishlist && resp.response.result.data.ecom_ba_wishlist.wishlistId) ? true : false });
-        const defaultSelectedData = {
-          productUnitId:this.state.details.ecom_aca_product_units[0].productUnitId,
-          unitQty:this.state.details.ecom_aca_product_units[0].unitQty,
-          unitType:this.state.details.ecom_aca_product_units[0].unitType,
-          qty:0
+  updateCart = async (item, type, index) => {
+    const token = await getAccessToken();
+    if (token == null) {
+      showAlert();
+    } else {
+      try {
+        const sendData = {
+          cartId: this.state.selectedQty.ecom_ba_cart.cartId,
+          type: 2,
+        };
+        if (this.state.selectedQty.qty > 0) {
+          const response = await updateToCart(sendData);
+          this.state.selectedQty.qty = this.state.selectedQty.qty - 1;
+          this.setState({ selectedQty: this.state.selectedQty });
         }
-        this.setState({ selectedQty: defaultSelectedData });
-        //console.log("this.state.se.details.ecom_aca_product_units >>>",this.state.details.ecom_aca_product_units);
-        console.log("price > ",this.state.details.ecom_aca_product_units[this.state.index].unitUserPrice);
+      } catch (error) {
+        ToastAndroid.showWithGravity(
+          error,
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+        );
       }
-    } catch (error) {
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-      );
     }
   }
+
 
   removeFavorite = async (id) => {
     const token = await getAccessToken();
@@ -159,7 +174,6 @@ class ProductDetailDrinks extends Component {
       }
     }
   }
-
 
   renderItem = (item) => {
     return (
@@ -223,17 +237,8 @@ class ProductDetailDrinks extends Component {
     );
   }
 
-  setQty = (itemIndex,item) => {
-    //console.log("this.setState({ selectedQty: index })", itemIndex,item);
-    console.log("default selected quantity >>> ",item.qty,itemIndex);
-    if(item.qty == undefined)
-    {
-      item.qty = 0;
-      console.log("after update item qty >>",item);
-      this.state.details.ecom_aca_product_units[itemIndex]=item
-      this.setState({index:itemIndex, selectedQty: item,details:this.state.details });
-    }
-    
+  setQty = (itemIndex, item) => {
+    this.setState({ index: itemIndex, selectedQty: this.state.details.ecom_aca_product_units[itemIndex] });
   }
 
 
@@ -241,9 +246,9 @@ class ProductDetailDrinks extends Component {
     //console.log("render Item >",item.qty);
     return (
       <TouchableOpacity
-        onPress={() => this.setQty(index,item)}
+        onPress={() => this.setQty(index, item)}
         style={
-          index == this.state.index
+          item.productUnitId == this.state.selectedQty.productUnitId
             ? styles.itemQuantitySelected
             : styles.itemQuantity
         }
@@ -280,7 +285,7 @@ class ProductDetailDrinks extends Component {
                     style={styles.headerText}>
                     {this.state.details.name}
                   </Text>
-                  {this.state.details.ecom_aca_product_units && this.state.details.ecom_aca_product_units[this.state.index]?
+                  {this.state.details.ecom_aca_product_units && this.state.details.ecom_aca_product_units[this.state.index] ?
                     <Text
                       style={styles.priceText}>
                       {'$ ' + this.state.details.ecom_aca_product_units[this.state.index].unitUserPrice}
@@ -308,7 +313,7 @@ class ProductDetailDrinks extends Component {
                         </Text>
                         <Text
                           style={styles.discountText}>
-                          {' '}
+                          {' $'}
                           {this.state.details.ecom_aca_product_units[this.state.index].savedPrices}
                         </Text>
                       </View>
@@ -391,7 +396,7 @@ class ProductDetailDrinks extends Component {
                 <View style={styles.descriptionContainer}>
                   <HTMLView
                     value={this.state.details.description}
-                    // stylesheet={styles.descriptionText}
+                  // stylesheet={styles.descriptionText}
                   />
                 </View>
               </View>
@@ -414,7 +419,6 @@ class ProductDetailDrinks extends Component {
               style={styles.vendor}>
               {this.state.vendors && this.state.vendors.length > 0 ?
                 this.state.vendors.map((item, index) => {
-                  console.log(item)
                   return (
                     <View style={styles.vendorContainer}>
                       <TouchableOpacity
@@ -492,25 +496,25 @@ class ProductDetailDrinks extends Component {
                 Item added to cart successfully
               </Text>
             </View>
-
             <View
               style={styles.modalBody}>
               <Text
                 style={styles.modalTextDetail}>
-                {this.state.details.name} {this.state.selectedQty.unitQty+this.state.selectedQty.unitType}
+                {this.state.details.name} {this.state.selectedQty.unitQty + this.state.selectedQty.unitType}
               </Text>
               <View style={styles.modalCartQty}>
                 <TouchableOpacity
                   onPress={() => {
-                    this.setState({ modalVisible: false })
-                    alert('work in progress')
+                    this.state.selectedQty.ecom_ba_cart ?
+                      this.updateCart(this.state.selectedQty) :
+                      this.setState({ modalVisible: false })
                   }}
                 >
                   <Icon name="remove" size={20} color="#4D4F50" />
                 </TouchableOpacity>
                 <Text
                   style={styles.modalTextDetail}>
-                    {' ' + this.state.selectedQty.qty +' '}
+                  {' ' + this.state.selectedQty.qty + ' '}
                   {/* {' ' + this.state.cartQty + ' '} */}
                 </Text>
                 <TouchableOpacity
@@ -523,8 +527,8 @@ class ProductDetailDrinks extends Component {
             <TouchableOpacity
               style={styles.save}
               onPress={() => {
-                this.setState({ modalVisible: false }),
-                  this.props.navigation.navigate('MyCard')
+                this.setState({ modalVisible: false })
+                this.props.navigation.navigate('MyCard')
               }}>
               <Text style={{
                 fontFamily: FontFamily.TAJAWAL_REGULAR,
@@ -568,7 +572,6 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     zIndex: 1
-
   },
   backArrowContainer: {
     margin: 12,
@@ -601,7 +604,6 @@ const styles = StyleSheet.create({
     color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     fontWeight: '400',
     marginTop: 10,
-
   },
   discountContainer: {
     width: 180,
@@ -622,7 +624,6 @@ const styles = StyleSheet.create({
   },
   quantity: {
     marginTop: '15%',
-
   },
   qtyText: {
     fontFamily: FontFamily.TAJAWAL_REGULAR,
@@ -646,7 +647,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   prodImage: {
-    //width: '30%',
     height: '30%',
     alignItems: 'center',
     marginTop: '5%',
@@ -660,7 +660,6 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
     marginTop: -20,
-    //paddingLeft:35,
     alignContent: 'center',
     zIndex: 0,
   },
@@ -670,11 +669,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#AD1832',
     width: 192,
     borderRadius: 20,
-
   },
   cartMargin: {
     margin: 40,
-
   },
   cartBtnContainer: {
     flexDirection: 'row',
@@ -682,7 +679,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignContent: "center",
     paddingLeft: 40,
-    //backgroundColor:"powderblue"
   },
   cartText: {
     fontSize: 15,
@@ -749,11 +745,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     elevation: 2,
-    //marginTop: 15,
-    //marginBottom: 10
   },
   vendorContainer: {
-    //margin: 10,
     marginHorizontal: 10,
     marginVertical: 10,
     paddingBottom: 10,
@@ -853,7 +846,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    borderRadius: 20
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   modalHeader: {
     paddingVertical: 10
@@ -879,62 +873,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end'
   },
-
-  // bottomContainer: {
-  //   marginTop: '10%',
-  // },
-  // bottomSubContainer: {
-  //   shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
-  //   shadowOffset: {
-  //     width: 0,
-  //     height: 5,
-  //   },
-  //   shadowOpacity: 1,
-  //   shadowRadius: 10,
-  //   elevation: 4,
-  //   backgroundColor: ThemeColors.CLR_WHITE,
-  //   borderTopLeftRadius: 20,
-  //   borderTopRightRadius: 20,
-  //   overflow: 'hidden',
-  // },
-  // textMsg: {
-  //   margin: 20
-  // },
-  // textDetails: {
-  //   color: '#ACACAC',
-  //   fontWeight: '500',
-  //   fontSize: 14,
-  //   fontFamily: FontFamily.TAJAWAL_REGULAR,
-  // },
-  // productText: {
-  //   fontFamily: FontFamily.TAJAWAL_REGULAR,
-  //   fontSize: 15,
-  //   fontWeight: '500',
-  //   color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
-  // },
-  // cartQuantity: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center'
-  // },
-  // qty: {
-  //   fontFamily: FontFamily.TAJAWAL_REGULAR,
-  //   fontSize: 15,
-  //   fontWeight: '500',
-  //   color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
-  // },
-  // cartButton: {
-  //   marginTop: 30,
-  //   marginBottom: 10
-  // },
   descriptionContainer: { marginTop: 20 },
-  // cartBtnText: {
-  //   color: ThemeColors.CLR_WHITE,
-  //   fontFamily: FontFamily.TAJAWAL_REGULAR,
-  //   fontWeight: '700',
-  //   fontSize: 18
-  // },
-  // productUnderline: {
-  //   height: 0.7,
-  //   backgroundColor: '#ACACAC',
-  // },
 });
