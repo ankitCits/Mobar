@@ -604,7 +604,7 @@ export default class Redeem extends Component {
             >
               {this.state.isLoading ?
 
-                <ActivityIndicator size="mideum" color="#ffffff" />
+                <ActivityIndicator size="small" color="#ffffff" />
 
                 :
                 <Text style={{ color: '#fff', fontSize: 15 }}>REDEEM</Text>
