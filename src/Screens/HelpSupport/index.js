@@ -41,15 +41,15 @@ export default class HelpSupport extends Component {
       categoryError: null,
       descriptionError: null,
       formError: '',
-      faqData:[],
+      faqData: [],
       categoryData: [
-        {id:1,title:'Enquiry'},
-        {id:2,title:'Complaint'},
-        {id:3,title:'Order Related'},
-        {id:4,title:'Account Related'},
-        {id:5,title:'Product Related'},
-        {id:6,title:'Payment Related'},
-        {id:7,title:'Bar Related'}
+        { id: 1, title: 'Enquiry' },
+        { id: 2, title: 'Complaint' },
+        { id: 3, title: 'Order Related' },
+        { id: 4, title: 'Account Related' },
+        { id: 5, title: 'Product Related' },
+        { id: 6, title: 'Payment Related' },
+        { id: 7, title: 'Bar Related' }
       ]
     };
   }
@@ -58,7 +58,7 @@ export default class HelpSupport extends Component {
     this.setState({ [name]: value }, () => { this.validateField(name, value) });
   }
 
-  componentDidMount = ()=>{
+  componentDidMount = () => {
     this.getFAQData();
   }
 
@@ -127,7 +127,6 @@ export default class HelpSupport extends Component {
     this.validateField('mobileNumber');
     this.validateField('description');
     this.validateField('category');
-    console.log("selected category",this.state.category);
     if (this.state.nameError == null && this.state.emailError == null &&
       this.state.mobileError == null && this.state.descriptionError == null &&
       this.state.categoryError == null) {
@@ -140,45 +139,43 @@ export default class HelpSupport extends Component {
       };
       try {
         const response = await helpSupport(raw);
-        this.setState({ formError: null });
         if (response && response.status == 'SUCCESS') {
-          this.setState({ categoryError: null });
+          this.setState({ categoryError: null, loader: false });
           ToastAndroid.showWithGravity(
             response.mag,
             ToastAndroid.LONG,
             ToastAndroid.TOP,
           );
         }
-        this.setState({ loader: false });
       } catch (error) {
-        //this.setState({ formError: error, loader: false });
+        this.setState({ loader: false });
       }
     }
   };
 
-  getFAQData = async ()=>{
-    try{
-    const res = await fetchFAQData();
-    console.log("HelpSupport > getFAQData > res >",res.response.result.faq);
-    this.setState({faqData:res.response.result.faq});
-    console.log("HelpSupport > getFAQData > state data>",res.response.result.faq);
-    
-    }catch(error){
-      console.log("HelpSupport > getFAQData > catch >",error);
+  getFAQData = async () => {
+    try {
+      const res = await fetchFAQData();
+      console.log("HelpSupport > getFAQData > res >", res.response.result.faq);
+      this.setState({ faqData: res.response.result.faq });
+      console.log("HelpSupport > getFAQData > state data>", res.response.result.faq);
+
+    } catch (error) {
+      console.log("HelpSupport > getFAQData > catch >", error);
     }
   }
 
-  renderFaqCategory = (item,index) => {
+  renderFaqCategory = (item, index) => {
     (
-     <View style={styles.helpBottomList} key={index}>
-          <Text style={styles.helpBottomListText}>Account</Text>
-          <Icon
-            name="navigate-next"
-            size={30}
-            color={ThemeColors.CLR_DARK_GREY}
-            style={styles.imageStyle}
-          />
-        </View>
+      <View style={styles.helpBottomList} key={index}>
+        <Text style={styles.helpBottomListText}>Account</Text>
+        <Icon
+          name="navigate-next"
+          size={30}
+          color={ThemeColors.CLR_DARK_GREY}
+          style={styles.imageStyle}
+        />
+      </View>
     )
   }
 
@@ -187,7 +184,7 @@ export default class HelpSupport extends Component {
   };
 
   onSelected = (value) => {
-    console.log("value",value);
+    console.log("value", value);
     this.setState({ category: value.title });
     this.toggle();
   };
@@ -280,12 +277,12 @@ export default class HelpSupport extends Component {
             />
             <View style={styles.dropdown} >
               <SelectInput items={this.state.categoryData}
-                  selectedItems={{ id: 0, title: 'Select Category' }}
-                  visible={false}
-                  onChange={
-                    (item) => { this.onSelected(item) }
-                  } />
-                  </View>
+                selectedItems={{ id: 0, title: 'Select Category' }}
+                visible={false}
+                onChange={
+                  (item) => { this.onSelected(item) }
+                } />
+            </View>
             {this.state.categoryError &&
               <View style={styles.errorContainer}>
                 <Text style={styles.errorText}>{this.state.categoryError}</Text>
@@ -298,9 +295,9 @@ export default class HelpSupport extends Component {
               onChangeText={text => this.handleUserInput('description', text)}
               error={this.state.descriptionError}
             />
-            <Text style={styles.errorText}>
+            {/* <Text style={styles.errorText}>
               {this.state.formError}
-            </Text>
+            </Text> */}
           </View>
           <View>
             <View style={styles.btnContainer}>
@@ -336,25 +333,25 @@ export default class HelpSupport extends Component {
             <View style={styles.helpBottom}>
               {
                 this.state.faqData.length > 0 &&
-                this.state.faqData.map((item, index) => 
-                  (
-                    <>
-                      <TouchableOpacity 
-                      onPress={()=>{
-                        this.props.navigation.navigate('FAQs',{data:this.state.faqData,selectedItem:item})
+                this.state.faqData.map((item, index) =>
+                (
+                  <>
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.props.navigation.navigate('FAQs', { data: this.state.faqData, selectedItem: item })
                       }}
                       style={styles.helpBottomList} key={index}>
-                        <Text style={styles.helpBottomListText}>{item.CategoryName}</Text>
-                        <Icon
-                          name="navigate-next"
-                          size={30}
-                          color={ThemeColors.CLR_DARK_GREY}
-                          style={styles.imageStyle}
-                        />
-                      </TouchableOpacity>
-                      <View style={styles.underLine} />
-                    </>
-                  )
+                      <Text style={styles.helpBottomListText}>{item.CategoryName}</Text>
+                      <Icon
+                        name="navigate-next"
+                        size={30}
+                        color={ThemeColors.CLR_DARK_GREY}
+                        style={styles.imageStyle}
+                      />
+                    </TouchableOpacity>
+                    <View style={styles.underLine} />
+                  </>
+                )
                 )
               }
 
@@ -453,7 +450,7 @@ const styles = StyleSheet.create({
     color: '#4D4F50',
     textAlign: 'center'
   },
-  dropdown:{marginBottom:25},
+  dropdown: { marginBottom: 25 },
   imageStyle: {
     resizeMode: 'stretch',
     alignSelf: 'center',
@@ -463,7 +460,7 @@ const styles = StyleSheet.create({
   btnContainer: {
     marginTop: '7%',
     marginBottom: '6%',
-    zIndex:-1,
+    zIndex: -1,
   },
   save: {
     backgroundColor: '#851729',
@@ -472,7 +469,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     width: 300,
-    zIndex:0,
+    zIndex: 0,
   },
   btnText: {
     color: ThemeColors.CLR_WHITE,
@@ -484,7 +481,7 @@ const styles = StyleSheet.create({
     marginLeft: '7%',
     marginBottom: 0,
     flexDirection: 'row',
-    zIndex:-1,
+    zIndex: -1,
     alignItems: 'center'
   },
   faqs: {

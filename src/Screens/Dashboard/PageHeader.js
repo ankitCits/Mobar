@@ -59,7 +59,7 @@ class PageHeader extends Component {
                 <Image
                     resizeMode="cover"
                     resizeMethod="resize"
-                    style={{ width: viewportWidth, height: 200 }}
+                    style={{ width: viewportWidth - 30, height: 200 }}
                     defaultSource={images.Dashboard}
                     // source={images.Dashboard} 
                     source={{ uri: `${this.state.hostUrl + item.slider}` }}

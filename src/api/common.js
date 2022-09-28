@@ -83,6 +83,9 @@ export const fetchFAQData = () => {
 
 export const getNotification = () => {
     return new Promise(async (resolve, reject) => {
+
+        const token = await getAccessToken(token);
+
         const myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
         myHeaders.append('A_Key', A_KEY);
@@ -90,6 +93,10 @@ export const getNotification = () => {
             method: 'GET',
             headers: myHeaders,
         };
+
+        if (token) {
+            myHeaders.append('Token', `${token}`);
+        }
 
         fetch(`${BASE_URL}/app/notification`, requestOptions)
             .then(response => response.json())

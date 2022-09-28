@@ -71,13 +71,13 @@ export default class MyCard extends Component {
 
   onChange = (item) => {
     if (item.qty == 0) {
-      this.state.cart.filter(x =>{
-        if(x.cartId == item.id){
+      this.state.cart.filter(x => {
+        if (x.cartId == item.id) {
           x.qty = parseInt(item.qty)
         }
       });
-    const length = this.state.cart.filter(x =>x.qty != 0).length;
-     this.setState({ cart: this.state.cart, totalQty: length });
+      const length = this.state.cart.filter(x => x.qty != 0).length;
+      this.setState({ cart: this.state.cart, totalQty: length });
     }
     this.setState({ amountData: item.data });
   }
@@ -141,14 +141,14 @@ export default class MyCard extends Component {
                 {this.state.totalQty} items in your cart
               </Text>
             </View>
-            
+
             <View style={{ height: '47%' }}>
               <ScrollView>
                 {
                   this.state.cart && this.state.cart.length > 0 && this.state.cart.map((cartItem, index) => (
                     cartItem.qty != 0 ?
-                    <CartProduct navigation={this.props.navigation} index={index} item={cartItem} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item) }} /> :
-                    null
+                      <CartProduct navigation={this.props.navigation} index={index} item={cartItem} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item) }} /> :
+                      null
                   ))
                 }
               </ScrollView>
@@ -173,7 +173,7 @@ export default class MyCard extends Component {
                       style={{
                         backgroundColor: '#751A2A',
                         width: 120,
-                        height: 44,
+                        height: 36,
                         borderRadius: 20,
                         justifyContent: 'center',
                         alignItems: 'center',
@@ -233,7 +233,7 @@ export default class MyCard extends Component {
                       marginLeft: 10,
                       color: '#3C3C3C',
                       fontWeight: '500',
-                      fontSize: 20,
+                      fontSize: 16,
                     }}>
                     Sub Total
                   </Text>
@@ -242,7 +242,7 @@ export default class MyCard extends Component {
                       marginRight: 40,
                       color: '#3C3C3C',
                       fontWeight: '500',
-                      fontSize: 20,
+                      fontSize: 16,
                     }}>
                     ${this.state.amountData.subTotalAmount}
                   </Text>
@@ -260,7 +260,7 @@ export default class MyCard extends Component {
                         marginLeft: 30,
                         color: '#3C3C3C',
                         fontWeight: '500',
-                        fontSize: 18,
+                        fontSize: 16,
                       }}>
                       Coupon Discount
                     </Text>
@@ -269,7 +269,7 @@ export default class MyCard extends Component {
                         marginRight: 40,
                         color: '#F01111',
                         fontWeight: '500',
-                        fontSize: 18,
+                        fontSize: 16,
                       }}>
                       -${this.state.amountData.couponDiscount}
                     </Text>
@@ -287,7 +287,7 @@ export default class MyCard extends Component {
                         marginLeft: 30,
                         color: '#3C3C3C',
                         fontWeight: '500',
-                        fontSize: 18,
+                        fontSize: 16,
                       }}>
                       Discount
                     </Text>
@@ -296,7 +296,7 @@ export default class MyCard extends Component {
                         marginRight: 40,
                         color: '#F01111',
                         fontWeight: '500',
-                        fontSize: 18,
+                        fontSize: 16,
                       }}>
                       -${this.state.amountData.extraDiscount}
                     </Text>
@@ -307,8 +307,8 @@ export default class MyCard extends Component {
                   style={{
                     height: 1,
                     backgroundColor: '#000',
-                    marginTop: 10,
-                    marginBottom: 10,
+                    marginTop: 5,
+                    marginBottom: 5,
                   }}
                 />
 
@@ -323,7 +323,7 @@ export default class MyCard extends Component {
                       marginLeft: 30,
                       color: '#000',
                       fontWeight: '700',
-                      fontSize: 22,
+                      fontSize: 18,
                     }}>
                     Total Payable
                   </Text>
@@ -332,13 +332,13 @@ export default class MyCard extends Component {
                       marginRight: 40,
                       color: '#000',
                       fontWeight: '700',
-                      fontSize: 22,
+                      fontSize: 18,
                     }}>
                     ${this.state.amountData.totalPayable}
                   </Text>
                 </View>
 
-                <View style={{ marginTop: '5%', marginBottom: 10 }}>
+                <View style={{ marginTop: '1%', marginBottom: 10 }}>
                   {/* {this.state.totalQty > 0 &&  */}
                   <TouchableOpacity
                     style={styles.save}
@@ -371,7 +371,8 @@ const styles = StyleSheet.create({
     backgroundColor: ThemeColors.CLR_BG,
   },
   cartCount: {
-    margin: 15,
+    marginHorizontal: 14,
+    marginVertical: 8,
     marginBottom: 0,
   },
   itemCountText: {
@@ -381,10 +382,10 @@ const styles = StyleSheet.create({
     color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
   },
   bottomContainer: {
-    marginTop: 10,
-    //flex:1,
+    // marginTop: 10,
+    flex:1,
     justifyContent: 'flex-end',
-    //backgroundColor:"red"
+    // backgroundColor:"red"
     //height:90,
   },
   subContainer: {
@@ -392,7 +393,6 @@ const styles = StyleSheet.create({
     shadowOffset: {
       width: 0,
       height: 5,
-
     },
     shadowOpacity: 1,
     shadowRadius: 10,

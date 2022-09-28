@@ -10,8 +10,6 @@ import { FontFamily } from '../../Theme/FontFamily';
 import Share from 'react-native-share';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import HeaderSide from '../Component/HeaderSide';
-import { Linking } from 'react-native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 export default class InviteFriends extends Component {
     constructor(props) {
@@ -21,7 +19,7 @@ export default class InviteFriends extends Component {
             isLoading: true,
             title: null,
             shareLink: null,
-            referLink:null,
+            referLink: null,
         };
     }
 
@@ -65,7 +63,7 @@ export default class InviteFriends extends Component {
     }
 
     render() {
-        
+
         return (
             <SafeAreaView style={styles.container}>
                 <HeaderSide
@@ -81,12 +79,11 @@ export default class InviteFriends extends Component {
                         <HTMLView value={this.state.pageData} />
 
                     }
-                    <View style={{fontSize:20,fontWeight:500,padding:15,paddingTop:15,flexDirection:"row",justifyContent:"center"}}>
-                        <Text //onPress={()=>Linking.openURL(this.state.shareLink)}
-                         >
-                            Your Referal link is : 
+                    <View style={{ fontSize: 20, fontWeight: 500, padding: 15, paddingTop: 15, flexDirection: "column", justifyContent: "center", alignItems: 'center' }}>
+                        <Text style={{ color: 'black' }}>
+                            Your Referral link is :
                         </Text>
-                        <Text style={{borderBottomColor:"brown",borderBottomWidth:1}}>{this.state.shareLink}</Text>
+                        <Text style={{}}>{this.state.shareLink}</Text>
                     </View>
                     {!this.state.isLoading &&
                         <TouchableOpacity
@@ -115,7 +112,7 @@ export default class InviteFriends extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: ThemeColors.CLR_BG,
+        backgroundColor: ThemeColors.CLR_WHITE,
     },
     content: {
         margin: 10,
@@ -129,12 +126,12 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         alignSelf: 'center',
     },
-    link:{
-        fontSize:20,
-        fontWeight:500,
-        padding:15,
-        paddingTop:15,
-        flexDirection:"row",
-        justifyContent:"center"      
+    link: {
+        fontSize: 20,
+        fontWeight: 500,
+        padding: 15,
+        paddingTop: 15,
+        flexDirection: "row",
+        justifyContent: "center"
     },
 });

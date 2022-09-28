@@ -106,16 +106,18 @@ class Product extends Component {
   };
 
   renderCategories = (item, index) =>
-    <View
+    <TouchableOpacity
       style={{
         margin: 10,
         marginLeft: 15,
         marginBottom: 0,
-      }}>
-      <TouchableOpacity
-        onPress={() => {
-          this.setState({ itemIndex: index }, () => { this.getProductList(); });
-        }}
+      }}
+      onPress={() => {
+        this.setState({ itemIndex: index }, () => { this.getProductList(); });
+      }}
+    >
+      <View
+
         style={{
           shadowColor: '#fff',
           shadowOffset: { width: 1, height: 0 },
@@ -143,7 +145,7 @@ class Product extends Component {
             width: 35,
           }}
         />
-      </TouchableOpacity>
+      </View>
       <Text
         style={{
           fontSize: 10,
@@ -153,7 +155,7 @@ class Product extends Component {
         }}>
         {item.name}
       </Text>
-    </View>
+    </TouchableOpacity>
 
   renderProducts = (item, index) => {
     return (

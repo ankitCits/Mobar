@@ -352,19 +352,18 @@ class ProductDetailDrinks extends Component {
             <View style={styles.cart}>
               <View style={styles.cartMargin}>
                 <View style={styles.cartBtnContainer}>
-                  <View
-                    style={styles.cartContainer}>
+
+                  <TouchableOpacity
+                    style={styles.cartContainer}
+                    onPress={() => { this.setState({ modalVisible: true }, () => this.addCart()) }}
+                  >
                     <Text
                       style={styles.cartText}
-                      onPress={() => {
-                        this.setState({ modalVisible: true })
-                        this.addCart()
-                      }}
                     >
                       ADD TO CART
                     </Text>
-                    <TouchableOpacity
-                      onPress={() => { this.addCart() }}
+                    <View
+
                       style={styles.cartIcon}>
                       <Image
                         resizeMode={'cover'}
@@ -372,9 +371,8 @@ class ProductDetailDrinks extends Component {
                         defaultSource={images.cart}
                         style={styles.cartImage}
                       />
-                    </TouchableOpacity>
-                  </View>
-                  <View />
+                    </View>
+                  </TouchableOpacity>
 
                   <TouchableOpacity
                     style={styles.heartContainer}
