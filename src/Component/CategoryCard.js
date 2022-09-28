@@ -63,10 +63,11 @@ export default class CategoryCard extends React.Component {
                     vendorId: 0
                 };
                 const response = await addToWishlist(data);
-                this.state.data.ecom_ba_wishlist = {
+                this.props.item.ecom_ba_wishlist = {
                     "wishlistId": response.result.data.wishlistId,
                     "wishlistFor": "Drinks"
                 }
+                console.log("response add ti wishlist >",response.result);
                 this.setState({ isFavorite: true })
             } catch (error) {
                 console.log("CategoryCard > addFavorite > Catch", error);
@@ -115,21 +116,21 @@ export default class CategoryCard extends React.Component {
                         <View style={styles.innerTop}>
                             <TouchableOpacity
                                 onPress={() => {
-                                    this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId
-                                        ? this.removeFavorite(this.state.data.ecom_ba_wishlist.wishlistId)
-                                        : this.addFavorite(this.state.data.productId, index);
+                                    this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId
+                                        ? this.removeFavorite(this.props.item.ecom_ba_wishlist.wishlistId)
+                                        : this.addFavorite(this.props.item.productId, index);
                                 }}>
                                 <View style={styles.favContainer}>
                                     <Image
                                         resizeMode={'contain'}
-                                        source={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
-                                        defaultSource={this.state.data.ecom_ba_wishlist ? images.heartFill : images.heart}
+                                        source={this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
+                                        defaultSource={this.props.item.ecom_ba_wishlist ? images.heartFill : images.heart}
                                         style={styles.favIcon}
                                     />
                                 </View>
                             </TouchableOpacity>
                             <Text style={{ color: '#fff', fontSize: 12 }}>
-                                {this.state.data.ecom_aca_product_units[0].unitQty + this.state.data.ecom_aca_product_units[0].unitType}
+                                {this.props.item.ecom_aca_product_units[0].unitQty + this.props.item.ecom_aca_product_units[0].unitType}
                             </Text>
                         </View>
 
@@ -137,7 +138,7 @@ export default class CategoryCard extends React.Component {
                             style={styles.productImg}
                             resizeMode={'cover'}
                             defaultSource={images.product1}
-                            source={{ uri: hostUrl + this.state.data.images }}
+                            source={{ uri: hostUrl + this.props.item.images }}
                         />
 
                         <Image
@@ -150,14 +151,14 @@ export default class CategoryCard extends React.Component {
                         <View style={styles.innerBottom}>
                             <View>
                                 <Text style={styles.innerBottomText}>
-                                    {this.state.data.name}
+                                    {this.props.item.name}
                                 </Text>
                             </View>
                             <View>
                                 <Text style={styles.innerBottomText2}>
                                     Your Saving:{' '}
                                     {
-                                        this.state.data.ecom_aca_product_units[0].unitDiscountPrice
+                                        this.props.item.ecom_aca_product_units[0].unitDiscountPrice
                                     }
                                 </Text>
                             </View>
@@ -165,7 +166,7 @@ export default class CategoryCard extends React.Component {
                                 <Text style={styles.innerBottomText3}>
                                     ${' '}
                                     {
-                                        this.state.data.ecom_aca_product_units[0].unitUserPrice
+                                        this.props.item.ecom_aca_product_units[0].unitUserPrice
                                     }
                                 </Text>
                             </View>

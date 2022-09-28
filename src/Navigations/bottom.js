@@ -32,7 +32,7 @@ export default function MyBottomTabs() {
         name="Dashboard"
         component={Dashboard}
         options={{
-          unmountOnBlur: true,
+          
           tabBarIcon: ({ focused }) => (
             <Icon name="home" size={28} color={focused ? '#711323' : '#000'} />
           ),
