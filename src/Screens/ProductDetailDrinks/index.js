@@ -11,6 +11,7 @@ import {
   ToastAndroid,
   FlatList,
   Modal,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -173,6 +174,10 @@ class ProductDetailDrinks extends Component {
         );
       }
     }
+  }
+
+  onCloseModal=()=>{
+    this.setState({modalVisible:false})
   }
 
   renderItem = (item) => {
@@ -487,12 +492,19 @@ class ProductDetailDrinks extends Component {
           animationType="slide"
           transparent={true}
           visible={this.state.modalVisible}>
+          <TouchableWithoutFeedback
+          onPressOut={()=>this.onCloseModal()}>
+          <View style={styles.centeredView}>  
           <View style={styles.modalContainer}>
             <View style={styles.modalHeader}>
               <Text
                 style={styles.modalTitle}>
                 Item added to cart successfully
               </Text>
+              <TouchableOpacity
+              onPress={()=>this.onCloseModal()}>
+              <Text><Icon name="close" size={28} color="#000" /></Text>
+              </TouchableOpacity>
             </View>
             <View
               style={styles.modalBody}>
@@ -538,6 +550,8 @@ class ProductDetailDrinks extends Component {
               </Text>
             </TouchableOpacity>
           </View>
+          </View>
+          </TouchableWithoutFeedback>
         </Modal>
       </SafeAreaView>
     );
@@ -835,6 +849,12 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },
+  centeredView:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',  
+  },
   modalContainer: {
     position: 'absolute',
     bottom: 0,
@@ -846,9 +866,22 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
+    opacity:4,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: 400,
+    height: 280, 
   },
   modalHeader: {
-    paddingVertical: 10
+    paddingVertical: 10,
+    flexDirection:"row",
+    justifyContent:"space-between",
   },
   modalTitle: {
     fontFamily: FontFamily.TAJAWAL_REGULAR,
