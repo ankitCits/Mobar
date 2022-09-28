@@ -414,6 +414,7 @@ class ProductDetailDrinks extends Component {
               style={styles.vendor}>
               {this.state.vendors && this.state.vendors.length > 0 ?
                 this.state.vendors.map((item, index) => {
+                  console.log(item)
                   return (
                     <View style={styles.vendorContainer}>
                       <TouchableOpacity
@@ -437,7 +438,7 @@ class ProductDetailDrinks extends Component {
                             <Icon name="wine-bar" size={20} color={ThemeColors.CLR_TAB} />
                             <Text
                               style={styles.vendorTitle}>
-                              {item.name}
+                              {item.vendorShopName}
                             </Text>
                           </View>
 
