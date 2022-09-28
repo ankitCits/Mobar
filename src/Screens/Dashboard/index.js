@@ -67,8 +67,6 @@ class Dashboard extends Component {
             this.getTabDetail();
         });
         await this.requestLocationPermission();
-
-
     }
 
     componentWillUnmount() {
@@ -82,6 +80,9 @@ class Dashboard extends Component {
     // }
 
     componentDidUpdate() {
+        // if (this.prevState.position.isLocation !== this.state.position.isLocation) {
+        //     this.getTabDetail();
+        //   }
     }
 
     requestLocationPermission = async () => {
@@ -109,9 +110,9 @@ class Dashboard extends Component {
 
     getLatLong = async () => {
         Geolocation.getCurrentPosition((position) => {
-            console.log(position);
             this.setState({ position: { longitude: position.coords.longitude, latitude: position.coords.latitude, isLocation: true } });
             this.props.dispatch(setUserLocationDetail(this.state.position));
+            this.getTabDetail();
         }, (error) => {
             console.log(JSON.stringify(error));
             Alert.alert('Alert', 'Unable to retrieve your location')

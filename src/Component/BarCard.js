@@ -40,11 +40,11 @@ class BarCard extends Component {
             try {
                 const response = await removeToWishlist(data);
                 this.setState({ isFavorite: false });
-                this.state.data.ecom_ba_wishlist = null;
+                this.props.item.ecom_ba_wishlist = null;
                 console.log("BarCard > removeFavorite > Response", response);
             } catch (error) {
                 this.setState({ isFavorite: false });
-                this.state.data.ecom_ba_wishlist = null;
+                this.props.item.ecom_ba_wishlist = null;
                 console.log("BarCard > removeFavorite > Error", error);
             }
         }
@@ -63,12 +63,11 @@ class BarCard extends Component {
             try {
                 const response = await addToWishlist(data);
                 console.log("BarCard > addFavorite > response", response.result.data.wishlistId);
-                this.state.data.ecom_ba_wishlist = {
+                this.props.item.ecom_ba_wishlist = {
                     "wishlistId": response.result.data.wishlistId,
                     "wishlistFor": "Bars"
                 };
                 this.setState({ isFavorite: true });
-                console.log("object after add fav", this.state.data.ecom_ba_wishlist);
             } catch (error) {
                 console.log("BarCard > addFavorite > Catch", error);
             }
@@ -98,16 +97,16 @@ class BarCard extends Component {
                     >
                         <TouchableOpacity
                             onPress={() => {
-                                this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId
-                                    ? this.removeFavorite(this.state.data.ecom_ba_wishlist.wishlistId)
-                                    : this.addFavorite(this.state.data.vendorId, index); // pass vendor id 
+                                this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId
+                                    ? this.removeFavorite(this.props.item.ecom_ba_wishlist.wishlistId)
+                                    : this.addFavorite(this.props.item.vendorId, index); // pass vendor id 
                             }}
                             style={styles.heartContainer}
                         >
                             <View style={styles.favContainer}>
                                 <Image
                                     resizeMode={'contain'}
-                                    source={this.state.isFavorite ? images.heartFill : images.heart}
+                                    source={this.props.item.ecom_ba_wishlist ? images.heartFill : images.heart}
                                     defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
                                     // source={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
                                     // defaultSource={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
@@ -125,17 +124,17 @@ class BarCard extends Component {
                     <View
                         style={styles.addressContainer}>
                         <Text style={styles.textTitle}>
-                            {this.state.data.vendorShopName}
+                            {this.props.item.vendorShopName}
                         </Text>
                         <View>
                             {/* numberOfLines={2} ellipsizeMode='tail' */}
                             <Text style={styles.textAddress}
                                 numberOfLines={2}
-                            >{this.state.data.address}</Text>
+                            >{this.props.item.address}</Text>
                         </View>
                         <View style={styles.footer}>
                             <TouchableOpacity style={styles.details}>
-                                <StarRating isEdit={false} size={this.state.data.vendorRating} />
+                                <StarRating isEdit={false} size={this.props.item.vendorRating} />
                             </TouchableOpacity>
 
                             <TouchableOpacity
@@ -146,7 +145,7 @@ class BarCard extends Component {
                                     style={styles.bottomIcon}
                                 />
                                 <Text style={styles.textAddress}>
-                                    {this.state.data.distance.toFixed(1)}Km
+                                    {this.props.item.distance.toFixed(1)}Km
                                 </Text>
                             </TouchableOpacity>
 
