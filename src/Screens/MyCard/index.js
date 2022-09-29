@@ -16,6 +16,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { applyCoupon, cartCheckout, fetchCart } from '../../api/product';
 import CartProduct from '../../Component/CartProduct';
+import FullPageLoader from '../../Component/FullPageLoader';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import { FontFamily } from '../../Theme/FontFamily';
 import { ThemeColors } from '../../Theme/ThemeColors';
@@ -30,6 +31,7 @@ export default class MyCard extends Component {
       totalQty: 0,
       payableTotal: 0,
       isLoading: false,
+      cartLoader:false,
       couponText: '',
       couponLoader: false,
       checkoutLoader: false,
@@ -43,6 +45,11 @@ export default class MyCard extends Component {
     await this.fetchData();
     this.setState({ isLoading: false });
 
+  }
+
+  cartLoader=(isLoader)=>{
+    // this.setState({cartLoader:isLoader});
+    console.log("My card > cartLoader > Item > ",isLoader);
   }
 
 
@@ -129,6 +136,7 @@ export default class MyCard extends Component {
           name={'My Cart'}
           onClick={() => this.props.navigation.pop()}
         />
+      
         {this.state.isLoading ?
           <>
             <ThemeFullPageLoader />
@@ -142,12 +150,21 @@ export default class MyCard extends Component {
               </Text>
             </View>
 
-            <View style={{ height: '47%' }}>
+            <View style={{ height: '54%' }}>
+            {/* {this.state.cartLoader &&
+          <>
+          
+            <FullPageLoader />
+          
+          </>
+          
+          
+          } */}
               <ScrollView>
                 {
                   this.state.cart && this.state.cart.length > 0 && this.state.cart.map((cartItem, index) => (
                     cartItem.qty != 0 ?
-                      <CartProduct navigation={this.props.navigation} index={index} item={cartItem} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item) }} /> :
+                      <CartProduct navigation={this.props.navigation} onCart={(item)=>{this.cartLoader(item)}} index={index} item={cartItem} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item) }} /> :
                       null
                   ))
                 }
@@ -371,6 +388,7 @@ const styles = StyleSheet.create({
     backgroundColor: ThemeColors.CLR_BG,
   },
   cartCount: {
+    zIndex:0,
     marginHorizontal: 14,
     marginVertical: 8,
     marginBottom: 0,
