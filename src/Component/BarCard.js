@@ -82,8 +82,7 @@ class BarCard extends Component {
             index
         } = this.props;
         return (
-            <View>
-                <TouchableOpacity
+            <TouchableOpacity
                     key={index}
                     activeOpacity={1}
                     onPress={() => this.goToDetails(this.state.data)}
@@ -163,8 +162,7 @@ class BarCard extends Component {
                             </TouchableOpacity>
                         </View>
                     </View>
-                </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
         );
     }
 }

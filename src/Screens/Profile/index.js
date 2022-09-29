@@ -55,7 +55,8 @@ class MyProfile extends Component {
       formError: null,
       lblEmail: '',
       lblName: '',
-      profilePic: {},
+      profilePic:null,
+      isProfileSelected:false,
       hostUrl: null
     };
   }
@@ -68,6 +69,7 @@ class MyProfile extends Component {
         profile: response.assets[0].uri
       }
       try {
+        this.setState({isProfileSelected:true});
         const response = await updateProfilePic(postDate);
         if (response.status == 'SUCCESS') {
           ToastAndroid.showWithGravity(
@@ -306,6 +308,7 @@ class MyProfile extends Component {
       };
       try {
         const response = await updateProfile(raw);
+        this.setState({isProfileSelected:false});
         if (response.status == 'SUCCESS') {
           this.setState({ lblName: this.state.name, lblEmail: this.state.email });
           ToastAndroid.showWithGravity(
@@ -565,7 +568,10 @@ class MyProfile extends Component {
                   this.state.email != this.state.data.email ||
                   this.state.mobileNumber != this.state.data.contact ||
                   this.state.address != this.state.data.address ||
-                  this.state.gender != this.state.data.gender ? (
+                  this.state.isProfileSelected ||
+                  this.state.gender != this.state.data.gender ? 
+
+                  (
                   <View>
                     <TouchableOpacity
                       style={styles.save}

@@ -15,6 +15,7 @@ import images from '../assets/images';
 import { getAccessToken } from '../localstorage';
 import { FontFamily } from '../Theme/FontFamily';
 import { ThemeColors } from '../Theme/ThemeColors';
+import ThemeFullPageLoader from './ThemeFullPageLoader';
 export default class CartProduct extends React.Component {
   constructor(props) {
     super(props);
@@ -29,11 +30,13 @@ export default class CartProduct extends React.Component {
     if (token == null) {
       showAlert();
     } else {
+      this.setState({loader:true});
       const cartItem = {
         cartId: this.state.data.cartId,
         type: type,
       };
       try {
+        this.props.onCart(true)
         const res = await updateToCart(cartItem);
         let amount = res.response.amountData;
         const cartQty = this.state.qty;
@@ -42,13 +45,14 @@ export default class CartProduct extends React.Component {
         } else {
           this.state.qty = cartQty - 1;
         }
-        this.setState({ qty: this.state.qty });
+        this.setState({ qty: this.state.qty,loader:false });
         const data = {
           qty: this.state.qty,
           data: amount,
           id: this.props.item.cartId
         }
         this.props.onChange(data);
+        this.props.onCart(false)
       } catch (error) {
         console.log(error)
         ToastAndroid.showWithGravity(
@@ -73,8 +77,10 @@ export default class CartProduct extends React.Component {
     } = this.props;
     return (
       <>
+      {
+      
         <View style={styles.container} key={index} >
-          <View style={styles.subContainer} key={index}>
+          <View style={styles.subContainer}>
             {/* Image */}
             <View style={styles.productInnerView}>
               {this.props.item.ecom_aca_product_unit && this.props.item.ecom_aca_product_unit.ecom_ac_product ?
@@ -124,26 +130,40 @@ export default class CartProduct extends React.Component {
                 }
               </View>
             </View>
-            <View
-              style={styles.qtyContainer}>
-              <TouchableOpacity
-                onPress={() => { this.updateCart(2) }}
-                style={styles.icon}>
-                <Icon name="remove" size={20} color="#fff" />
-              </TouchableOpacity>
-
+           
+            <View style={{
+              flex:1,
+              flexDirection:'row',
+              alignItems:'center',
+            }}
+            >
+              
+          
+              
+              
+              
+                <TouchableOpacity
+                  onPress={() => { this.updateCart(2) }}
+                  style={styles.icon}>
+                  <Icon name="remove" size={20} color="#fff" />
+                </TouchableOpacity>
+              
               <Text
                 style={styles.inputQty}>
                 {this.state.qty}
               </Text>
-              <TouchableOpacity
-                onPress={() => { this.updateCart(1) }}
-                style={styles.icon}>
-                <Icon name="add" size={20} color="#fff" />
-              </TouchableOpacity>
+              {/* {this.state.loader ? <ThemeFullPageLoader /> : */}
+                <TouchableOpacity
+                  onPress={() => { this.updateCart(1) }}
+                  style={styles.icon}>
+                  <Icon name="add" size={20} color="#fff" />
+                </TouchableOpacity>
+              
             </View>
+            
           </View>
         </View>
+  }
       </>
     );
   }

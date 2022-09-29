@@ -31,6 +31,7 @@ import { setUserDetail, setUserLocationDetail } from '../../Redux/actions/auth';
 import { getUserDetails } from '../../api/auth';
 import images from '../../assets/images';
 import Geolocation from 'react-native-geolocation-service';
+import { lime100 } from 'react-native-paper/lib/typescript/styles/colors';
 
 
 const LazyPlaceholder = ({ route }) => (
@@ -59,9 +60,11 @@ class Dashboard extends Component {
             },
             subscribe: null,
         };
+        
     }
 
     async componentDidMount() {
+        console.log("Dashboard > Redux ",this.props.redux);
         this.state._unsubscribe = this.props.navigation.addListener('focus', async () => {
             this.getDetail();
             this.getTabDetail();
@@ -418,6 +421,18 @@ class Dashboard extends Component {
                                                         <BarCard navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />
                                                     ))
                                                 }
+                                                  <TouchableOpacity
+                                                  onPress={() => this.props.navigation.navigate('BarList')}
+                                                    style={{
+                                                        flexDirection: 'row',
+                                                        justifyContent: 'center',
+                                                        marginVertical: '5%',
+                                                        paddingVertical:10,
+                                                        borderRadius:10,
+                                                        backgroundColor:'#851729'
+                                                    }}>
+                                                    <Text style={[styles.sectionTitle,{color:ThemeColors.CLR_WHITE}]}>View All  </Text>
+                                                </TouchableOpacity>
                                                 {/* </ScrollView> */}
 
                                             </View>

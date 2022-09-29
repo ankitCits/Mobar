@@ -7,6 +7,7 @@ import {
   StatusBar,
   Platform,
   ToastAndroid,
+  Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RNRestart from 'react-native-restart';
@@ -23,7 +24,9 @@ class SideDrawer extends Component {
     super(props);
     this.state = {
       drawerIndex: 0,
+      //hostUrl:this.props.redux.response.result.hostUrl
     };
+    console.log("this.props >",this.props.redux.response.result.userData);
   }
 
 
@@ -98,6 +101,15 @@ class SideDrawer extends Component {
               <View
                 style={styles.profileDetails}>
                 <View>
+                  {/* {
+                    this.props.redux.response.result ?
+                    <Image 
+                    source={{
+                      uri: `${this.props.redux.response.result.hostUrl+ this.props.redux.response.result.profile.ProfilePic}`,
+                  }}
+                     /> :
+                  <Icon name="account-circle" size={50} color={ThemeColors.CLR_TAB} />
+                  } */}
                   <Icon name="account-circle" size={50} color={ThemeColors.CLR_TAB} />
                 </View>
                 <View>
@@ -114,6 +126,7 @@ class SideDrawer extends Component {
                         : 'Singapore'}
                     </Text>
                     <TouchableOpacity
+                    onPress={() => this.onPressFun('MyProfile')}
                       style={styles.editBtnContainer}>
                       <Text
                         style={styles.editBtnText}>

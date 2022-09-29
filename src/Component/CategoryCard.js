@@ -108,6 +108,7 @@ export default class CategoryCard extends React.Component {
                     }}>
 
                     <ImageBackground
+                    key={index}
                         style={styles.boxInner}
                         resizeMode={'cover'}
                         source={currImage.outerBox}

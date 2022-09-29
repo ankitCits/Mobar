@@ -43,7 +43,7 @@ class ProductDetailBars extends Component {
     this.setState({ loader: true });
     try {
       const postData = {
-        vendorId: this.props.route.params && this.props.route.params.id ? this.props.route.params.id : 1,
+        vendorId: 4,///this.props.route.params && this.props.route.params.id ? this.props.route.params.id : 1,
         latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : '',
         longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
       };
@@ -54,6 +54,7 @@ class ProductDetailBars extends Component {
           this.state.data.vendorDetail[0].ecom_ba_wishlist.wishlistId ?
           true : false
       });
+      console.log("this.state.data.vendorDetail[0].ecom_ac_products >>",this.state.data.vendorDetail[0].ecom_ac_products[0].ecom_aca_product_units);
     } catch (error) {
       ToastAndroid.showWithGravity(
         error,
@@ -446,16 +447,17 @@ class ProductDetailBars extends Component {
                           fontSize: 14,
                           color: '#4D4F50',
                           fontWeight: '400',
+                          marginHorizontal:5,
                         }}>
-                          {/* <Text
+                          <Text
                           style={{
                             fontSize: 14,
                             color: '#4D4F50',
                             fontWeight: '400',
                           }}>
-                          {item.shortDescription}
-                        </Text> */}
-                          <HTMLView value={item.shortDescription} />
+                          {item.ecom_aca_product_units[0].unitQty+item.ecom_aca_product_units[0].unitType}
+                        </Text>
+                          {/* <HTMLView value={item.shortDescription} /> */}
                         </View>
 
                         <View
@@ -484,6 +486,19 @@ class ProductDetailBars extends Component {
                               }}>
                               $
                               {item.ecom_aca_product_units[0].unitDiscountPrice}
+                            </Text>
+                          ) : null}
+
+{item.ecom_aca_product_units[0].savedPrices ? (
+                            <Text
+                              style={{
+                                marginLeft: 10,
+                                fontSize: 15,
+                                color: '#969696',
+                                textDecorationLine: 'line-through',
+                              }}>
+                              $
+                              {item.ecom_aca_product_units[0].savedPrices}
                             </Text>
                           ) : null}
                         </View>
