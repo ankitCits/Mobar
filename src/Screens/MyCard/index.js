@@ -31,7 +31,7 @@ export default class MyCard extends Component {
       totalQty: 0,
       payableTotal: 0,
       isLoading: false,
-      cartLoader:false,
+      cartLoader: false,
       couponText: '',
       couponLoader: false,
       checkoutLoader: false,
@@ -47,11 +47,9 @@ export default class MyCard extends Component {
 
   }
 
-  cartLoader=(isLoader)=>{
-    // this.setState({cartLoader:isLoader});
-    console.log("My card > cartLoader > Item > ",isLoader);
+  cartLoader = (isLoader) => {
+    this.setState({ cartLoader: isLoader });
   }
-
 
   fetchData = async () => {
     try {
@@ -136,13 +134,15 @@ export default class MyCard extends Component {
           name={'My Cart'}
           onClick={() => this.props.navigation.pop()}
         />
-      
+
         {this.state.isLoading ?
-          <>
-            <ThemeFullPageLoader />
-          </>
+          <><ThemeFullPageLoader /></>
           :
           (<>
+            {this.state.cartLoader &&
+              <><FullPageLoader />
+              </>
+            }
             <View style={styles.cartCount}>
               <Text
                 style={styles.itemCountText}>
@@ -151,20 +151,11 @@ export default class MyCard extends Component {
             </View>
 
             <View style={{ height: '54%' }}>
-            {/* {this.state.cartLoader &&
-          <>
-          
-            <FullPageLoader />
-          
-          </>
-          
-          
-          } */}
               <ScrollView>
                 {
                   this.state.cart && this.state.cart.length > 0 && this.state.cart.map((cartItem, index) => (
                     cartItem.qty != 0 ?
-                      <CartProduct navigation={this.props.navigation} onCart={(item)=>{this.cartLoader(item)}} index={index} item={cartItem} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item) }} /> :
+                      <CartProduct navigation={this.props.navigation} onCart={(item) => { this.cartLoader(item) }} index={index} item={cartItem} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item) }} /> :
                       null
                   ))
                 }
@@ -388,7 +379,7 @@ const styles = StyleSheet.create({
     backgroundColor: ThemeColors.CLR_BG,
   },
   cartCount: {
-    zIndex:0,
+    zIndex: 0,
     marginHorizontal: 14,
     marginVertical: 8,
     marginBottom: 0,
@@ -401,7 +392,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     // marginTop: 10,
-    flex:1,
+    flex: 1,
     justifyContent: 'flex-end',
     // backgroundColor:"red"
     //height:90,

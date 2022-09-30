@@ -60,11 +60,10 @@ class Dashboard extends Component {
             },
             subscribe: null,
         };
-        
+
     }
 
     async componentDidMount() {
-        console.log("Dashboard > Redux ",this.props.redux);
         this.state._unsubscribe = this.props.navigation.addListener('focus', async () => {
             this.getDetail();
             this.getTabDetail();
@@ -143,7 +142,7 @@ class Dashboard extends Component {
         }
         try {
             const responseDetail = await getUserDetails(postData);
-            this.props.dispatch(setUserDetail(responseDetail.response.result.profile));
+            this.props.dispatch(setUserDetail(responseDetail.response));
         } catch (error) {
             this.setState({ loader: false });
             ToastAndroid.showWithGravity(
@@ -240,10 +239,19 @@ class Dashboard extends Component {
                                     IconName="account-circle"
                                     IconColor="#711323"
                                     Address={
-                                        this.props.redux.auth.userData
-                                            ? this.props.redux.auth.userData.address
+                                        this.props.redux && this.props.redux.auth.userData && this.props.redux.auth.userData.result && this.props.redux.auth.userData.result.profile
+                                            ? this.props.redux.auth.userData.result.profile.address
                                             : 'Duxten Road, 338750'
                                     }
+                                    // Address={
+                                    //     this.props.redux.auth.userData
+                                    //         ? this.props.redux.auth.userData.address
+                                    //         : 'Duxten Road, 338750'
+                                    // }
+                                    Image={
+                                        this.props.redux && this.props.redux.auth.userData && this.props.redux.auth.userData.result && this.props.redux.auth.userData.result.profile
+                                            ? this.props.redux.auth.userData.result.hostUrl + this.props.redux.auth.userData.result.profile.profilePic
+                                            : 'Default'}
                                 />
                                 <ScrollView
                                     refreshControl={
@@ -421,17 +429,17 @@ class Dashboard extends Component {
                                                         <BarCard navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />
                                                     ))
                                                 }
-                                                  <TouchableOpacity
-                                                  onPress={() => this.props.navigation.navigate('BarList')}
+                                                <TouchableOpacity
+                                                    onPress={() => this.props.navigation.navigate('BarList')}
                                                     style={{
                                                         flexDirection: 'row',
                                                         justifyContent: 'center',
                                                         marginVertical: '5%',
-                                                        paddingVertical:10,
-                                                        borderRadius:10,
-                                                        backgroundColor:'#851729'
+                                                        paddingVertical: 10,
+                                                        borderRadius: 10,
+                                                        backgroundColor: '#851729'
                                                     }}>
-                                                    <Text style={[styles.sectionTitle,{color:ThemeColors.CLR_WHITE}]}>View All  </Text>
+                                                    <Text style={[styles.sectionTitle, { color: ThemeColors.CLR_WHITE }]}>View All  </Text>
                                                 </TouchableOpacity>
                                                 {/* </ScrollView> */}
 

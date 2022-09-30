@@ -12,6 +12,7 @@ export default class Header extends Component {
   constructor(props) {
     super(props);
     this.state = {};
+    //console.log("auth redux > ",`${this.props}`);
   }
 
   render() {
@@ -20,7 +21,21 @@ export default class Header extends Component {
 
         <View style={styles.leftContainer}>
           <TouchableOpacity onPress={() => this.props.onClick()}>
-            <Icon name={this.props.IconName} size={35} color={this.props.IconColor} />
+            {
+              this.props.Image == 'Default' ?
+              <Icon name={this.props.IconName} size={35} color={this.props.IconColor} /> :
+                <Image
+                style={{
+                  width:32,height:32,borderRadius:20
+                }}
+                  resizeMode={'cover'}
+                  source={{
+                    uri:`${this.props.Image}`
+                  }}
+                  defaultSource={images.cart}
+                />    
+            }
+            {/* <Icon name={this.props.IconName} size={35} color={this.props.IconColor} /> */}
           </TouchableOpacity>
           <View
             style={styles.location}>

@@ -24,9 +24,7 @@ class SideDrawer extends Component {
     super(props);
     this.state = {
       drawerIndex: 0,
-      //hostUrl:this.props.redux.response.result.hostUrl
     };
-    console.log("this.props >",this.props.redux.response.result.userData);
   }
 
 
@@ -100,33 +98,35 @@ class SideDrawer extends Component {
             <View style={styles.profileContainer}>
               <View
                 style={styles.profileDetails}>
-                <View>
-                  {/* {
-                    this.props.redux.response.result ?
-                    <Image 
-                    source={{
-                      uri: `${this.props.redux.response.result.hostUrl+ this.props.redux.response.result.profile.ProfilePic}`,
-                  }}
-                     /> :
-                  <Icon name="account-circle" size={50} color={ThemeColors.CLR_TAB} />
-                  } */}
-                  <Icon name="account-circle" size={50} color={ThemeColors.CLR_TAB} />
+                <View style={styles.imageAvatar}>
+                  {
+                    this.props.redux && this.props.redux.result && this.props.redux.result.profile && this.props.redux.result.profile.profilePic ?
+                      <Image
+                        style={styles.image}
+                        source={{
+                          uri:
+                            `${this.props.redux.result.hostUrl}${this.props.redux.result.profile.profilePic}`
+                        }}
+                      /> :
+                      <Icon name="account-circle" size={50} color={ThemeColors.CLR_TAB} />
+                  }
+
                 </View>
                 <View>
                   <Text style={styles.profileTitle}>
-                    {this.props.redux ? this.props.redux.name : 'User'}
+                    {this.props.redux.result ? this.props.redux.result.profile.name : 'User'}
                   </Text>
                   <View
                     style={styles.profileSubContainer}>
                     <Icon name="location-on" size={15} color={ThemeColors.CLR_TAB} />
                     <Text
                       style={styles.profileSubHeader}>
-                      {this.props.redux
-                        ? this.props.redux.address
+                      {this.props.redux && this.props.redux.result
+                        ? this.props.redux.result.profile.address
                         : 'Singapore'}
                     </Text>
                     <TouchableOpacity
-                    onPress={() => this.onPressFun('MyProfile')}
+                      onPress={() => this.onPressFun('MyProfile')}
                       style={styles.editBtnContainer}>
                       <Text
                         style={styles.editBtnText}>
@@ -255,7 +255,15 @@ const styles = StyleSheet.create({
     height: 60,
     borderColor: '#D41335',
     alignItems: 'center',
-    padding: 5
+    paddingRight: 5
+  },
+  imageAvatar: {
+    paddingHorizontal: 10,
+  },
+  image: {
+    width: 40,
+    height: 40,
+    borderRadius: 20
   },
   profileTitle: {
     fontSize: 17,
