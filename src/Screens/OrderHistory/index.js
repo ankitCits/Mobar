@@ -84,136 +84,6 @@ export default class OrderHistory extends Component {
     }
   };
 
-  renderItem = (item, index) => {
-    return (
-      <>
-        <TouchableOpacity key={index}
-          style={[styles.subContainer, styles.productContainer]}
-        // onPress={() =>
-        //   this.props.navigation.navigate('OrderHistoryDetail', { orderData: item, hostUrl: this.state.url })
-        // }
-        >
-          <View style={styles.imageContainer}>
-            <Image
-              style={{
-                height: 80,
-                width: 70
-              }}
-              resizeMode={'cover'}
-              source={{
-                uri: `${this.state.url +
-                  item.ecom_bc_order_details[0].productImage
-                  }`,
-              }}
-            />
-          </View>
-
-          <View style={{ margin: 5, marginLeft: 10 }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginTop: 5,
-              }}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: '700',
-                  color: '#4D4F50',
-                }}>
-                Purchase Id :{item.orderNumber}
-              </Text>
-            </View>
-
-            <View>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: '#4D4F50',
-                  fontWeight: '400',
-                }}>
-                Purchased On : {this.formatDDMMM(item.orderDate)}
-              </Text>
-            </View>
-            {this.state.data.couponCode == '' &&
-              <View style={{ marginTop: 10, flexDirection: 'row' }}>
-
-                <View
-                  style={{
-                    borderWidth: 1,
-                    borderColor: '#B51D36',
-                    height: 20,
-                    width: 90,
-                    borderRadius: 5,
-                    flexDirection: 'row',
-                  }}>
-                  <Image
-                    style={styles.orderPercentageImg}
-                    resizeMode={'cover'}
-                    source={images.orderPercentage}
-                    defaultSource={images.orderPercentage}
-                  />
-                  <Text style={{ marginLeft: 5, fontSize: 12 }}>
-                    {item.couponCode}
-                  </Text>
-                </View>
-
-                <Text style={{ marginLeft: 10, fontSize: 13 }}>
-                  Applied
-                </Text>
-              </View>
-            }
-          </View>
-
-          <View style={{ marginTop: 5, paddingLeft: 30 }}>
-            <Text
-              style={{
-                fontSize: 12,
-                marginLeft: 20,
-                color: '#4D4F50',
-                fontWeight: '400',
-              }}>
-              {item.ecom_bc_order_details[0].productUnitType}
-            </Text>
-
-            <Text
-              style={{
-                fontSize: 20,
-                marginLeft: 20,
-                color: '#4D4F50',
-                fontWeight: '500',
-                marginTop: 5,
-              }}>
-              ${item.subTotalAmount}
-            </Text>
-
-            <View
-              style={{
-                backgroundColor: '#26B90E',
-                // height:30,
-                // width:90,
-                // right:15,
-                padding: 5,
-                marginTop: 10,
-                marginLeft: 5,
-                borderRadius: 10,
-              }}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: '#fff',
-                  fontWeight: '500',
-                }}>
-                Purchased
-              </Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-      </>
-    )
-  }
-
   _handleIndexChange = index => this.setState({ index });
 
   _renderLazyPlaceholder = ({ route }) => <LazyPlaceholder route={route} />;
@@ -230,9 +100,9 @@ export default class OrderHistory extends Component {
                   <>
                     <TouchableOpacity key={index}
                       style={[styles.subContainer, styles.productContainer]}
-                    // onPress={() =>
-                    //   this.props.navigation.navigate('OrderHistoryDetail', { orderData: item, hostUrl: this.state.url })
-                    // }
+                    onPress={() =>
+                      this.props.navigation.navigate('OrderHistoryDetail', { orderData: item, hostUrl: this.state.url })
+                    }
                     >
                       <View style={styles.imageContainer}>
                         <Image
@@ -372,10 +242,10 @@ export default class OrderHistory extends Component {
           <ScrollView>
           {
           this.state.redeemOrders && this.state.redeemOrders.length > 0 ? (
-            this.state.redeemOrders.map(item => { 
+            this.state.redeemOrders.map((item,index) => { 
                return (
                 <>
-                <View style={styles.header}>
+                <View style={styles.header} key={index}>
                   <Text
                   style={styles.titleText}
                      >{
@@ -386,9 +256,10 @@ export default class OrderHistory extends Component {
                 </View>
                   <TouchableOpacity
                     style={styles.subContainer}
-                    // onPress={() =>
-                    //   //this.props.navigation.navigate('OrderHistoryDetail', { orderData: item, hostUrl: this.state.url })
-                    // }
+                    onPress={() =>
+                      alert('work in progress')
+                     // this.props.navigation.navigate('RedeemHistoryDetail', { orderData:item,hostUrl:this.state.url})
+                    }
                     >
                     <View style={styles.imageAvatar}>
                       <Image
