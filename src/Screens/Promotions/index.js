@@ -113,7 +113,7 @@ class Promotions extends Component {
               refreshControl={
                 <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
               }
-              ListFooterComponent={this.footerComponent()}
+              // ListFooterComponent={this.footerComponent()}
             />
 
           </View>

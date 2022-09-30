@@ -365,7 +365,7 @@ class ProductDetailBars extends Component {
               </View>
             </View>
 
-            <View style={{ margin: 15, marginTop: 20 }}>
+            {/* <View style={{ margin: 15, marginTop: 20 }}>
               <Text
                 style={{
                   fontSize: 20,
@@ -386,7 +386,8 @@ class ProductDetailBars extends Component {
                   defaultSource={images.promotionBanner}
                 />
               </View>
-            </View>
+            </View> */}
+
             <View style={{ margin: 15, marginTop: 20 }}>
               <Text
                 style={{
