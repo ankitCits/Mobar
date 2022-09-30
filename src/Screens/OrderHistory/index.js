@@ -238,7 +238,7 @@ export default class OrderHistory extends Component {
     } else {
       return (
     
-        <View style={styles.redeemContainer}>
+      <View style={styles.redeemContainer}>
           <ScrollView>
           {
           this.state.redeemOrders && this.state.redeemOrders.length > 0 ? (
@@ -258,7 +258,7 @@ export default class OrderHistory extends Component {
                     style={styles.subContainer}
                     onPress={() =>
                       alert('work in progress')
-                     // this.props.navigation.navigate('RedeemHistoryDetail', { orderData:item,hostUrl:this.state.url})
+                      //this.props.navigation.navigate('RedeemHistoryDetail', { orderData:item,hostUrl:this.state.url})
                     }
                     >
                     <View style={styles.imageAvatar}>

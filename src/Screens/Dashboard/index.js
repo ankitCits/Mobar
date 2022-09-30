@@ -32,6 +32,7 @@ import { getUserDetails } from '../../api/auth';
 import images from '../../assets/images';
 import Geolocation from 'react-native-geolocation-service';
 import { lime100 } from 'react-native-paper/lib/typescript/styles/colors';
+import { inviteShare } from '../../api/common';
 
 
 const LazyPlaceholder = ({ route }) => (
@@ -50,6 +51,7 @@ class Dashboard extends Component {
             drinkObj: {},
             hostUrl: null,
             index: 0,
+            inviteShareImg:null,
             routes: [],
             refreshing: false,
             locationPermission: false,
@@ -65,6 +67,7 @@ class Dashboard extends Component {
 
     async componentDidMount() {
         this.state._unsubscribe = this.props.navigation.addListener('focus', async () => {
+            this.getReferralImage();
             this.getDetail();
             this.getTabDetail();
         });
@@ -73,6 +76,16 @@ class Dashboard extends Component {
 
     componentWillUnmount() {
         this.state._unsubscribe();
+    }
+
+    async getReferralImage(){
+        try{
+        const res = await inviteShare();
+        console.log("response getReferralImage",res.response.result.pageData.images);
+        this.setState({inviteShareImg:res.response.result.pageData.images})
+        }catch(error){
+            console.log("dashboard > getReferralImage > catch > getReferralImage",error);
+        }
     }
 
     // async componentDidMount() {
@@ -324,7 +337,7 @@ class Dashboard extends Component {
                                                     <Text style={styles.sectionTitle}>Combos</Text>
                                                     <TouchableOpacity>
                                                         <Text style={styles.ViewAll}
-                                                            onPress={() => this.props.navigation.navigate('Product', { categoryIdx: { key: 3 } })}>
+                                                            onPress={() => this.props.navigation.navigate('ComboList')}>
                                                             View All
                                                         </Text>
                                                     </TouchableOpacity>
@@ -346,7 +359,11 @@ class Dashboard extends Component {
                                         {/* Combo Offer */}
 
                                         {/* Promotion Banner */}
-                                        <View
+                                        {
+                                            this.state.inviteShareImg &&
+                                        
+                                        <TouchableOpacity
+                                        onPress={()=>this.props.navigation.navigate('InviteFriends')}
                                             style={{
                                                 marginTop: 10,
                                                 backgroundColor: '#fff',
@@ -362,7 +379,11 @@ class Dashboard extends Component {
                                             <ImageBackground
                                                 style={styles.promotionsImg}
                                                 resizeMode={'cover'}
-                                                source={images.promotions2}
+                                                source={
+                                                    {
+                                                        uri: `${this.state.hostUrl+this.state.inviteShareImg}` 
+                                                    }
+                                                }
                                                 defaultSource={images.promotions2}>
                                                 <View style={{ marginTop: '10%', marginLeft: '65%' }}>
                                                     <TouchableOpacity
@@ -395,7 +416,8 @@ class Dashboard extends Component {
                                                     </TouchableOpacity>
                                                 </View>
                                             </ImageBackground>
-                                        </View>
+                                        </TouchableOpacity>
+    }
                                         {/* Promotion End */}
 
 

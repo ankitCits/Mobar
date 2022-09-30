@@ -178,17 +178,32 @@ class Product extends Component {
             <View style={{ height: 70, }}>
               <Header
                 onClick={() => this.props.navigation.pop()}
+                
                 onCard={() => this.props.navigation.navigate('MyCard')}
                 onNotification={() =>
                   this.props.navigation.navigate('Notification')
                 }
                 IconName="arrow-back"
-                IconColor="#4D4F50"
+                IconColor="#4D4F33"
                 Address={
-                  this.props.redux.auth.userData
-                    ? this.props.redux.auth.userData.address
-                    : 'Duxten Road, 338750'
-                }
+                  this.props.redux && this.props.redux.auth.userData && this.props.redux.auth.userData.result && this.props.redux.auth.userData.result.profile
+                      ? this.props.redux.auth.userData.result.profile.address
+                      : 'Duxten Road, 338750'
+              }
+              // Address={
+              //     this.props.redux.auth.userData
+              //         ? this.props.redux.auth.userData.address
+              //         : 'Duxten Road, 338750'
+              // }
+              Image={
+                  this.props.redux && this.props.redux.auth.userData && this.props.redux.auth.userData.result && this.props.redux.auth.userData.result.profile
+                      ? this.props.redux.auth.userData.result.hostUrl + this.props.redux.auth.userData.result.profile.profilePic
+                      : 'Default'}
+                // Address={
+                //   this.props.redux.auth.userData
+                //     ? this.props.redux.auth.userData.address
+                //     : 'Duxten Road, 338750'
+                // }
               />
             </View>
             <View style={{ alignSelf: 'center', marginTop: -5 }}>

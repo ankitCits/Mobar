@@ -851,8 +851,8 @@ const styles = StyleSheet.create({
   },
   centeredView:{
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    //justifyContent: 'center',
+    //alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',  
   },
   modalContainer: {
@@ -875,8 +875,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: 400,
-    height: 280, 
+    //width: 400,
+    //height: 280, 
   },
   modalHeader: {
     paddingVertical: 10,
