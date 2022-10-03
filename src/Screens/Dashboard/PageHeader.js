@@ -58,7 +58,7 @@ class PageHeader extends Component {
                 }}>
                 <Image
                     resizeMode="cover"
-                    resizeMethod="resize"
+                    // resizeMethod="resize"
                     style={{ width: viewportWidth - 30, height: 200 }}
                     defaultSource={images.Dashboard}
                     // source={images.Dashboard} 

@@ -1,4 +1,3 @@
-import { LongFloatNumberCSSPropertyValidator } from '@native-html/css-processor/lib/typescript/validators/LongFloatNumberCSSPropertyValidator';
 import React, { Component } from 'react';
 import {
   Text,
@@ -11,7 +10,8 @@ import {
   ToastAndroid,
   ActivityIndicator,
   Alert,
-  ScrollView
+  ScrollView,
+  Animated
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { applyCoupon, cartCheckout, fetchCart } from '../../api/product';
@@ -21,6 +21,8 @@ import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import { FontFamily } from '../../Theme/FontFamily';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import HeaderSide from '../Component/HeaderSide';
+
+import { Swipeable } from 'react-native-gesture-handler';
 export default class MyCard extends Component {
   constructor(props) {
     super(props);
@@ -126,6 +128,48 @@ export default class MyCard extends Component {
     }
   }
 
+  renderRightActions = (
+    progress: Animated.AnimatedInterpolation,
+    dragX: Animated.AnimatedInterpolation,
+  ) => {
+    const opacity = dragX.interpolate({
+      inputRange: [-150, 0],
+      outputRange: [1, 0],
+      extrapolate: 'clamp',
+    });
+
+    return (
+      <View style={styles.swipedRow}>
+        <View style={styles.swipedConfirmationContainer}>
+          <Text style={styles.deleteConfirmationText}>Are you sure?</Text>
+        </View>
+        <Animated.View style={[styles.deleteButton, { opacity }]}>
+          <TouchableOpacity onPress={() => { console.log('Delete'); }}>
+            <Text style={styles.deleteButtonText}>Delete</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </View>
+    );
+  };
+
+  renderProducts = () => {
+    return (
+      <ScrollView>
+        {
+          this.state.cart && this.state.cart.length > 0 && this.state.cart.map((cartItem, index) => (
+            cartItem.qty != 0 ? (
+              <Swipeable renderRightActions={this.renderRightActions} rightThreshold={-200}>
+                <CartProduct navigation={this.props.navigation} onCart={(item) => { this.cartLoader(item) }} index={index} item={cartItem} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item) }} />
+              </Swipeable>
+            )
+              :
+              null
+          ))
+        }
+      </ScrollView>
+    )
+  }
+
   render() {
     return (
       <SafeAreaView
@@ -151,15 +195,10 @@ export default class MyCard extends Component {
             </View>
 
             <View style={{ height: '54%' }}>
-              <ScrollView>
-                {
-                  this.state.cart && this.state.cart.length > 0 && this.state.cart.map((cartItem, index) => (
-                    cartItem.qty != 0 ?
-                      <CartProduct navigation={this.props.navigation} onCart={(item) => { this.cartLoader(item) }} index={index} item={cartItem} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item) }} /> :
-                      null
-                  ))
-                }
-              </ScrollView>
+
+              {this.renderProducts()}
+
+
             </View>
 
 
@@ -391,11 +430,8 @@ const styles = StyleSheet.create({
     color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
   },
   bottomContainer: {
-    // marginTop: 10,
     flex: 1,
     justifyContent: 'flex-end',
-    // backgroundColor:"red"
-    //height:90,
   },
   subContainer: {
     shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
@@ -461,5 +497,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     width: 300,
+  },
+  swipedRow: {
+    flexDirection: 'row',
+    flex: 1,
+    alignItems: 'center',
+    paddingLeft: 5,
+    backgroundColor: '#818181',
+    margin: 20,
+    // minHeight: 50,
+  },
+  swipedConfirmationContainer: {
+    flex: 1,
+  },
+  deleteConfirmationText: {
+    color: '#fcfcfc',
+    fontWeight: 'bold',
+  },
+  deleteButton: {
+    backgroundColor: '#b60000',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    height: '100%',
+  },
+  deleteButtonText: {
+    color: '#fcfcfc',
+    fontWeight: 'bold',
+    padding: 3,
   },
 });
