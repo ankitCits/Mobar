@@ -43,7 +43,7 @@ class ProductDetailBars extends Component {
     this.setState({ loader: true });
     try {
       const postData = {
-        vendorId: 4,///this.props.route.params && this.props.route.params.id ? this.props.route.params.id : 1,
+        vendorId: this.props.route.params && this.props.route.params.id ? this.props.route.params.id : 1,
         latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : '',
         longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
       };

@@ -19,12 +19,13 @@ class ComboOfferCard extends Component {
             navigation,
             index
         } = this.props
+        console.log(item)
         return (
             <>
                 <TouchableOpacity
                     key={index}
                     onPress={() => {
-                        navigation.navigate('Product', { categoryIdx: { key: 3 } })
+                        this.props.navigation.navigate('ComboDetails', { comboId: item.comboId })
                     }}
                     style={{
                         marginTop: 28,

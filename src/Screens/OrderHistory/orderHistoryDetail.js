@@ -108,10 +108,8 @@ export default class OrderHistoryDetail extends Component {
 
 
   renderCartItems = (item, index) => {
-    // console.log("renderCartItems", (this.state.hostUrl + item.productImage));
     return (
       <>
-
         <View style={styles.productView} key={index}>
           <Text
             style={{

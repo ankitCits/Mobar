@@ -234,7 +234,9 @@ class ProductDetailDrinks extends Component {
                 size={18}
                 color="#38C720"
               />
-              {item.ecom_acc_vendor_product && item.ecom_acc_vendor_product.vendorProductStatus == 'Available' ? <Text style={[styles.productStatusText, styles.open]}>Open</Text> : <Text style={[styles.productStatusText, styles.close]}>Close</Text>}
+              {item.ecom_acc_vendor_product && item.ecom_acc_vendor_product.vendorProductStatus == 'Available' ? 
+              <Text style={[styles.productStatusText, styles.open]}>Open</Text> : 
+              <Text style={[styles.productStatusText, styles.close]}>Closed</Text>}
             </View>
           </View>
         </TouchableOpacity>
@@ -476,7 +478,7 @@ class ProductDetailDrinks extends Component {
                               size={18}
                               color={item.ecom_acc_vendor_product && item.ecom_acc_vendor_product.vendorProductStatus == 'Available' ? '#38C720' : '#FF2121'}
                             />
-                            {item.ecom_acc_vendor_product && item.ecom_acc_vendor_product.vendorProductStatus == 'Available' ? <Text style={[styles.productStatusText, styles.open]}>Open</Text> : <Text style={[styles.productStatusText, styles.close]}>Close</Text>}
+                            {item.ecom_acc_vendor_product && item.ecom_acc_vendor_product.vendorProductStatus == 'Available' ? <Text style={[styles.productStatusText, styles.open]}>Open</Text> : <Text style={[styles.productStatusText, styles.close]}>Closed</Text>}
                           </View>
                         </View>
                       </TouchableOpacity>
@@ -488,6 +490,7 @@ class ProductDetailDrinks extends Component {
             </View>
           </View>
         </ScrollView>
+        
         <Modal
           animationType="slide"
           transparent={true}

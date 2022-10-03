@@ -218,7 +218,7 @@ class SelectBars extends Component {
                 />
                 {item.ecom_acc_vendor_product.vendorProductStatus == 'Available' ?
                   <Text style={{ color: '#3C3C3C', marginLeft: 5 }}>Open</Text> :
-                  <Text style={{ color: 'red', marginLeft: 5 }}>Close</Text>
+                  <Text style={{ color: 'red', marginLeft: 5 }}>Closed</Text>
                 }
               </TouchableOpacity>
 
