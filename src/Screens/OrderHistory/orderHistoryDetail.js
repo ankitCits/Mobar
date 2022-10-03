@@ -11,18 +11,21 @@ import {
   ScrollView,
   PermissionsAndroid,
   Platform,
+  ToastAndroid,
 } from 'react-native';
 import { getPrintInvoicePdf } from '../../api/order';
 import RNFetchBlob from 'rn-fetch-blob';
 import images from '../../assets/images';
 import HeaderSide from '../Component/HeaderSide';
 import { getAccessToken } from '../../localstorage';
+import FullPageLoader from '../../Component/FullPageLoader';
 export default class OrderHistoryDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
       item: props.route.params.orderData.ecom_bc_order_details,
       visibility: false,
+      isLoading:false,
       pdfLink: '',
       orderHistory: props.route.params.orderData,
       hostUrl: props.route.params.hostUrl,
@@ -39,9 +42,12 @@ export default class OrderHistoryDetail extends Component {
       orderId: this.state.orderHistory.orderId,
     }
     try {
+      this.setState({isLoading:true});
       const res = await getPrintInvoicePdf(data);
       this.setState({ pdfLink: res.response.result.hostUrl + res.response.result.data }, () => this.downloadPdf())
+      this.setState({isLoading:false});
     } catch (error) {
+      this.setState({isLoading:false});
       console.log(" history details > getPdfInvoiceLink > catch ", error);
     }
 
@@ -81,6 +87,7 @@ export default class OrderHistoryDetail extends Component {
     const token = getAccessToken();
     const { config, fs } = RNFetchBlob;
     let DownloadDir = RNFetchBlob.fs.dirs.DownloadDir;
+    let date = new Date();
     let options = {
       fileCache: true,
       addAndroidDownloads: {
@@ -89,7 +96,7 @@ export default class OrderHistoryDetail extends Component {
         notification: true,
         path:
           DownloadDir +
-          '/MybarInvoice1.pdf',
+          '/MybarInvoice'+Math.floor(date.getTime() + date.getSeconds() / 2) + '.pdf',
         description: 'Your invoice pdf download',
       },
     };
@@ -98,7 +105,12 @@ export default class OrderHistoryDetail extends Component {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/pdf',
       });
-      
+      console.log("response >",res);
+      ToastAndroid.showWithGravity(
+        'Invoice pdf downloaded successfully',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+      );
     } catch (error) {
       console.log("orderHistoryDetails > downloadHistory > catch >", error);
       alert('Download failed.');
@@ -123,7 +135,7 @@ export default class OrderHistoryDetail extends Component {
             style={styles.productImg}
             resizeMode={'cover'}
             source={{ uri: `${this.state.hostUrl + item.productImage}` }}
-          // defaultSource={`${this.state.hostUrl + item.productImage}`}
+            defaultSource={images.defaultCategory}
           />
           <Text
             style={{
@@ -151,6 +163,10 @@ export default class OrderHistoryDetail extends Component {
           onClick={() => this.props.navigation.pop()}
         />
         <>
+        {
+          this.state.isLoading &&
+          (<FullPageLoader />) 
+        }
           <View
             style={{
               margin: 15,
@@ -176,7 +192,7 @@ export default class OrderHistoryDetail extends Component {
                 style={styles.productImg}
                 resizeMode={'cover'}
                 source={images.pdf}
-                defaultSource={images.pdf}
+                defaultSource={images.defaultBar}
               />
             </TouchableOpacity>
           </View>

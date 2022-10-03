@@ -21,6 +21,8 @@ import { ThemeColors } from '../../Theme/ThemeColors';
 import SelectInput from '../../Component/SelectInput';
 import HTMLView from 'react-native-htmlview';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
+import moment from 'moment/moment';
+import HeaderSide from '../Component/HeaderSide';
 
 export default class Collections extends Component {
   constructor(props) {
@@ -34,6 +36,7 @@ export default class Collections extends Component {
       comData: null,
       comboProducts: [],
       isToggle: false,
+      modalVisible:false,
       isLoading: false,
       refreshing: false,
       currentDate: new Date().getFullYear() + "-" + new Date().getMonth() + "-" + new Date().getDate(),
@@ -55,6 +58,7 @@ export default class Collections extends Component {
   fetchData = async () => {
     try {
       this.setState({ isLoading: true });
+      
       const response = await fetchCollectionData();
       this.setState({
         hostUrl: response.response.result.hostUrl,
@@ -80,6 +84,7 @@ export default class Collections extends Component {
         qty: 1
       }
       await addToCart(cartItem);
+      this.setState({modalVisible:true});
       ToastAndroid.showWithGravity(
         'Item added to cart successfully',
         ToastAndroid.LONG,
@@ -137,6 +142,7 @@ export default class Collections extends Component {
             <View style={styles.productInnerView} >
               <Image
                 source={{ uri: `${this.state.hostUrl + item.ecom_aca_product_unit.ecom_ac_product.images}` }}
+                defaultSource={images.defaultImg}
                 style={styles.prodImg}
               />
             </View>
@@ -148,20 +154,20 @@ export default class Collections extends Component {
                   {item.ecom_aca_product_unit.ecom_ac_product.name}
                 </Text>
               </View>
-              <View style={styles.itemDes}>
+              {/* <View style={styles.itemDes}>
                 <HTMLView
                   value={item.ecom_aca_product_unit.ecom_ac_product.shortDescription.substr(0, 28)} />
-              </View>
-              <View>
+              </View> */}
+              <View style={styles.itemDes}>
                 <Text
-                  style={styles.itemDes}>
-                  Qty: {item.ecom_aca_product_unit.unitQty + ' ' + item.ecom_aca_product_unit.unitType}
+                style={styles.qtyText}>
+                  Available Qty: {item.availableQty}
                 </Text>
               </View>
               <View>
                 <Text
                   style={[styles.validDate, styles.itemDes]}>
-                  Valid until: {item.validTillDate}
+                  Valid until: {moment(item.validTillDate).format('DD MMM YYYY')}
                 </Text>
               </View>
             </View>
@@ -174,7 +180,9 @@ export default class Collections extends Component {
                   <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => this.props.navigation.navigate('SelectBars', { data: { walletId: item.walletId, productId: item.ecom_aca_product_unit.ecom_ac_product.productId } })}
+                  onPress={() => 
+                    //this.props.navigation.navigate('OrderHistory')}
+                    this.props.navigation.navigate('SelectBars', { data: { walletId: item.walletId, productId: item.ecom_aca_product_unit.ecom_ac_product.productId } })}
                   style={styles.redeemBtn}>
                   <Text
                     style={styles.redeemBtnText}>
@@ -205,8 +213,8 @@ export default class Collections extends Component {
                 </Text>
               </View>
               <View style={styles.itemDes}>
-                <HTMLView
-                  value={item.ecom_ea_combo.description.substr(0, 28)} />
+                    <Text style={styles.qtyText}
+                    >Available Qty : {item.availableQty}</Text>
               </View>
               <View>
                 <Text
@@ -251,23 +259,14 @@ export default class Collections extends Component {
   }
 
   render() {
-    const { modalVisible } = this.state;
+    
     return (
       <SafeAreaView
         style={styles.container}>
-        <View style={styles.subContainer}>
-          <View
-            style={styles.header}>
-            <TouchableOpacity
-              onPress={() => this.props.navigation.navigate('MyBottomTabs')}>
-            </TouchableOpacity>
-            <View style={{}}>
-              <Text style={styles.headerText}>
-                Collections
-              </Text>
-            </View>
-          </View>
-        </View>
+           <HeaderSide
+                    name={'Collection'}
+                    onClick={() => this.props.navigation.goBack()}
+                />
 
         {
           this.state.isLoading ? (
@@ -353,7 +352,7 @@ export default class Collections extends Component {
         <Modal
           animationType="slide"
           transparent={true}
-          visible={modalVisible}
+          visible={false}
           onRequestClose={() => {
             this.setState({ modalVisible: false });
           }}>
@@ -363,7 +362,7 @@ export default class Collections extends Component {
                 <Text></Text>
                 <Text
                   style={styles.modalTitle}>
-                  Topup
+                  Top up
                 </Text>
                 <TouchableOpacity
                   onPress={() => this.setState({ modalVisible: false })}>
@@ -568,7 +567,14 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.TAJAWAL_REGULAR,
     fontSize: 14,
     color: '#424242',
-    fontWeight: '400'
+    fontWeight: '400',
+    paddingVertical:5
+  },
+  qtyText:{
+    fontFamily:FontFamily.TAJAWAL_REGULAR,
+    fontWeight:'300',
+    fontSize:14,
+    color:ThemeColors.CLR_DARK_GREY
   },
   validDate: {
     fontSize: 12

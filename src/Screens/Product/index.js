@@ -137,7 +137,7 @@ class Product extends Component {
           source={{
             uri: `${this.state.categoryList.hostUrl + item.images}`,
           }}
-          defaultSource={item.image}
+          defaultSource={item.defaultImg}
           style={{
             alignSelf: 'center',
             // marginTop: index == this.state.itemIndex ? 5 : 10,
@@ -171,12 +171,7 @@ class Product extends Component {
   render() {
     return (
       <SafeAreaView style={styles.container}>
-        <>
-          {/* Header */}
-          <View
-            style={{ backgroundColor: '#fff', }}>
-            <View style={{ height: 70, }}>
-              <Header
+          <Header
                 onClick={() => this.props.navigation.pop()}
                 
                 onCard={() => this.props.navigation.navigate('MyCard')}
@@ -199,14 +194,11 @@ class Product extends Component {
                   this.props.redux && this.props.redux.auth.userData && this.props.redux.auth.userData.result && this.props.redux.auth.userData.result.profile
                       ? this.props.redux.auth.userData.result.hostUrl + this.props.redux.auth.userData.result.profile.profilePic
                       : 'Default'}
-                // Address={
-                //   this.props.redux.auth.userData
-                //     ? this.props.redux.auth.userData.address
-                //     : 'Duxten Road, 338750'
-                // }
-              />
-            </View>
-            <View style={{ alignSelf: 'center', marginTop: -5 }}>
+              />    
+            <View style={{ 
+              flexDirection: 'row'
+            }}
+            >
               <View style={styles.sectionStyle}>
                 <Icon
                   name="search"
@@ -231,43 +223,22 @@ class Product extends Component {
                 </TouchableOpacity>
               </View>
             </View>
-          </View>
-          {/* Header Ends */}
-          <>
-            {/* Sort and Filter */}
-            {/* <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row' }}>
               <View style={styles.filterView}>
-                <View
-                  style={{
-                    margin: 12,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-around',
-                  }}>
                   <TouchableOpacity style={styles.filterInnerView}>
                     <Icon name="swap-vert" size={28} color="#4D4F50" />
                     <Text style={styles.filterInnerText}>Sort</Text>
                   </TouchableOpacity>
-                </View>
+              
               </View>
               <View style={styles.filterView}>
-                <View
-                  style={{
-                    margin: 12,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-around',
-                  }}>
                   <TouchableOpacity style={styles.filterInnerView}>
                     <Icon name="filter-list-alt" size={24} color="#4D4F50" />
                     <Text style={styles.filterInnerText}>Filter</Text>
                   </TouchableOpacity>
-                </View>
               </View>
-            </View> */}
-            {/* Sort and Filter Ends */}
-
-          </>
+            </View>
+        
 
           {this.state.loader ? (
             <ThemeFullPageLoader />
@@ -317,9 +288,6 @@ class Product extends Component {
               )}
             </>
           )}
-        </>
-
-        <></>
       </SafeAreaView>
     );
   }

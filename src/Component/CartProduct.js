@@ -51,6 +51,11 @@ export default class CartProduct extends React.Component {
           data: amount,
           id: this.props.item.cartId
         }
+        ToastAndroid.showWithGravity(
+          type == 1 ? 'Item added to cart successfully':'Item remove to cart successfully',
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+        );
         this.props.onChange(data);
         this.props.onCart(false)
       } catch (error) {

@@ -128,7 +128,7 @@ class BarCard extends Component {
                         <View>
                             {/* numberOfLines={2} ellipsizeMode='tail' */}
                             <Text style={styles.textAddress}
-                                numberOfLines={2}
+                                numberOfLines={1}
                             >{this.props.item.address}</Text>
                         </View>
                         <View style={styles.footer}>

@@ -1,5 +1,6 @@
 
 import { StyleSheet } from 'react-native';
+import { JumpingTransition } from 'react-native-reanimated';
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -7,6 +8,7 @@ const styles = StyleSheet.create({
     },
     sectionStyle: {
         flexDirection: 'row',
+        flex:1,
         alignItems: 'center',
         backgroundColor: '#EAEAEA',
         borderWidth: 0,
@@ -14,7 +16,8 @@ const styles = StyleSheet.create({
         height: 40,
         width: 360,
         borderRadius: 5,
-        margin: 10,
+        marginHorizontal: 10,
+        marginBottom:20,
         elevation: 2,
     },
     imageStyle: {
@@ -31,18 +34,22 @@ const styles = StyleSheet.create({
     },
     filterView: {
         backgroundColor: '#fff',
-        height: 50,
+        //height: 45,
         width: '50%',
+        justifyContent:'center',
         shadowColor: '#000',
         shadowOffset: { width: 1, height: 0 },
         shadowOpacity: 0.4,
         shadowRadius: 3,
         elevation: 5,
+        paddingVertical:6,
         borderTopWidth: 0,
     },
     filterInnerView: {
         flexDirection: 'row',
         alignItems: 'center',
+        alignSelf:'center',
+        justifyContent:'center'
     },
     filterInnerText: {
         marginLeft: 5,

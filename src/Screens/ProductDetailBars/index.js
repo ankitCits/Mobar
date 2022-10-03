@@ -23,6 +23,9 @@ import { getAccessToken } from '../../localstorage';
 import { showAlert } from '../../api/auth';
 import HTMLView from 'react-native-htmlview';
 import { connect } from 'react-redux';
+import StarRating from '../../Component/StarRatings';
+import PageHeader from '../Dashboard/PageHeader';
+import Carousel from 'react-native-snap-carousel';
 
 class ProductDetailBars extends Component {
   constructor(props) {
@@ -143,6 +146,27 @@ class ProductDetailBars extends Component {
     }
   }
 
+  renderSliderImage = ({ item, index }) => {
+    return (
+        <View
+            key={index}
+            style={{
+                alignItems: 'center',
+                backgroundColor: 'white',
+                marginTop: 10,
+            }}>
+            <Image
+                resizeMode="cover"
+                // resizeMethod="resize"
+                style={{ width: viewportWidth - 30, height: 200 }}
+                defaultSource={images.defaultImg}
+                source={{ uri: `${this.state.hostUrl + item.slider}` }}
+            />
+        </View>
+
+    );
+};
+
   render() {
     return (
       <SafeAreaView
@@ -167,7 +191,7 @@ class ProductDetailBars extends Component {
                     this.state.data.hostUrl +
                     this.state.data.vendorDetail[0].images,
                 }}
-                defaultSource={images.promotions1}
+                defaultSource={images.defaultImg}
               >
                 <View
                   style={{
@@ -305,6 +329,12 @@ class ProductDetailBars extends Component {
                     {this.state.data.vendorDetail[0].description}
                   </Text>
                 </View>
+                {/* this.state.data.vendorDetail[0].vendorRating */}
+                <View style={{
+                  marginHorizontal:2
+                }}>
+                <StarRating isEdit={false} size={this.state.data.vendorDetail[0].vendorRating} />
+                </View>
 
                 <View
                   style={{
@@ -365,7 +395,7 @@ class ProductDetailBars extends Component {
               </View>
             </View>
 
-            {/* <View style={{ margin: 15, marginTop: 20 }}>
+            <View style={{ margin: 15, marginTop: 20 }}>
               <Text
                 style={{
                   fontSize: 20,
@@ -374,8 +404,10 @@ class ProductDetailBars extends Component {
                 }}>
                 Special Offers
               </Text>
-
-              <View
+                <View style={{ flexDirection: 'row' }}>
+                <PageHeader {...this.props} page={'BarDetail'} />
+                </View>
+              {/* <View
                 style={{
                   marginTop: 15,
                 }}>
@@ -385,8 +417,19 @@ class ProductDetailBars extends Component {
                   source={images.promotionBanner}
                   defaultSource={images.promotionBanner}
                 />
-              </View>
-            </View> */}
+              </View> */}
+              {/* <View
+                style={{
+                  marginTop: 15,
+                }}>
+                <Image
+                  // style={styles.productImg}
+                  resizeMode={'cover'}
+                  source={images.promotionBanner}
+                  defaultSource={images.promotionBanner}
+                />
+              </View> */}
+            </View>
 
             <View style={{ margin: 15, marginTop: 20 }}>
               <Text
@@ -422,7 +465,7 @@ class ProductDetailBars extends Component {
                           source={{
                             uri: `${this.state.data.hostUrl + item.images}`,
                           }}
-                          defaultSource={images.product2}
+                          defaultSource={images.defaultImg}
                         />
                       </View>
                       <View style={{ margin: 5, marginLeft: 10, width: '60%' }}>

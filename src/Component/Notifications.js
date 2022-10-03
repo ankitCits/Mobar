@@ -38,13 +38,13 @@ export default class Notifications extends Component {
             <Image
               resizeMode={'cover'}
               source={images.notification1}
-              defaultSource={images.notification1}
+              defaultSource={images.defaultCombo}
             />
             <ImageBackground
               style={styles.productImg2}
               resizeMode={'cover'}
               source={images.notification2}
-              defaultSource={images.notification2}>
+              defaultSource={images.defaultCombo}>
               <View
                 style={styles.notificationBoxDetails}>
                 <Text

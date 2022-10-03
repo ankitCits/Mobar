@@ -191,7 +191,7 @@ export default class AllBars extends Component {
                   style={styles.promotions1Img}
                   resizeMode={'cover'}
                   source={images.promotions1}
-                  defaultSource={images.promotions1}>
+                  defaultSource={images.defaultBar}>
                   <View style={{ marginTop: '2%', marginRight: 10 }}>
                     <TouchableOpacity
                       style={{

@@ -193,7 +193,8 @@ class ProductDetailDrinks extends Component {
               style={styles.vendorImage}
               resizeMode={'cover'}
               source={{ uri: this.state.hostUrl + item.images }}
-              defaultSource={images.barProduct}
+              //source={images.defaultBar}
+              defaultSource={images.defaultImg}
             />
           </View>
 
@@ -351,6 +352,7 @@ class ProductDetailDrinks extends Component {
                     style={styles.mainProductImg}
                     resizeMode={'cover'}
                     source={{ uri: this.state.hostUrl + this.state.details.images }}
+                    defaultSource={images.defaultCategory}
                   />
                 </View>
               </View>
@@ -437,7 +439,7 @@ class ProductDetailDrinks extends Component {
                             style={styles.vendorImage}
                             resizeMode={'cover'}
                             source={{ uri: this.state.hostUrl + item.images }}
-                            defaultSource={images.barProduct}
+                            defaultSource={images.defaultImg}
                           />
                         </View>
 

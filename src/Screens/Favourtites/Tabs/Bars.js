@@ -71,12 +71,13 @@ export default class Bars extends Component {
                         />
                       </View>
                     </TouchableOpacity>
+                    
                     <Image
                       style={styles.prodImage}
                       resizeMode={'cover'}
-                      //source={images.product1}
+                      defaultSource={images.defaultImg}
                       source={{ uri: `${this.state.hostUrl + item.ecom_ae_vendor.images}` }}
-                    />
+                    /> 
                     {/* </ImageBackground> */}
                   </View>
 

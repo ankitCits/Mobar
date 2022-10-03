@@ -39,7 +39,7 @@ export default class PasswordSuccessFullyChanged extends Component {
             <Image
               resizeMode={'cover'}
               source={images.forgot4}
-              defaultSource={images.forgot4}
+              defaultSource={images.defaultBar}
             />
           </View>
           <View style={styles.emailView}>

@@ -154,7 +154,7 @@ export default class ComboDetails extends Component {
                                                     this.state.hostUrl +
                                                     this.state.data.images,
                                             }}
-                                            defaultSource={images.defaultBar}
+                                            defaultSource={images.defaultCombo}
                                         >
                                             <View
                                                 style={styles.headerContainer}>

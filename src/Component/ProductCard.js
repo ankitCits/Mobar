@@ -32,9 +32,7 @@ class ProductCard extends Component {
             data: this.props.item,
             cart: this.props.item.ecom_aca_product_units[0].ecom_ba_cart ? parseInt(this.props.item.ecom_aca_product_units[0].ecom_ba_cart.qty) : 0,
         };
-        console.log();
-        console.log("this.state.data.ecom_aca_product_units.savedPrices", this.state.data.ecom_aca_product_units);
-
+        console.log("Category Data > ",this.state.data);
     }
 
     addCart = async (productUnitId) => {
@@ -182,10 +180,14 @@ class ProductCard extends Component {
                     <TouchableOpacity
                         onPress={() => navigation.navigate('ProductDetailDrinks', { id: this.state.data.productId })}>
                         <View style={styles.topBar}>
-                            <Text style={styles.item}>
-                                {this.state.data.ecom_aca_product_units[0].unitQty}{' '}
-                                {this.state.data.ecom_aca_product_units[0].unitType}
-                            </Text>
+                            
+                             
+                                <Text style={styles.item}>
+                                      { this.state.data.ecom_aca_product_units[0].unitType != 'Bottle'  &&
+                                    this.state.data.ecom_aca_product_units[0].unitQty +' '+
+                                    this.state.data.ecom_aca_product_units[0].unitType}
+                                </Text>
+                            
                             <TouchableOpacity
                                 onPress={() => {
                                     this.state.isFavorite
@@ -254,7 +256,11 @@ class ProductCard extends Component {
                                             Save $50{this.state.data.ecom_aca_product_units.savedPrices}
                                         </Text>
                                     </ImageBackground>
-                                ) : (<ImageBackground></ImageBackground>)
+                                ) : (<ImageBackground style={styles.savedPriceImg}>
+                                        <Text
+                                            style={styles.savedPriceText}></Text>
+
+                                </ImageBackground>)
                                 }
                             </View>
                             <View

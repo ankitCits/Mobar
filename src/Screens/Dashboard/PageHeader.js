@@ -60,8 +60,7 @@ class PageHeader extends Component {
                     resizeMode="cover"
                     // resizeMethod="resize"
                     style={{ width: viewportWidth - 30, height: 200 }}
-                    defaultSource={images.Dashboard}
-                    // source={images.Dashboard} 
+                    defaultSource={images.defaultImg}
                     source={{ uri: `${this.state.hostUrl + item.slider}` }}
                 />
             </View>
@@ -77,6 +76,7 @@ class PageHeader extends Component {
                     backgroundColor: '#fff',
                 }}>
                 {/* Search Bar */}
+                { this.props.page == 'Dashboard' && 
                 <View style={{ alignSelf: 'center', marginTop: -5 }}>
                     <TouchableOpacity
                         style={styles.sectionStyle}
@@ -105,6 +105,7 @@ class PageHeader extends Component {
                         </TouchableOpacity>
                     </TouchableOpacity>
                 </View>
+                }
 
                 {/* Slider */}
                 {this.state.data.length == 0 &&

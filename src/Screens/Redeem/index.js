@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React, { Component } from 'react';
 import {
   Text,
@@ -238,7 +239,7 @@ export default class Redeem extends Component {
     let unitQuantityError = data.find(x => x.unitQty == 0);
     if (quantityError && quantityError.numberOfGlass == 0) {
       ToastAndroid.showWithGravity(
-        'Please select quantity',
+        'Please Select Unit',
         ToastAndroid.LONG,
         ToastAndroid.TOP,
       );
@@ -246,7 +247,7 @@ export default class Redeem extends Component {
     }
     if (unitQuantityError && unitQuantityError.unitQty == 0) {
       ToastAndroid.showWithGravity(
-        'Please select unit quantity',
+        'Please select quantity',
         ToastAndroid.LONG,
         ToastAndroid.TOP,
       );
@@ -270,6 +271,7 @@ export default class Redeem extends Component {
       this.setState({ isLoading: true });
       const res = await redeemOrder(payload);
       this.setState({ isLoading: false, modalVisible: true });
+      console.log("redeem details after submit order > ",res.response.result.data);
       this.setState({ successOrderData: res.response.result.data });
     } catch (error) {
       this.setState({ isLoading: false });
@@ -342,7 +344,7 @@ export default class Redeem extends Component {
                   uri: `${this.state.data.hostUrl + this.state.data.images
                     }`,
                 }}
-                defaultSource={images.promotions1}
+                defaultSource={images.defaultImg}
               />
             </View>
           </View>
@@ -374,7 +376,7 @@ export default class Redeem extends Component {
                           { uri: `${this.state.data.hostUrl + item.ecom_aca_product_unit.ecom_ac_product.images}` } :
                           { uri: `${this.state.data.hostUrl + item.images}` }
                       }
-                      defaultSource={images.product2}
+                      defaultSource={images.defaultImg}
                     />
                   </View>
                   <View
@@ -388,14 +390,7 @@ export default class Redeem extends Component {
                     </Text>
 
                     <View style={{ marginBottom: 0, margin: 20 }}>
-                      {item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product.description ?
-                        <HTMLView value={item.ecom_aca_product_unit.ecom_ac_product.description.substr(0, 40)} />
-                        :
-                        item.description ?
-                          <HTMLView value={item.description.substr(0, 40)} /> :
-                          null
-                      }
-
+                    
                     </View>
                     <Text
                       style={{
@@ -420,7 +415,7 @@ export default class Redeem extends Component {
                   }}>
                   <Text
                     style={styles.middleContainerSubText1}>
-                    Select Unit Quantity:
+                    Select Quantity:
                   </Text>
                   <ScrollView
                     showsHorizontalScrollIndicator={false}
@@ -493,7 +488,7 @@ export default class Redeem extends Component {
                   }}>
                   <Text
                     style={styles.middleContainerSubText2}>
-                    Select Quantity:
+                    Select Unit:
                   </Text>
                   <View
                     style={styles.middleContainerSubTextIcon}>
@@ -716,7 +711,7 @@ export default class Redeem extends Component {
                     </Text>
                     <Text
                       style={styles.redeemDetailsSubText1}>
-                      20 june 2021 10:00 Am
+                      {moment(new Date()).format('DD MMM YYYY hh:mm A')} 
                     </Text>
                   </View>
                 </View>
@@ -743,6 +738,7 @@ export default class Redeem extends Component {
                             source={
                               { uri: `${this.state.data.hostUrl + item.ecom_ac_product.images}` }
                             }
+                            defaultSource={images.defaultImg}
                           />
                         </View>
                         <View
@@ -767,6 +763,10 @@ export default class Redeem extends Component {
                           <Text
                             style={styles.redeemDetailsContainerSubText}>
                             {item.ecom_ac_product.mixerData != undefined ? item.ecom_ac_product.mixerData : item.mixerData}
+                          </Text>
+                          <Text
+                            style={styles.redeemDetailsContainerSubText}>
+                            {item.tableNo}
                           </Text>
                         </View>
                       </View>
@@ -965,8 +965,9 @@ export default class Redeem extends Component {
                                     {
                                       uri: `${this.state.data.hostUrl + item.ecom_ea_combo.images}`
                                     } :
-                                    images.redeemProduct
+                                    images.defaultImg
                                 }
+                                defaultSource={images.defaultImg}
                               />
                             </View>
 

@@ -188,7 +188,7 @@ export default class ForgetPassword extends Component {
             <Image
               resizeMode={'cover'}
               source={images.forgot1}
-              defaultSource={images.forgot1}
+              defaultSource={images.defaultImg}
             />
           </View>
           <View style={styles.createView}>

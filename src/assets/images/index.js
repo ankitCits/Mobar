@@ -67,7 +67,7 @@ const images = {
   defaultCategory: require('./defaultApp.png'), 
   defaultBar: require('./defaultApp.png'), 
   defaultCombo: require('./defaultApp.png'), 
-
+  defaultImg: require('./defaultApp.png'), 
 };
 
 export default images;

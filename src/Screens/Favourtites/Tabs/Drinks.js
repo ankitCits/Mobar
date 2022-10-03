@@ -137,24 +137,24 @@ export default class Drinks extends Component {
                       style={styles.cartButton}>
                       <Text
                         style={styles.cartText}>
-                        Add to Cart
+                        Add to Cart 
                       </Text>
                     </TouchableOpacity>
                   </View>
 
                   <View style={styles.productInnerView}>
-                    {item.ecom_ac_product ?
+                    {item.ecom_ac_product && item.ecom_ac_product.images ?
                       <Image
                         style={styles.prodImage}
                         resizeMode={'cover'}
                         source={{ uri: `${hostUrl + item.ecom_ac_product.images}` }}
-                      //defaultSource={images.product2}
+                        defaultSource={images.defaultImg}
                       /> :
-                      <View
+                      <Image
                         style={styles.prodImage}
                         resizeMode={'cover'}
-                        source={images.product2}
-                        defaultSource={images.product2}
+                        source={images.defaultCategory}
+                        defaultSource={images.defaultCategory}
                       />
                     }
                     <TouchableOpacity

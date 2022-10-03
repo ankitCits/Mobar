@@ -29,13 +29,15 @@ class ComboOfferCard extends Component {
                     }}
                     style={{
                         marginTop: 28,
+                        marginRight:10,
+                        marginHorizontal:10,
                         marginBottom: 30,
                     }}>
                     <ImageBackground
                         style={{ alignSelf: 'center', }}
                         resizeMode={'cover'}
                         source={images.combo}
-                        defaultSource={images.defaultCombo}
+                        defaultSource={images.combo}
                     >
                         <View
                             style={{
