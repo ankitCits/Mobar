@@ -22,6 +22,7 @@ import SelectBars from '../Screens/SelectBars';
 import Product from '../Screens/Product';
 import FAQs from '../Screens/Faqs';
 import ComboList from '../Screens/ComboList';
+import ComboDetails from '../Screens/ComboDetails';
 const Stack = createStackNavigator();
 
 
@@ -84,6 +85,8 @@ const DrawerScreen = () => {
       <Stack.Screen name="Product" component={Product} />
       <Stack.Screen name="FAQs" component={FAQs} />
       <Stack.Screen name="ComboList" component={ComboList} />
+      <Stack.Screen name="ComboDetails" component={ComboDetails} />
+      
 
     </Stack.Navigator>
   );
