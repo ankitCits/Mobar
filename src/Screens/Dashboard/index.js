@@ -384,7 +384,7 @@ class Dashboard extends Component {
                                                         uri: `${this.state.hostUrl+this.state.inviteShareImg}` 
                                                     }
                                                 }
-                                                defaultSource={images.promotions2}>
+                                                defaultSource={images.defaultBar}>
                                                 <View style={{ marginTop: '10%', marginLeft: '65%' }}>
                                                     <TouchableOpacity
                                                         style={{

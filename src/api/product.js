@@ -136,6 +136,66 @@ export const updateToCart = (payload) => {
     })
 }
 
+export const fetchComboProducts = (payload) => {
+    return new Promise(async (resolve, reject) => {
+        const token = await getAccessToken(token);
+        const myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+        myHeaders.append('A_Key', A_KEY);
+        myHeaders.append('Token', `${token}`);
+        const raw = JSON.stringify(payload);
+        const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow',
+        };
+        fetch(`${BASE_URL}/products/allComboProduct`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                if (result.errors) {
+                    reject(result.errors[0].msg);
+                } else {
+                    resolve(result);
+                }
+            })
+            .catch(error => {
+                console.log('ApiProduct > addToCart > Catch', error);
+                reject(error.message);
+            });
+    })
+}
+
+export const fetchComboDetailsById = (payload) => {
+    return new Promise(async (resolve, reject) => {
+        const token = await getAccessToken(token);
+        const myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+        myHeaders.append('A_Key', A_KEY);
+        myHeaders.append('Token', `${token}`);
+        const raw = JSON.stringify(payload);
+        const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow',
+        };
+        fetch(`${BASE_URL}/products/comboDetailsById`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                if (result.errors) {
+                    reject(result.errors[0].msg);
+                } else {
+                    resolve(result);
+                }
+            })
+            .catch(error => {
+                console.log('ApiProduct > addToCart > Catch', error);
+                reject(error.message);
+            });
+    })
+}
+
 
 export const removeFromCart = (payload) => {
     return new Promise(async (resolve, reject) => {

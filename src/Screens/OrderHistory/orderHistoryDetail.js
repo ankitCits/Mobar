@@ -9,23 +9,113 @@ import {
   FlatList,
   Dimensions,
   ScrollView,
+  PermissionsAndroid,
+  Platform,
 } from 'react-native';
+import { getPrintInvoicePdf } from '../../api/order';
+import RNFetchBlob from 'rn-fetch-blob';
 import images from '../../assets/images';
 import HeaderSide from '../Component/HeaderSide';
+import { startDetecting } from 'react-native/Libraries/Utilities/PixelRatio';
+import { getAccessToken } from '../../localstorage';
 export default class OrderHistoryDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
       item: props.route.params.orderData.ecom_bc_order_details,
       visibility: false,
+      pdfLink:'',
       orderHistory: props.route.params.orderData,
       hostUrl: props.route.params.hostUrl,
     };
-    console.log(this.state)
+    console.log('orderHistory data ',this.state.orderHistory.orderId);
   }
 
-  cartDetails = () => {
+  componentDidMount(){
+    this.getPdfInvoiceLink();
+  }
 
+  getPdfInvoiceLink = async () => {   
+    const data = {
+      orderId:this.state.orderHistory.orderId,
+    }
+    try{
+    const res = await getPrintInvoicePdf(data);
+    console.log("response > ",res.response.result.data);
+    this.setState({pdfLink:this.state.hostUrl+res.response.result.data})
+    console.log("state pdf link > ",this.state.pdfLink);
+    }catch(error){
+      console.log(" history details > getPdfInvoiceLink > catch ",error);
+    }
+    
+  }
+
+  async downloadHistory() {
+  
+ 
+    
+    
+
+    const token = getAccessToken();
+    const { config, fs } = RNFetchBlob;
+    let DownloadDir = RNFetchBlob.fs.dirs.DownloadDir;
+    var date = new Date();
+    let options = {
+      fileCache: true,
+      addAndroidDownloads: {
+        //Related to the Android only
+        useDownloadManager: true,
+        mime : 'application/pdf',
+        notification: true,
+        path:
+          DownloadDir +
+          '/MybarInvoice1.pdf',
+        description: 'Your invoice pdf download',
+      },
+    };
+    try{
+      const res = await config(options).fetch('GET', this.state.pdfLink, {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/pdf',
+      });
+      console.log("res d pdf",res);
+    }catch(error){
+      console.log("orderHistoryDetails > downloadHistory > catch >",error);
+        alert('Download failed.');
+    }
+  }
+
+
+  downloadPdf = async () =>{
+    //Function to check the platform
+    //If iOS the start downloading
+    //If Android then ask for runtime permission
+    if (Platform.OS === 'ios') {
+      this.downloadHistory();
+    } else {
+      try {
+        PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title:'Storage Permission',
+            message:'Allow access external storage to download invoice pdf',
+          },
+        ).then(granted => {
+          console.log("permission storage granted,result granted > ",granted,PermissionsAndroid.RESULTS.GRANTED);
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            //Once user grant the permission start downloading
+            console.log('Storage Permission Granted.');
+            this.downloadHistory();
+          } else {
+            //If permission denied then show alert 'Storage Permission 
+           alert('Storage permission has denied.');
+          }
+        });
+      } catch (err) {
+        //To handle permission related issue
+        console.log('error', err);
+      }
+    }
   }
 
   renderCartItems = (item, index) => {
@@ -90,14 +180,18 @@ export default class OrderHistoryDetail extends Component {
               </Text>
               <Text style={styles.innerText}>Date : {this.state.orderHistory.orderDate}</Text>
             </View>
-            <View style={{ margin: 15 }}>
+            <TouchableOpacity 
+            onPress={()=>{
+              this.downloadPdf();
+            }}
+            style={{ margin: 15 }}>
               <Image
                 style={styles.productImg}
                 resizeMode={'cover'}
                 source={images.pdf}
                 defaultSource={images.pdf}
               />
-            </View>
+            </TouchableOpacity>
           </View>
 
           <View

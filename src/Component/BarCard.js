@@ -92,7 +92,7 @@ class BarCard extends Component {
                         source={{
                             uri: `${hostUrl + this.state.data.images}`,
                         }}
-                        defaultSource={images.promotions1}
+                        defaultSource={images.defaultBar}
                     >
                         <TouchableOpacity
                             onPress={() => {

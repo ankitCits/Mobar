@@ -212,7 +212,7 @@ class ProductCard extends Component {
                                             ? `${hostUrl + this.state.data.images}`
                                             : images.wine,
                                     }}
-                                    defaultSource={images.wine}
+                                    defaultSource={images.defaultCategory}
                                     style={styles.prodImage}
                                 />
                             </TouchableOpacity>

@@ -112,7 +112,7 @@ export default class CategoryCard extends React.Component {
                         style={styles.boxInner}
                         resizeMode={'cover'}
                         source={currImage.outerBox}
-                        defaultSource={currImage.outerBox}>
+                        defaultSource={images.defaultImg}>
 
                         <View style={styles.innerTop}>
                             <TouchableOpacity
@@ -138,7 +138,7 @@ export default class CategoryCard extends React.Component {
                         <Image
                             style={styles.productImg}
                             resizeMode={'cover'}
-                            defaultSource={images.product1}
+                            defaultSource={images.defaultImg}
                             source={{ uri: hostUrl + this.props.item.images }}
                         />
 
@@ -146,7 +146,7 @@ export default class CategoryCard extends React.Component {
                             style={styles.boxOuter}
                             resizeMode={'cover'}
                             source={currImage.innerBox}
-                            defaultSource={currImage.innerBox}
+                            defaultSource={images.defaultImg}
                         />
 
                         <View style={styles.innerBottom}>
@@ -198,7 +198,7 @@ export default class CategoryCard extends React.Component {
                             style={styles.boxOuter}
                             resizeMode={'cover'}
                             source={currImage.innerBox}
-                            defaultSource={currImage.innerBox}
+                            defaultSource={images.defaultCategory}
                         />    
                         {/* <Text>View All</Text> */}
                         <View style={styles.innerBottom}>

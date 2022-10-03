@@ -34,7 +34,7 @@ class ComboOfferCard extends Component {
                         style={{ alignSelf: 'center', }}
                         resizeMode={'cover'}
                         source={images.combo}
-                        defaultSource={images.combo}
+                        defaultSource={images.defaultCombo}
                     >
                         <View
                             style={{

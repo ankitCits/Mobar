@@ -180,3 +180,35 @@ export const cancelOrder = (payload) => {
   });
 };
 
+
+export const getPrintInvoicePdf = (payload) => {
+  return new Promise(async (resolve, reject) => {
+    const token = await getAccessToken();
+    const myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append('A_Key', A_KEY);
+    myHeaders.append('Token', `${token}`);
+    const data = JSON.stringify(payload);
+    console.log("payload",payload);
+    const requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: data,
+      redirect: 'follow',
+    }
+    fetch(`${BASE_URL}/printInvoice/orderPdf`, requestOptions)
+      .then(result => result.json())
+      .then(responseDetail => {
+        console.log("response details > ",responseDetail);
+        if (responseDetail.response) {
+          resolve(responseDetail);
+        }
+        if (responseDetail.errors) {
+          reject(responseDetail.errors[0].msg)
+        }
+      }).catch(error => {
+        reject(error.message);
+      });
+  });
+};
+
