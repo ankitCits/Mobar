@@ -94,9 +94,9 @@ export const redeemOrderHistory = () => {
   return new Promise(async (resolve, reject) => {
     const token = await getAccessToken();
     const data = {
-    latitude: 1.28668,
-    longitude: 103.853607
-  }
+      latitude: 1.28668,
+      longitude: 103.853607
+    }
     const myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('A_Key', A_KEY);
@@ -104,7 +104,7 @@ export const redeemOrderHistory = () => {
     const requestOptions = {
       method: 'POST',
       headers: myHeaders,
-      body:JSON.stringify(data),
+      body: JSON.stringify(data),
       redirect: 'follow',
     }
     fetch(`${BASE_URL}/redeem/redeemHistory`, requestOptions)
@@ -189,7 +189,6 @@ export const getPrintInvoicePdf = (payload) => {
     myHeaders.append('A_Key', A_KEY);
     myHeaders.append('Token', `${token}`);
     const data = JSON.stringify(payload);
-    console.log("payload",payload);
     const requestOptions = {
       method: 'POST',
       headers: myHeaders,
@@ -199,7 +198,6 @@ export const getPrintInvoicePdf = (payload) => {
     fetch(`${BASE_URL}/printInvoice/orderPdf`, requestOptions)
       .then(result => result.json())
       .then(responseDetail => {
-        console.log("response details > ",responseDetail);
         if (responseDetail.response) {
           resolve(responseDetail);
         }

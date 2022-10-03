@@ -16,7 +16,6 @@ import { getPrintInvoicePdf } from '../../api/order';
 import RNFetchBlob from 'rn-fetch-blob';
 import images from '../../assets/images';
 import HeaderSide from '../Component/HeaderSide';
-import { startDetecting } from 'react-native/Libraries/Utilities/PixelRatio';
 import { getAccessToken } from '../../localstorage';
 export default class OrderHistoryDetail extends Component {
   constructor(props) {
@@ -24,72 +23,31 @@ export default class OrderHistoryDetail extends Component {
     this.state = {
       item: props.route.params.orderData.ecom_bc_order_details,
       visibility: false,
-      pdfLink:'',
+      pdfLink: '',
       orderHistory: props.route.params.orderData,
       hostUrl: props.route.params.hostUrl,
     };
-    console.log('orderHistory data ',this.state.orderHistory.orderId);
+    console.log('orderHistory data ', this.state.orderHistory.orderId);
   }
 
-  componentDidMount(){
-    this.getPdfInvoiceLink();
+  componentDidMount() {
+    // this.getPdfInvoiceLink();
   }
 
-  getPdfInvoiceLink = async () => {   
+  getPdfInvoiceLink = async () => {
     const data = {
-      orderId:this.state.orderHistory.orderId,
+      orderId: this.state.orderHistory.orderId,
     }
-    try{
-    const res = await getPrintInvoicePdf(data);
-    console.log("response > ",res.response.result.data);
-    this.setState({pdfLink:this.state.hostUrl+res.response.result.data})
-    console.log("state pdf link > ",this.state.pdfLink);
-    }catch(error){
-      console.log(" history details > getPdfInvoiceLink > catch ",error);
+    try {
+      const res = await getPrintInvoicePdf(data);
+      this.setState({ pdfLink: res.response.result.hostUrl + res.response.result.data }, () => this.downloadPdf())
+    } catch (error) {
+      console.log(" history details > getPdfInvoiceLink > catch ", error);
     }
-    
+
   }
 
-  async downloadHistory() {
-  
- 
-    
-    
-
-    const token = getAccessToken();
-    const { config, fs } = RNFetchBlob;
-    let DownloadDir = RNFetchBlob.fs.dirs.DownloadDir;
-    var date = new Date();
-    let options = {
-      fileCache: true,
-      addAndroidDownloads: {
-        //Related to the Android only
-        useDownloadManager: true,
-        mime : 'application/pdf',
-        notification: true,
-        path:
-          DownloadDir +
-          '/MybarInvoice1.pdf',
-        description: 'Your invoice pdf download',
-      },
-    };
-    try{
-      const res = await config(options).fetch('GET', this.state.pdfLink, {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/pdf',
-      });
-      console.log("res d pdf",res);
-    }catch(error){
-      console.log("orderHistoryDetails > downloadHistory > catch >",error);
-        alert('Download failed.');
-    }
-  }
-
-
-  downloadPdf = async () =>{
-    //Function to check the platform
-    //If iOS the start downloading
-    //If Android then ask for runtime permission
+  downloadPdf = async () => {
     if (Platform.OS === 'ios') {
       this.downloadHistory();
     } else {
@@ -97,18 +55,18 @@ export default class OrderHistoryDetail extends Component {
         PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
           {
-            title:'Storage Permission',
-            message:'Allow access external storage to download invoice pdf',
+            title: 'Storage Permission',
+            message: 'Allow access external storage to download invoice pdf',
           },
         ).then(granted => {
-          console.log("permission storage granted,result granted > ",granted,PermissionsAndroid.RESULTS.GRANTED);
+          console.log("permission storage granted,result granted > ", granted, PermissionsAndroid.RESULTS.GRANTED);
           if (granted === PermissionsAndroid.RESULTS.GRANTED) {
             //Once user grant the permission start downloading
             console.log('Storage Permission Granted.');
             this.downloadHistory();
           } else {
             //If permission denied then show alert 'Storage Permission 
-           alert('Storage permission has denied.');
+            alert('Storage permission has denied.');
           }
         });
       } catch (err) {
@@ -117,6 +75,37 @@ export default class OrderHistoryDetail extends Component {
       }
     }
   }
+
+
+  downloadHistory = async () => {
+    const token = getAccessToken();
+    const { config, fs } = RNFetchBlob;
+    let DownloadDir = RNFetchBlob.fs.dirs.DownloadDir;
+    let options = {
+      fileCache: true,
+      addAndroidDownloads: {
+        useDownloadManager: true,
+        mime: 'application/pdf',
+        notification: true,
+        path:
+          DownloadDir +
+          '/MybarInvoice1.pdf',
+        description: 'Your invoice pdf download',
+      },
+    };
+    try {
+      const res = await config(options).fetch('GET', this.state.pdfLink, {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/pdf',
+      });
+      
+    } catch (error) {
+      console.log("orderHistoryDetails > downloadHistory > catch >", error);
+      alert('Download failed.');
+    }
+  }
+
+
 
   renderCartItems = (item, index) => {
     // console.log("renderCartItems", (this.state.hostUrl + item.productImage));
@@ -180,11 +169,11 @@ export default class OrderHistoryDetail extends Component {
               </Text>
               <Text style={styles.innerText}>Date : {this.state.orderHistory.orderDate}</Text>
             </View>
-            <TouchableOpacity 
-            onPress={()=>{
-              this.downloadPdf();
-            }}
-            style={{ margin: 15 }}>
+            <TouchableOpacity
+              onPress={() => {
+                this.getPdfInvoiceLink();
+              }}
+              style={{ margin: 15 }}>
               <Image
                 style={styles.productImg}
                 resizeMode={'cover'}
@@ -196,10 +185,10 @@ export default class OrderHistoryDetail extends Component {
 
           <View
             style={{
-              margin:15,
+              margin: 15,
               flexDirection: 'row',
               justifyContent: 'space-between',
-              
+
             }}>
             <Text style={styles.innerText}>Items Purchased</Text>
             <Text style={styles.innerText}>Total :{this.state.item.length} </Text>
@@ -270,7 +259,7 @@ export default class OrderHistoryDetail extends Component {
               style={{
                 marginTop: 50,
                 alignItems: 'center',
-                
+
               }}>
               <Text
                 style={{
@@ -317,7 +306,7 @@ export default class OrderHistoryDetail extends Component {
               </Text>
             </View>
           }
-          <View style={{ marginTop: '0%', flex: 0, justifyContent: 'flex-end',}}>
+          <View style={{ marginTop: '0%', flex: 0, justifyContent: 'flex-end', }}>
             <View
               style={{
                 shadowColor: '#000',
@@ -432,7 +421,7 @@ export default class OrderHistoryDetail extends Component {
                   style={{
                     marginTop: '-2%',
                     marginBottom: '2%',
-                    
+
                   }}>
                   <TouchableOpacity
                     style={styles.save}
