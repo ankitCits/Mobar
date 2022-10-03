@@ -145,11 +145,11 @@ export default class ComboList extends Component {
                 <ImageBackground
                     style={styles.promotionsImg}
                     //sa
-                    // source={
-                    //     {
-                    //         uri: `${this.state.hostUrl + item.images}`,
-                    //     }
-                    // }
+                    source={
+                        {
+                            uri: `${this.state.hostUrl + item.images}`,
+                        }
+                    }
                     defaultSource={images.defaultCombo}
                 >
                     <TouchableOpacity

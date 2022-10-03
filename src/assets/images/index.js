@@ -64,9 +64,9 @@ const images = {
   noContentFound: require('./no-record.png'),
   cart: require('./cart.png'),
   notification: require('./notification.png'),
-  defaultCategory: require('./App_Iconhdpi.png'), 
-  defaultBar: require('./App_Iconhdpi.png'), 
-  defaultCombo: require('./App_Iconhdpi.png'), 
+  defaultCategory: require('./defaultApp.png'), 
+  defaultBar: require('./defaultApp.png'), 
+  defaultCombo: require('./defaultApp.png'), 
 
 };
 
