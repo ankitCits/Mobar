@@ -4,7 +4,6 @@ import { ActivityIndicator, StyleSheet, View } from 'react-native';
 export default class ThemeFullPageLoader extends React.Component {
     constructor(props) {
         super(props);
-
     }
 
     render() {

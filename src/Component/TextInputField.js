@@ -19,7 +19,7 @@ export default class TextInputField extends React.Component {
         const {
             editable = true,
             isPassword = false,
-            isButton , 
+            isButton,
             error
         } = this.props
         return (
@@ -108,7 +108,7 @@ const innerStyle = StyleSheet.create({
     errorText: {
         color: 'red',
     },
-    isModal:{
-       // marginLeft: 25,
+    isModal: {
+        // marginLeft: 25,
     }
 });

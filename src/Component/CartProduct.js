@@ -25,14 +25,14 @@ export default class CartProduct extends React.Component {
     };
   }
 
-  
+
 
   updateCart = async (type) => {
     const token = await getAccessToken();
     if (token == null) {
       showAlert();
     } else {
-      this.setState({loader:true});
+      this.setState({ loader: true });
       const cartItem = {
         cartId: this.state.data.cartId,
         type: type,
@@ -47,14 +47,14 @@ export default class CartProduct extends React.Component {
         } else {
           this.state.qty = cartQty - 1;
         }
-        this.setState({ qty: this.state.qty,loader:false });
+        this.setState({ qty: this.state.qty, loader: false });
         const data = {
           qty: this.state.qty,
           data: amount,
           id: this.props.item.cartId
         }
         ToastAndroid.showWithGravity(
-          type == 1 ? 'Item added to cart successfully':'Item remove to cart successfully',
+          type == 1 ? 'Item added to cart successfully' : 'Item remove to cart successfully',
           ToastAndroid.LONG,
           ToastAndroid.BOTTOM,
         );
@@ -84,93 +84,93 @@ export default class CartProduct extends React.Component {
     } = this.props;
     return (
       <>
-      {
-      
-        <View style={styles.container} key={index} >
-          <View style={styles.subContainer}>
-            {/* Image */}
-            <View style={styles.productInnerView}>
-              {this.props.item.ecom_aca_product_unit && this.props.item.ecom_aca_product_unit.ecom_ac_product ?
-                <Image
-                  style={styles.prodImage}
-                  resizeMode={'cover'}
-                  source={{ uri: `${hostUrl + this.props.item.ecom_aca_product_unit.ecom_ac_product.images}` }}
-                /> :
-                <Image
-                  style={styles.prodImage}
-                  resizeMode={'cover'}
-                  source={images.product1}
-                />
-              }
-            </View>
-            <View style={styles.details}>
-              <View style={styles.header}>
+        {
+
+          <View style={styles.container} key={index} >
+            <View style={styles.subContainer}>
+              {/* Image */}
+              <View style={styles.productInnerView}>
                 {this.props.item.ecom_aca_product_unit && this.props.item.ecom_aca_product_unit.ecom_ac_product ?
-                  <Text style={styles.title}>
-                    {this.props.item.ecom_aca_product_unit.ecom_ac_product.name}
-                  </Text>
-                  :
-                  <Text style={styles.title}>Not Available</Text>}
+                  <Image
+                    style={styles.prodImage}
+                    resizeMode={'cover'}
+                    source={{ uri: `${hostUrl + this.props.item.ecom_aca_product_unit.ecom_ac_product.images}` }}
+                  /> :
+                  <Image
+                    style={styles.prodImage}
+                    resizeMode={'cover'}
+                    source={images.product1}
+                  />
+                }
               </View>
-              <View>
-                <Text
-                  style={styles.qty}>
-                  {this.props.item.unitQty + ' ' + this.props.item.unitType}
-                </Text>
-              </View>
-              <View
-                style={styles.priceContainer}>
-                {this.props.item.ecom_aca_product_unit ?
+              <View style={styles.details}>
+                <View style={styles.header}>
+                  {this.props.item.ecom_aca_product_unit && this.props.item.ecom_aca_product_unit.ecom_ac_product ?
+                    <Text style={styles.title}>
+                      {this.props.item.ecom_aca_product_unit.ecom_ac_product.name}
+                    </Text>
+                    :
+                    <Text style={styles.title}>Not Available</Text>}
+                </View>
+                <View>
                   <Text
-                    style={styles.priceText}>
-                    ${this.props.item.ecom_aca_product_unit.unitUserPrice}
+                    style={styles.qty}>
+                    {this.props.item.unitQty + ' ' + this.props.item.unitType}
                   </Text>
-                  :
-                  <Text style={styles.priceText}>Not Available</Text>
-                }
-                {this.props.item.ecom_aca_product_unit && this.props.item.ecom_aca_product_unit.unitDiscountPrice ?
-                  <Text style={styles.discountPrice}>
-                    ${this.props.item.ecom_aca_product_unit.unitDiscountType}
-                  </Text>
-                  :
-                  <Text style={styles.discountPrice}></Text>
-                }
+                </View>
+                <View
+                  style={styles.priceContainer}>
+                  {this.props.item.ecom_aca_product_unit ?
+                    <Text
+                      style={styles.priceText}>
+                      ${this.props.item.ecom_aca_product_unit.unitUserPrice}
+                    </Text>
+                    :
+                    <Text style={styles.priceText}>Not Available</Text>
+                  }
+                  {this.props.item.ecom_aca_product_unit && this.props.item.ecom_aca_product_unit.unitDiscountPrice ?
+                    <Text style={styles.discountPrice}>
+                      ${this.props.item.ecom_aca_product_unit.unitDiscountType}
+                    </Text>
+                    :
+                    <Text style={styles.discountPrice}></Text>
+                  }
+                </View>
               </View>
-            </View>
-           
-            <View style={{
-              flex:1,
-              flexDirection:'row',
-              alignItems:'center',
-            }}
-            >
-              
-          
-              
-              
-              
+
+              <View style={{
+                flex: 1,
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+              >
+
+
+
+
+
                 <TouchableOpacity
                   onPress={() => { this.updateCart(2) }}
                   style={styles.icon}>
                   <Icon name="remove" size={20} color="#fff" />
                 </TouchableOpacity>
-              
-              <Text
-                style={styles.inputQty}>
-                {this.state.qty}
-              </Text>
-              {/* {this.state.loader ? <ThemeFullPageLoader /> : */}
+
+                <Text
+                  style={styles.inputQty}>
+                  {this.state.qty}
+                </Text>
+                {/* {this.state.loader ? <ThemeFullPageLoader /> : */}
                 <TouchableOpacity
                   onPress={() => { this.updateCart(1) }}
                   style={styles.icon}>
                   <Icon name="add" size={20} color="#fff" />
                 </TouchableOpacity>
-              
+
+              </View>
+
             </View>
-            
           </View>
-        </View>
-  }
+        }
       </>
     );
   }

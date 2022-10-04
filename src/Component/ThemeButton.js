@@ -14,10 +14,10 @@ export default class ThemeButton extends React.Component {
         return (
             <View style={innerStyle.btnContainer}>
                 <TouchableOpacity
-                    style={[innerStyle.container,this.props.isDisabled ? innerStyle.disabled : innerStyle.enable]}
+                    style={[innerStyle.container, this.props.isDisabled ? innerStyle.disabled : innerStyle.enable]}
                     onPress={this.props.onPress}
                     disabled={this.props.isDisabled}
-                    >
+                >
                     {this.props.isLoading ?
                         (
                             <ActivityIndicator size="small" color="#ffffff" />
@@ -46,10 +46,10 @@ const innerStyle = StyleSheet.create({
         height: 44,
         borderRadius: 10,
     },
-    disabled:{
-        backgroundColor:'#969696',
+    disabled: {
+        backgroundColor: '#969696',
     },
-    enable:{
+    enable: {
         backgroundColor: '#711323FC'
     },
     title: {

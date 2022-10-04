@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Image,View, Text } from 'react-native'
+import { StyleSheet, Image, View, Text } from 'react-native'
 import images from '../assets/images'
 const NoContentFound = ({ title, customHeigth, customWidth }) => (
   <View style={innerStyle.emptyContainer}>

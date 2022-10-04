@@ -12,9 +12,9 @@ export default class SelectInput extends React.Component {
             isToggle: this.props.visible,
             selectedItem: this.props.selectedItems,
         };
-        setTimeout(() => {
-            //console.log("const > selected items",this.props.items);
-        }, 500);
+        // setTimeout(() => {
+        //console.log("const > selected items",this.props.items);
+        // }, 500);
     }
 
     toggle = () => {

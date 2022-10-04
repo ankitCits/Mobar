@@ -32,7 +32,6 @@ class ProductCard extends Component {
             data: this.props.item,
             cart: this.props.item.ecom_aca_product_units[0].ecom_ba_cart ? parseInt(this.props.item.ecom_aca_product_units[0].ecom_ba_cart.qty) : 0,
         };
-        console.log("Category Data > ",this.state.data);
     }
 
     addCart = async (productUnitId) => {
@@ -180,14 +179,14 @@ class ProductCard extends Component {
                     <TouchableOpacity
                         onPress={() => navigation.navigate('ProductDetailDrinks', { id: this.state.data.productId })}>
                         <View style={styles.topBar}>
-                            
-                             
-                                <Text style={styles.item}>
-                                      { this.state.data.ecom_aca_product_units[0].unitType != 'Bottle'  &&
-                                    this.state.data.ecom_aca_product_units[0].unitQty +' '+
+
+
+                            <Text style={styles.item}>
+                                {this.state.data.ecom_aca_product_units[0].unitType != 'Bottle' &&
+                                    this.state.data.ecom_aca_product_units[0].unitQty + ' ' +
                                     this.state.data.ecom_aca_product_units[0].unitType}
-                                </Text>
-                            
+                            </Text>
+
                             <TouchableOpacity
                                 onPress={() => {
                                     this.state.isFavorite
@@ -257,8 +256,8 @@ class ProductCard extends Component {
                                         </Text>
                                     </ImageBackground>
                                 ) : (<ImageBackground style={styles.savedPriceImg}>
-                                        <Text
-                                            style={styles.savedPriceText}></Text>
+                                    <Text
+                                        style={styles.savedPriceText}></Text>
 
                                 </ImageBackground>)
                                 }
@@ -305,11 +304,11 @@ const styles = StyleSheet.create({
     itemOuterContainer: {
         flex: 1,
         //marginHorizontal: 12,
-        alignItems:'center'
+        alignItems: 'center'
     },
     itemContainer: {
         flexDirection: 'column',
-        width: size -22,
+        width: size - 22,
         //height: 200,
         shadowColor: '#000',
         shadowOffset: { width: 1, height: 1 },
@@ -319,8 +318,8 @@ const styles = StyleSheet.create({
         borderTopWidth: 0,
         borderRadius: 20,
         // marginBottom: 10,
-        marginVertical:9,
-        marginHorizontal:0,
+        marginVertical: 9,
+        marginHorizontal: 0,
         backgroundColor: ThemeColors.CLR_WHITE,
         borderRadius: 10,
         //backgroundColor:"red"

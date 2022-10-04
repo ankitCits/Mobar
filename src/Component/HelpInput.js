@@ -10,7 +10,6 @@ export default class HelpInput extends React.Component {
         super(props);
         this.state = {
             visibility: this.props.visibility
-
         }
     }
 
@@ -20,11 +19,10 @@ export default class HelpInput extends React.Component {
             error,
             icon
         } = this.props
-       
         return (
             <>
-                <View style={[this.props.multiline ? styles.sectionStyleDes : styles.sectionStyle,page == 'Profile' ? styles.isProfile : '']}>
-                    { page == 'Profile' ?
+                <View style={[this.props.multiline ? styles.sectionStyleDes : styles.sectionStyle, page == 'Profile' ? styles.isProfile : '']}>
+                    {page == 'Profile' ?
                         <Icon
                             name={icon}
                             size={20}
@@ -44,9 +42,9 @@ export default class HelpInput extends React.Component {
                         value={this.props.value}
                     />
                 </View>
-                    <View style={styles.errorContainer}>
-                        <Text style={styles.errorText}>{error}</Text>
-                    </View>
+                <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>{error}</Text>
+                </View>
             </>
         );
     }
@@ -61,35 +59,35 @@ const styles = StyleSheet.create({
         borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
         height: 48,
         width: 324,
-        zIndex:1,
+        zIndex: 1,
         margin: 10,
         elevation: 4,
     },
-    isProfile:{
+    isProfile: {
         borderRadius: 10,
-        borderWidth:1,
-        alignItems:'center',
-        paddingLeft:10,
-        borderColor:ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+        borderWidth: 1,
+        alignItems: 'center',
+        paddingLeft: 10,
+        borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     },
-    profileText:{
-        fontFamily:FontFamily.TAJAWAL_REGULAR,
-        fontSize:18,
-        fontWeight:'500',
-        color:ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
-        marginLeft:5,
-        width:"100%",
-      },
+    profileText: {
+        fontFamily: FontFamily.TAJAWAL_REGULAR,
+        fontSize: 18,
+        fontWeight: '500',
+        color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
+        marginLeft: 5,
+        width: "100%",
+    },
     sectionStyleDes: {
         flexDirection: 'row',
-        backgroundColor:'red',
+        backgroundColor: 'red',
         backgroundColor: ThemeColors.CLR_WHITE,
         borderWidth: 0,
         borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
         width: 324,
         borderRadius: 5,
         margin: 10,
-        zIndex:1,
+        zIndex: 1,
         elevation: 4,
     },
     inputText: {
@@ -99,13 +97,13 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 10,
         color: ThemeColors.CLR_DARK_GREY,
-        
+
     },
     errorContainer: {
         width: screenWidth(80),
         marginLeft: 15,
-        marginBottom:5,
-        
+        marginBottom: 5,
+
     },
     errorText: {
         color: 'red',

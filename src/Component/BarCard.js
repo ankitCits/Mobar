@@ -83,85 +83,85 @@ class BarCard extends Component {
         } = this.props;
         return (
             <TouchableOpacity
-                    key={index}
-                    activeOpacity={1}
-                    onPress={() => this.goToDetails(this.state.data)}
-                    style={styles.container}>
-                    <ImageBackground
-                        style={styles.promotionsImg}
-                        source={{
-                            uri: `${hostUrl + this.state.data.images}`,
+                key={index}
+                activeOpacity={1}
+                onPress={() => this.goToDetails(this.state.data)}
+                style={styles.container}>
+                <ImageBackground
+                    style={styles.promotionsImg}
+                    source={{
+                        uri: `${hostUrl + this.state.data.images}`,
+                    }}
+                    defaultSource={images.defaultBar}
+                >
+                    <TouchableOpacity
+                        onPress={() => {
+                            this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId
+                                ? this.removeFavorite(this.props.item.ecom_ba_wishlist.wishlistId)
+                                : this.addFavorite(this.props.item.vendorId, index); // pass vendor id 
                         }}
-                        defaultSource={images.defaultBar}
+                        style={styles.heartContainer}
                     >
-                        <TouchableOpacity
-                            onPress={() => {
-                                this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId
-                                    ? this.removeFavorite(this.props.item.ecom_ba_wishlist.wishlistId)
-                                    : this.addFavorite(this.props.item.vendorId, index); // pass vendor id 
-                            }}
-                            style={styles.heartContainer}
-                        >
-                            <View style={styles.favContainer}>
-                                <Image
-                                    resizeMode={'contain'}
-                                    source={this.props.item.ecom_ba_wishlist ? images.heartFill : images.heart}
-                                    defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
-                                    // source={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
-                                    // defaultSource={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
-                                    style={styles.favIcon}
-                                />
-                            </View>
+                        <View style={styles.favContainer}>
+                            <Image
+                                resizeMode={'contain'}
+                                source={this.props.item.ecom_ba_wishlist ? images.heartFill : images.heart}
+                                defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
+                                // source={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
+                                // defaultSource={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
+                                style={styles.favIcon}
+                            />
+                        </View>
+                    </TouchableOpacity>
+
+                    <View style={styles.off}>
+                        <Text style={styles.offText}>
+                            50% Off
+                        </Text>
+                    </View>
+                </ImageBackground>
+                <View
+                    style={styles.addressContainer}>
+                    <Text style={styles.textTitle}>
+                        {this.props.item.vendorShopName}
+                    </Text>
+                    <View>
+                        {/* numberOfLines={2} ellipsizeMode='tail' */}
+                        <Text style={styles.textAddress}
+                            numberOfLines={1}
+                        >{this.props.item.address}</Text>
+                    </View>
+                    <View style={styles.footer}>
+                        <TouchableOpacity style={styles.details}>
+                            <StarRating isEdit={false} size={this.props.item.vendorRating} />
                         </TouchableOpacity>
 
-                        <View style={styles.off}>
-                            <Text style={styles.offText}>
-                                50% Off
+                        <TouchableOpacity
+                            style={styles.distanceContainer}>
+                            <Icon
+                                name="directions-run"
+                                size={16}
+                                style={styles.bottomIcon}
+                            />
+                            <Text style={styles.textAddress}>
+                                {this.props.item.distance.toFixed(1)}Km
                             </Text>
-                        </View>
-                    </ImageBackground>
-                    <View
-                        style={styles.addressContainer}>
-                        <Text style={styles.textTitle}>
-                            {this.props.item.vendorShopName}
-                        </Text>
-                        <View>
-                            {/* numberOfLines={2} ellipsizeMode='tail' */}
-                            <Text style={styles.textAddress}
-                                numberOfLines={1}
-                            >{this.props.item.address}</Text>
-                        </View>
-                        <View style={styles.footer}>
-                            <TouchableOpacity style={styles.details}>
-                                <StarRating isEdit={false} size={this.props.item.vendorRating} />
-                            </TouchableOpacity>
+                        </TouchableOpacity>
 
-                            <TouchableOpacity
-                                style={styles.distanceContainer}>
-                                <Icon
-                                    name="directions-run"
-                                    size={16}
-                                    style={styles.bottomIcon}
-                                />
-                                <Text style={styles.textAddress}>
-                                    {this.props.item.distance.toFixed(1)}Km
-                                </Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={styles.openLink}>
-                                <Icon
-                                    name="fiber-manual-record"
-                                    size={15}
-                                    color="#26B90E"
-                                    style={styles.bottomIcon}
-                                />
-                                <Text style={styles.openText}>
-                                    Open
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
+                        <TouchableOpacity
+                            style={styles.openLink}>
+                            <Icon
+                                name="fiber-manual-record"
+                                size={15}
+                                color="#26B90E"
+                                style={styles.bottomIcon}
+                            />
+                            <Text style={styles.openText}>
+                                Open
+                            </Text>
+                        </TouchableOpacity>
                     </View>
+                </View>
             </TouchableOpacity>
         );
     }

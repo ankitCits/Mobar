@@ -67,7 +67,7 @@ export default class CategoryCard extends React.Component {
                     "wishlistId": response.result.data.wishlistId,
                     "wishlistFor": "Drinks"
                 }
-                console.log("response add ti wishlist >",response.result);
+                console.log("response add ti wishlist >", response.result);
                 this.setState({ isFavorite: true })
             } catch (error) {
                 console.log("CategoryCard > addFavorite > Catch", error);
@@ -108,7 +108,7 @@ export default class CategoryCard extends React.Component {
                     }}>
 
                     <ImageBackground
-                    key={index}
+                        key={index}
                         style={styles.boxInner}
                         resizeMode={'cover'}
                         source={currImage.outerBox}
@@ -174,7 +174,7 @@ export default class CategoryCard extends React.Component {
                         </View>
                     </ImageBackground>
                 </TouchableOpacity>
-                          {index == totalItems - 1 &&
+                {index == totalItems - 1 &&
                     <TouchableOpacity
                         onPress={() => {
                             navigation.navigate('Product', { categoryIdx: categoryIdx });
@@ -184,32 +184,32 @@ export default class CategoryCard extends React.Component {
                             marginBottom: 30,
                             marginLeft: 10,
                         }}>
-                        
 
-                         <View style={{backgroundColor:Colors.blueGrey100,width: 147,height: 180,alignItems:"center",justifyContent:"center"}}>
-                        <View>
-                            <TouchableOpacity>
-                            <Icon name="arrow-forward-ios" size={28} color="#4D4F50" />
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.productHeader}>
-                        </View>
-                         <Image
-                            style={styles.boxOuter}
-                            resizeMode={'cover'}
-                            source={currImage.innerBox}
-                            defaultSource={images.innerBox}
-                        />    
-                        {/* <Text>View All</Text> */}
-                        <View style={styles.innerBottom}>
+
+                        <View style={{ backgroundColor: Colors.blueGrey100, width: 147, height: 180, alignItems: "center", justifyContent: "center" }}>
                             <View>
-                                <Text style={styles.innerViewAll}>
-                                    View All
-                                </Text>
+                                <TouchableOpacity>
+                                    <Icon name="arrow-forward-ios" size={28} color="#4D4F50" />
+                                </TouchableOpacity>
                             </View>
+                            <View style={styles.productHeader}>
+                            </View>
+                            <Image
+                                style={styles.boxOuter}
+                                resizeMode={'cover'}
+                                source={currImage.innerBox}
+                                defaultSource={images.innerBox}
+                            />
+                            {/* <Text>View All</Text> */}
+                            <View style={styles.innerBottom}>
+                                <View>
+                                    <Text style={styles.innerViewAll}>
+                                        View All
+                                    </Text>
+                                </View>
                             </View>
                         </View>
-                       
+
                     </TouchableOpacity>
                 }
             </>
@@ -237,9 +237,9 @@ const styles = StyleSheet.create({
         zIndex: 0,
         alignSelf: 'center'
     },
-    productHeader:{
-        marginTop:'40%',
-        
+    productHeader: {
+        marginTop: '40%',
+
     },
     favContainer: {
         width: 30,
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '500',
     },
-    innerViewAll:{
+    innerViewAll: {
         color: '#fff',
         fontSize: 15,
         fontWeight: '400',

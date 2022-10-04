@@ -19,7 +19,6 @@ class ComboOfferCard extends Component {
             navigation,
             index
         } = this.props
-        console.log(item)
         return (
             <>
                 <TouchableOpacity
@@ -29,8 +28,8 @@ class ComboOfferCard extends Component {
                     }}
                     style={{
                         marginTop: 28,
-                        marginRight:10,
-                        marginHorizontal:10,
+                        marginRight: 10,
+                        marginHorizontal: 10,
                         marginBottom: 30,
                     }}>
                     <ImageBackground
