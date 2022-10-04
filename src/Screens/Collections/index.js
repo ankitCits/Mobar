@@ -10,6 +10,7 @@ import {
   ToastAndroid,
   FlatList,
   RefreshControl,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { showAlert } from '../../api/auth';
@@ -29,7 +30,7 @@ export default class Collections extends Component {
     super(props);
     this.state = {
       visibilityQuantity: 30,
-      modalVisible: false,
+      cartModalVisible: false,
       isComboProduct: false,
       hostUrl: '',
       comboProduct: { productId: 0, walletId: 0, text: 'Select Product' },
@@ -38,6 +39,11 @@ export default class Collections extends Component {
       isToggle: false,
       modalVisible:false,
       modalCartItem:null,
+      selectedQty:{
+        name:'name',
+        unit:'0ml',
+        qty:0
+      },
       isLoading: false,
       refreshing: false,
       currentDate: new Date().getFullYear() + "-" + new Date().getMonth() + "-" + new Date().getDate(),
@@ -61,10 +67,13 @@ export default class Collections extends Component {
       this.setState({ isLoading: true });
       
       const response = await fetchCollectionData();
+      response.response.result.data.map((item)=>{
+        item.qty=0
+      });
       this.setState({
         hostUrl: response.response.result.hostUrl,
         data: response.response.result.data,
-        isLoading: false
+        isLoading: false,
       });
     } catch (error) {
       console.log("collection > catch > error", error);
@@ -77,20 +86,39 @@ export default class Collections extends Component {
     }
   }
 
-  addCart = async (item, type) => {
+  addCart = async (item, type,index) => {
     try {
       const cartItem = {
         productUnitId: (type == 'product') ? item.ecom_aca_product_unit.productUnitId : 0,
-        comboId: (type == 'combo') ? prodUnitId : 0,
+        comboId: (type == 'combo') ? item.ecom_ea_combo.comboId : 0,
         qty: 1
+      };
+      const res = await addToCart(cartItem);
+      const defaultQty = this.state.data[index].qty;
+      this.state.data[index].qty = defaultQty + 1;
+      this.setState({data:this.state.data});
+      if(type =='product'){
+        this.setState({selectedQty:
+          {
+          name:item.ecom_aca_product_unit.ecom_ac_product.name,
+          unit:item.ecom_aca_product_unit.unitQty+item.ecom_aca_product_unit.unitType,
+          type:type,
+          index:index,
+          items:item,
+          qty:defaultQty + 1
+        }
+      });
+      }else{
+        this.setState({selectedQty:{
+          name:item.ecom_ea_combo.name,
+          unit:item.walletOriginalTotalQty+item.unitType,
+          qty:defaultQty + 1,
+          type:type,
+          index:index,
+          items:item,
+        }});
       }
-      await addToCart(cartItem);
-      ToastAndroid.showWithGravity(
-        'Item added to cart successfully..',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
-      //this.setState({modalVisible:true,modalCartItem:item});
+      this.setState({cartModalVisible:true});
     } catch (error) {
       console.log("Details Bars > addCart > catch", error);
       ToastAndroid.showWithGravity(
@@ -176,7 +204,7 @@ export default class Collections extends Component {
               style={styles.cartContainer}>
               <View style={styles.cart}>
                 <TouchableOpacity
-                  onPress={() => this.addCart(item, 'product')}
+                  onPress={() => this.addCart(item, 'product',index)}
                   style={styles.cartIcon}>
                   <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
                 </TouchableOpacity>
@@ -228,7 +256,7 @@ export default class Collections extends Component {
               style={styles.cartContainer}>
               <View style={styles.cart}>
                 <TouchableOpacity
-                  onPress={() => this.addCart(item.ecom_ea_combo.comboId, 'combo')}
+                  onPress={() => this.addCart(item, 'combo',index)}
                   style={styles.cartIcon}>
                   <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
                 </TouchableOpacity>
@@ -252,6 +280,10 @@ export default class Collections extends Component {
       this.state.comboProduct.text = value.name,
       this.toggle();
   };
+
+  onCloseModal=()=>{
+    this.setState({cartModalVisible:false})
+  }
 
   onSelectComboProduct = () => {
     this.setState({ isComboProduct: !this.state.isComboProduct },
@@ -358,7 +390,7 @@ export default class Collections extends Component {
           transparent={true}
           visible={false}
           onRequestClose={() => {
-            this.setState({ modalVisible: false });
+            this.setState({ cartModalVisible: false });
           }}>
           <View style={styles.modalContainer}>
             <View style={styles.modalView}>
@@ -369,7 +401,7 @@ export default class Collections extends Component {
                   Top up
                 </Text>
                 <TouchableOpacity
-                  onPress={() => this.setState({ modalVisible: false })}>
+                  onPress={() => this.setState({ cartModalVisible: false })}>
                   <Icon name="close" size={28} color="#4D4F50" />
                 </TouchableOpacity>
               </View>
@@ -467,6 +499,71 @@ export default class Collections extends Component {
               </View>
             </View>
           </View>
+        </Modal>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.state.cartModalVisible}>
+          <TouchableWithoutFeedback
+          onPressOut={()=>this.onCloseModal()}>
+          <View style={styles.centeredView}>  
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text
+                style={styles.modalTitle}>
+                Item added to cart successfully
+              </Text>
+              <TouchableOpacity
+              onPress={()=>this.onCloseModal()}>
+              <Text><Icon name="close" size={28} color="#000" /></Text>
+              </TouchableOpacity>
+            </View>
+            <View
+              style={styles.modalBody}>
+              <Text
+                style={styles.modalTextDetail}>
+                {this.state.selectedQty.name} {this.state.selectedQty.unit}
+              </Text>
+              <View style={styles.modalCartQty}>
+                <TouchableOpacity
+                  onPress={() => {
+                    // this.state.selectedQty.ecom_ba_cart ?
+                    //   this.updateCart(this.state.selectedQty) :
+                    //   this.setState({ cartModalVisible: false })
+                  }}
+                >
+                  <Icon name="remove" size={20} color="#4D4F50" />
+                </TouchableOpacity>
+                <Text
+                  style={styles.modalTextDetail}>
+                  {' ' + this.state.selectedQty.qty + ' '}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => this.addCart(this.state.selectedQty.items,this.state.selectedQty.type,this.state.selectedQty.index)}
+                >
+                  <Icon name="add" size={20} color="#4D4F50" />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <TouchableOpacity
+              style={styles.save}
+              onPress={() => {
+                this.setState({ modalVisible: false })
+                this.props.navigation.navigate('MyCard')
+              }}>
+              <Text style={{
+                fontFamily: FontFamily.TAJAWAL_REGULAR,
+                fontWeight: '700',
+                fontSize: 18,
+                color: ThemeColors.CLR_WHITE
+              }}>
+                VIEW CART
+              </Text>
+            </TouchableOpacity>
+          </View>
+          </View>
+          </TouchableWithoutFeedback>
         </Modal>
       </SafeAreaView>
     );
@@ -766,4 +863,68 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderColor: '#A1172F',
   },
+  centeredView:{
+    flex: 1,
+    //justifyContent: 'center',
+    //alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',  
+  },
+  modalContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    elevation: 4,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    opacity:4,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    //width: 400,
+    //height: 280, 
+  },
+  modalHeader: {
+    paddingVertical: 10,
+    flexDirection:"row",
+    justifyContent:"space-between",
+  },
+  modalTitle: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    fontWeight: '500',
+    fontSize: 14,
+    color: '#ACACAC'
+  },
+  modalBody: {
+    flexDirection: 'row',
+    paddingVertical: 15
+  },
+  modalTextDetail: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    fontWeight: '500',
+    fontSize: 15,
+    color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR
+  },
+  modalCartQty: {
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'flex-end'
+  },
+  save: {
+    backgroundColor: '#851729',
+    padding: 12,
+    borderRadius: 25,
+    alignItems: 'center',
+    alignSelf: 'center',
+    width: 300,
+  },
+  descriptionContainer: { marginTop: 20 },
 });
