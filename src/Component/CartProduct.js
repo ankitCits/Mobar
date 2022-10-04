@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { showAlert } from '../api/auth';
-import { addToCart, removeFromCart, updateToCart } from '../api/product';
+import { addToCart, updateToCart } from '../api/product';
 import images from '../assets/images';
 import { getAccessToken } from '../localstorage';
 import { FontFamily } from '../Theme/FontFamily';
@@ -24,6 +24,8 @@ export default class CartProduct extends React.Component {
       qty: parseInt(this.props.item.qty)
     };
   }
+
+  
 
   updateCart = async (type) => {
     const token = await getAccessToken();

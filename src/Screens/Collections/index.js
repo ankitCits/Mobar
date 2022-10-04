@@ -37,6 +37,7 @@ export default class Collections extends Component {
       comboProducts: [],
       isToggle: false,
       modalVisible:false,
+      modalCartItem:null,
       isLoading: false,
       refreshing: false,
       currentDate: new Date().getFullYear() + "-" + new Date().getMonth() + "-" + new Date().getDate(),
@@ -76,20 +77,20 @@ export default class Collections extends Component {
     }
   }
 
-  addCart = async (prodUnitId, type) => {
+  addCart = async (item, type) => {
     try {
       const cartItem = {
-        productUnitId: (type == 'product') ? prodUnitId : 0,
+        productUnitId: (type == 'product') ? item.ecom_aca_product_unit.productUnitId : 0,
         comboId: (type == 'combo') ? prodUnitId : 0,
         qty: 1
       }
       await addToCart(cartItem);
-      this.setState({modalVisible:true});
       ToastAndroid.showWithGravity(
-        'Item added to cart successfully',
+        'Item added to cart successfully..',
         ToastAndroid.LONG,
         ToastAndroid.TOP,
       );
+      //this.setState({modalVisible:true,modalCartItem:item});
     } catch (error) {
       console.log("Details Bars > addCart > catch", error);
       ToastAndroid.showWithGravity(
@@ -175,7 +176,7 @@ export default class Collections extends Component {
               style={styles.cartContainer}>
               <View style={styles.cart}>
                 <TouchableOpacity
-                  onPress={() => this.addCart(item.ecom_aca_product_unit.productUnitId, 'product')}
+                  onPress={() => this.addCart(item, 'product')}
                   style={styles.cartIcon}>
                   <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
                 </TouchableOpacity>
@@ -273,7 +274,7 @@ export default class Collections extends Component {
             <ThemeFullPageLoader />
           ) : (
             <>
-              <View style={styles.filterRow}>
+              {/* <View style={styles.filterRow}>
                 <View style={styles.filterView}>
                   <View
                     style={styles.sort}>
@@ -293,12 +294,15 @@ export default class Collections extends Component {
                     </TouchableOpacity>
                   </View>
                 </View>
-              </View>
+              </View> */}
 
               {/* </View> */}
               <FlatList
                 nestedScrollEnabled={true}
                 showsHorizontalScrollIndicator={false}
+                style={{
+                  marginTop:10,
+                }}
                 data={this.state.data}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item, index }) => this.renderProducts(item, index)}

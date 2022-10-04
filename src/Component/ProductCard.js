@@ -304,12 +304,12 @@ const size = Dimensions.get('window').width / numColumns;
 const styles = StyleSheet.create({
     itemOuterContainer: {
         flex: 1,
-        marginHorizontal: 16,
-
+        //marginHorizontal: 12,
+        alignItems:'center'
     },
     itemContainer: {
         flexDirection: 'column',
-        width: size - 28,
+        width: size -22,
         //height: 200,
         shadowColor: '#000',
         shadowOffset: { width: 1, height: 1 },
@@ -318,11 +318,11 @@ const styles = StyleSheet.create({
         elevation: 5,
         borderTopWidth: 0,
         borderRadius: 20,
-        marginTop: 20,
-        marginBottom: 10,
-        backgroundColor: '#fff',
+        // marginBottom: 10,
+        marginVertical:9,
+        marginHorizontal:0,
+        backgroundColor: ThemeColors.CLR_WHITE,
         borderRadius: 10,
-        marginBottom: 12,
         //backgroundColor:"red"
     },
     itemDetails: {

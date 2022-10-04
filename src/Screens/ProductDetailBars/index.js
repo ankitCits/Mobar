@@ -9,6 +9,7 @@ import {
   StyleSheet,
   ScrollView,
   ToastAndroid,
+  Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
@@ -26,7 +27,9 @@ import { connect } from 'react-redux';
 import StarRating from '../../Component/StarRatings';
 import PageHeader from '../Dashboard/PageHeader';
 import Carousel from 'react-native-snap-carousel';
-
+import { LogData } from 'react-native/Libraries/LogBox/LogBox';
+import { screenHeight } from '../../Theme/Matrices';
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 class ProductDetailBars extends Component {
   constructor(props) {
     super(props);
@@ -34,6 +37,8 @@ class ProductDetailBars extends Component {
       modalVisible: true,
       loader: false,
       data: null,
+      offersData:[],
+      hostUrl:null,
       isFavorite: false,
     };
   }
@@ -51,13 +56,12 @@ class ProductDetailBars extends Component {
         longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
       };
       const data = await fetchVendorDetails(postData);
-      this.setState({ data: data.response.result, loader: false });
+      this.setState({ data: data.response.result,offersData:data.response.result.barOffers,hostUrl:data.response.result.hostUrl, loader: false });
       this.setState({
         isFavorite: this.state.data.vendorDetail[0].ecom_ba_wishlist &&
           this.state.data.vendorDetail[0].ecom_ba_wishlist.wishlistId ?
           true : false
       });
-      console.log("this.state.data.vendorDetail[0].ecom_ac_products >>",this.state.data.vendorDetail[0].ecom_ac_products[0].ecom_aca_product_units);
     } catch (error) {
       ToastAndroid.showWithGravity(
         error,
@@ -158,14 +162,47 @@ class ProductDetailBars extends Component {
             <Image
                 resizeMode="cover"
                 // resizeMethod="resize"
-                style={{ width: viewportWidth - 30, height: 200 }}
+                style={{ width: viewportWidth - 30, height: 200,alignSelf:'flex-start' }}
                 defaultSource={images.defaultImg}
-                source={{ uri: `${this.state.hostUrl + item.slider}` }}
+                source={{ uri: `${this.state.hostUrl + item.images}` }}
             />
         </View>
-
     );
 };
+
+redirectTo=(item)=>{
+  //console.log("selected product > ",item.ecom_aca_product_units[0].ecom_ca_wallet);
+  //return;
+  const data = {
+    walletId: item.ecom_aca_product_units[0].ecom_ca_wallet.walletId,
+    availableQty: item.ecom_aca_product_units[0].ecom_ca_wallet.availableQty,
+    unitType: item.ecom_aca_product_units[0].ecom_ca_wallet.unitType,
+    vendorShopName: this.state.data.vendorDetail[0].vendorShopName,
+    description: this.state.data.vendorDetail[0].description,
+    images: this.state.data.vendorDetail[0].images,
+    vendorId: this.state.data.vendorDetail[0].vendorId,
+    hostUrl: this.state.hostUrl,
+    ecom_aca_product_unit: {
+      productUnitId: item.ecom_aca_product_units[0].productUnitId,
+      unitType: item.ecom_aca_product_units[0].unitType,
+      unitQty: item.ecom_aca_product_units[0].unitQty,
+      unitUserPrice: item.ecom_aca_product_units[0].unitUserPrice,
+      ecom_ac_product: {
+        selectedUnitQty: 0,
+        inputQty: 0,
+        selectedMixerData: "",
+        quantity: 0,
+        productId: item.productId,
+        name: item.name,
+        images: item.images,
+        description: item.description,
+        ecom_acca_vendor_product_units: item.ecom_acca_vendor_product_units,
+      }
+    }
+  };
+  console.log("redeem data > ",data);
+  this.props.navigation.navigate('Redeem', { items: data })
+}
 
   render() {
     return (
@@ -405,30 +442,20 @@ class ProductDetailBars extends Component {
                 Special Offers
               </Text>
                 <View style={{ flexDirection: 'row' }}>
-                <PageHeader {...this.props} page={'BarDetail'} />
+                <View style={{ alignItems: 'center', height: screenHeight(26) }}>
+                        <View style={{ marginVertical: 10 }}>
+                            <Carousel
+                                ref={(c) => { this._carousel = c; }}
+                                data={this.state.offersData}
+                                renderItem={this.renderSliderImage}
+                                sliderWidth={viewportWidth}
+                                sliderHeight={viewportWidth}
+                                itemWidth={viewportWidth}
+                                inactiveSlideOpacity={0}
+                            />
+                        </View>
+                    </View>
                 </View>
-              {/* <View
-                style={{
-                  marginTop: 15,
-                }}>
-                <Image
-                  // style={styles.productImg}
-                  resizeMode={'cover'}
-                  source={images.promotionBanner}
-                  defaultSource={images.promotionBanner}
-                />
-              </View> */}
-              {/* <View
-                style={{
-                  marginTop: 15,
-                }}>
-                <Image
-                  // style={styles.productImg}
-                  resizeMode={'cover'}
-                  source={images.promotionBanner}
-                  defaultSource={images.promotionBanner}
-                />
-              </View> */}
             </View>
 
             <View style={{ margin: 15, marginTop: 20 }}>
@@ -491,16 +518,16 @@ class ProductDetailBars extends Component {
                           fontSize: 14,
                           color: '#4D4F50',
                           fontWeight: '400',
-                          marginHorizontal:5,
+                          marginHorizontal: 5,
                         }}>
                           <Text
-                          style={{
-                            fontSize: 14,
-                            color: '#4D4F50',
-                            fontWeight: '400',
-                          }}>
-                          {item.ecom_aca_product_units[0].unitQty+item.ecom_aca_product_units[0].unitType}
-                        </Text>
+                            style={{
+                              fontSize: 14,
+                              color: '#4D4F50',
+                              fontWeight: '400',
+                            }}>
+                            {item.ecom_aca_product_units[0].unitQty + item.ecom_aca_product_units[0].unitType}
+                          </Text>
                           {/* <HTMLView value={item.shortDescription} /> */}
                         </View>
 
@@ -533,7 +560,7 @@ class ProductDetailBars extends Component {
                             </Text>
                           ) : null}
 
-{item.ecom_aca_product_units[0].savedPrices ? (
+                          {item.ecom_aca_product_units[0].savedPrices ? (
                             <Text
                               style={{
                                 marginLeft: 10,
@@ -546,55 +573,58 @@ class ProductDetailBars extends Component {
                             </Text>
                           ) : null}
                         </View>
-                        <View
-                          style={{
-                            // top: '15%',
-                            marginLeft: '60%',
-                            flex: 1,
-                            justifyContent: 'flex-end',
-                          }}>
-                          {/* <TouchableOpacity
-                          onPress={
-                            () =>
-                              this.props.navigation.navigate('Redeem', {
-                                item,
-                                uri: this.state.data.hostUrl,
-                                image: this.state.data.vendorDetail[0].images,
-                                vendorId: this.props.route.params.id ? this.props.route.params.id : 1
-                              })
-                            // console.log('--->xxxxxxx', item.images)
-                          }
-                          style={{
-                            backgroundColor: '#C11331',
-                            marginTop: 10,
-                            borderRadius: 10,
-                            height: 25,
-                            width: 70,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}>
-                          <Text
-                            style={{
-                              fontSize: 12,
-                              color: '#fff',
-                              fontWeight: '500',
-                            }}>
-                            Redeem
-                          </Text>
-                        </TouchableOpacity> */}
-                        </View>
                       </View>
-                      <View style={{ marginTop: 17, marginRight: 12, }}>
-                        <TouchableOpacity
-                          onPress={() => { this.addCart(item.ecom_aca_product_units[0].productUnitId) }}
-                          key={index}
-                          style={{
-                            backgroundColor: '#BABABA',
-                            padding: 2,
-                            borderRadius: 20,
-                          }}>
-                          <Icon name="add" size={18} color="#fff" key={index} />
-                        </TouchableOpacity>
+                      <View style={{
+                        flexDirection:'column',
+                        justifyContent:'space-between'
+                      }}>
+                        <View style={{ 
+                          alignSelf:'flex-end',
+                          marginHorizontal:10,
+                          marginVertical:5
+                       }}>
+                          <TouchableOpacity
+                            onPress={() => { this.addCart(item.ecom_aca_product_units[0].productUnitId) }}
+                            key={index}
+                            style={{
+                              backgroundColor: '#BABABA',
+                              padding: 2,
+                              borderRadius: 20,
+                            }}>
+                            <Icon name="add" size={18} color="#fff" key={index} />
+                          </TouchableOpacity>
+                        </View>
+
+                        {item.ecom_aca_product_units[0].ecom_ca_wallet != null &&
+                          <View
+                            style={{
+                              marginHorizontal:10,marginVertical:5,
+                            }}>
+                            <TouchableOpacity
+                              onPress={
+                                () => this.redirectTo(item)
+
+                              }
+                              style={{
+                                backgroundColor: '#C11331',
+                                marginTop: 10,
+                                borderRadius: 20,
+                                padding: 5,
+                                paddingHorizontal: 10,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}>
+                              <Text
+                                style={{
+                                  fontSize: 12,
+                                  color: '#fff',
+                                  fontWeight: '500',
+                                }}>
+                                Redeem
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
+                        }
                       </View>
                       {/* <CartModal itemName={'Product'} modalVisible={this.state.modalVisible} /> */}
                     </View>
@@ -716,12 +746,13 @@ const styles = StyleSheet.create({
   productView: {
     backgroundColor: ThemeColors.CLR_WHITE,
     //height: 100,
-    //width: '96%',
+    //width: '95%',
+    margin:20,
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
     shadowRadius: 12,
-    borderRadius: 12,
+    borderRadius: 15,
     elevation: 5,
     alignSelf: 'center',
     flexDirection: 'row',
@@ -733,11 +764,11 @@ const styles = StyleSheet.create({
     width: '26%',
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 10,
+    borderRadius:15
   },
   favContainer: {
-    width: 35,
-    height: 35,
+    width: 40,
+    height: 40,
     justifyContent: 'center',
     backgroundColor: ThemeColors.CLR_WHITE,
     elevation: 4,
