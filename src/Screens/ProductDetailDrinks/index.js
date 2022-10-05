@@ -23,6 +23,7 @@ import { addToWishlist, removeToWishlist } from '../../api/wishlist';
 import { showAlert } from '../../api/auth';
 import { getAccessToken } from '../../localstorage';
 import { connect } from 'react-redux';
+import CartModal from '../../Component/CartModal';
 
 class ProductDetailDrinks extends Component {
   constructor(props) {
@@ -35,7 +36,11 @@ class ProductDetailDrinks extends Component {
       cartQty: 0,
       modalVisible: false,
       index: 0,
-      selectedQty: 0,
+      selectedQty: {
+        qty: 0,
+        name: '',
+        unit: ''
+      },
       isFavorite: false
     };
   }
@@ -78,6 +83,7 @@ class ProductDetailDrinks extends Component {
       showAlert();
       return;
     } else {
+      console.log("addCart > product unit Id > ", this.state.selectedQty.productUnitId);
       try {
         const cartItem = {
           productUnitId: this.state.selectedQty.productUnitId,
@@ -86,7 +92,11 @@ class ProductDetailDrinks extends Component {
         };
         const cartResponse = await addToCart(cartItem);
         this.state.selectedQty.qty = this.state.selectedQty.qty + 1
+        this.state.selectedQty.unit = this.state.selectedQty.unitQty + this.state.selectedQty.unitType;
+        this.state.selectedQty.name = this.state.details.name;
+        //this.state.details.ecom_aca_product_units[0]
         this.setState({ selectedQty: this.state.selectedQty });
+        //console.log("selected modal item after set > ",this.state.selectedQty);
       } catch (error) {
         console.log("Details Bars > addCart > catch", error);
         ToastAndroid.showWithGravity(
@@ -98,20 +108,27 @@ class ProductDetailDrinks extends Component {
     }
   }
 
-  updateCart = async (item, type, index) => {
+  updateCart = async (type, index) => {
     const token = await getAccessToken();
     if (token == null) {
       showAlert();
     } else {
+      console.log("updateCart > type > ", type);
       try {
         const sendData = {
           cartId: this.state.selectedQty.ecom_ba_cart.cartId,
-          type: 2,
+          type: type,
         };
         if (this.state.selectedQty.qty > 0) {
           const response = await updateToCart(sendData);
-          this.state.selectedQty.qty = this.state.selectedQty.qty - 1;
+
+          this.state.selectedQty.qty = type == 1 ? this.state.selectedQty.qty + 1 : this.state.selectedQty.qty - 1;
+          this.state.selectedQty.unit = this.state.selectedQty.unitQty + this.state.selectedQty.unitType;
+          this.state.selectedQty.name = this.state.details.name;
           this.setState({ selectedQty: this.state.selectedQty });
+          if (this.state.selectedQty.qty == 0) {
+            this.state.selectedQty.ecom_ba_cart = null;
+          }
         }
       } catch (error) {
         ToastAndroid.showWithGravity(
@@ -176,8 +193,8 @@ class ProductDetailDrinks extends Component {
     }
   }
 
-  onCloseModal=()=>{
-    this.setState({modalVisible:false})
+  onCloseModal = () => {
+    this.setState({ modalVisible: false })
   }
 
   renderItem = (item) => {
@@ -235,9 +252,9 @@ class ProductDetailDrinks extends Component {
                 size={18}
                 color="#38C720"
               />
-              {item.ecom_acc_vendor_product && item.ecom_acc_vendor_product.vendorProductStatus == 'Available' ? 
-              <Text style={[styles.productStatusText, styles.open]}>Open</Text> : 
-              <Text style={[styles.productStatusText, styles.close]}>Closed</Text>}
+              {item.ecom_acc_vendor_product && item.ecom_acc_vendor_product.vendorProductStatus == 'Available' ?
+                <Text style={[styles.productStatusText, styles.open]}>Open</Text> :
+                <Text style={[styles.productStatusText, styles.close]}>Closed</Text>}
             </View>
           </View>
         </TouchableOpacity>
@@ -276,6 +293,7 @@ class ProductDetailDrinks extends Component {
   render() {
     return (
       <SafeAreaView>
+
         <ScrollView>
           <View>
             <View style={styles.productDetailsContainer}>
@@ -492,72 +510,15 @@ class ProductDetailDrinks extends Component {
             </View>
           </View>
         </ScrollView>
-        
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={this.state.modalVisible}>
-          <TouchableWithoutFeedback
-          onPressOut={()=>this.onCloseModal()}>
-          <View style={styles.centeredView}>  
-          <View style={styles.modalContainer}>
-            <View style={styles.modalHeader}>
-              <Text
-                style={styles.modalTitle}>
-                Item added to cart successfully
-              </Text>
-              <TouchableOpacity
-              onPress={()=>this.onCloseModal()}>
-              <Text><Icon name="close" size={28} color="#000" /></Text>
-              </TouchableOpacity>
-            </View>
-            <View
-              style={styles.modalBody}>
-              <Text
-                style={styles.modalTextDetail}>
-                {this.state.details.name} {this.state.selectedQty.unitQty + this.state.selectedQty.unitType}
-              </Text>
-              <View style={styles.modalCartQty}>
-                <TouchableOpacity
-                  onPress={() => {
-                    this.state.selectedQty.ecom_ba_cart ?
-                      this.updateCart(this.state.selectedQty) :
-                      this.setState({ modalVisible: false })
-                  }}
-                >
-                  <Icon name="remove" size={20} color="#4D4F50" />
-                </TouchableOpacity>
-                <Text
-                  style={styles.modalTextDetail}>
-                  {' ' + this.state.selectedQty.qty + ' '}
-                  {/* {' ' + this.state.cartQty + ' '} */}
-                </Text>
-                <TouchableOpacity
-                  onPress={() => this.addCart()}
-                >
-                  <Icon name="add" size={20} color="#4D4F50" />
-                </TouchableOpacity>
-              </View>
-            </View>
-            <TouchableOpacity
-              style={styles.save}
-              onPress={() => {
-                this.setState({ modalVisible: false })
-                this.props.navigation.navigate('MyCard')
-              }}>
-              <Text style={{
-                fontFamily: FontFamily.TAJAWAL_REGULAR,
-                fontWeight: '700',
-                fontSize: 18,
-                color: ThemeColors.CLR_WHITE
-              }}>
-                VIEW CART
-              </Text>
-            </TouchableOpacity>
-          </View>
-          </View>
-          </TouchableWithoutFeedback>
-        </Modal>
+
+        <CartModal props={this.props}
+          navigation={this.props.navigation}
+          data={this.state.selectedQty}
+          modalVisible={this.state.modalVisible}
+          onModalChange={(type) => this.state.selectedQty.ecom_ba_cart ?
+            this.updateCart(type) : type == 1 && this.addCart()
+          }
+          onModalClose={this.onCloseModal} />
       </SafeAreaView>
     );
   }
@@ -853,61 +814,6 @@ const styles = StyleSheet.create({
   vendorItem: {
     flex: 1,
     flexDirection: 'row',
-  },
-  centeredView:{
-    flex: 1,
-    //justifyContent: 'center',
-    //alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',  
-  },
-  modalContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    elevation: 4,
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    opacity:4,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    //width: 400,
-    //height: 280, 
-  },
-  modalHeader: {
-    paddingVertical: 10,
-    flexDirection:"row",
-    justifyContent:"space-between",
-  },
-  modalTitle: {
-    fontFamily: FontFamily.TAJAWAL_REGULAR,
-    fontWeight: '500',
-    fontSize: 14,
-    color: '#ACACAC'
-  },
-  modalBody: {
-    flexDirection: 'row',
-    paddingVertical: 15
-  },
-  modalTextDetail: {
-    fontFamily: FontFamily.TAJAWAL_REGULAR,
-    fontWeight: '500',
-    fontSize: 15,
-    color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR
-  },
-  modalCartQty: {
-    flexDirection: 'row',
-    flex: 1,
-    justifyContent: 'flex-end'
   },
   descriptionContainer: { marginTop: 20 },
 });

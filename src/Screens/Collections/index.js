@@ -11,6 +11,7 @@ import {
   FlatList,
   RefreshControl,
   TouchableWithoutFeedback,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { showAlert } from '../../api/auth';
@@ -24,6 +25,8 @@ import HTMLView from 'react-native-htmlview';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import moment from 'moment/moment';
 import HeaderSide from '../Component/HeaderSide';
+import CartModal from '../../Component/CartModal';
+import PaymentForm from '../../Component/PaymentForm';
 
 export default class Collections extends Component {
   constructor(props) {
@@ -38,7 +41,12 @@ export default class Collections extends Component {
       comboProducts: [],
       isToggle: false,
       modalVisible:false,
+      paymentModal:false,
+      paymentType:'creditDebit',
       modalCartItem:null,
+      item:null,
+      type:'Product',
+      index:null,
       selectedQty:{
         name:'name',
         unit:'0ml',
@@ -46,7 +54,7 @@ export default class Collections extends Component {
       },
       isLoading: false,
       refreshing: false,
-      currentDate: new Date().getFullYear() + "-" + new Date().getMonth() + "-" + new Date().getDate(),
+      currentDate: moment(new Date()).format('DD-MM-yyyy'),
       data: [],
     };
   }
@@ -86,7 +94,9 @@ export default class Collections extends Component {
     }
   }
 
-  addCart = async (item, type,index) => {
+  addCart = async (item, type,index,category) => {
+    if(category == 2 )
+      return;
     try {
       const cartItem = {
         productUnitId: (type == 'product') ? item.ecom_aca_product_unit.productUnitId : 0,
@@ -119,8 +129,10 @@ export default class Collections extends Component {
         }});
       }
       this.setState({cartModalVisible:true});
+      
     } catch (error) {
-      console.log("Details Bars > addCart > catch", error);
+
+      console.log("Collection > addCart > catch", error);
       ToastAndroid.showWithGravity(
         'Try again!',
         ToastAndroid.LONG,
@@ -183,10 +195,6 @@ export default class Collections extends Component {
                   {item.ecom_aca_product_unit.ecom_ac_product.name}
                 </Text>
               </View>
-              {/* <View style={styles.itemDes}>
-                <HTMLView
-                  value={item.ecom_aca_product_unit.ecom_ac_product.shortDescription.substr(0, 28)} />
-              </View> */}
               <View style={styles.itemDes}>
                 <Text
                 style={styles.qtyText}>
@@ -204,18 +212,18 @@ export default class Collections extends Component {
               style={styles.cartContainer}>
               <View style={styles.cart}>
                 <TouchableOpacity
-                  onPress={() => this.addCart(item, 'product',index)}
+                  onPress={() => this.addCart(item, 'product',index,1)}
                   style={styles.cartIcon}>
                   <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => 
-                    //this.props.navigation.navigate('OrderHistory')}
-                    this.props.navigation.navigate('SelectBars', { data: { walletId: item.walletId, productId: item.ecom_aca_product_unit.ecom_ac_product.productId } })}
+                    this.onRedeem(item)
+                    }
                   style={styles.redeemBtn}>
                   <Text
                     style={styles.redeemBtnText}>
-                    Redeem
+                    {this.state.currentDate > validTillDate ? 'Active' : 'Redeem'}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -256,7 +264,7 @@ export default class Collections extends Component {
               style={styles.cartContainer}>
               <View style={styles.cart}>
                 <TouchableOpacity
-                  onPress={() => this.addCart(item, 'combo',index)}
+                  onPress={() => this.addCart(item, 'combo',index,1)}
                   style={styles.cartIcon}>
                   <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
                 </TouchableOpacity>
@@ -281,14 +289,20 @@ export default class Collections extends Component {
       this.toggle();
   };
 
-  onCloseModal=()=>{
-    this.setState({cartModalVisible:false})
+  onCloseModal=(isClose)=>{
+    this.setState({cartModalVisible:isClose})
   }
 
   onSelectComboProduct = () => {
     this.setState({ isComboProduct: !this.state.isComboProduct },
       this.props.navigation.navigate('SelectBars', { data: this.state.comboProduct }));
 
+  }
+
+  onRedeem =(item)=>{
+    this.state.currentDate > item.validTillDate ?
+      this.setState({ paymentModal: true }) :
+      this.props.navigation.navigate('SelectBars', { data: { walletId: item.walletId, productId: item.ecom_aca_product_unit.ecom_ac_product.productId } });
   }
 
   render() {
@@ -345,6 +359,8 @@ export default class Collections extends Component {
             </>
           )
         }
+
+        {/* Product Modal */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -384,7 +400,9 @@ export default class Collections extends Component {
             </View>
           </View>
         </Modal>
+        {/* End Product Modal */}
 
+        {/* Top up Modal */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -500,71 +518,270 @@ export default class Collections extends Component {
             </View>
           </View>
         </Modal>
+        {/*End Top up Modal */}
 
+        {/* Payment Modal */}
         <Modal
           animationType="slide"
           transparent={true}
-          visible={this.state.cartModalVisible}>
-          <TouchableWithoutFeedback
-          onPressOut={()=>this.onCloseModal()}>
-          <View style={styles.centeredView}>  
+          visible={this.state.paymentModal}>
           <View style={styles.modalContainer}>
-            <View style={styles.modalHeader}>
-              <Text
-                style={styles.modalTitle}>
-                Item added to cart successfully
-              </Text>
-              <TouchableOpacity
-              onPress={()=>this.onCloseModal()}>
-              <Text><Icon name="close" size={28} color="#000" /></Text>
-              </TouchableOpacity>
-            </View>
-            <View
-              style={styles.modalBody}>
-              <Text
-                style={styles.modalTextDetail}>
-                {this.state.selectedQty.name} {this.state.selectedQty.unit}
-              </Text>
-              <View style={styles.modalCartQty}>
-                <TouchableOpacity
-                  onPress={() => {
-                    // this.state.selectedQty.ecom_ba_cart ?
-                    //   this.updateCart(this.state.selectedQty) :
-                    //   this.setState({ cartModalVisible: false })
-                  }}
-                >
-                  <Icon name="remove" size={20} color="#4D4F50" />
-                </TouchableOpacity>
+            <View style={[styles.modalView,styles.heightAuto]}>
+              <View style={styles.modalHeader}>
                 <Text
-                  style={styles.modalTextDetail}>
-                  {' ' + this.state.selectedQty.qty + ' '}
+                  style={styles.modalTitle}>
+                  Checkout
                 </Text>
                 <TouchableOpacity
-                  onPress={() => this.addCart(this.state.selectedQty.items,this.state.selectedQty.type,this.state.selectedQty.index)}
-                >
-                  <Icon name="add" size={20} color="#4D4F50" />
+                  onPress={() => this.setState({ paymentModal:false })}>
+                  <Icon name="close" size={28} color="#4D4F50" />
+                </TouchableOpacity>
+              </View>
+              <View
+                style={styles.modalBorder}
+              />
+            {this.state.paymentType == 'creditDebit' ? (
+            <View style={{
+              flexDirection:"column",
+              justifyContent:'flex-start'
+            }}>
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: '400',
+                  color: '#4D4F50',
+                  marginLeft: 15,
+                  marginTop:10,
+                }}>
+                Enter Payment Details
+              </Text>
+              <PaymentForm></PaymentForm>
+            </View>
+          ) : null}
+
+          <View
+            style={{
+              //marginTop: '10%',
+              //flex: 1,
+              justifyContent: 'center',
+            }}>
+            <View
+              style={{
+                shadowColor: '#000',
+                shadowOffset: {
+                  width: 1,
+                  height: 1,
+                },
+                //shadowOpacity: 1,
+                shadowRadius: 10,
+                elevation: 10,
+                zIndex:1,
+                backgroundColor: '#fff',
+                borderTopLeftRadius:30,
+                borderTopRightRadius:30,
+                borderRadius:10,
+                overflow: 'hidden',
+              }}>
+              <View
+                style={{
+                  margin: 10,
+                  marginLeft: 30,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: '700',
+                    color: '#3C3C3C',
+                  }}>
+                  Order Summary
+                </Text>
+              </View>
+              <View
+                style={{
+                  // marginTop: 20,
+                  marginLeft: 20,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{
+                    marginLeft: 10,
+                    color: '#3C3C3C',
+                    fontWeight: '500',
+                    fontSize: 20,
+                  }}>
+                  Sub Total
+                </Text>
+                <Text
+                  style={{
+                    marginRight: 40,
+                    color: '#3C3C3C',
+                    fontWeight: '500',
+                    fontSize: 20,
+                  }}>
+                  {/* ${this.state.amountData.subTotalAmount} */}
+                  $2274
+                </Text>
+              </View>
+
+              {/* {this.state.amountData.couponDiscount > 0 &&
+                <View
+                  style={{
+                    marginTop: 5,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text
+                    style={{
+                      marginLeft: 30,
+                      color: '#3C3C3C',
+                      fontWeight: '500',
+                      fontSize: 18,
+                    }}>
+                    Coupon Discount
+                  </Text>
+                  <Text
+                    style={{
+                      marginRight: 40,
+                      color: '#F01111',
+                      fontWeight: '500',
+                      fontSize: 18,
+                    }}>
+                    -$10
+                    {/* {this.state.amountData.couponDiscount} 
+                  </Text>
+                </View>
+              {/* } */}
+
+              {/* {this.state.amountData.extraDiscount > 0 && 
+                <View
+                  style={{
+                    marginTop: 5,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text
+                    style={{
+                      marginLeft: 30,
+                      color: '#3C3C3C',
+                      fontWeight: '500',
+                      fontSize: 18,
+                    }}>
+                    Discount
+                  </Text>
+                  <Text
+                    style={{
+                      marginRight: 40,
+                      color: '#F01111',
+                      fontWeight: '500',
+                      fontSize: 18,
+                    }}>
+                    -$100
+                    {/* {this.state.amountData.extraDiscount} 
+                  </Text>
+                </View>
+              {/* } */}
+
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: '#000',
+                  marginTop: 10,
+                  
+                }}
+              />
+
+              <View
+                style={{
+                  marginVertical: 15,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{
+                    marginLeft: 30,
+                    color: '#000',
+                    fontWeight: '700',
+                    fontSize: 22,
+                  }}>
+                  Total Payable
+                </Text>
+                <Text
+                  style={{
+                    marginRight: 40,
+                    color: '#000',
+                    fontWeight: '700',
+                    fontSize: 22,
+                  }}>
+                  $2274
+                  {/* {this.state.amountData.totalPayable} */}
+                </Text>
+              </View>
+
+              <View style={{ marginVertical:0 }}>
+                <TouchableOpacity
+                  style={styles.placeOrder}
+                  disabled={this.state.loader}
+                  onPress={() =>
+                    Alert.alert('Work in progress')
+                    //this.placeOrder()
+                    //this.props.navigation.navigate('OrderHistoryDetail', { home: true })
+                  }
+                  >
+                  {/* {this.state.loader ?
+                    (
+                      <ActivityIndicator size="small" color="#ffffff" />
+                    ) : (
+                      <Text style={{ color: '#fff', fontSize: 18 }}>PLACE ORDER</Text>
+                    )
+                  } */}
+                  <Text style={{ color: '#fff', fontSize: 18 }}>PLACE ORDER</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    Alert.alert(
+                      "Cancelled!",
+                      "You have requested to cancel this product.",
+                      [
+                        {
+                          text: "Cancel",
+                          onPress: () => console.log("Cancel Pressed"),
+                          style: "cancel"
+                        },
+                        { text: "OK", onPress: () => this.setState({paymentModal:false}) }
+                      ]
+                    )
+                  }}
+                  style={{
+                    marginTop: 10,
+                    marginBottom: 20,
+                    alignSelf: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      color: '#FF1405',
+                      fontSize: 18,
+                      fontWeight: '700',
+                    }}>
+                    Cancel Order
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
-            <TouchableOpacity
-              style={styles.save}
-              onPress={() => {
-                this.setState({ modalVisible: false })
-                this.props.navigation.navigate('MyCard')
-              }}>
-              <Text style={{
-                fontFamily: FontFamily.TAJAWAL_REGULAR,
-                fontWeight: '700',
-                fontSize: 18,
-                color: ThemeColors.CLR_WHITE
-              }}>
-                VIEW CART
-              </Text>
-            </TouchableOpacity>
           </View>
+            </View>
           </View>
-          </TouchableWithoutFeedback>
         </Modal>
+        {/* End Payment Modal */}
+        
+        <CartModal props={this.props} 
+        navigation={this.props.navigation}
+        data={this.state.selectedQty} 
+        modalVisible={this.state.cartModalVisible} 
+        onModalChange = {this.addCart}
+        onModalClose={this.onCloseModal} />
+
       </SafeAreaView>
     );
   }
@@ -714,7 +931,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    //height: '100%',
+    //borderRadius:20,
+    justifyContent:'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalTitle: {
@@ -744,8 +962,8 @@ const styles = StyleSheet.create({
     borderColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
     height: 48,
     width: 300,
-    borderTopLeftRadiusRadius: 5,
-    borderTopRightRadiusRadius: 5,
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5,
     elevation: 4,
   },
   collapsed: {
@@ -766,7 +984,6 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     borderBottomWidth: 1,
     borderBottomColor: '#c3c3c3',
-    //marginBottom:15,
     alignItems: 'center',
     height: 48,
     alignSelf: 'center'
@@ -818,7 +1035,6 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 25,
     alignItems: 'center',
-
     alignSelf: 'center',
     width: 200,
   },
@@ -831,7 +1047,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     flexDirection: 'column',
-    // alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -840,8 +1055,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+    borderRadius:10,
     width: 332,
-    height: 384,
+    height: '384',
+  },
+  heightAuto:{
+    height: 'auto',
   },
   modalHeader: {
     margin: 15,
@@ -863,68 +1082,13 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderColor: '#A1172F',
   },
-  centeredView:{
-    flex: 1,
-    //justifyContent: 'center',
-    //alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',  
-  },
-  modalContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    elevation: 4,
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    opacity:4,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    //width: 400,
-    //height: 280, 
-  },
-  modalHeader: {
-    paddingVertical: 10,
-    flexDirection:"row",
-    justifyContent:"space-between",
-  },
-  modalTitle: {
-    fontFamily: FontFamily.TAJAWAL_REGULAR,
-    fontWeight: '500',
-    fontSize: 14,
-    color: '#ACACAC'
-  },
-  modalBody: {
-    flexDirection: 'row',
-    paddingVertical: 15
-  },
-  modalTextDetail: {
-    fontFamily: FontFamily.TAJAWAL_REGULAR,
-    fontWeight: '500',
-    fontSize: 15,
-    color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR
-  },
-  modalCartQty: {
-    flexDirection: 'row',
-    flex: 1,
-    justifyContent: 'flex-end'
-  },
-  save: {
+  descriptionContainer: { marginTop: 20 },
+  placeOrder:{
     backgroundColor: '#851729',
     padding: 12,
     borderRadius: 25,
     alignItems: 'center',
     alignSelf: 'center',
     width: 300,
-  },
-  descriptionContainer: { marginTop: 20 },
+  }
 });
