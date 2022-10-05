@@ -223,7 +223,7 @@ export default class Collections extends Component {
                   style={styles.redeemBtn}>
                   <Text
                     style={styles.redeemBtnText}>
-                    {this.state.currentDate > validTillDate ? 'Active' : 'Redeem'}
+                    {this.state.currentDate > item.validTillDate ? 'Active' : 'Redeem'}
                   </Text>
                 </TouchableOpacity>
               </View>
