@@ -457,7 +457,7 @@ export default class AllBars extends Component {
                     fontWeight: '600',
                     color: '#424242',
                   }}>
-                  New on Mobar
+                  New on Mybar
                 </Text>
               </View>
 

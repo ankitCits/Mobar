@@ -47,7 +47,7 @@ export default class About extends Component {
                   this.props.navigation.navigate('Info',{title:'About Us'})
                   //await Linking.openURL('https://www.mobar.sg/p/About-Us')
                 }>
-                <Text style={styles.helpBottomListText}>About Mobar</Text>
+                <Text style={styles.helpBottomListText}>About Mybar</Text>
                 <Icon
                   name="navigate-next"
                   size={30}
