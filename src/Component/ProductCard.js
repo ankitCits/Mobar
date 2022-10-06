@@ -49,7 +49,7 @@ class ProductCard extends Component {
         if (token == null) {
             showAlert();
         } else {
-            console.log("product unit qty > ", this.state.data.ecom_aca_product_units[0].productUnitId);
+            console.log("Add Cart > product unit qty > ", this.state.data.ecom_aca_product_units[0].productUnitId);
             try {
                 const sendData = {
                     productUnitId: this.state.data.ecom_aca_product_units[0].productUnitId,
@@ -58,7 +58,7 @@ class ProductCard extends Component {
                 };
                 const response = await addToCart(sendData);
                 this.setState({
-                    modalVisible: false,
+                    modalVisible: true,
                     selectedQty: {
                         type: 1,
                         name: this.state.data.name,
@@ -74,7 +74,6 @@ class ProductCard extends Component {
                 // const cart = this.state.data.item.ecom_aca_product_units[0].ecom_ba_cart.qty;
                 // this.props.item.ecom_aca_product_units[0].ecom_ba_cart.qty = cart -1;
                 this.setState({ cart: this.state.cart + 1 });
-                console.log("modal visible > ", this.state.modalVisible, this.state.selectedQty);
             } catch (error) {
                 ToastAndroid.showWithGravity(
                     error,
@@ -94,6 +93,7 @@ class ProductCard extends Component {
             showAlert();
         } else {
             try {
+                
                 const sendData = {
                     cartId: this.state.data.ecom_aca_product_units[0].ecom_ba_cart.cartId,
                     type: cartType,//type 1 for add and 2 for substraction
@@ -108,6 +108,7 @@ class ProductCard extends Component {
                     let removeCart = this.state.cart;
                     removeCart = removeCart - 1;
                     this.setState({
+                        modalVisible: true,
                         cart: removeCart,
                         selectedQty: {
                             type: cartType,
@@ -143,26 +144,7 @@ class ProductCard extends Component {
         }
     }
 
-    removeCart = async (cartId, index) => {
-        const token = await getAccessToken();
-        if (token == null) {
-            showAlert();
-        } else {
-            try {
-                const response = await removeFromCart(cartId);
-                // const cart = this.state.data.ecom_aca_product_units[0].ecom_ba_cart.qty;
-                // this.state.data.ecom_aca_product_units[0].ecom_ba_cart.qty = cart - 1;
-                this.setState({ cart: this.state.cart - 1 });
 
-            } catch (error) {
-                ToastAndroid.showWithGravity(
-                    error,
-                    ToastAndroid.LONG,
-                    ToastAndroid.BOTTOM,
-                );
-            }
-        }
-    }
 
     addFavorite = async (productId, index) => {
         const token = await getAccessToken();
@@ -233,7 +215,7 @@ class ProductCard extends Component {
 
 
                                 <Text style={styles.item}>
-                                    {this.state.data.ecom_aca_product_units[0].unitType != 'Bottle' &&
+                                 { 
                                         this.state.data.ecom_aca_product_units[0].unitQty + ' ' +
                                         this.state.data.ecom_aca_product_units[0].unitType}
                                 </Text>
@@ -354,10 +336,9 @@ class ProductCard extends Component {
                         data={this.state.selectedQty}
                         modalVisible={this.state.modalVisible}
                         onModalChange={(type, isOpen) =>
-                            this.state.data.ecom_aca_product_units[0].ecom_ba_cart &&
-                                this.state.cart
+                            this.state.data.ecom_aca_product_units[0].ecom_ba_cart 
                                 ?
-                                this.updateCart(type, isOpen) : this.addCart()}
+                                this.updateCart(type, isOpen) : type == 1 ? this.addCart(): this.setState({modalVisible:false})}
                         onModalClose={this.onCloseModal} />
                 }
 

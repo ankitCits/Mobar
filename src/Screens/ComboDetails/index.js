@@ -191,10 +191,17 @@ export default class ComboDetails extends Component {
                                             </View>
 
                                             <View style={styles.cardBody}>
+                                                <View style={styles.priceContainer}>
                                                 <Text
                                                     style={styles.priceText}>
                                                     ${this.state.data.comboPrice}
                                                 </Text>
+                                                </View>
+                                                <TouchableOpacity
+                                                    onPress={() => { this.addCart() }}
+                                                    style={styles.cart}>
+                                                    <Icon name="add" size={18} color="#fff" />
+                                                </TouchableOpacity>
                                             </View>
 
                                             <View>
@@ -264,12 +271,6 @@ export default class ComboDetails extends Component {
                                                                 </Text>
                                                             </View>
                                                         </View>
-                                                        <TouchableOpacity
-                                                            onPress={() => { this.addCart() }}
-                                                            key={index}
-                                                            style={styles.cart}>
-                                                            <Icon name="add" size={18} color="#fff" key={index} />
-                                                        </TouchableOpacity>
                                                     </View>
                                                 </TouchableOpacity>
                                             )
@@ -330,7 +331,13 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: '#3C3C3C',
     },
-    cardBody: { paddingVertical: 5, },
+    cardBody: { 
+        paddingVertical: 2,
+        justifyContent:'space-between',
+        flexDirection:'row'
+     },priceContainer:{
+        alignSelf:'center'
+    },
     priceText: {
         fontFamily: FontFamily.ROBOTO_REGULAR,
         fontSize: 18,

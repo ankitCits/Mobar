@@ -12,6 +12,7 @@ import {
   RefreshControl,
   TouchableWithoutFeedback,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { showAlert } from '../../api/auth';
@@ -27,8 +28,11 @@ import moment from 'moment/moment';
 import HeaderSide from '../Component/HeaderSide';
 import CartModal from '../../Component/CartModal';
 import PaymentForm from '../../Component/PaymentForm';
-
-export default class Collections extends Component {
+import { initStripe, confirmPayment } from '@stripe/stripe-react-native';
+import { fetchPaymentIntentClientSecret, increaseActiveDate, placeOrder } from '../../api/order';
+import { amountForActiveDate } from '../../api/order';
+import { connect } from 'react-redux';
+class Collections extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -40,27 +44,37 @@ export default class Collections extends Component {
       comData: null,
       comboProducts: [],
       isToggle: false,
-      modalVisible:false,
-      paymentModal:false,
-      paymentType:'creditDebit',
-      modalCartItem:null,
-      item:null,
-      type:'Product',
-      index:null,
-      selectedQty:{
-        name:'name',
-        unit:'0ml',
-        qty:0
+      modalVisible: false,
+      paymentModal: false,
+      paymentType: 'creditDebit',
+      activeDateAmount: 0,
+      modalCartItem: null,
+      item: null,
+      type: 'Product',
+      index: null,
+      selectedQty: {
+        name: 'name',
+        unit: '0ml',
+        qty: 0
       },
       isLoading: false,
+      loader:false,
       refreshing: false,
-      currentDate: moment(new Date()).format('DD-MM-yyyy'),
+      selectedWalletId:0,
+      userEmail: props.redux.auth.userData.result.profile.email,
       data: [],
     };
   }
 
   componentDidMount() {
+    async function initialize() {
+      await initStripe({
+        publishableKey: 'pk_test_QNBEnRDDdYq1Yc7TZjVZhhwG00JySy2oJq',
+      });
+    }
+    initialize().catch("collection > componentDidMount > catch", console.error);
     this.fetchData();
+    this.fetchActiveDateAmount();
   }
 
   componentDidUpdate() {
@@ -73,10 +87,9 @@ export default class Collections extends Component {
   fetchData = async () => {
     try {
       this.setState({ isLoading: true });
-      
       const response = await fetchCollectionData();
-      response.response.result.data.map((item)=>{
-        item.qty=0
+      response.response.result.data.map((item) => {
+        item.qty = 0
       });
       this.setState({
         hostUrl: response.response.result.hostUrl,
@@ -94,8 +107,24 @@ export default class Collections extends Component {
     }
   }
 
-  addCart = async (item, type,index,category) => {
-    if(category == 2 )
+  fetchActiveDateAmount = async () => {
+    try {
+      this.setState({ isLoading: true });
+      const res = await amountForActiveDate();
+      this.setState({ isLoading: false, activeDateAmount: res.response.result.data.Amount });
+    } catch (error) {
+      this.setState({ isLoading: false });
+      console.log("Collection > fetchActiveDateAmount > catch >", error);
+      ToastAndroid.showWithGravity(
+        error,
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+      );
+    }
+  }
+
+  addCart = async (item, type, index, category) => {
+    if (category == 2)
       return;
     try {
       const cartItem = {
@@ -106,30 +135,33 @@ export default class Collections extends Component {
       const res = await addToCart(cartItem);
       const defaultQty = this.state.data[index].qty;
       this.state.data[index].qty = defaultQty + 1;
-      this.setState({data:this.state.data});
-      if(type =='product'){
-        this.setState({selectedQty:
+      this.setState({ data: this.state.data });
+      if (type == 'product') {
+        this.setState({
+          selectedQty:
           {
-          name:item.ecom_aca_product_unit.ecom_ac_product.name,
-          unit:item.ecom_aca_product_unit.unitQty+item.ecom_aca_product_unit.unitType,
-          type:type,
-          index:index,
-          items:item,
-          qty:defaultQty + 1
-        }
-      });
-      }else{
-        this.setState({selectedQty:{
-          name:item.ecom_ea_combo.name,
-          unit:item.walletOriginalTotalQty+item.unitType,
-          qty:defaultQty + 1,
-          type:type,
-          index:index,
-          items:item,
-        }});
+            name: item.ecom_aca_product_unit.ecom_ac_product.name,
+            unit: item.ecom_aca_product_unit.unitQty + item.ecom_aca_product_unit.unitType,
+            type: type,
+            index: index,
+            items: item,
+            qty: defaultQty + 1
+          }
+        });
+      } else {
+        this.setState({
+          selectedQty: {
+            name: item.ecom_ea_combo.name,
+            unit: item.walletOriginalTotalQty + item.unitType,
+            qty: defaultQty + 1,
+            type: type,
+            index: index,
+            items: item,
+          }
+        });
       }
-      this.setState({cartModalVisible:true});
-      
+      this.setState({ cartModalVisible: true });
+
     } catch (error) {
 
       console.log("Collection > addCart > catch", error);
@@ -197,7 +229,7 @@ export default class Collections extends Component {
               </View>
               <View style={styles.itemDes}>
                 <Text
-                style={styles.qtyText}>
+                  style={styles.qtyText}>
                   Available Qty: {item.availableQty}
                 </Text>
               </View>
@@ -212,18 +244,18 @@ export default class Collections extends Component {
               style={styles.cartContainer}>
               <View style={styles.cart}>
                 <TouchableOpacity
-                  onPress={() => this.addCart(item, 'product',index,1)}
+                  onPress={() => this.addCart(item, 'product', index, 1)}
                   style={styles.cartIcon}>
                   <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => 
+                  onPress={() =>
                     this.onRedeem(item)
-                    }
+                  }
                   style={styles.redeemBtn}>
                   <Text
                     style={styles.redeemBtnText}>
-                    {this.state.currentDate > item.validTillDate ? 'Active' : 'Redeem'}
+                    {item.validDateStatus == 0 ? 'Redeem' : 'Active'}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -250,8 +282,8 @@ export default class Collections extends Component {
                 </Text>
               </View>
               <View style={styles.itemDes}>
-                    <Text style={styles.qtyText}
-                    >Available Qty : {item.availableQty}</Text>
+                <Text style={styles.qtyText}
+                >Available Qty : {item.availableQty}</Text>
               </View>
               <View>
                 <Text
@@ -264,7 +296,7 @@ export default class Collections extends Component {
               style={styles.cartContainer}>
               <View style={styles.cart}>
                 <TouchableOpacity
-                  onPress={() => this.addCart(item, 'combo',index,1)}
+                  onPress={() => this.addCart(item, 'combo', index, 1)}
                   style={styles.cartIcon}>
                   <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
                 </TouchableOpacity>
@@ -289,8 +321,8 @@ export default class Collections extends Component {
       this.toggle();
   };
 
-  onCloseModal=(isClose)=>{
-    this.setState({cartModalVisible:isClose})
+  onCloseModal = (isClose) => {
+    this.setState({ cartModalVisible: isClose })
   }
 
   onSelectComboProduct = () => {
@@ -299,21 +331,74 @@ export default class Collections extends Component {
 
   }
 
-  onRedeem =(item)=>{
-    this.state.currentDate > item.validTillDate ?
-      this.setState({ paymentModal: true }) :
+  onRedeem = (item) => {
+    this.state.currentDate > item.validDateStatus == 0 ?
+      this.setState({ paymentModal: true,selectedWalletId:item.walletId }) :
       this.props.navigation.navigate('SelectBars', { data: { walletId: item.walletId, productId: item.ecom_aca_product_unit.ecom_ac_product.productId } });
+
+  }
+
+  increaseDate = async () => {
+    try {
+    
+      this.setState({ loader: true });
+      const postData = { orderAmount: this.state.activeDateAmount * 100 }; // get dynamic amount and pass to below api 
+      const res = await fetchPaymentIntentClientSecret(postData);
+      const billingDetails = {
+        email: this.state.userEmail,
+      };
+      const { paymentIntent, error } = await confirmPayment(
+        res.response.result.paymentIntent,
+        {
+          paymentMethodType: 'Card',
+          paymentMethodData: {
+            billingDetails,
+          },
+        },
+        { setupFutureUsage: 'OffSession', }
+      );
+      if (error) {
+        console.log("Collection > increaseDate > error > ",error);
+        this.setState({ loader: false });
+        Alert.alert(`${error.code}`, error.localizedMessage)
+      } else if (paymentIntent) {
+        if (paymentIntent.status === 'Succeeded') {
+          try {
+            const data = {
+              walletId: this.state.selectedWalletId,
+              transactionId: paymentIntent.id,
+              paymentMethod: 'credit-debit-cart',
+              transactionPayAmount: paymentIntent.amount,
+              transactionDate: moment(new Date()).format('YYYY-MM-DD'),
+              transactionTime: moment(new Date()).format('HH:mm:ss'),
+              transactionStatus: 'SUCCEEDED'
+            }
+            const res = await increaseActiveDate(data); // Call api to increase date 
+            this.setState({ loader: false,paymentModal:false });
+            this.fetchData();
+          } catch (e) {
+            console.log("Collection > increaseDate > catch >",e);
+            this.setState({ loader: false });
+            Alert.alert('Error', 'Error while processing payment')
+          }
+        } else {
+          this.setState({ loader: false });
+        }
+      }
+    } catch (error) {
+      console.log("Collection > increaseDate > catch >", error);
+    }
   }
 
   render() {
-    
+
     return (
       <SafeAreaView
         style={styles.container}>
-           <HeaderSide
-                    name={'Collection'}
-                    onClick={() => this.props.navigation.goBack()}
-                />
+        <HeaderSide
+          name={'Collection'}
+          onClick={() => this.props.navigation.goBack()}
+        />
 
         {
           this.state.isLoading ? (
@@ -347,7 +432,7 @@ export default class Collections extends Component {
                 nestedScrollEnabled={true}
                 showsHorizontalScrollIndicator={false}
                 style={{
-                  marginTop:10,
+                  marginTop: 10,
                 }}
                 data={this.state.data}
                 keyExtractor={(item, index) => index.toString()}
@@ -526,105 +611,104 @@ export default class Collections extends Component {
           transparent={true}
           visible={this.state.paymentModal}>
           <View style={styles.modalContainer}>
-            <View style={[styles.modalView,styles.heightAuto]}>
+            <View style={[styles.modalView, styles.heightAuto]}>
               <View style={styles.modalHeader}>
                 <Text
                   style={styles.modalTitle}>
                   Checkout
                 </Text>
                 <TouchableOpacity
-                  onPress={() => this.setState({ paymentModal:false })}>
+                  onPress={() => this.setState({ paymentModal: false })}>
                   <Icon name="close" size={28} color="#4D4F50" />
                 </TouchableOpacity>
               </View>
               <View
                 style={styles.modalBorder}
               />
-            {this.state.paymentType == 'creditDebit' ? (
-            <View style={{
-              flexDirection:"column",
-              justifyContent:'flex-start'
-            }}>
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontWeight: '400',
-                  color: '#4D4F50',
-                  marginLeft: 15,
-                  marginTop:10,
+              {this.state.paymentType == 'creditDebit' ? (
+                <View style={{
+                  flexDirection: "column",
+                  justifyContent: 'flex-start'
                 }}>
-                Enter Payment Details
-              </Text>
-              <PaymentForm></PaymentForm>
-            </View>
-          ) : null}
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontWeight: '400',
+                      color: '#4D4F50',
+                      marginLeft: 15,
+                      marginTop: 10,
+                    }}>
+                    Enter Payment Details
+                  </Text>
+                  <PaymentForm></PaymentForm>
+                </View>
+              ) : null}
 
-          <View
-            style={{
-              //marginTop: '10%',
-              //flex: 1,
-              justifyContent: 'center',
-            }}>
-            <View
-              style={{
-                shadowColor: '#000',
-                shadowOffset: {
-                  width: 1,
-                  height: 1,
-                },
-                //shadowOpacity: 1,
-                shadowRadius: 10,
-                elevation: 10,
-                zIndex:1,
-                backgroundColor: '#fff',
-                borderTopLeftRadius:30,
-                borderTopRightRadius:30,
-                borderRadius:10,
-                overflow: 'hidden',
-              }}>
               <View
                 style={{
-                  margin: 10,
-                  marginLeft: 30,
+                  //marginTop: '10%',
+                  //flex: 1,
+                  justifyContent: 'center',
                 }}>
-                <Text
+                <View
                   style={{
-                    fontSize: 18,
-                    fontWeight: '700',
-                    color: '#3C3C3C',
+                    shadowColor: '#000',
+                    shadowOffset: {
+                      width: 1,
+                      height: 1,
+                    },
+                    //shadowOpacity: 1,
+                    shadowRadius: 10,
+                    elevation: 10,
+                    zIndex: 1,
+                    backgroundColor: '#fff',
+                    borderTopLeftRadius: 30,
+                    borderTopRightRadius: 30,
+                    borderRadius: 10,
+                    overflow: 'hidden',
                   }}>
-                  Order Summary
-                </Text>
-              </View>
-              <View
-                style={{
-                  // marginTop: 20,
-                  marginLeft: 20,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <Text
-                  style={{
-                    marginLeft: 10,
-                    color: '#3C3C3C',
-                    fontWeight: '500',
-                    fontSize: 20,
-                  }}>
-                  Sub Total
-                </Text>
-                <Text
-                  style={{
-                    marginRight: 40,
-                    color: '#3C3C3C',
-                    fontWeight: '500',
-                    fontSize: 20,
-                  }}>
-                  {/* ${this.state.amountData.subTotalAmount} */}
-                  $2274
-                </Text>
-              </View>
+                  <View
+                    style={{
+                      margin: 10,
+                      marginLeft: 30,
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontWeight: '700',
+                        color: '#3C3C3C',
+                      }}>
+                      Order Summary
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      // marginTop: 20,
+                      marginLeft: 20,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Text
+                      style={{
+                        marginLeft: 10,
+                        color: '#3C3C3C',
+                        fontWeight: '500',
+                        fontSize: 20,
+                      }}>
+                      Sub Total
+                    </Text>
+                    <Text
+                      style={{
+                        marginRight: 40,
+                        color: '#3C3C3C',
+                        fontWeight: '500',
+                        fontSize: 20,
+                      }}>
+                      ${this.state.activeDateAmount}
+                    </Text>
+                  </View>
 
-              {/* {this.state.amountData.couponDiscount > 0 &&
+                  {/* {this.state.amountData.couponDiscount > 0 &&
                 <View
                   style={{
                     marginTop: 5,
@@ -653,7 +737,7 @@ export default class Collections extends Component {
                 </View>
               {/* } */}
 
-              {/* {this.state.amountData.extraDiscount > 0 && 
+                  {/* {this.state.amountData.extraDiscount > 0 && 
                 <View
                   style={{
                     marginTop: 5,
@@ -682,105 +766,73 @@ export default class Collections extends Component {
                 </View>
               {/* } */}
 
-              <View
-                style={{
-                  height: 1,
-                  backgroundColor: '#000',
-                  marginTop: 10,
-                  
-                }}
-              />
+                  <View
+                    style={{
+                      height: 1,
+                      backgroundColor: '#000',
+                      marginTop: 10,
 
-              <View
-                style={{
-                  marginVertical: 15,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <Text
-                  style={{
-                    marginLeft: 30,
-                    color: '#000',
-                    fontWeight: '700',
-                    fontSize: 22,
-                  }}>
-                  Total Payable
-                </Text>
-                <Text
-                  style={{
-                    marginRight: 40,
-                    color: '#000',
-                    fontWeight: '700',
-                    fontSize: 22,
-                  }}>
-                  $2274
-                  {/* {this.state.amountData.totalPayable} */}
-                </Text>
-              </View>
+                    }}
+                  />
 
-              <View style={{ marginVertical:0 }}>
-                <TouchableOpacity
-                  style={styles.placeOrder}
-                  disabled={this.state.loader}
-                  onPress={() =>
-                    Alert.alert('Work in progress')
-                    //this.placeOrder()
-                    //this.props.navigation.navigate('OrderHistoryDetail', { home: true })
-                  }
-                  >
-                  {/* {this.state.loader ?
+                  <View
+                    style={{
+                      marginVertical: 15,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Text
+                      style={{
+                        marginLeft: 30,
+                        color: '#000',
+                        fontWeight: '700',
+                        fontSize: 22,
+                      }}>
+                      Total Payable
+                    </Text>
+                    <Text
+                      style={{
+                        marginRight: 40,
+                        color: '#000',
+                        fontWeight: '700',
+                        fontSize: 22,
+                      }}>
+
+                      ${this.state.activeDateAmount}
+                    </Text>
+                  </View>
+
+                  <View style={{ marginBottom: 15 }}>
+                    <TouchableOpacity
+                      style={styles.placeOrder}
+                      disabled={this.state.loader}
+                      onPress={() =>
+                        this.increaseDate()
+                      }
+                    >
+                      {this.state.loader ?
                     (
                       <ActivityIndicator size="small" color="#ffffff" />
                     ) : (
                       <Text style={{ color: '#fff', fontSize: 18 }}>PLACE ORDER</Text>
                     )
-                  } */}
-                  <Text style={{ color: '#fff', fontSize: 18 }}>PLACE ORDER</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => {
-                    Alert.alert(
-                      "Cancelled!",
-                      "You have requested to cancel this product.",
-                      [
-                        {
-                          text: "Cancel",
-                          onPress: () => console.log("Cancel Pressed"),
-                          style: "cancel"
-                        },
-                        { text: "OK", onPress: () => this.setState({paymentModal:false}) }
-                      ]
-                    )
-                  }}
-                  style={{
-                    marginTop: 10,
-                    marginBottom: 20,
-                    alignSelf: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      color: '#FF1405',
-                      fontSize: 18,
-                      fontWeight: '700',
-                    }}>
-                    Cancel Order
-                  </Text>
-                </TouchableOpacity>
+                  }
+                      
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
-            </View>
-          </View>
             </View>
           </View>
         </Modal>
         {/* End Payment Modal */}
-        
-        <CartModal props={this.props} 
-        navigation={this.props.navigation}
-        data={this.state.selectedQty} 
-        modalVisible={this.state.cartModalVisible} 
-        onModalChange = {this.addCart}
-        onModalClose={this.onCloseModal} />
+
+        <CartModal props={this.props}
+          navigation={this.props.navigation}
+          data={this.state.selectedQty}
+          modalVisible={this.state.cartModalVisible}
+          onModalChange={this.addCart}
+          onModalClose={this.onCloseModal} />
 
       </SafeAreaView>
     );
@@ -886,13 +938,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#424242',
     fontWeight: '400',
-    paddingVertical:5
+    paddingVertical: 5
   },
-  qtyText:{
-    fontFamily:FontFamily.TAJAWAL_REGULAR,
-    fontWeight:'300',
-    fontSize:14,
-    color:ThemeColors.CLR_DARK_GREY
+  qtyText: {
+    fontFamily: FontFamily.TAJAWAL_REGULAR,
+    fontWeight: '300',
+    fontSize: 14,
+    color: ThemeColors.CLR_DARK_GREY
   },
   validDate: {
     fontSize: 12
@@ -932,7 +984,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     //borderRadius:20,
-    justifyContent:'center',
+    justifyContent: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalTitle: {
@@ -1055,11 +1107,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    borderRadius:10,
+    borderRadius: 10,
     width: 332,
     height: '384',
   },
-  heightAuto:{
+  heightAuto: {
     height: 'auto',
   },
   modalHeader: {
@@ -1083,7 +1135,7 @@ const styles = StyleSheet.create({
     borderColor: '#A1172F',
   },
   descriptionContainer: { marginTop: 20 },
-  placeOrder:{
+  placeOrder: {
     backgroundColor: '#851729',
     padding: 12,
     borderRadius: 25,
@@ -1092,3 +1144,14 @@ const styles = StyleSheet.create({
     width: 300,
   }
 });
+
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatch,
+  };
+}
+function mapStateToProps(state) {
+  let redux = state;
+  return { redux };
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Collections);

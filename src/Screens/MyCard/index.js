@@ -14,7 +14,8 @@ import {
   Animated
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { applyCoupon, cartCheckout, fetchCart } from '../../api/product';
+import { applyCoupon, cartCheckout, fetchCart, removeFromCart } from '../../api/product';
+import { SwipeListView, SwipedRow } from 'react-native-swipe-list-view';
 import CartProduct from '../../Component/CartProduct';
 import FullPageLoader from '../../Component/FullPageLoader';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
@@ -23,6 +24,7 @@ import { ThemeColors } from '../../Theme/ThemeColors';
 import HeaderSide from '../Component/HeaderSide';
 
 import { Swipeable } from 'react-native-gesture-handler';
+
 export default class MyCard extends Component {
   constructor(props) {
     super(props);
@@ -35,9 +37,11 @@ export default class MyCard extends Component {
       isLoading: false,
       cartLoader: false,
       couponText: '',
+      row: [],
+      swipeIndex: null,
       couponLoader: false,
       checkoutLoader: false,
-      isFetching: false
+
     };
 
   }
@@ -49,25 +53,35 @@ export default class MyCard extends Component {
 
   }
 
+  // componentDidUpdate(prevProps){
+  //   console.log("prevProps >",prevProps);
+  //   if (prevProps && prevProps.swipeIndex !== this.state.swipeIndex) {
+  //     console.log('pokemons state has changed.')
+  //   }
+  // }
+
   cartLoader = (isLoader) => {
     this.setState({ cartLoader: isLoader });
   }
 
   fetchData = async () => {
     try {
+
       const resp = await fetchCart();
+      console.log("response > after called" > resp);
       this.setState({
         cart: resp.response.result.data,
         hostUrl: resp.response.result.hostUrl,
         amountData: resp.response.result.amountData,
         totalQty: 0,
-        isFetching: false
+        cartLoader: false,
+        isLoading: false,
       });
       if (this.state.cart.length > 0) {
         this.setState({ totalQty: this.state.cart.length });
       }
     } catch (error) {
-      this.setState({ isLoading: false, isFetching: false });
+      this.setState({ isLoading: false, cartLoader: false });
       ToastAndroid.showWithGravity(
         error,
         ToastAndroid.LONG,
@@ -128,45 +142,43 @@ export default class MyCard extends Component {
     }
   }
 
-  renderRightActions = (
-    progress: Animated.AnimatedInterpolation,
-    dragX: Animated.AnimatedInterpolation,
-  ) => {
-    const opacity = dragX.interpolate({
-      inputRange: [-150, 0],
-      outputRange: [1, 0],
-      extrapolate: 'clamp',
-    });
+  deleteFromCart = async (id) => {
+    try {
+      const res = await removeFromCart(id);
+      this.setState({ cartLoader: true });
+      
+      this.fetchData();
+    } catch (error) {
+      this.setState({ cartLoader: false });
+      console.log("my card > deleteFromCart > catch > ", error);
+    }
+  }
 
-    return (
-      <View style={styles.swipedRow}>
-        <View style={styles.swipedConfirmationContainer}>
-          <Text style={styles.deleteConfirmationText}>Are you sure?</Text>
-        </View>
-        <Animated.View style={[styles.deleteButton, { opacity }]}>
-          <TouchableOpacity onPress={() => { console.log('Delete'); }}>
-            <Text style={styles.deleteButtonText}>Delete</Text>
-          </TouchableOpacity>
-        </Animated.View>
-      </View>
-    );
-  };
 
-  renderProducts = () => {
+
+  renderHiddenItem = (rowData, rowMap) => {
+    console.log("data > ", rowMap[rowData.item]);
     return (
-      <ScrollView>
-        {
-          this.state.cart && this.state.cart.length > 0 && this.state.cart.map((cartItem, index) => (
-            cartItem.qty != 0 ? (
-              <Swipeable renderRightActions={this.renderRightActions} rightThreshold={-200}>
-                <CartProduct navigation={this.props.navigation} onCart={(item) => { this.cartLoader(item) }} index={index} item={cartItem} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item) }} />
-              </Swipeable>
-            )
-              :
-              null
-          ))
-        }
-      </ScrollView>
+
+      <TouchableOpacity
+        onPress={() => {rowMap[rowData.item.key].closeRow(),this.deleteFromCart(rowData.item.cartId)}}
+        style={{
+          flexDirection: 'column',
+          flex: 1,
+          height: 131,
+          marginTop: 15,
+          width: 230,
+          alignSelf: 'flex-end',
+          marginRight: 10,
+          paddingHorizontal: 30,
+          borderRadius: 15,
+          justifyContent: 'center',
+          alignItems: 'flex-end',
+          backgroundColor: '#A1172F'
+        }}>
+        <Icon name='delete' size={35} color={'#fff'} />
+      </TouchableOpacity>
+
     )
   }
 
@@ -196,7 +208,38 @@ export default class MyCard extends Component {
 
             <View style={{ height: '54%' }}>
 
-              {this.renderProducts()}
+            <ScrollView>
+        {
+          this.state.cart && this.state.cart.length > 0 && this.state.cart.map((cartItem, index) => (
+            cartItem.qty != 0 ? (
+              <Swipeable renderRightActions={this.renderRightActions} rightThreshold={-200}>
+                <CartProduct navigation={this.props.navigation} onCart={(item) => { this.cartLoader(item) }} index={index} item={cartItem} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item) }} />
+              </Swipeable>
+            )
+              :
+              null
+          ))
+        }
+      </ScrollView>
+
+              {/* {this.renderProducts()} */}
+
+
+              {/* <SwipeListView
+                
+                useFlatList={true}
+                closeOnScroll={true}
+                closeOnRowOpen={true}
+                data={this.state.cart}
+                renderItem={(data, rowMap) => (
+                  <CartProduct navigation={this.props.navigation} ref={this.collectRowRefs} onCart={(item) => { this.cartLoader(item) }} item={data.item} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item) }} />
+                )}
+                renderHiddenItem={(data, rowMap) => (
+                  //this.renderHiddenItem(data, rowMap)
+                )}
+                rightOpenValue={-90}
+              /> */}
+
 
 
             </View>
@@ -505,10 +548,11 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     backgroundColor: '#818181',
     margin: 20,
-    // minHeight: 50,
+    //minHeight: 90,
   },
   swipedConfirmationContainer: {
     flex: 1,
+    height: 200
   },
   deleteConfirmationText: {
     color: '#fcfcfc',

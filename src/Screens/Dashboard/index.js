@@ -81,7 +81,6 @@ class Dashboard extends Component {
     async getReferralImage(){
         try{
         const res = await inviteShare();
-        console.log("response getReferralImage",res.response.result.pageData.images);
         this.setState({inviteShareImg:res.response.result.pageData.images})
         }catch(error){
             console.log("dashboard > getReferralImage > catch > getReferralImage",error);

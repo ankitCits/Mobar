@@ -22,7 +22,6 @@ export const addToFav = (payload) => {
         fetch(`${BASE_URL}/wishlist/addToWishlist`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log('addToFav', result);
                 if (result.errors) {
                     reject(result.errors[0].msg);
                 } else {
@@ -58,7 +57,6 @@ export const removeToFav = (payload) => {
         fetch(`${BASE_URL}/wishlist/addToWishlist`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log('addToFav', result);
                 if (result.errors) {
                     reject(result.errors[0].msg);
                 } else {
@@ -92,7 +90,6 @@ export const addToCart = (payload) => {
         fetch(`${BASE_URL}/cart/addToCart`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                //console.log('ApiProduct > addToCart > result', result)
                 if (result.status == 'FAILED') {
                     reject(result.reason);
                 } else {
@@ -248,7 +245,6 @@ export const fetchCart = () => {
         fetch(`${BASE_URL}/cart/viewCart`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                // console.log('fetchCart > result', result)
                 if (result.errors) {
                     reject(result.errors[0].msg);
                 } else {
@@ -281,7 +277,6 @@ export const fetchProductDetails = (postData) => {
         fetch(`${BASE_URL}/products/productDetailsById`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log('fetchProductDetail > result', result)
                 if (result.errors) {
                     reject(result.errors[0].msg);
                 } else {
@@ -311,11 +306,9 @@ export const fetchProductData = (postData) => {
             headers: myHeaders,
             body: data,
         };
-        // console.log("request option", requestOptions);
         fetch(`${BASE_URL}/products/alldatas`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log('Product > fetchProductData > result', result)
                 if (result.errors) {
                     reject(result.errors[0].msg);
                 } else {
@@ -332,7 +325,6 @@ export const fetchProductData = (postData) => {
 export const fetchCollectionData = () => {
     return new Promise(async (resolve, reject) => {
         const token = await getAccessToken(token);
-        console.log("Token", token);
         const myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
         myHeaders.append('A_Key', A_KEY);
@@ -341,11 +333,9 @@ export const fetchCollectionData = () => {
             method: 'POST',
             headers: myHeaders,
         };
-        console.log("request option", requestOptions);
         fetch(`${BASE_URL}/redeem/collection`, requestOptions)
             .then(response => response.json())
             .then(result => {
-                // console.log('ApiProduct > fetchCollectionData > result', result)
                 if (result.errors) {
                     reject(result.errors[0].msg);
                 } else {
