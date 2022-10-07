@@ -1,4 +1,4 @@
-package com.mobar.newarchitecture;
+package com.mybar.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.EmptyReactNativeConfig;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.mobar.BuildConfig;
-import com.mobar.newarchitecture.components.MainComponentsRegistry;
-import com.mobar.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.mybar.BuildConfig;
+import com.mybar.newarchitecture.components.MainComponentsRegistry;
+import com.mybar.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 

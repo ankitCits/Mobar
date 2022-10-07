@@ -1,4 +1,4 @@
-package com.mobar.newarchitecture.modules;
+package com.mybar.newarchitecture.modules;
 
 import com.facebook.jni.HybridData;
 import com.facebook.react.ReactPackage;
