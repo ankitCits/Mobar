@@ -193,15 +193,21 @@ class Collections extends Component {
     this.setState({ isToggle: !this.state.isToggle });
   };
 
-  onModal = (data, id) => {
-    const comboData = data.map(x => {
-      return {
-        id: x.productId,
-        title: x.name
-      }
-    });
-    this.setState({ isComboProduct: true, comData: data, comboProducts: comboData });
-    this.state.comboProduct.walletId = id;
+  onModal = (data) => {
+    console.log("onModal > walletId >",data.walletId);
+    console.log("onModal > combo  Products >",data.ecom_ea_combo.ecom_ac_products);
+    if (data.validDateStatus == 1) {
+      this.setState({ paymentModal: true, selectedWalletId: data.walletId })
+    } else {
+      const comboData = data.ecom_ea_combo.ecom_ac_products.map(x => {
+        return {
+          id: x.productId,
+          title: x.name
+        }
+      });
+      this.setState({ isComboProduct: true, comData: data, comboProducts: comboData });
+      this.state.comboProduct.walletId = id;
+    }
   }
 
   renderProducts = (item, index) => {
@@ -255,7 +261,7 @@ class Collections extends Component {
                   style={styles.redeemBtn}>
                   <Text
                     style={styles.redeemBtnText}>
-                    {item.validDateStatus == 0 ? 'Redeem' : 'Active'}
+                    {item.validDateStatus == 1 ? 'Active' : 'Redeem'}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -301,11 +307,11 @@ class Collections extends Component {
                   <Icon name="add" size={18} color={ThemeColors.CLR_WHITE} />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => { this.onModal(item.ecom_ea_combo.ecom_ac_products, item.walletId) }}
+                  onPress={() => { this.onModal(item) }}
                   style={styles.redeemBtn}>
                   <Text
                     style={styles.redeemBtnText}>
-                    Redeem
+                    {item.validDateStatus == 1 ? 'Active' : 'Redeem'}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -332,7 +338,7 @@ class Collections extends Component {
   }
 
   onRedeem = (item) => {
-    this.state.currentDate > item.validDateStatus == 0 ?
+     item.validDateStatus == 1 ?
       this.setState({ paymentModal: true,selectedWalletId:item.walletId }) :
       this.props.navigation.navigate('SelectBars', { data: { walletId: item.walletId, productId: item.ecom_aca_product_unit.ecom_ac_product.productId } });
 
@@ -771,7 +777,6 @@ class Collections extends Component {
                       height: 1,
                       backgroundColor: '#000',
                       marginTop: 10,
-
                     }}
                   />
 
@@ -1109,7 +1114,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     borderRadius: 10,
     width: 332,
-    height: '384',
+    height: 384,
   },
   heightAuto: {
     height: 'auto',

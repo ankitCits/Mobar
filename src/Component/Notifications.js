@@ -28,11 +28,17 @@ export default class Notifications extends Component {
           </View>
           <View
             style={styles.body}>
-            <Icon
-              name={'check-circle'}
-              size={25}
-              color="#4FEA36" />
-
+              <View
+              style={{
+                flexDirection:'row',
+                marginRight:5,
+              }}
+              >
+              <Icon
+                name={'check-circle'}
+                size={25}
+                color="#4FEA36" />
+                </View>
             <View
               style={styles.notificationBox}>
               <Image
@@ -52,10 +58,14 @@ export default class Notifications extends Component {
                     {this.props.data.title}
                   </Text>
 
-                  <TouchableOpacity>
+                  <TouchableOpacity
+                  style={{
+                    marginBottom:0
+                  }}
+                  >
                     <Icon
                       name={'close'}
-                      size={22}
+                      size={20}
                       color="#969696"
                     />
                   </TouchableOpacity>
@@ -80,12 +90,12 @@ const styles = StyleSheet.create({
   productImg2: {
     right: '18%',
     //height: 117,
-    width: 305,
+    width: 300,
   },
   container: {
     flexDirection: 'column',
     alignSelf: 'center',
-    marginBottom: 10
+    marginHorizontal: 25,
   },
   header: {
     margin: '4%',
@@ -99,14 +109,16 @@ const styles = StyleSheet.create({
   },
   body: {
     flexDirection: 'row',
+    justifyContent:'space-between',
   },
   notificationBox: {
     flexDirection: 'row',
     margin: 5,
+    width:320,
   },
   notificationBoxDetails: {
-    marginHorizontal: '4%',
-    marginTop: '6%',
+    marginHorizontal: 10,
+    marginTop: 3,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -115,10 +127,11 @@ const styles = StyleSheet.create({
   },
   details: {
     marginHorizontal: '4%',
-
+    width:300,
     marginBottom: '4%'
   },
   detailsText: {
+    width:250,
     fontFamily: FontFamily.TAJAWAL_REGULAR,
     color: '#969696',
     fontSize: 15,

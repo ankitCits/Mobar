@@ -11,6 +11,7 @@ import {
   Modal,
   Alert,
   FlatList,
+  ToastAndroid,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { fetchRedeemBars } from '../../api/vendor';
@@ -30,9 +31,8 @@ class SelectBars extends Component {
       hostUrl: '',
       vendorData: [],
       isLoading: 'false',
-      data: {}
+      data:{}
     };
-    console.log("route data", props.route.params.data);
   }
 
   componentDidMount() {
@@ -49,7 +49,10 @@ class SelectBars extends Component {
         longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
       };
 
+      console.log("select > fetchData > data",data);
+
       const response = await fetchRedeemBars(data);
+      console.log("response > ",response);
       this.setState({
         hostUrl: response.response.result.hostUrl,
         data: response.response.result.productWithBar,
@@ -57,7 +60,7 @@ class SelectBars extends Component {
         collectionWallet: response.response.result.collectionWallet,
         isLoading: false
       });
-
+      console.log("state Data > ",this.state.data);
     } catch (error) {
       console.log("Select bars > catch > error", error);
       this.setState({ isLoading: false });
@@ -343,31 +346,33 @@ class SelectBars extends Component {
                     </View>
                   </View>
                 </View>
-                <View
-                  style={{
-                    width: '90%',
-                    alignSelf: 'center',
-                    marginTop: '5%',
-                    marginBottom: '2%',
-                  }}>
-                  <Text
+                {this.state.data != null &&
+                  <View
                     style={{
-                      fontSize: 18,
-                      fontWeight: '500',
-                      color: '#4D4F50',
+                      width: '90%',
+                      alignSelf: 'center',
+                      marginTop: '5%',
+                      marginBottom: '2%',
                     }}>
-                    Redeemable in Bars
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 15,
-                      fontWeight: '400',
-                      color: '#ACACAC',
-                      marginTop: 5,
-                    }}>
-                    Select your nearest bar and redeem your drink
-                  </Text>
-                </View>
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontWeight: '500',
+                        color: '#4D4F50',
+                      }}>
+                      Redeemable in Bars
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 15,
+                        fontWeight: '400',
+                        color: '#ACACAC',
+                        marginTop: 5,
+                      }}>
+                      Select your nearest bar and redeem your drink
+                    </Text>
+                  </View>
+                }
 
                 <FlatList
                   nestedScrollEnabled={true}

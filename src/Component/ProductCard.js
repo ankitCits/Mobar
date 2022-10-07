@@ -221,6 +221,9 @@ class ProductCard extends Component {
                                 </Text>
 
                                 <TouchableOpacity
+                                style={{
+                                    margin:7,
+                                }}
                                     onPress={() => {
                                         this.state.isFavorite
                                             ? this.removeFavorite(this.state.data.ecom_ba_wishlist.wishlistId, index)
@@ -285,7 +288,7 @@ class ProductCard extends Component {
                                             style={styles.savedPriceImg}>
                                             <Text
                                                 style={styles.savedPriceText}>
-                                                Save $50{this.state.data.ecom_aca_product_units.savedPrices}
+                                                Save ${this.state.data.ecom_aca_product_units.savedPrices}
                                             </Text>
                                         </ImageBackground>
                                     ) : (<ImageBackground style={styles.savedPriceImg}>
@@ -334,6 +337,7 @@ class ProductCard extends Component {
                 {this.state.modalVisible &&
                     <CartModal props={this.props}
                         data={this.state.selectedQty}
+                        navigation={this.props.navigation}
                         modalVisible={this.state.modalVisible}
                         onModalChange={(type, isOpen) =>
                             this.state.data.ecom_aca_product_units[0].ecom_ba_cart 
@@ -465,7 +469,7 @@ const styles = StyleSheet.create({
         width: 40,
     },
     prodName: {
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: '500',
         color: '#050505',
         fontFamily: FontFamily.TAJAWAL_REGULAR,
@@ -511,13 +515,14 @@ const styles = StyleSheet.create({
     topBar: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        padding: 10,
+        alignItems: 'center',
+        paddingLeft:3
     },
     item: {
         fontFamily: FontFamily.TAJAWAL_REGULAR,
         fontSize: 15,
         fontWeight: '400',
-        color: '#000',
+        color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR
     },
     cartActionIcon: {
         alignSelf: 'center',

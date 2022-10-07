@@ -114,11 +114,11 @@ class BarCard extends Component {
                         </View>
                     </TouchableOpacity>
 
-                    <View style={styles.off}>
+                     {/* <View style={styles.off}>
                         <Text style={styles.offText}>
                             50% Off
                         </Text>
-                    </View>
+                    </View>  */}
                 </ImageBackground>
                 <View
                     style={styles.addressContainer}>

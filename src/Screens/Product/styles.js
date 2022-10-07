@@ -1,9 +1,9 @@
 
 import { StyleSheet } from 'react-native';
-import { JumpingTransition } from 'react-native-reanimated';
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        justifyContent:'center',
         backgroundColor: '#fff',
     },
     sectionStyle: {

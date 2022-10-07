@@ -110,7 +110,7 @@ export default class CartProduct extends React.Component {
                       {this.props.item.ecom_aca_product_unit.ecom_ac_product.name}
                     </Text>
                     :
-                    <Text style={styles.title}>Not Available</Text>}
+                    <Text style={styles.title}>{this.props.item.ecom_ea_combo.name}</Text>}
                 </View>
                 <View>
                   <Text
@@ -120,20 +120,20 @@ export default class CartProduct extends React.Component {
                 </View>
                 <View
                   style={styles.priceContainer}>
-                  {this.props.item.ecom_aca_product_unit ?
+                  {this.props.item.ecom_aca_product_unit && this.props.item.ecom_aca_product_unit.unitUserPrice != '' ?
                     <Text
                       style={styles.priceText}>
                       ${this.props.item.ecom_aca_product_unit.unitUserPrice}
                     </Text>
                     :
-                    <Text style={styles.priceText}>Not Available</Text>
+                    <Text style={styles.priceText}>{this.props.item.productAmount != 0 ? '$'+this.props.item.productAmount : ''}</Text>
                   }
                   {this.props.item.ecom_aca_product_unit && this.props.item.ecom_aca_product_unit.unitDiscountPrice ?
                     <Text style={styles.discountPrice}>
-                      ${this.props.item.ecom_aca_product_unit.unitDiscountType}
+                      {this.props.item.ecom_aca_product_unit.unitDiscountPrice != '' ? this.props.item.ecom_aca_product_unit.unitDiscountType:""}
                     </Text>
                     :
-                    <Text style={styles.discountPrice}></Text>
+                    <Text style={styles.discountPrice}>{this.props.item.productDiscountAmount != "" ? '$'+this.props.item.productDiscountAmount : '' }</Text>
                   }
                 </View>
               </View>
@@ -253,6 +253,7 @@ const styles = StyleSheet.create({
     color: '#969696',
     fontWeight: '400',
     marginTop: 5,
+    marginHorizontal:5,
     textDecorationLine: 'line-through',
   },
   icon: {

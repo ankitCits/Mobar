@@ -223,7 +223,7 @@ class Product extends Component {
                 </TouchableOpacity>
               </View>
             </View>
-            <View style={{ flexDirection: 'row' }}>
+            {/* <View style={{ flexDirection: 'row' }}>
               <View style={styles.filterView}>
                   <TouchableOpacity style={styles.filterInnerView}>
                     <Icon name="swap-vert" size={28} color="#4D4F50" />
@@ -237,7 +237,7 @@ class Product extends Component {
                     <Text style={styles.filterInnerText}>Filter</Text>
                   </TouchableOpacity>
               </View>
-            </View>
+            </View> */}
         
 
           {this.state.loader ? (

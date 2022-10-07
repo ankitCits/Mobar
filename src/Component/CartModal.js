@@ -43,15 +43,17 @@ class CartModal extends Component {
                   </Text>
                   <TouchableOpacity
                     onPress={() => this.onCloseModal()}>
-                    <Text><Icon name="close" size={28} color="#000" /></Text>
+                    <Text><Icon name="close" size={20} color="#000" /></Text>
                   </TouchableOpacity>
                 </View>
                 <View
                   style={styles.cartModalBody}>
+                    <View style={styles.header}>
                   <Text
                     style={styles.modalTextDetail}>
                     {this.props.data.name} {this.props.data.unit}
                   </Text>
+                  </View>
                   <View style={styles.modalCartQty}>
                     <TouchableOpacity
                       onPress={() => {
@@ -106,8 +108,6 @@ export default CartModal;
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
-    //justifyContent: 'center',
-    //alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   cartModalContainer: {
@@ -152,9 +152,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR
   },
+  header:{
+    width:'80%'
+  },
   modalCartQty: {
     flexDirection: 'row',
     flex: 1,
+    alignItems:'flex-end',
+    alignSelf:'center',
     justifyContent: 'flex-end'
   },
   save: {

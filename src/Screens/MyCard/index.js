@@ -6,24 +6,21 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  FlatList,
   ToastAndroid,
   ActivityIndicator,
   Alert,
   ScrollView,
-  Animated
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { applyCoupon, cartCheckout, fetchCart, removeFromCart } from '../../api/product';
-import { SwipeListView, SwipedRow } from 'react-native-swipe-list-view';
+import { SwipeListView } from 'react-native-swipe-list-view';
 import CartProduct from '../../Component/CartProduct';
 import FullPageLoader from '../../Component/FullPageLoader';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import { FontFamily } from '../../Theme/FontFamily';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import HeaderSide from '../Component/HeaderSide';
-
-import { Swipeable } from 'react-native-gesture-handler';
+import { style } from 'deprecated-react-native-prop-types/DeprecatedImagePropType';
 
 export default class MyCard extends Component {
   constructor(props) {
@@ -37,13 +34,9 @@ export default class MyCard extends Component {
       isLoading: false,
       cartLoader: false,
       couponText: '',
-      row: [],
-      swipeIndex: null,
       couponLoader: false,
       checkoutLoader: false,
-
     };
-
   }
 
   async componentDidMount() {
@@ -53,22 +46,19 @@ export default class MyCard extends Component {
 
   }
 
-  // componentDidUpdate(prevProps){
-  //   console.log("prevProps >",prevProps);
-  //   if (prevProps && prevProps.swipeIndex !== this.state.swipeIndex) {
-  //     console.log('pokemons state has changed.')
-  //   }
-  // }
-
   cartLoader = (isLoader) => {
     this.setState({ cartLoader: isLoader });
   }
 
   fetchData = async () => {
     try {
-
       const resp = await fetchCart();
-      console.log("response > after called" > resp);
+      if (resp.response.result && resp.response.result.data.length > 0) {
+        resp.response.result.data.map((item, index) => {
+          item.key = index + 1
+        });
+      }
+      console.log("fetch cart data > ",resp.response.result.data);
       this.setState({
         cart: resp.response.result.data,
         hostUrl: resp.response.result.hostUrl,
@@ -97,8 +87,9 @@ export default class MyCard extends Component {
           x.qty = parseInt(item.qty)
         }
       });
-      const length = this.state.cart.filter(x => x.qty != 0).length;
-      this.setState({ cart: this.state.cart, totalQty: length });
+      const filterData = this.state.cart.filter(x => x.qty != 0);
+      const length = filterData.length;
+      this.setState({ cart: filterData, totalQty: length });
     }
     this.setState({ amountData: item.data });
   }
@@ -142,11 +133,11 @@ export default class MyCard extends Component {
     }
   }
 
-  deleteFromCart = async (id) => {
+  deleteFromCart = async (data, rowMap) => {
     try {
-      const res = await removeFromCart(id);
+      rowMap[data.item.key].closeRow();
       this.setState({ cartLoader: true });
-      
+      await removeFromCart(data.item.cartId);
       this.fetchData();
     } catch (error) {
       this.setState({ cartLoader: false });
@@ -154,31 +145,19 @@ export default class MyCard extends Component {
     }
   }
 
+  closeRow = (rowMap, rowKey) => {
+    if (rowMap[rowKey]) {
+      rowMap[rowKey].closeRow();
+    }
+  };
 
-
-  renderHiddenItem = (rowData, rowMap) => {
-    console.log("data > ", rowMap[rowData.item]);
+  renderHiddenItem = (data, rowMap) => {
     return (
-
       <TouchableOpacity
-        onPress={() => {rowMap[rowData.item.key].closeRow(),this.deleteFromCart(rowData.item.cartId)}}
-        style={{
-          flexDirection: 'column',
-          flex: 1,
-          height: 131,
-          marginTop: 15,
-          width: 230,
-          alignSelf: 'flex-end',
-          marginRight: 10,
-          paddingHorizontal: 30,
-          borderRadius: 15,
-          justifyContent: 'center',
-          alignItems: 'flex-end',
-          backgroundColor: '#A1172F'
-        }}>
+        onPress={() => this.deleteFromCart(data, rowMap)}
+        style={styles.hiddenItem}>
         <Icon name='delete' size={35} color={'#fff'} />
       </TouchableOpacity>
-
     )
   }
 
@@ -186,10 +165,12 @@ export default class MyCard extends Component {
     return (
       <SafeAreaView
         style={styles.container}>
+          
         <HeaderSide
           name={'My Cart'}
           onClick={() => this.props.navigation.pop()}
         />
+      
 
         {this.state.isLoading ?
           <><ThemeFullPageLoader /></>
@@ -206,45 +187,23 @@ export default class MyCard extends Component {
               </Text>
             </View>
 
-            <View style={{ height: '54%' }}>
-
-            <ScrollView>
-        {
-          this.state.cart && this.state.cart.length > 0 && this.state.cart.map((cartItem, index) => (
-            cartItem.qty != 0 ? (
-              <Swipeable renderRightActions={this.renderRightActions} rightThreshold={-200}>
-                <CartProduct navigation={this.props.navigation} onCart={(item) => { this.cartLoader(item) }} index={index} item={cartItem} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item) }} />
-              </Swipeable>
-            )
-              :
-              null
-          ))
-        }
-      </ScrollView>
-
-              {/* {this.renderProducts()} */}
-
-
-              {/* <SwipeListView
-                
-                useFlatList={true}
-                closeOnScroll={true}
-                closeOnRowOpen={true}
+            {/* <View style={{ height: '54%',marginBottom:1, }}> */}
+              
+              <SwipeListView
                 data={this.state.cart}
+                disableRightSwipe={true}
+                stopRightSwipe={-80}
+                
+                closeOnRowOpen={true}
                 renderItem={(data, rowMap) => (
-                  <CartProduct navigation={this.props.navigation} ref={this.collectRowRefs} onCart={(item) => { this.cartLoader(item) }} item={data.item} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item) }} />
+                  <CartProduct navigation={this.props.navigation} onCart={(item) => { this.cartLoader(item) }} item={data.item} hostUrl={this.state.hostUrl} onChange={(item, qty) => { this.onChange(item) }} />
                 )}
                 renderHiddenItem={(data, rowMap) => (
-                  //this.renderHiddenItem(data, rowMap)
+                  this.renderHiddenItem(data, rowMap)
                 )}
-                rightOpenValue={-90}
-              /> */}
-
-
-
-            </View>
-
-
+                rightOpenValue={-80}
+              />
+            {/* </View> */}
             <View style={styles.bottomContainer}>
               <View
                 style={styles.subContainer}>
@@ -258,16 +217,17 @@ export default class MyCard extends Component {
                       underlineColorAndroid="transparent"
                       onChangeText={(text) => this.setState({ couponText: text })}
                     />
-
                     <TouchableOpacity
                       style={{
                         backgroundColor: '#751A2A',
-                        width: 120,
-                        height: 36,
-                        borderRadius: 20,
+                        width:110,
+                        height: 44,
+                        borderRadius: 25,
+                        marginRight:15,
+                        flexDirection:'row',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        alignSelf: 'center',
+                        //alignSelf: 'flex-end',
                       }}
                       onPress={() => this.applyCoupon()}
                       disabled={this.state.couponLoader}
@@ -296,43 +256,40 @@ export default class MyCard extends Component {
                     marginTop: 10,
                     marginBottom: 10,
                     alignSelf: 'center',
-                    alignItems: 'center',
                   }}>
                   <Icon
                     name="redeem"
                     size={22}
                     color="#A39B9B"
-                    style={styles.imageStyle}
                   />
                   <Text
                     style={{
                       marginLeft: 10,
+                      fontFamily:FontFamily.TAJAWAL_REGULAR,
+                      fontSize:15,
+                      fontWeight:'400',
+                      color:'#A39B9B'
                     }}>
                     Do you have any promocode?
                   </Text>
                 </View>
                 <View
-                  style={{
-                    marginTop: 10,
-                    marginLeft: 20,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
+                  style={styles.bottomDetails}>
                   <Text
                     style={{
-                      marginLeft: 10,
+                      fontFamily:FontFamily.TAJAWAL_REGULAR,
                       color: '#3C3C3C',
                       fontWeight: '500',
-                      fontSize: 16,
+                      fontSize: 17,
                     }}>
                     Sub Total
                   </Text>
                   <Text
                     style={{
-                      marginRight: 40,
+                      fontFamily:FontFamily.TAJAWAL_REGULAR,
                       color: '#3C3C3C',
                       fontWeight: '500',
-                      fontSize: 16,
+                      fontSize: 17,
                     }}>
                     ${this.state.amountData.subTotalAmount}
                   </Text>
@@ -340,23 +297,19 @@ export default class MyCard extends Component {
 
                 {this.state.amountData.couponDiscount > 0 &&
                   <View
-                    style={{
-                      marginTop: 5,
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}>
+                    style={styles.bottomDetails}>
                     <Text
-                      style={{
-                        marginLeft: 30,
-                        color: '#3C3C3C',
-                        fontWeight: '500',
-                        fontSize: 16,
-                      }}>
+                    style={{
+                      fontFamily: FontFamily.TAJAWAL_REGULAR,
+                      color: '#3C3C3C',
+                      fontWeight: '500',
+                      fontSize: 16,
+                    }}>
                       Coupon Discount
                     </Text>
                     <Text
                       style={{
-                        marginRight: 40,
+                        fontFamily: FontFamily.TAJAWAL_REGULAR,
                         color: '#F01111',
                         fontWeight: '500',
                         fontSize: 16,
@@ -364,17 +317,13 @@ export default class MyCard extends Component {
                       -${this.state.amountData.couponDiscount}
                     </Text>
                   </View>
-                }
+                 } 
                 {this.state.amountData.extraDiscount > 0 &&
                   <View
-                    style={{
-                      marginTop: 5,
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}>
+                    style={styles.bottomDetails}>
                     <Text
                       style={{
-                        marginLeft: 30,
+                        fontFamily: FontFamily.TAJAWAL_REGULAR,
                         color: '#3C3C3C',
                         fontWeight: '500',
                         fontSize: 16,
@@ -383,7 +332,7 @@ export default class MyCard extends Component {
                     </Text>
                     <Text
                       style={{
-                        marginRight: 40,
+                        fontFamily: FontFamily.TAJAWAL_REGULAR,
                         color: '#F01111',
                         fontWeight: '500',
                         fontSize: 16,
@@ -391,7 +340,7 @@ export default class MyCard extends Component {
                       -${this.state.amountData.extraDiscount}
                     </Text>
                   </View>
-                }
+                 } 
 
                 <View
                   style={{
@@ -404,14 +353,15 @@ export default class MyCard extends Component {
 
                 <View
                   style={{
-                    marginTop: 5,
+                    marginHorizontal: 37,
+                    marginVertical:10,
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                   }}>
                   <Text
                     style={{
-                      marginLeft: 30,
-                      color: '#000',
+                      fontFamily:FontFamily.TAJAWAL_REGULAR,
+                      color: '#050505',
                       fontWeight: '700',
                       fontSize: 18,
                     }}>
@@ -419,16 +369,16 @@ export default class MyCard extends Component {
                   </Text>
                   <Text
                     style={{
-                      marginRight: 40,
-                      color: '#000',
+                      fontFamily:FontFamily.TAJAWAL_REGULAR,
+                      color: '#030303',
                       fontWeight: '700',
-                      fontSize: 18,
+                      fontSize: 18
                     }}>
                     ${this.state.amountData.totalPayable}
                   </Text>
                 </View>
 
-                <View style={{ marginTop: '1%', marginBottom: 10 }}>
+                <View style={{  }}>
                   {/* {this.state.totalQty > 0 &&  */}
                   <TouchableOpacity
                     style={styles.save}
@@ -439,7 +389,12 @@ export default class MyCard extends Component {
                       (
                         <ActivityIndicator size="small" color="#ffffff" />
                       ) : (
-                        <Text style={{ color: '#fff', fontSize: 18 }}>CHECKOUT</Text>
+                        <Text style={{ 
+                          fontFamily:FontFamily.TAJAWAL_REGULAR,
+                      color: ThemeColors.CLR_WHITE,
+                      fontWeight: '700',
+                      fontSize: 18
+                      }}>CHECKOUT</Text>
                       )
                     }
                   </TouchableOpacity>
@@ -447,9 +402,12 @@ export default class MyCard extends Component {
                 </View>
               </View>
             </View>
+            
           </>
           )
         }
+    
+    
       </SafeAreaView>
     );
   }
@@ -473,8 +431,11 @@ const styles = StyleSheet.create({
     color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
   },
   bottomContainer: {
-    flex: 1,
     justifyContent: 'flex-end',
+    alignContent:'flex-end',
+    marginVertical:1,
+    borderTopLeftRadius:20,
+    borderTopRightRadius:20,
   },
   subContainer: {
     shadowColor: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
@@ -488,7 +449,20 @@ const styles = StyleSheet.create({
     backgroundColor: ThemeColors.CLR_WHITE,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    overflow: 'hidden',
+  },
+  hiddenItem:{
+    flexDirection: 'column',
+    flex: 1,
+    height: 133,
+    marginTop: 16,
+    width: 100,
+    alignSelf: 'flex-end',
+    marginRight: 10,
+    paddingHorizontal: 25,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    backgroundColor: '#A1172F'
   },
   containerAlign: {
     marginTop: 20,
@@ -500,16 +474,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#DADADA',
     width: 306,
     height: 44,
-    borderRadius: 20,
+    borderRadius: 25,
   },
   promoText: {
     fontFamily: FontFamily.TAJAWAL_REGULAR,
     fontSize: 20,
     fontWeight: '400',
     color: ThemeColors.CLR_SIGN_IN_TEXT_COLOR,
-    alignItems: 'center',
-    alignSelf: 'center',
-    paddingLeft: '13%',
+    textAlignVertical: 'center',
+    paddingVertical:0,
+    alignContent: 'center',
+    paddingLeft: 20,
     width: 200
   },
   productView: {
@@ -526,8 +501,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 15,
   },
+  bottomDetails:{
+    marginHorizontal:37,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   productInnerView: {
-    // backgroundColor: '#fff',
     height: 100,
     width: '30%',
     alignItems: 'center',
@@ -536,6 +515,7 @@ const styles = StyleSheet.create({
   save: {
     backgroundColor: '#851729',
     padding: 12,
+    marginVertical:3,
     borderRadius: 25,
     alignItems: 'center',
     alignSelf: 'center',
