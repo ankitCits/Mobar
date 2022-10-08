@@ -58,10 +58,10 @@ class Collections extends Component {
         qty: 0
       },
       isLoading: false,
-      loader:false,
+      loader: false,
       refreshing: false,
-      selectedWalletId:0,
-      userEmail: props.redux.auth.userData.result.profile.email,
+      selectedWalletId: 0,
+      userEmail: (props.redux.auth.userData) ? props.redux.auth.userData.result.profile.email : null,
       data: [],
     };
   }
@@ -100,7 +100,7 @@ class Collections extends Component {
       console.log("collection > catch > error", error);
       this.setState({ isLoading: false });
       ToastAndroid.showWithGravity(
-        error,
+        'You need to Sign in to visit your collection',
         ToastAndroid.LONG,
         ToastAndroid.BOTTOM,
       );
@@ -336,15 +336,15 @@ class Collections extends Component {
   }
 
   onRedeem = (item) => {
-     item.validDateStatus == 1 ?
-      this.setState({ paymentModal: true,selectedWalletId:item.walletId }) :
+    item.validDateStatus == 1 ?
+      this.setState({ paymentModal: true, selectedWalletId: item.walletId }) :
       this.props.navigation.navigate('SelectBars', { data: { walletId: item.walletId, productId: item.ecom_aca_product_unit.ecom_ac_product.productId } });
 
   }
 
   increaseDate = async () => {
     try {
-    
+
       this.setState({ loader: true });
       const postData = { orderAmount: this.state.activeDateAmount * 100 }; // get dynamic amount and pass to below api 
       const res = await fetchPaymentIntentClientSecret(postData);
@@ -362,7 +362,7 @@ class Collections extends Component {
         { setupFutureUsage: 'OffSession', }
       );
       if (error) {
-        console.log("Collection > increaseDate > error > ",error);
+        console.log("Collection > increaseDate > error > ", error);
         this.setState({ loader: false });
         Alert.alert(`${error.code}`, error.localizedMessage)
       } else if (paymentIntent) {
@@ -378,10 +378,10 @@ class Collections extends Component {
               transactionStatus: 'SUCCEEDED'
             }
             const res = await increaseActiveDate(data); // Call api to increase date 
-            this.setState({ loader: false,paymentModal:false });
+            this.setState({ loader: false, paymentModal: false });
             this.fetchData();
           } catch (e) {
-            console.log("Collection > increaseDate > catch >",e);
+            console.log("Collection > increaseDate > catch >", e);
             this.setState({ loader: false });
             Alert.alert('Error', 'Error while processing payment')
           }
@@ -814,13 +814,13 @@ class Collections extends Component {
                       }
                     >
                       {this.state.loader ?
-                    (
-                      <ActivityIndicator size="small" color="#ffffff" />
-                    ) : (
-                      <Text style={{ color: '#fff', fontSize: 18 }}>PLACE ORDER</Text>
-                    )
-                  }
-                      
+                        (
+                          <ActivityIndicator size="small" color="#ffffff" />
+                        ) : (
+                          <Text style={{ color: '#fff', fontSize: 18 }}>PLACE ORDER</Text>
+                        )
+                      }
+
                     </TouchableOpacity>
                   </View>
                 </View>

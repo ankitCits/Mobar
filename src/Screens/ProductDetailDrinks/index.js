@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   Image,
   ImageBackground,
   TouchableOpacity,
@@ -24,6 +23,7 @@ import { showAlert } from '../../api/auth';
 import { getAccessToken } from '../../localstorage';
 import { connect } from 'react-redux';
 import CartModal from '../../Component/CartModal';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 class ProductDetailDrinks extends Component {
   constructor(props) {
@@ -292,8 +292,7 @@ class ProductDetailDrinks extends Component {
 
   render() {
     return (
-      <SafeAreaView>
-
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
         <ScrollView>
           <View>
             <View style={styles.productDetailsContainer}>
@@ -504,7 +503,6 @@ class ProductDetailDrinks extends Component {
                       </TouchableOpacity>
                     </View>
                   )
-
                 }) :
                 null}
             </View>
