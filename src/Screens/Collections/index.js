@@ -194,8 +194,6 @@ class Collections extends Component {
   };
 
   onModal = (data) => {
-    console.log("onModal > walletId >",data.walletId);
-    console.log("onModal > combo  Products >",data.ecom_ea_combo.ecom_ac_products);
     if (data.validDateStatus == 1) {
       this.setState({ paymentModal: true, selectedWalletId: data.walletId })
     } else {
@@ -206,7 +204,7 @@ class Collections extends Component {
         }
       });
       this.setState({ isComboProduct: true, comData: data, comboProducts: comboData });
-      this.state.comboProduct.walletId = id;
+      this.state.comboProduct.walletId = data.walletId;
     }
   }
 

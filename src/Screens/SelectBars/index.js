@@ -19,6 +19,7 @@ import images from '../../assets/images';
 import HeaderSide from '../Component/HeaderSide';
 import { connect } from 'react-redux';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
+import NoContentFound from '../../Component/NoContentFound';
 
 class SelectBars extends Component {
   constructor(props) {
@@ -31,7 +32,7 @@ class SelectBars extends Component {
       hostUrl: '',
       vendorData: [],
       isLoading: 'false',
-      data:{}
+      data:null
     };
   }
 
@@ -261,8 +262,10 @@ class SelectBars extends Component {
           this.state.isLoading ?
             (<ThemeFullPageLoader />)
             :
-            (
-              <>
+           
+                 this.state.data != null ?
+                (
+                  <>
                 <View
                   style={{
                     width: '96%',
@@ -346,7 +349,7 @@ class SelectBars extends Component {
                     </View>
                   </View>
                 </View>
-                {this.state.data != null &&
+             
                   <View
                     style={{
                       width: '90%',
@@ -372,7 +375,7 @@ class SelectBars extends Component {
                       Select your nearest bar and redeem your drink
                     </Text>
                   </View>
-                }
+               
 
                 <FlatList
                   nestedScrollEnabled={true}
@@ -381,10 +384,11 @@ class SelectBars extends Component {
                   keyExtractor={(item, index) => index.toString()}
                   renderItem={({ item, index }) => this.renderProducts(item, index)}
                 />
-              </>
-            )
+                </>
+                ) :
+               (<NoContentFound title="No Data Found" />)
         }
-
+          
 
         {this.state.itemSelected != 0 ? (
           <View style={{

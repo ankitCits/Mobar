@@ -432,7 +432,7 @@ redirectTo=(item)=>{
               </View>
             </View>
 
-            <View style={{ margin: 15, marginTop: 20 }}>
+            {/* <View style={{ margin: 15, marginTop: 20 }}>
               <Text
                 style={{
                   fontSize: 20,
@@ -456,7 +456,7 @@ redirectTo=(item)=>{
                         </View>
                     </View>
                 </View>
-            </View>
+            </View> */}
 
             <View style={{ margin: 15, marginTop: 20 }}>
               <Text
@@ -476,7 +476,9 @@ redirectTo=(item)=>{
                       this.props.navigation.navigate('ProductDetailDrinks', { id: item.productId });
                     }}>
                     <View
-                      style={styles.productView}
+                      style={[styles.productView,
+                        item.ecom_aca_product_units[0].ecom_ca_wallet == null ? styles.redeem:''
+                      ]}
                     // onPress={() =>
                     //   this.props.navigation.navigate('OrderHistoryDetail')
                     // }
@@ -744,9 +746,9 @@ const styles = StyleSheet.create({
     height: 241,
   },
   productView: {
-    backgroundColor: ThemeColors.CLR_WHITE,
+    backgroundColor:ThemeColors.CLR_WHITE,
     //height: 100,
-    //width: '95%',
+    //width: '96%',
     margin:20,
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 1 },
@@ -757,6 +759,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     marginTop: 10,
+  },
+  redeem:{
+    width:'100%'
   },
   productInnerView: {
     backgroundColor: '#fff',
