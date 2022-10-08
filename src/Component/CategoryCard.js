@@ -6,16 +6,15 @@ import {
     TouchableOpacity,
     View,
     Image,
-    ToastAndroid,
 } from 'react-native';
 import images from '../assets/images';
 import { addToWishlist, removeToWishlist } from '../api/wishlist';
 import { getAccessToken } from '../localstorage';
-import { showAlert } from '../api/auth';
 import { ThemeColors } from '../Theme/ThemeColors';
 import { screenHeight, screenWidth } from '../Theme/Matrices';
 import { Colors } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { isLoggedIn, showAlert, showToaster } from '../api/func';
 
 export default class CategoryCard extends React.Component {
     constructor(props) {
@@ -32,30 +31,26 @@ export default class CategoryCard extends React.Component {
     }
 
     removeFavorite = async (id) => {
-        const token = await getAccessToken();
-        if (token == null) {
-            showAlert();
-        } else {
+        if (await isLoggedIn()) {
             try {
                 const data = {
                     wishlistId: id
                 }
                 await removeToWishlist(data);
-                this.state.data.ecom_ba_wishlist.wishlistId = null;
+                this.props.item.ecom_ba_wishlist = null;
                 this.setState({ isFavorite: false })
             } catch (error) {
-                this.state.data.ecom_ba_wishlist.wishlistId = null;
+                this.state.data.ecom_ba_wishlist = null;
                 this.setState({ isFavorite: false })
                 console.log("CategoryCard > removeFavorite > Catch", error);
             }
+        } else {
+            showAlert();
         }
     }
 
     addFavorite = async (id, index) => {
-        const token = await getAccessToken();
-        if (token == null) {
-            showAlert();
-        } else {
+        if (await isLoggedIn()) {
             try {
                 const data = {
                     productId: id,
@@ -67,16 +62,13 @@ export default class CategoryCard extends React.Component {
                     "wishlistId": response.result.data.wishlistId,
                     "wishlistFor": "Drinks"
                 }
-                console.log("response add ti wishlist >", response.result);
                 this.setState({ isFavorite: true })
             } catch (error) {
                 console.log("CategoryCard > addFavorite > Catch", error);
-                ToastAndroid.showWithGravity(
-                    error,
-                    ToastAndroid.LONG,
-                    ToastAndroid.BOTTOM,
-                );
+                //showToaster(error);
             }
+        } else {
+            showAlert();
         }
     }
 

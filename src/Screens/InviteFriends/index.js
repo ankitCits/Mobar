@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { SafeAreaView, StyleSheet, Text, Platform, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, Platform, ToastAndroid, TouchableOpacity, View } from 'react-native';
 
 import HTMLView from 'react-native-htmlview';
 
@@ -10,6 +10,8 @@ import { FontFamily } from '../../Theme/FontFamily';
 import Share from 'react-native-share';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import HeaderSide from '../Component/HeaderSide';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { showToaster } from '../../api/func';
 
 export default class InviteFriends extends Component {
     constructor(props) {
@@ -53,11 +55,7 @@ export default class InviteFriends extends Component {
             })
             console.log(res);
         } catch (error) {
-            ToastAndroid.showWithGravity(
-                error[0],
-                ToastAndroid.LONG,
-                ToastAndroid.BOTTOM,
-            );
+            showToaster(error[0])
             console.log("Invite Friends > Fetch data > catch >", error);
         }
     }

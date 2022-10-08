@@ -1,17 +1,12 @@
 import React, { Component } from 'react';
 import {
-  Text,
   View,
-  SafeAreaView,
-  Image,
-  TextInput,
-  TouchableOpacity,
   StyleSheet,
-  ScrollView,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { getNotification } from '../../api/common';
-import images from '../../assets/images';
+import { isLoggedIn, showToaster } from '../../api/func';
+import NoContentFound from '../../Component/NoContentFound';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import HeaderSide from '../Component/HeaderSide';
@@ -21,15 +16,18 @@ export default class Notification extends Component {
     super(props);
     this.state = {
       visibility: false,
-      data:null,
-      isLoading:true
+      data:[],
+      isLoading:false
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    if(await isLoggedIn()){
    this.fetchData(); 
+  }else{
+showToaster('You need to Sign in to visit your notification');
   }
-  
+}
   fetchData= async () =>{
     try{
     const res = await getNotification();
@@ -53,8 +51,11 @@ export default class Notification extends Component {
           <View style={styles.container}>
           {this.state.isLoading ?
         (<ThemeFullPageLoader  />)
-      :      
-           ( <MyTabs data={this.state.data} />)
+      :     
+      this.state.data.length > 0 ? 
+           (
+             <MyTabs data={this.state.data} />):
+             (<NoContentFound title="No Data Found" />)
           }
           </View>
       </SafeAreaView>

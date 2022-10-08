@@ -2,30 +2,29 @@ import React, { Component } from 'react';
 import {
     Text,
     View,
-    SafeAreaView,
     Image,
     TouchableOpacity,
     StyleSheet,
     FlatList,
-    ToastAndroid,
     ImageBackground,
 } from 'react-native';
-import HTMLView from 'react-native-htmlview';
 import { addToCart, fetchComboProducts } from '../../api/product';
 import images from '../../assets/images';
 import { FontFamily } from '../../Theme/FontFamily';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import HeaderSide from '../Component/HeaderSide';
-import { getAccessToken } from '../../localstorage';
-import { showAlert } from '../../api/auth';
 import { addToWishlist, removeToWishlist } from '../../api/wishlist';
+import { isLoggedIn, showAlert, showToaster } from '../../api/func';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 
 export default class ComboList extends Component {
     constructor(props) {
         super(props);
         this.state = {
             data: [],
+            isLoader:false,
             hostUrl: ''
         };
     }
@@ -37,26 +36,18 @@ export default class ComboList extends Component {
 
     getComboData = async () => {
         try {
+            this.setState({isLoader:true});
             const data = await fetchComboProducts();
-            //console.log("ComboList > getComboData > response >",data.response.result.hostUrl);
-            this.setState({ data: data.response.result.comboDatas, hostUrl: data.response.result.hostUrl })
-            //console.log("state data",this.state.data);
+            this.setState({ data: data.response.result.comboDatas, hostUrl: data.response.result.hostUrl });
+            this.setState({isLoader:false});
         } catch (error) {
             console.log("ComboList > getComboData > catch >", error);
-            ToastAndroid.showWithGravity(
-                error,
-                ToastAndroid.LONG,
-                ToastAndroid.TOP,
-            );
+            showToaster(error,'TOP');
         }
     }
 
     removeFavorite = async (id, index) => {
-        const token = await getAccessToken();
-        if (token == null) {
-            showAlert();
-            return;
-        } else {
+        if (await isLoggedIn()) {
             try {
                 const data = {
                     wishlistId: id
@@ -67,21 +58,14 @@ export default class ComboList extends Component {
             } catch (error) {
                 this.state.data[index].ecom_ba_wishlist = null;
                 this.setState({ data: this.state.data })
-                // ToastAndroid.showWithGravity(
-                //     error,
-                //     ToastAndroid.LONG,
-                //     ToastAndroid.BOTTOM,
-                // );
             }
+        } else {
+            showAlert();
         }
     }
 
     addToFavorite = async (comboId, index) => {
-        const token = await getAccessToken();
-        if (token == null) {
-            showAlert();
-            return;
-        } else {
+        if (await isLoggedIn()) {
             try {
                 const data = {
                     productId: 0,
@@ -93,22 +77,15 @@ export default class ComboList extends Component {
                 this.setState({ data: this.state.data })
             } catch (error) {
                 console.log("ComboList > addToFavorite >  catch > ", error);
-                ToastAndroid.showWithGravity(
-                    error,
-                    ToastAndroid.LONG,
-                    ToastAndroid.BOTTOM,
-                );
             }
+        } else {
+            showAlert();
         }
 
     }
 
     addCart = async (comboId) => {
-        const token = await getAccessToken();
-        if (token == null) {
-            showAlert();
-            return;
-        } else {
+        if (await isLoggedIn()) {
             try {
                 const cartItem = {
                     productUnitId: 0,
@@ -116,21 +93,16 @@ export default class ComboList extends Component {
                     qty: 1,
                 };
                 await addToCart(cartItem);
-                ToastAndroid.showWithGravity(
-                    'Item added to cart successfully',
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                );
+                showToaster('Item added to cart successfully','TOP');
             } catch (error) {
                 console.log("Combo list > addCart > catch", error);
-                ToastAndroid.showWithGravity(
-                    error,
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                );
+                showToaster(error,'TOP')
             }
+        } else {
+            showAlert();
         }
     }
+
     goToDetails = (id) => {
         this.props.navigation.navigate('ComboDetails', { comboId: id });
     }
@@ -208,17 +180,20 @@ export default class ComboList extends Component {
                     name={'Combo'}
                     onClick={() => this.props.navigation.pop()}
                 />
-                <>
-                    <View style={styles.container}>
-                        <FlatList
-                            data={this.state.data}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item, index }) => this.renderComboItems(item, index)}
-                        />
-                    </View>
-                </>
-            </SafeAreaView>
-        )
+                {this.state.isLoader ?
+                    (<ThemeFullPageLoader />) :
+                    (
+                        <>
+                            <View style={styles.container}>
+                                <FlatList
+                                    data={this.state.data}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    renderItem={({ item, index }) => this.renderComboItems(item, index)}
+                                />
+                            </View>
+                        </>)
+                }
+            </SafeAreaView>)
     }
 }
 

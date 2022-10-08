@@ -1,12 +1,7 @@
 import React, { Component } from 'react';
 import {
-  Text,
   View,
-  SafeAreaView,
   Image,
-  TouchableOpacity,
-  ScrollView,
-  ImageBackground,
   FlatList,
   RefreshControl,
 } from 'react-native';
@@ -19,6 +14,8 @@ import { FontFamily } from '../../Theme/FontFamily';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import styles from './styles'
 import { connect } from 'react-redux';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import HeaderSide from '../Component/HeaderSide';
 
 class Promotions extends Component {
   constructor(props) {
@@ -58,7 +55,7 @@ class Promotions extends Component {
   }
 
   renderPromotion = (item, index) => {
-   // console.log(item);
+   console.log('bar item and type >',item);
     if (item.type == 1) {
       return (
         <View style={{ marginHorizontal: 15, }}>
@@ -88,37 +85,19 @@ class Promotions extends Component {
   render() {
     return (
       <SafeAreaView style={styles.container}>
-        {/* Header */}
-        <View
-          style={styles.headerContainer}>
-          <View
-            style={styles.header}>
-
-            <View style={styles.headerLeft}>
-              <Text style={styles.title}>
-                Promotions
-              </Text>
-            </View>
-          </View>
-        </View>
-        {/* Header Ends */}
-        <>
-          {/* <ScrollView > */}
-          <View
-            style={styles.cardContainer}>
-            <FlatList
-              data={this.state.promotion}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item, index }) => this.renderPromotion(item, index)}
-              refreshControl={
-                <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
-              }
-              // ListFooterComponent={this.footerComponent()}
-            />
-
-          </View>
-          {/* </ScrollView> */}
-        </>
+        <HeaderSide
+          name={'Promotions'}
+          onClick={() => this.props.navigation.goBack()}
+        />
+        <FlatList
+          data={this.state.promotion}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => this.renderPromotion(item, index)}
+          refreshControl={
+            <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+          }
+        //ListFooterComponent={this.footerComponent()}
+        />
       </SafeAreaView>
     );
   }

@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   Image,
   TouchableOpacity,
   StyleSheet,
   ToastAndroid,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { showAlert } from '../../../api/auth';
+import { showToaster } from '../../../api/func';
 import { addToCart } from '../../../api/product';
 import { removeToWishlist } from '../../../api/wishlist';
 import images from '../../../assets/images';
@@ -34,11 +35,7 @@ export default class Drinks extends Component {
       this.props.onClick(updatedData, 'Drinks');
     } catch (error) {
       console.log("favorites > Drinks > removeFavorite > Catch", error);
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-      );
+      showToaster(error);
     }
   }
 
@@ -60,17 +57,9 @@ export default class Drinks extends Component {
           qty: 1,
         };
         await addToCart(sendData);
-        ToastAndroid.showWithGravity(
-          'Product Added to Cart',
-          ToastAndroid.LONG,
-          ToastAndroid.BOTTOM,
-        );
+        showToaster('Product Added to Cart');
       } catch (error) {
-        ToastAndroid.showWithGravity(
-          error,
-          ToastAndroid.LONG,
-          ToastAndroid.BOTTOM,
-        );
+        showToaster(error);
       }
     }
   }

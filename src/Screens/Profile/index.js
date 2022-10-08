@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   Image,
   TextInput,
   TouchableOpacity,
@@ -26,6 +25,8 @@ import { getUserDetails, updateProfilePic } from '../../api/auth';
 import { connectActionSheet } from '@expo/react-native-action-sheet';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { BASE_URL } from '../../config';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { showToaster } from '../../api/func';
 
 const options = ['Camera', 'Gallery', 'Cancel'];
 const cancelButtonIndex = 2;
@@ -72,19 +73,11 @@ class MyProfile extends Component {
         this.setState({isProfileSelected:true});
         const response = await updateProfilePic(postDate);
         if (response.status == 'SUCCESS') {
-          ToastAndroid.showWithGravity(
-            'Profile picture updated successfully..!',
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
+          showToaster('Profile picture updated successfully..!','TOP');
         }
       } catch (error) {
         console.log("Profile > Update Profile picture> error", error);
-        ToastAndroid.showWithGravity(
-          'Error white uploading picture!',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
+        showToaster('Error white uploading picture!','TOP');
       }
 
     }
@@ -239,11 +232,7 @@ class MyProfile extends Component {
       });
     } catch (error) {
       this.setState({ loading: false });
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster(error,'TOP');
       console.log('Error_On_Data_Fetch', error);
     }
   };
@@ -254,45 +243,7 @@ class MyProfile extends Component {
     this.validateField('email');
     this.validateField('mobileNumber');
     this.validateField('address');
-    // if ((this.state.name == '')) {
-    //   ToastAndroid.showWithGravity(
-    //     'Name Required!',
-    //     ToastAndroid.LONG,
-    //     ToastAndroid.TOP,
-    //   );
-    //   this.setState({loader: false});
-    //   return;
-    // }
-
-    // if ((this.state.email == '')) {
-    //   ToastAndroid.showWithGravity(
-    //     'Email Required!',
-    //     ToastAndroid.LONG,
-    //     ToastAndroid.TOP,
-    //   );
-    //   this.setState({loader: false});
-    //   return;
-    // }
-
-    // if ((this.state.mobileNumber == '')) {
-    //   ToastAndroid.showWithGravity(
-    //     'Contact Required!',
-    //     ToastAndroid.LONG,
-    //     ToastAndroid.TOP,
-    //   );
-    //   this.setState({loader: false});
-    //   return;
-    // }
-
-    // if ((this.state.address == '')) {
-    //   ToastAndroid.showWithGravity(
-    //     'Address Required!',
-    //     ToastAndroid.LONG,
-    //     ToastAndroid.TOP,
-    //   );
-    //   this.setState({loader: false});
-    //   return;
-    // }
+    
     if (this.state.nameError == null && this.state.emailError == null &&
       this.state.mobileError == null && this.state.addressError == null
     ) {
@@ -311,11 +262,7 @@ class MyProfile extends Component {
         this.setState({isProfileSelected:false});
         if (response.status == 'SUCCESS') {
           this.setState({ lblName: this.state.name, lblEmail: this.state.email });
-          ToastAndroid.showWithGravity(
-            'Profile updated successfully..!',
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
+          showToaster('Profile updated successfully..!','TOP');
         }
         this.setState({ formError: null, loader: false });
       } catch (error) {

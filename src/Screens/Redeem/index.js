@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   Image,
   TextInput,
   TouchableOpacity,
@@ -14,7 +13,9 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import HTMLView from 'react-native-htmlview';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { showToaster } from '../../api/func';
 import { redeemOrder } from '../../api/order';
 import { fetchRedeemMixerData, fetchRedeemMoreData } from '../../api/vendor';
 import images from '../../assets/images';
@@ -43,6 +44,7 @@ export default class Redeem extends Component {
       successOrderData: [],
       moreData: [this.props.route.params.items]
     };
+    console.log('redeem params data > ',this.props.route.params.items);
   }
 
   componentDidMount() {
@@ -68,11 +70,7 @@ export default class Redeem extends Component {
       this.setState({ mixerData: mappedData });
     } catch (error) {
       console.log("Redeem > fetchMixerData > catch", error);
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster(error,'TOP');
     }
   }
 
@@ -84,11 +82,7 @@ export default class Redeem extends Component {
       const res = await fetchRedeemMoreData(raw);
       this.setState({ addItemData: res.response.result.data });
     } catch (error) {
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster(error,'TOP');
     }
   };
 
@@ -118,6 +112,12 @@ export default class Redeem extends Component {
       }
       this.setState({ moreData: this.state.moreData });
     }
+  }
+
+  redirectHandle=()=>{
+    
+    console.log("redeem > redirect data > ",{ data: { walletId: this.props.route.params.items.walletId, productId: this.props.route.params.items.ecom_aca_product_unit.ecom_ac_product.productId } });
+    this.props.navigation.navigate('SelectBars', { data: { walletId: this.props.route.params.items.walletId, productId: this.props.route.params.items.ecom_aca_product_unit.ecom_ac_product.productId } })
   }
 
   onComboSelect = (data) => {
@@ -192,11 +192,7 @@ export default class Redeem extends Component {
       );
 
       if (ifExist && ifExist.ecom_aca_product_unit.ecom_ac_product.productId) {
-        ToastAndroid.showWithGravity(
-          'This product already exists',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
+        showToaster('This product already exists','TOP');
       } else {
         this.state.moreData.push(data);
         this.setState({ itemModalVisible: false })
@@ -238,32 +234,20 @@ export default class Redeem extends Component {
     let quantityError = data.find(x => x.numberOfGlass == 0);
     let unitQuantityError = data.find(x => x.unitQty == 0);
     if (quantityError && quantityError.numberOfGlass == 0) {
-      ToastAndroid.showWithGravity(
-        'Please Select Unit',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster('Please Select Unit','TOP');
       return;
     }
     if (unitQuantityError && unitQuantityError.unitQty == 0) {
-      ToastAndroid.showWithGravity(
-        'Please select quantity',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster('Please select quantity','TOP');
       return;
     }
     if (this.state.tableNo.trim() == "") {
-      ToastAndroid.showWithGravity(
-        'Please enter  Table No.',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster('Please enter  Table No.','TOP');
       return;
     }
 
     const payload = {
-      vendorId: this.state.data.vendorId,
+      vendorId: this.props.route.params.items.vendorId,
       tableNo: this.state.tableNo,
       redeemProducts: data
     };
@@ -275,11 +259,7 @@ export default class Redeem extends Component {
       this.setState({ successOrderData: res.response.result.data });
     } catch (error) {
       this.setState({ isLoading: false });
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster(error,'TOP');
     }
     //this.setState({ modalVisible: true })
   }
@@ -311,16 +291,16 @@ export default class Redeem extends Component {
               }}>
               <Text
                 style={styles.topSubContainer}>
-                {this.state.data.vendorShopName}
+                {this.props.route.params.items.vendorShopName}
               </Text>
               <View style={{ margin: 20 }}>
-                <HTMLView value={this.state.data.description} />
+                <HTMLView value={this.props.route.params.items.description} />
               </View>
               <View
                 style={styles.topFooterContainer}>
                 <Icon name="self-improvement" size={25} color="#851729" />
                 <Text
-                  onPress={() => { this.props.navigation.goBack() }}
+                  onPress={() => { this.redirectHandle()  }}
                   style={styles.topSubText}>
 
                   Select Other Bar
@@ -341,7 +321,7 @@ export default class Redeem extends Component {
                 resizeMode={'cover'}
                 //source={images.product1}
                 source={{
-                  uri: `${this.state.data.hostUrl + this.state.data.images
+                  uri: `${this.state.data.hostUrl + this.props.route.params.items.images
                     }`,
                 }}
                 defaultSource={images.defaultImg}

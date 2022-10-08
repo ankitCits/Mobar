@@ -14,6 +14,7 @@ import { fetchVendorList } from '../../api/vendor';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import BarCard from '../../Component/BarCard';
 import NoContentFound from '../../Component/NoContentFound';
+import { showToaster } from '../../api/func';
 class BarList extends Component {
   constructor(props) {
     super(props);
@@ -45,11 +46,7 @@ class BarList extends Component {
       this.setState({ hostUrl: res.response.result.hostUrl, data: res.response.result.vendorList, loader: false })
     } catch (error) {
       this.setState({ loader: false });
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster(error,'TOP');
       console.log('Error_On_Data_Fetch getDetail', error);
     }
   }

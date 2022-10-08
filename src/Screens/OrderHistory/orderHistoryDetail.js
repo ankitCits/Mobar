@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   Image,
   TouchableOpacity,
   StyleSheet,
@@ -19,6 +18,8 @@ import images from '../../assets/images';
 import HeaderSide from '../Component/HeaderSide';
 import { getAccessToken } from '../../localstorage';
 import FullPageLoader from '../../Component/FullPageLoader';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { showToaster } from '../../api/func';
 export default class OrderHistoryDetail extends Component {
   constructor(props) {
     super(props);
@@ -106,11 +107,7 @@ export default class OrderHistoryDetail extends Component {
         'Content-Type': 'application/pdf',
       });
       console.log("response >",res);
-      ToastAndroid.showWithGravity(
-        'Invoice pdf downloaded successfully',
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-      );
+      showToaster('Invoice pdf downloaded successfully');
     } catch (error) {
       console.log("orderHistoryDetails > downloadHistory > catch >", error);
       alert('Download failed.');

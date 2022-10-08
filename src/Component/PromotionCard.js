@@ -12,6 +12,7 @@ import { ThemeColors } from '../Theme/ThemeColors';
 export default class PromotionCard extends React.Component {
   constructor(props) {
     super(props);
+    console.log("promotion card > item > ",props.item);
   }
 
   render() {

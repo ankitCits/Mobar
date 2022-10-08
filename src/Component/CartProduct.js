@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { showAlert } from '../api/auth';
+import { showToaster } from '../api/func';
 import { addToCart, updateToCart } from '../api/product';
 import images from '../assets/images';
 import { getAccessToken } from '../localstorage';
@@ -53,20 +54,12 @@ export default class CartProduct extends React.Component {
           data: amount,
           id: this.props.item.cartId
         }
-        ToastAndroid.showWithGravity(
-          type == 1 ? 'Item added to cart successfully' : 'Item remove to cart successfully',
-          ToastAndroid.LONG,
-          ToastAndroid.BOTTOM,
-        );
+        showToaster(type == 1 ? 'Item added to cart successfully' : 'Item remove to cart successfully');
         this.props.onChange(data);
         this.props.onCart(false)
       } catch (error) {
         console.log(error)
-        ToastAndroid.showWithGravity(
-          error ?? 'Error while performing action',
-          ToastAndroid.LONG,
-          ToastAndroid.BOTTOM,
-        );
+        showToaster(error ?? 'Error while performing action');
       }
     }
   }

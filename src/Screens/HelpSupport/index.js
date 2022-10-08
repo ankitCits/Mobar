@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   Image,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
@@ -23,6 +21,8 @@ import TextInputField from '../../Component/TextInputField';
 import HelpInput from '../../Component/HelpInput';
 import SelectInput from '../../Component/SelectInput';
 import { fetchFAQData } from '../../api/common';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { showToaster } from '../../api/func';
 export default class HelpSupport extends Component {
   constructor(props) {
     super(props);
@@ -141,11 +141,7 @@ export default class HelpSupport extends Component {
         const response = await helpSupport(raw);
         if (response && response.status == 'SUCCESS') {
           this.setState({ categoryError: null, loader: false });
-          ToastAndroid.showWithGravity(
-            response.mag,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
+          showToaster(mag,'TOP');
         }
       } catch (error) {
         this.setState({ loader: false });

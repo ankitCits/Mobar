@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
-  ToastAndroid,
   ScrollView,
   RefreshControl
 } from 'react-native';
@@ -20,18 +19,18 @@ import Drinks from './Tabs/Drinks';
 import Bars from './Tabs/Bars';
 import { wishlist } from '../../api/wishlist';
 import { connect } from 'react-redux';
+import { isLoggedIn, showToaster } from '../../api/func';
 
 const LazyPlaceholder = ({ route }) => (
-  <View>
+  
     <ThemeFullPageLoader />
-  </View>
 );
 class Favourites extends Component {
   constructor(props) {
     super(props);
     this.state = {
       subscribe: null,
-      loader: true,
+      loader: false,
       data: [],
       hostUrl: null,
       index: 0,
@@ -45,7 +44,11 @@ class Favourites extends Component {
 
   componentDidMount() {
     this.state._unsubscribe = this.props.navigation.addListener('focus', async () => {
-      await this.fetchData();
+      if(await isLoggedIn()){
+        await this.fetchData();
+      }else{
+        showToaster('You need to Sign in to visit My Favorites');
+      }
     });
 
   }
@@ -80,11 +83,7 @@ class Favourites extends Component {
     } catch (error) {
       this.setState({ loader: false });
       console.log("Wishlist > fetchData > Catch", error);
-      ToastAndroid.showWithGravity(
-        'Unauthorized user',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster(error,'TOP');
     }
   };
 
@@ -132,11 +131,9 @@ class Favourites extends Component {
         <SafeAreaView
           style={styles.container}
         >
-
           <View>
             <View
               style={styles.headerContainer}>
-
               <View style={styles.header}>
                 <Text style={styles.titleText}>
                   Favourites

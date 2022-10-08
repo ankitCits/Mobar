@@ -2,14 +2,10 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  ToastAndroid,
   ActivityIndicator,
-  Alert,
-  ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { applyCoupon, cartCheckout, fetchCart, removeFromCart } from '../../api/product';
@@ -20,7 +16,9 @@ import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import { FontFamily } from '../../Theme/FontFamily';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import HeaderSide from '../Component/HeaderSide';
-import { style } from 'deprecated-react-native-prop-types/DeprecatedImagePropType';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { isLoggedIn, showAlert, showToaster } from '../../api/func';
+import NoContentFound from '../../Component/NoContentFound';
 
 export default class MyCard extends Component {
   constructor(props) {
@@ -41,9 +39,12 @@ export default class MyCard extends Component {
 
   async componentDidMount() {
     this.setState({ isLoading: true });
+    if(await isLoggedIn()){
     await this.fetchData();
+    }else{
+      showToaster('You need to Sign in to visit your cart items');
+    }
     this.setState({ isLoading: false });
-
   }
 
   cartLoader = (isLoader) => {
@@ -58,7 +59,6 @@ export default class MyCard extends Component {
           item.key = index + 1
         });
       }
-      console.log("fetch cart data > ",resp.response.result.data);
       this.setState({
         cart: resp.response.result.data,
         hostUrl: resp.response.result.hostUrl,
@@ -72,11 +72,7 @@ export default class MyCard extends Component {
       }
     } catch (error) {
       this.setState({ isLoading: false, cartLoader: false });
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-      );
+      showToaster(error);
     }
   };
 
@@ -105,10 +101,10 @@ export default class MyCard extends Component {
         console.log(respCoupon.response.result);
         this.setState({ amountData: respCoupon.response.result.data, couponLoader: false })
       } catch (e) {
-        Alert.alert('Error', e);
+        showAlert('Error', e);
       }
     } else {
-      Alert.alert('Error', 'Promocode cannot be empty');
+      showAlert('Error', 'Promocode cannot be empty');
       this.setState({ couponLoader: false })
     }
   }
@@ -128,7 +124,7 @@ export default class MyCard extends Component {
       this.props.navigation.navigate('Checkout', { orderDetails: result, checkoutLoader: false })
       this.setState({ checkoutLoader: false })
     } catch (e) {
-      Alert.alert('Error', e);
+      showAlert('Error', e);
       this.setState({ checkoutLoader: false })
     }
   }
@@ -170,25 +166,24 @@ export default class MyCard extends Component {
           name={'My Cart'}
           onClick={() => this.props.navigation.pop()}
         />
-      
-
         {this.state.isLoading ?
-          <><ThemeFullPageLoader /></>
+          <ThemeFullPageLoader />
           :
-          (<>
-            {this.state.cartLoader &&
-              <><FullPageLoader />
-              </>
-            }
+          (
+          <>
+          {this.state.cart.length > 0 ?
+            this.state.cartLoader &&
+             (<><FullPageLoader /></>)
+            
+            
+            (<>
             <View style={styles.cartCount}>
               <Text
                 style={styles.itemCountText}>
                 {this.state.totalQty} items in your cart
               </Text>
             </View>
-
-            {/* <View style={{ height: '54%',marginBottom:1, }}> */}
-              
+ 
               <SwipeListView
                 data={this.state.cart}
                 disableRightSwipe={true}
@@ -203,7 +198,7 @@ export default class MyCard extends Component {
                 )}
                 rightOpenValue={-80}
               />
-            {/* </View> */}
+          
             <View style={styles.bottomContainer}>
               <View
                 style={styles.subContainer}>
@@ -402,12 +397,13 @@ export default class MyCard extends Component {
                 </View>
               </View>
             </View>
-            
+            </>)
+            :
+            (<NoContentFound title="No Data Found" />)
+          }
           </>
           )
         }
-    
-    
       </SafeAreaView>
     );
   }

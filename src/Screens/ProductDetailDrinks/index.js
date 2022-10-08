@@ -7,10 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  ToastAndroid,
   FlatList,
-  Modal,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -19,11 +16,12 @@ import images from '../../assets/images';
 import { FontFamily } from '../../Theme/FontFamily';
 import HTMLView from 'react-native-htmlview';
 import { addToWishlist, removeToWishlist } from '../../api/wishlist';
-import { showAlert } from '../../api/auth';
 import { getAccessToken } from '../../localstorage';
 import { connect } from 'react-redux';
 import CartModal from '../../Component/CartModal';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { isLoggedIn, showAlert, showToaster } from '../../api/func';
+import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 
 class ProductDetailDrinks extends Component {
   constructor(props) {
@@ -36,6 +34,7 @@ class ProductDetailDrinks extends Component {
       cartQty: 0,
       modalVisible: false,
       index: 0,
+      loader:false,
       selectedQty: {
         qty: 0,
         name: '',
@@ -51,6 +50,7 @@ class ProductDetailDrinks extends Component {
 
   productDetails = async () => {
     try {
+      this.setState({loader:true});
       const data = {
         productId: this.state.id,
         latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : '',
@@ -61,59 +61,46 @@ class ProductDetailDrinks extends Component {
         resp.response.result.data.ecom_aca_product_units.map(item => {
           item.qty = 0
         });
-
-        this.setState({ details: resp.response.result.data, index: 0 });
-        this.setState({ vendors: resp.response.result.data.ecom_ae_vendors });
-        this.setState({ hostUrl: resp.response.result.hostUrl });
-        this.setState({ isFavorite: (resp.response.result.data.ecom_ba_wishlist && resp.response.result.data.ecom_ba_wishlist.wishlistId) ? true : false });
-        this.setState({ selectedQty: this.state.details.ecom_aca_product_units[0] });
+        this.setState({ details: resp.response.result.data, index: 0 ,
+         vendors: resp.response.result.data.ecom_ae_vendors ,
+         hostUrl: resp.response.result.hostUrl ,
+         isFavorite: (resp.response.result.data.ecom_ba_wishlist && resp.response.result.data.ecom_ba_wishlist.wishlistId) ? true : false ,
+         selectedQty: resp.response.result.data.ecom_aca_product_units[0],
+         loader:false
+         });
       }
     } catch (error) {
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-      );
+      console.log("productDetailsDrinks > productDetails catch > ",error);
+      this.setState({loader:false});
+      showToaster(error);
     }
   }
 
   addCart = async () => {
-    const token = await getAccessToken();
-    if (token == null) {
-      showAlert();
-      return;
-    } else {
-      console.log("addCart > product unit Id > ", this.state.selectedQty.productUnitId);
+    if (await isLoggedIn()) {
       try {
+        this.setState({ modalVisible: true });
         const cartItem = {
           productUnitId: this.state.selectedQty.productUnitId,
           comboId: 0,
           qty: 1,
         };
-        const cartResponse = await addToCart(cartItem);
+        await addToCart(cartItem);
         this.state.selectedQty.qty = this.state.selectedQty.qty + 1
         this.state.selectedQty.unit = this.state.selectedQty.unitQty + this.state.selectedQty.unitType;
         this.state.selectedQty.name = this.state.details.name;
-        //this.state.details.ecom_aca_product_units[0]
         this.setState({ selectedQty: this.state.selectedQty });
-        //console.log("selected modal item after set > ",this.state.selectedQty);
       } catch (error) {
         console.log("Details Bars > addCart > catch", error);
-        ToastAndroid.showWithGravity(
-          'Try Again',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
+        showToaster(error,'TOP');
       }
+    } else {
+      showAlert();
     }
   }
 
   updateCart = async (type, index) => {
-    const token = await getAccessToken();
-    if (token == null) {
-      showAlert();
-    } else {
-      console.log("updateCart > type > ", type);
+    if (await isLoggedIn()) {
       try {
         const sendData = {
           cartId: this.state.selectedQty.ecom_ba_cart.cartId,
@@ -131,46 +118,34 @@ class ProductDetailDrinks extends Component {
           }
         }
       } catch (error) {
-        ToastAndroid.showWithGravity(
-          error,
-          ToastAndroid.LONG,
-          ToastAndroid.BOTTOM,
-        );
+        showToaster(error);
       }
+    } else {
+      showAlert();
     }
   }
 
 
   removeFavorite = async (id) => {
-    const token = await getAccessToken();
-    if (token == null) {
-      showAlert();
-      return;
-    } else {
+    if (await isLoggedIn()) {
       try {
         const data = {
           wishlistId: id
         }
-        const response = await removeToWishlist(data);
+        await removeToWishlist(data);
         this.state.details.ecom_ba_wishlist = null;
         this.setState({ isFavorite: false });
       } catch (error) {
         console.log("CategoryCard > removeFavorite > Catch", error);
-        ToastAndroid.showWithGravity(
-          error,
-          ToastAndroid.LONG,
-          ToastAndroid.BOTTOM,
-        );
+       showToaster(error);
       }
+    } else {
+      showAlert();
     }
   }
 
   addFavorite = async (id) => {
-    const token = await getAccessToken();
-    if (token == null) {
-      showAlert();
-      return;
-    } else {
+    if (await isLoggedIn()) {
       try {
         const data = {
           productId: id,
@@ -184,12 +159,10 @@ class ProductDetailDrinks extends Component {
         }
         this.setState({ isFavorite: true })
       } catch (error) {
-        ToastAndroid.showWithGravity(
-          error,
-          ToastAndroid.LONG,
-          ToastAndroid.BOTTOM,
-        );
+        showToaster(error);
       }
+    } else {
+      showAlert();
     }
   }
 
@@ -268,7 +241,6 @@ class ProductDetailDrinks extends Component {
 
 
   renderQuantity = (item, index) => {
-    //console.log("render Item >",item.qty);
     return (
       <TouchableOpacity
         onPress={() => this.setQty(index, item)}
@@ -292,8 +264,12 @@ class ProductDetailDrinks extends Component {
 
   render() {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      this.state.loader ?
+        (<ThemeFullPageLoader />):
+      (<SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
         <ScrollView>
+          
+          <>
           <View>
             <View style={styles.productDetailsContainer}>
               <View
@@ -381,7 +357,7 @@ class ProductDetailDrinks extends Component {
 
                   <TouchableOpacity
                     style={styles.cartContainer}
-                    onPress={() => { this.setState({ modalVisible: true }, () => this.addCart()) }}
+                    onPress={() => this.addCart()}
                   >
                     <Text
                       style={styles.cartText}
@@ -507,6 +483,7 @@ class ProductDetailDrinks extends Component {
                 null}
             </View>
           </View>
+          </>
         </ScrollView>
 
         <CartModal props={this.props}
@@ -517,7 +494,7 @@ class ProductDetailDrinks extends Component {
             this.updateCart(type) : type == 1 && this.addCart()
           }
           onModalClose={this.onCloseModal} />
-      </SafeAreaView>
+      </SafeAreaView>)
     );
   }
 }

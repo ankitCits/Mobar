@@ -2,36 +2,35 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   Image,
   TouchableOpacity,
   StyleSheet,
   Modal,
-  ToastAndroid,
   FlatList,
   RefreshControl,
-  TouchableWithoutFeedback,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { showAlert } from '../../api/auth';
+
 import { addToCart, fetchCollectionData } from '../../api/product';
 import { FontFamily } from '../../Theme/FontFamily';
 import images from '../../assets/images';
 import { getAccessToken } from '../../localstorage';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import SelectInput from '../../Component/SelectInput';
-import HTMLView from 'react-native-htmlview';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import moment from 'moment/moment';
 import HeaderSide from '../Component/HeaderSide';
 import CartModal from '../../Component/CartModal';
 import PaymentForm from '../../Component/PaymentForm';
 import { initStripe, confirmPayment } from '@stripe/stripe-react-native';
-import { fetchPaymentIntentClientSecret, increaseActiveDate, placeOrder } from '../../api/order';
+import { fetchPaymentIntentClientSecret, increaseActiveDate } from '../../api/order';
 import { amountForActiveDate } from '../../api/order';
 import { connect } from 'react-redux';
+import NoContentFound from '../../Component/NoContentFound';
+import { authErrorMsg, stripePublishableKey } from '../../config';
+import { isLoggedIn, showAlert, showToaster } from '../../api/func';
+import { SafeAreaView } from 'react-native-safe-area-context';
 class Collections extends Component {
   constructor(props) {
     super(props);
@@ -66,15 +65,20 @@ class Collections extends Component {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    
+    if(await isLoggedIn()){
     async function initialize() {
       await initStripe({
-        publishableKey: 'pk_test_QNBEnRDDdYq1Yc7TZjVZhhwG00JySy2oJq',
+        publishableKey: stripePublishableKey,
       });
     }
     initialize().catch("collection > componentDidMount > catch", console.error);
     this.fetchData();
     this.fetchActiveDateAmount();
+  }else{
+    showToaster(authErrorMsg);
+  }
   }
 
   componentDidUpdate() {
@@ -99,11 +103,7 @@ class Collections extends Component {
     } catch (error) {
       console.log("collection > catch > error", error);
       this.setState({ isLoading: false });
-      ToastAndroid.showWithGravity(
-        'You need to Sign in to visit your collection',
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-      );
+      showToaster(error);
     }
   }
 
@@ -115,11 +115,7 @@ class Collections extends Component {
     } catch (error) {
       this.setState({ isLoading: false });
       console.log("Collection > fetchActiveDateAmount > catch >", error);
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-      );
+    showToaster(error)
     }
   }
 
@@ -163,13 +159,8 @@ class Collections extends Component {
       this.setState({ cartModalVisible: true });
 
     } catch (error) {
-
       console.log("Collection > addCart > catch", error);
-      ToastAndroid.showWithGravity(
-        'Try again!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster(error);
     }
   }
 
@@ -364,7 +355,7 @@ class Collections extends Component {
       if (error) {
         console.log("Collection > increaseDate > error > ", error);
         this.setState({ loader: false });
-        Alert.alert(`${error.code}`, error.localizedMessage)
+        showAlert(`${error.code}`, error.localizedMessage)
       } else if (paymentIntent) {
         if (paymentIntent.status === 'Succeeded') {
           try {
@@ -383,7 +374,7 @@ class Collections extends Component {
           } catch (e) {
             console.log("Collection > increaseDate > catch >", e);
             this.setState({ loader: false });
-            Alert.alert('Error', 'Error while processing payment')
+            showAlert('Error', 'Error while processing payment')
           }
         } else {
           this.setState({ loader: false });
@@ -432,19 +423,22 @@ class Collections extends Component {
               </View> */}
 
               {/* </View> */}
-              <FlatList
-                nestedScrollEnabled={true}
-                showsHorizontalScrollIndicator={false}
-                style={{
-                  marginTop: 10,
-                }}
-                data={this.state.data}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item, index }) => this.renderProducts(item, index)}
-                refreshControl={
-                  <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+                {this.state.data != null && this.state.data.length > 0 ?
+                  <FlatList
+                    nestedScrollEnabled={true}
+                    showsHorizontalScrollIndicator={false}
+                    style={{
+                      marginTop: 10,
+                    }}
+                    data={this.state.data}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item, index }) => this.renderProducts(item, index)}
+                    refreshControl={
+                      <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+                    }
+                  />
+                  : (<NoContentFound title="No Data Found" />)
                 }
-              />
             </>
           )
         }

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   Image,
   StatusBar,
   TouchableOpacity,
@@ -12,8 +11,10 @@ import {
   ToastAndroid,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { retrieveAccount } from '../../api/auth';
+import { showToaster } from '../../api/func';
 import images from '../../assets/images';
 import TextInputField from '../../Component/TextInputField';
 import { A_KEY, BASE_URL } from '../../config';
@@ -31,16 +32,6 @@ export default class ForgetPassword extends Component {
   }
 
   onProceed = async () => {
-    //this.props.navigation.navigate('forgetPasswordOtp');
-    //return;
-    // if (this.state.contact == null || this.state.contact == '') {
-    //   ToastAndroid.showWithGravity(
-    //     'Mobile Number mandatory !',
-    //     ToastAndroid.LONG,
-    //     ToastAndroid.TOP,
-    //   );
-    //   return;
-    // }
     let zero = this.state.contact && this.state.contact.startsWith('0');
     if (this.state.contact == null || this.state.contact.trim() == '') {
       this.setState({ mobileError: '* Mobile number mandatory', loader: false });
@@ -106,11 +97,6 @@ export default class ForgetPassword extends Component {
 
         if (result.errors) {
           this.setState({ formError: result.errors[0].msg, loader: false });
-          // ToastAndroid.showWithGravity(
-          //   result.errors[0].msg,
-          //   ToastAndroid.LONG,
-          //   ToastAndroid.TOP,
-          // );
         }
 
 
@@ -118,11 +104,7 @@ export default class ForgetPassword extends Component {
       .catch(error => {
         console.log('error', error);
         this.setState({ loader: false });
-        ToastAndroid.showWithGravity(
-          error,
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
+        showToaster(error,'TOP');
       });
   };
 

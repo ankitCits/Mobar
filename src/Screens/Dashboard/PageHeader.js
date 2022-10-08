@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 import { screenHeight } from '../../Theme/Matrices';
 import { fetchBanner } from '../../api/common';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
+import { showToaster } from '../../api/func';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
@@ -37,11 +38,7 @@ class PageHeader extends Component {
             const re = await fetchBanner();
             this.setState({ data: re.response.result.data, hostUrl: re.response.result.hostUrl })
         } catch (error) {
-            ToastAndroid.showWithGravity(
-                error,
-                ToastAndroid.LONG,
-                ToastAndroid.TOP,
-            );
+            showToaster(error,'TOP');
             console.log('getBanners', error);
         }
     }

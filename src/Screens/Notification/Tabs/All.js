@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   StyleSheet,
   FlatList,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Notifications from '../../../Component/Notifications';
 import { FontFamily } from '../../../Theme/FontFamily';
 import { ThemeColors } from '../../../Theme/ThemeColors';

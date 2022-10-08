@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   Image,
   TextInput,
   TouchableOpacity,
@@ -11,6 +10,7 @@ import {
   Linking,
   StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
 import HeaderSide from '../Component/HeaderSide';

@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   Image,
   StatusBar,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import images from '../../assets/images';
 export default class PasswordSuccessFullyChanged extends Component {
   constructor(props) {

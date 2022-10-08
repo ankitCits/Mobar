@@ -2,11 +2,9 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   StatusBar,
   TouchableOpacity,
   StyleSheet,
-  ToastAndroid,
   Linking,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -18,6 +16,7 @@ import ThemeButton from '../../Component/ThemeButton';
 import { FontFamily } from '../../Theme/FontFamily';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import { IgnorePattern } from 'react-native/Libraries/LogBox/LogBox';
+import { SafeAreaView } from 'react-native-safe-area-context';
 export default class CreateAccount extends Component {
   constructor(props) {
     super(props);
@@ -213,21 +212,11 @@ export default class CreateAccount extends Component {
 
         if (response.errors) {
           this.setState({ formError: response.errors[0].msg, loader: false });
-          // ToastAndroid.showWithGravity(
-          //   response.errors[0].msg,
-          //   ToastAndroid.LONG,
-          //   ToastAndroid.TOP,
-          // );
         }
       })
       .catch(error => {
         console.log('error', error);
         this.setState({ formError: 'Network rrror!', loader: false });
-        // ToastAndroid.showWithGravity(
-        //   error,
-        //   ToastAndroid.LONG,
-        //   ToastAndroid.TOP,
-        // );
       });
   }
 

@@ -18,6 +18,7 @@ import { FontFamily } from '../Theme/FontFamily';
 import { ThemeColors } from '../Theme/ThemeColors';
 import { setUserDetail } from '../Redux/actions/auth';
 import { loggedOut } from '../Redux/actions/product';
+import { showToaster } from '../api/func';
 
 class SideDrawer extends Component {
   constructor(props) {
@@ -61,11 +62,7 @@ class SideDrawer extends Component {
         this.reStart();
       }
     } catch (error) {
-      ToastAndroid.showWithGravity(
-        'Internet Issue!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster('Internet Issue!','TOP');
     }
   };
 

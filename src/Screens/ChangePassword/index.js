@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   TextInput,
   TouchableOpacity,
   StyleSheet,
@@ -16,6 +15,8 @@ import { changePassword } from '../../Redux/actions/product';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import { FontFamily } from '../../Theme/FontFamily';
 import HeaderSide from '../Component/HeaderSide';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { showToaster } from '../../api/func';
 
 class ChangePassword extends Component {
   constructor(props) {
@@ -39,21 +40,13 @@ class ChangePassword extends Component {
       this.state.currentPassword == null
       
     ) {
-      ToastAndroid.showWithGravity(
-        'Current Password Required!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster('Current Password Required!','TOP');
       this.setState({loader: false});
       return;
     }
 
     if (this.state.password == '' || this.state.password == null) {
-      ToastAndroid.showWithGravity(
-        'Password Required!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster('Password Required!','TOP');
       this.setState({loader: false});
       return;
     }
@@ -62,21 +55,13 @@ class ChangePassword extends Component {
       this.state.confirmPassword == '' ||
       this.state.confirmPassword == null
     ) {
-      ToastAndroid.showWithGravity(
-        'Confirm Password Required!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster('Confirm Password Required!','TOP');
       this.setState({loader: false});
       return;
     }
 
     if (this.state.confirmPassword != this.state.password) {
-      ToastAndroid.showWithGravity(
-        'Password & Confirm Password Should be Same Required!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster('Password & Confirm Password Should be Same Required!','TOP');
       this.setState({loader: false});
       return;
     }
@@ -92,11 +77,6 @@ class ChangePassword extends Component {
       console.log("response",response);
       if (response.status == 'SUCCESS') {
           this.props.navigation.navigate('PasswordChanged');
-        // ToastAndroid.showWithGravity(
-        //   'Password updated successfully..!',
-        //   ToastAndroid.LONG,
-        //   ToastAndroid.TOP,
-        // );
       }
       this.setState({
           loader: false,

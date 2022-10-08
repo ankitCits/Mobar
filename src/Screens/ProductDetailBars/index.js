@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   Image,
   ImageBackground,
   TouchableOpacity,
@@ -15,20 +14,15 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../assets/images';
 import ThemeFullPagerLoader from '../../Component/ThemeFullPageLoader';
 import { addToWishlist, removeToWishlist } from '../../api/wishlist';
-
 import { fetchVendorDetails } from '../../api/vendor';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import { FontFamily } from '../../Theme/FontFamily';
 import { addToCart } from '../../api/product';
 import { getAccessToken } from '../../localstorage';
-import { showAlert } from '../../api/auth';
-import HTMLView from 'react-native-htmlview';
 import { connect } from 'react-redux';
 import StarRating from '../../Component/StarRatings';
-import PageHeader from '../Dashboard/PageHeader';
-import Carousel from 'react-native-snap-carousel';
-import { LogData } from 'react-native/Libraries/LogBox/LogBox';
-import { screenHeight } from '../../Theme/Matrices';
+import { isLoggedIn, showAlert, showToaster } from '../../api/func';
+import { SafeAreaView } from 'react-native-safe-area-context';
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 class ProductDetailBars extends Component {
   constructor(props) {
@@ -63,19 +57,12 @@ class ProductDetailBars extends Component {
           true : false
       });
     } catch (error) {
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster(error,'TOP');
     }
   };
 
   wishListAdd = async (id) => {
-    const token = await getAccessToken();
-    if (token == null) {
-      showAlert();
-    } else {
+    if (await isLoggedIn()) {
       const data = {
         productId: 0,
         comboId: 0,
@@ -91,14 +78,13 @@ class ProductDetailBars extends Component {
       } catch (error) {
         console.log("Product Details Bar > addFavorite > Catch", error);
       }
+    } else {
+      showAlert();
     }
   };
 
   wishListRemove = async (id) => {
-    const token = await getAccessToken();
-    if (token == null) {
-      showAlert();
-    } else {
+    if (await isLoggedIn()) {
       try {
         const data = {
           wishlistId: id,
@@ -108,12 +94,10 @@ class ProductDetailBars extends Component {
         this.setState({ isFavorite: false })
       } catch (error) {
         console.log("Product Details Bar > removeFavorite > Catch", error);
-        ToastAndroid.showWithGravity(
-          error,
-          ToastAndroid.LONG,
-          ToastAndroid.BOTTOM,
-        );
+       showToaster(error);
       }
+    } else {
+      showAlert();
     }
   };
 
@@ -123,30 +107,21 @@ class ProductDetailBars extends Component {
 
 
   addCart = async (prodUnitId) => {
-    const token = await getAccessToken();
-    if (token == null) {
-      showAlert();
-    } else {
+    if (await isLoggedIn()) {
       const cartItem = {
         productUnitId: prodUnitId,
         comboId: 0,
         qty: 1,
       };
       try {
-        const cartResponse = await addToCart(cartItem);
-        ToastAndroid.showWithGravity(
-          'Item added to cart successfully',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
+       await addToCart(cartItem);
+       showToaster('Item added to cart successfully','TOP');
       } catch (error) {
         console.log("Details Bars > addCart > catch", error);
-        ToastAndroid.showWithGravity(
-          error,
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
+        showToaster(error,'TOP');
       }
+    } else {
+      showAlert();
     }
   }
 
@@ -171,7 +146,7 @@ class ProductDetailBars extends Component {
 };
 
 redirectTo=(item)=>{
-  //console.log("selected product > ",item.ecom_aca_product_units[0].ecom_ca_wallet);
+  console.log("selected product > ",item);
   //return;
   const data = {
     walletId: item.ecom_aca_product_units[0].ecom_ca_wallet.walletId,
@@ -200,7 +175,7 @@ redirectTo=(item)=>{
       }
     }
   };
-  console.log("redeem data > ",data);
+  //console.log("redeem data > ",data);
   this.props.navigation.navigate('Redeem', { items: data })
 }
 

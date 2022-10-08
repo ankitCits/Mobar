@@ -2,13 +2,10 @@ import React, {Component} from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
-  Image,
-  ImageBackground,
-  TouchableOpacity,
   StyleSheet,
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import images from '../../../assets/images';
 import Notifications from '../../../Component/Notifications';

@@ -21,6 +21,7 @@ import { initStripe, confirmPayment } from '@stripe/stripe-react-native';
 import { fetchPaymentIntentClientSecret, placeOrder, fetchCart, cancelOrder } from '../../api/order';
 
 import moment from 'moment'
+import { stripePublishableKey } from '../../config';
 // pk_test_QNBEnRDDdYq1Yc7TZjVZhhwG00JySy2oJq
 // sk_test_f1pXZRO62VZWj5xCJvqsOnLa00Kaq1E3nT
 class Checkout extends Component {
@@ -41,7 +42,7 @@ class Checkout extends Component {
   componentDidMount() {
     async function initialize() {
       await initStripe({
-        publishableKey: 'pk_test_QNBEnRDDdYq1Yc7TZjVZhhwG00JySy2oJq',
+        publishableKey: stripePublishableKey,
       });
     }
     initialize().catch(console.error);

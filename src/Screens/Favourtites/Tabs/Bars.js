@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   Image,
   TouchableOpacity,
   StyleSheet,
-  ImageBackground,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { showToaster } from '../../../api/func';
 import { removeToWishlist } from '../../../api/wishlist';
 import images from '../../../assets/images';
 import NoContentFound from '../../../Component/NoContentFound';
@@ -34,11 +34,7 @@ export default class Bars extends Component {
       this.props.onClick(updatedData, 'Bars');
     } catch (error) {
       console.log("Favorites > Bars > removeFavorite > Catch", error);
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-      );
+      showToaster(error);
     }
   }
 

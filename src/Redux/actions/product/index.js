@@ -1,4 +1,5 @@
 import { ToastAndroid } from 'react-native';
+import { showToaster } from '../../../api/func';
 import { BASE_URL, A_KEY } from '../../../config';
 import { getAccessToken } from '../../../localstorage';
 
@@ -138,11 +139,7 @@ export const helpSupport = async (postData) => {
                 }
                 if (result.errors) {
                     console.log("Product > 400 Errors >Response", result.errors)
-                    ToastAndroid.showWithGravity(
-                        result.errors.find(x => x.msg).msg,
-                        ToastAndroid.LONG,
-                        ToastAndroid.TOP,
-                    );
+                    showToaster(result.errors.find(x => x.msg).msg,'TOP');
                     reject(result.errors.find(x => x.msg).msg)
                 }
             })
@@ -163,11 +160,7 @@ export const updateProfile = async (postData) => {
                     resolve(result.response)
                 }
                 if (result.errors) {
-                    ToastAndroid.showWithGravity(
-                        result.errors.find(x => x.msg).msg,
-                        ToastAndroid.LONG,
-                        ToastAndroid.TOP,
-                    );
+                    showToaster(result.errors.find(x => x.msg).msg,'TOP');
                     reject(result.errors)
                 }
             })
@@ -190,11 +183,7 @@ export const changePassword = async (postData) => {
                 }
                 if (result.errors) {
                     console.log("Product > Change Password > 400 Errors >Response", result.errors)
-                    ToastAndroid.showWithGravity(
-                        result.errors.find(x => x.msg).msg,
-                        ToastAndroid.LONG,
-                        ToastAndroid.TOP,
-                    );
+                    showToaster(result.errors.find(x => x.msg).msg,'TOP');
                     reject(result.errors)
                 }
             })
@@ -225,11 +214,7 @@ export const loggedOut = async (postData) => {
                 }
                 if (result.errors) {
                     console.log("Product > sign out > 400 Errors >Response", result.errors)
-                    ToastAndroid.showWithGravity(
-                        'Internet Issue!',
-                        ToastAndroid.LONG,
-                        ToastAndroid.TOP,
-                    );
+                    showToaster('Internet Issue!','TOP');
                     reject(result.errors)
                 }
             })

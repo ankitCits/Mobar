@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   Image,
   StatusBar,
   TouchableOpacity,
@@ -16,6 +15,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import images from '../../assets/images';
 import { A_KEY, BASE_URL } from '../../config';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { showToaster } from '../../api/func';
 export default class ForgetPasswordOtp extends Component {
   constructor(props) {
     super(props);
@@ -28,11 +29,7 @@ export default class ForgetPasswordOtp extends Component {
 
   onProceed = () => {
     if (this.state.password == null || this.state.password == '') {
-      ToastAndroid.showWithGravity(
-        'Please Enter OTP !',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster('Please Enter OTP !','TOP');
       return;
     }
     //console.log("ForgotPWd > onProceed > P_Token",this.props.route.params.response.response['password-token']);
@@ -69,21 +66,13 @@ export default class ForgetPasswordOtp extends Component {
         if (result.errors) {
           console.log("OnProceed > Verify Otp > If Error", result.errors[0]);
           this.setState({ loader: false });
-          ToastAndroid.showWithGravity(
-            result.errors[0].msg,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
+          showToaster(result.errors[0].msg,'TOP');
         }
       })
       .catch(error => {
         console.log("OnProceed > Verify Otp > If Error", error);
         this.setState({ loader: false });
-        ToastAndroid.showWithGravity(
-          error,
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
+        showToaster(error,'TOP');
       });
   };
 
@@ -121,31 +110,19 @@ export default class ForgetPasswordOtp extends Component {
         console.log(result);
         if (result.response) {
           // this.setState({loader: false});
-          ToastAndroid.showWithGravity(
-            'OTP Resend Successfully !',
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
+          showToaster('OTP Resend Successfully !','TOP');
           return result;
         }
-
         if (result.errors) {
           // this.setState({loader: false});
-          ToastAndroid.showWithGravity(
-            result.errors[0].msg,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
+          showToaster(result.errors[0].msg,'TOP');
         }
       })
       .catch(error => {
         console.log('error', error);
         // this.setState({loader: false});
-        ToastAndroid.showWithGravity(
-          error,
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
+        showToaster(error,'TOP')
+        
       });
   };
 

@@ -2,11 +2,9 @@ import React, { Component } from 'react';
 import {
     Text,
     View,
-    SafeAreaView,
     Image,
     TouchableOpacity,
     StyleSheet,
-    ToastAndroid,
     ImageBackground,
     ScrollView,
 } from 'react-native';
@@ -17,12 +15,11 @@ import ThemeFullPagerLoader from '../../Component/ThemeFullPageLoader';
 import { FontFamily } from '../../Theme/FontFamily';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { getAccessToken } from '../../localstorage';
-import { showAlert } from '../../api/auth';
 import { addToWishlist, removeToWishlist } from '../../api/wishlist';
+import { isLoggedIn, showAlert, showToaster } from '../../api/func';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default class ComboDetails extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
@@ -31,8 +28,6 @@ export default class ComboDetails extends Component {
             hostUrl: ''
         };
     }
-
-
     componentDidMount() {
         this.getComboDetailsById();
     }
@@ -48,20 +43,12 @@ export default class ComboDetails extends Component {
             this.setState({ data: res.response.result.comboDatas, hostUrl: res.response.result.hostUrl })
         } catch (error) {
             console.log("ComboDetails > getComboDetailsById > catch >", error);
-            ToastAndroid.showWithGravity(
-                error,
-                ToastAndroid.LONG,
-                ToastAndroid.TOP,
-            );
+            showToaster(error,'TOP');
         }
     }
 
     removeFavorite = async (id) => {
-        const token = await getAccessToken();
-        if (token == null) {
-            showAlert();
-            return;
-        } else {
+        if (await isLoggedIn()) {
             try {
                 const data = {
                     wishlistId: id
@@ -71,21 +58,15 @@ export default class ComboDetails extends Component {
                 this.setState({ data: this.state.data })
             } catch (error) {
                 console.log("Combo Details > removeFavorite > catch > ", error);
-                ToastAndroid.showWithGravity(
-                    error,
-                    ToastAndroid.LONG,
-                    ToastAndroid.BOTTOM,
-                );
+                showToaster(error);
             }
+        } else {
+            showAlert();
         }
     }
 
     addToFavorite = async (comboId) => {
-        const token = await getAccessToken();
-        if (token == null) {
-            showAlert();
-            return;
-        } else {
+        if (await isLoggedIn()) {
             try {
                 const data = {
                     productId: 0,
@@ -97,21 +78,15 @@ export default class ComboDetails extends Component {
                 this.setState({ data: this.state.data })
             } catch (error) {
                 console.log("Combo Details > add wishlist > catch > ", error);
-                ToastAndroid.showWithGravity(
-                    error,
-                    ToastAndroid.LONG,
-                    ToastAndroid.BOTTOM,
-                );
+                showToaster(error);
             }
+        } else {
+            showAlert();
         }
     }
 
     addCart = async () => {
-        const token = await getAccessToken();
-        if (token == null) {
-            showAlert();
-            return;
-        } else {
+        if (await isLoggedIn()) {
             try {
                 const cartItem = {
                     productUnitId: 0,
@@ -119,19 +94,13 @@ export default class ComboDetails extends Component {
                     qty: 1,
                 };
                 await addToCart(cartItem);
-                ToastAndroid.showWithGravity(
-                    'Item added to cart successfully',
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                );
+                showToaster('Item added to cart successfully','TOP');
             } catch (error) {
                 console.log("Combo Details > addCart > catch", error);
-                ToastAndroid.showWithGravity(
-                    error,
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                );
+                showToaster(error,'TOP');
             }
+        } else {
+            showAlert();
         }
     }
 
@@ -192,10 +161,10 @@ export default class ComboDetails extends Component {
 
                                             <View style={styles.cardBody}>
                                                 <View style={styles.priceContainer}>
-                                                <Text
-                                                    style={styles.priceText}>
-                                                    ${this.state.data.comboPrice}
-                                                </Text>
+                                                    <Text
+                                                        style={styles.priceText}>
+                                                        ${this.state.data.comboPrice}
+                                                    </Text>
                                                 </View>
                                                 <TouchableOpacity
                                                     onPress={() => { this.addCart() }}
@@ -331,12 +300,12 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: '#3C3C3C',
     },
-    cardBody: { 
+    cardBody: {
         paddingVertical: 2,
-        justifyContent:'space-between',
-        flexDirection:'row'
-     },priceContainer:{
-        alignSelf:'center'
+        justifyContent: 'space-between',
+        flexDirection: 'row'
+    }, priceContainer: {
+        alignSelf: 'center'
     },
     priceText: {
         fontFamily: FontFamily.ROBOTO_REGULAR,

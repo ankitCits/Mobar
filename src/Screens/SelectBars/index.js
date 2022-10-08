@@ -2,14 +2,10 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   Image,
   ImageBackground,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
-  Modal,
-  Alert,
   FlatList,
   ToastAndroid,
 } from 'react-native';
@@ -20,6 +16,8 @@ import HeaderSide from '../Component/HeaderSide';
 import { connect } from 'react-redux';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import NoContentFound from '../../Component/NoContentFound';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { showToaster } from '../../api/func';
 
 class SelectBars extends Component {
   constructor(props) {
@@ -49,11 +47,8 @@ class SelectBars extends Component {
         latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : '',
         longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
       };
-
-      console.log("select > fetchData > data",data);
-
+      console.log("post data > ",data);
       const response = await fetchRedeemBars(data);
-      console.log("response > ",response);
       this.setState({
         hostUrl: response.response.result.hostUrl,
         data: response.response.result.productWithBar,
@@ -61,15 +56,11 @@ class SelectBars extends Component {
         collectionWallet: response.response.result.collectionWallet,
         isLoading: false
       });
-      console.log("state Data > ",this.state.data);
     } catch (error) {
       console.log("Select bars > catch > error", error);
       this.setState({ isLoading: false });
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-      );
+      showToaster(error);
+      
     }
   }
 

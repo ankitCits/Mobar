@@ -3,11 +3,7 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
-  Image,
-  TouchableOpacity,
   StyleSheet,
-  ActivityIndicator,
   ToastAndroid,
   StatusBar,
   ScrollView,
@@ -25,6 +21,8 @@ import { ThemeColors } from '../../Theme/ThemeColors';
 import HeaderSide from '../Component/HeaderSide';
 import Order from './Tabs/order';
 import Redeems from './Tabs/redeem';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { showToaster } from '../../api/func';
 
 const LazyPlaceholder = ({ route }) => (
     <ThemeFullPageLoader />
@@ -58,11 +56,7 @@ export default class OrderHistory extends Component {
       this.setState({ url: res.response.result.hostUrl, data: res.response.result.data, loader: false })
     } catch (error) {
       this.setState({ loader: false });
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster(error,'TOP');
       console.log('fetchOrders Error', error);
     }
   };
@@ -75,11 +69,7 @@ export default class OrderHistory extends Component {
       this.setState({ url: res.response.result.hostUrl, redeemOrders: res.response.result.data, loader: false })
     } catch (error) {
       this.setState({ loader: false });
-      ToastAndroid.showWithGravity(
-        error,
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster(error,'TOP');
       console.log('fetchRedeemOrders Error', error);
     }
   };

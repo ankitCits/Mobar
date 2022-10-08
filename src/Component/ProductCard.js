@@ -10,8 +10,6 @@ import {
     Image,
     Dimensions,
     ToastAndroid,
-    Alert,
-    Modal
 } from 'react-native';
 import images from '../assets/images';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -19,12 +17,11 @@ import { connect } from 'react-redux';
 import { addToCart, removeFromCart, updateToCart } from '../api/product';
 import { addToWishlist, removeToWishlist } from '../api/wishlist';
 import { getAccessToken } from '../localstorage';
-import { showAlert } from '../api/auth';
 import { FontFamily } from '../Theme/FontFamily';
 import { ThemeColors } from '../Theme/ThemeColors';
 import HTMLView from 'react-native-htmlview';
 import CartModal from './CartModal';
-import { is } from 'immer/dist/internal';
+import { isLoggedIn, showAlert, showToaster } from '../api/func';
 
 class ProductCard extends Component {
     constructor(props) {
@@ -44,66 +41,42 @@ class ProductCard extends Component {
     }
 
     addCart = async () => {
-
-        const token = await getAccessToken();
-        if (token == null) {
-            showAlert();
+        console.log("addCart",await isLoggedIn());
+    if (await isLoggedIn()) {
+        console.log("Add Cart > product unit qty > ", this.state.data.ecom_aca_product_units[0].productUnitId);
+        try {
+            const sendData = {
+                productUnitId: this.state.data.ecom_aca_product_units[0].productUnitId,
+                comboId: 0,
+                qty: 1,
+            };
+            const response = await addToCart(sendData);
+            this.setState({
+                modalVisible: true,
+                selectedQty: {
+                    type: 1,
+                    name: this.state.data.name,
+                    unit: this.state.data.ecom_aca_product_units[0].unitQty + this.state.data.ecom_aca_product_units[0].unitType,
+                    qty: this.state.cart + 1
+                }
+            });
+            this.setState({ cart: this.state.cart + 1 });
+        } catch (error) {
+            showToaster(error);
+        }
         } else {
-            console.log("Add Cart > product unit qty > ", this.state.data.ecom_aca_product_units[0].productUnitId);
-            try {
-                const sendData = {
-                    productUnitId: this.state.data.ecom_aca_product_units[0].productUnitId,
-                    comboId: 0,
-                    qty: 1,
-                };
-                const response = await addToCart(sendData);
-                this.setState({
-                    modalVisible: true,
-                    selectedQty: {
-                        type: 1,
-                        name: this.state.data.name,
-                        unit: this.state.data.ecom_aca_product_units[0].unitQty + this.state.data.ecom_aca_product_units[0].unitType,
-                        qty: this.state.cart + 1
-                    }
-                });
-                // ToastAndroid.showWithGravity(
-                //     'Product Added to Cart',
-                //     ToastAndroid.LONG,
-                //     ToastAndroid.BOTTOM,
-                // );
-                // const cart = this.state.data.item.ecom_aca_product_units[0].ecom_ba_cart.qty;
-                // this.props.item.ecom_aca_product_units[0].ecom_ba_cart.qty = cart -1;
-                this.setState({ cart: this.state.cart + 1 });
-            } catch (error) {
-                ToastAndroid.showWithGravity(
-                    error,
-                    ToastAndroid.LONG,
-                    ToastAndroid.BOTTOM,
-                );
-            }
+            showAlert();
         }
     }
 
     updateCart = async (cartType, isOpen) => {
-        const token = await getAccessToken();
-        console.log("updateCart > type > ", cartType);
-
-        //return;
-        if (token == null) {
-            showAlert();
-        } else {
-            try {
-                
+        if (await isLoggedIn()) {
+            try {  
                 const sendData = {
                     cartId: this.state.data.ecom_aca_product_units[0].ecom_ba_cart.cartId,
                     type: cartType,//type 1 for add and 2 for substraction
                 };
-                const response = await updateToCart(sendData);
-                // ToastAndroid.showWithGravity(
-                //     'Product Added to Cart',
-                //     ToastAndroid.LONG,
-                //     ToastAndroid.BOTTOM,
-                // );
+                await updateToCart(sendData);
                 if (cartType == 2) {
                     let removeCart = this.state.cart;
                     removeCart = removeCart - 1;
@@ -133,24 +106,18 @@ class ProductCard extends Component {
                 if (!isOpen) {
                     this.setState({ modalVisible: true });
                 }
-                console.log("modal visible > ", this.state.modalVisible, this.state.selectedQty);
             } catch (error) {
-                ToastAndroid.showWithGravity(
-                    error,
-                    ToastAndroid.LONG,
-                    ToastAndroid.BOTTOM,
-                );
+                showToaster(error);
             }
+        } else {
+            showAlert();
         }
     }
 
 
 
     addFavorite = async (productId, index) => {
-        const token = await getAccessToken();
-        if (token == null) {
-            showAlert();
-        } else {
+        if (await isLoggedIn()) {
             try {
                 const sendData = {
                     productId: productId,
@@ -161,41 +128,32 @@ class ProductCard extends Component {
                 this.state.data.ecom_ba_wishlist = wishlistData.result.data;
                 this.setState({ isFavorite: true });
             } catch (error) {
-                // ToastAndroid.showWithGravity(
-                //     error,
-                //     ToastAndroid.LONG,
-                //     ToastAndroid.BOTTOM,
-                // );
+            console.log("ProductCard > addFavorite > catch > ",error);
             }
+        } else {
+            showAlert();
         }
     };
 
     removeFavorite = async (wishListId, index) => {
-        const token = await getAccessToken();
-        if (token == null) {
-            showAlert();
-        } else {
+        if (await isLoggedIn()) {
             try {
                 const sendData = {
                     wishlistId: wishListId
                 };
-                const responseData = await removeToWishlist(sendData);
+                await removeToWishlist(sendData);
                 this.state.data.ecom_ba_wishlist = null;
                 this.setState({ isFavorite: false });
             } catch (error) {
                 this.state.data.ecom_ba_wishlist = null;
                 this.setState({ isFavorite: false });
-                // ToastAndroid.showWithGravity(
-                //     error,
-                //     ToastAndroid.LONG,
-                //     ToastAndroid.BOTTOM,
-                // );
             }
+        } else {
+            showAlert();
         }
     };
 
     onCloseModal = (isClose) => {
-        console.log("Collection > onCloseModal > is close > ", isClose);
         this.setState({ modalVisible: isClose })
     }
 

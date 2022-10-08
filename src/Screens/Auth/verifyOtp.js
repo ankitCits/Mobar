@@ -1,15 +1,11 @@
-import React, { Component, useEffect } from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
-  Image,
   StatusBar,
   TouchableOpacity,
   StyleSheet,
-  TextInput,
   ToastAndroid,
-  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
@@ -17,6 +13,8 @@ import { A_KEY, BASE_URL } from '../../config';
 import { setAccessToken } from '../../localstorage';
 import { FontFamily } from '../../Theme/FontFamily';
 import ThemeButton from '../../Component/ThemeButton';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { showToaster } from '../../api/func';
 
 export default class VerifyOtp extends Component {
   constructor(props) {
@@ -30,11 +28,7 @@ export default class VerifyOtp extends Component {
 
   VerifyOtp = () => {
     if (this.state.password == null || this.state.password == '') {
-      ToastAndroid.showWithGravity(
-        'Please Enter OTP !',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster('Please Enter OTP !','TOP');
       return;
     }
 
@@ -70,22 +64,14 @@ export default class VerifyOtp extends Component {
 
         if (result.errors) {
           this.setState({ loader: false });
-          ToastAndroid.showWithGravity(
-            result.errors[0].msg,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
+          showToaster(result.errors[0].msg,'TOP');
           return;
         }
       })
       .catch(error => {
         console.log('error', error);
         this.setState({ loader: false });
-        ToastAndroid.showWithGravity(
-          'Network Issue !',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
+        showToaster('Network Issue !','TOP');
         return;
       });
   };
@@ -130,28 +116,15 @@ export default class VerifyOtp extends Component {
         console.log("varify Otp > ResendOtp > response", result);
         if (result.response) {
           this.setState({ password:'' })
-          ToastAndroid.showWithGravity(
-            'OTP Resend Successfully !',
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
+          showToaster('OTP Resend Successfully !','TOP');
         }
-
         if (result.errors) {
-          ToastAndroid.showWithGravity(
-            result.errors[0].msg,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
+          showToaster(result.errors[0].msg,'TOP');
         }
       })
       .catch(error => {
         console.log('error', error);
-        ToastAndroid.showWithGravity(
-          'Network Issue !',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
+        showToaster('Network Issue !','TOP');
       });
   };
 

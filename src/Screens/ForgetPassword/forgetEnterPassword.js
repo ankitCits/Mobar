@@ -2,13 +2,10 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   Image,
   StatusBar,
   TouchableOpacity,
   StyleSheet,
-  TextInput,
-  ScrollView,
   ToastAndroid,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -18,6 +15,7 @@ import { ThemeColors } from '../../Theme/ThemeColors';
 import { FontFamily } from '../../Theme/FontFamily';
 import TextInputField from '../../Component/TextInputField';
 import { ActivityIndicator } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 export default class ForgetEnterPassword extends Component {
   constructor(props) {
     super(props);

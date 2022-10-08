@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import {
     View,
-    SafeAreaView,
     StyleSheet,
     ScrollView,
     StatusBar,
 } from 'react-native';
 import HTMLView from 'react-native-htmlview';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { getAllPages } from '../../api/product';
 import NoContentFound from '../../Component/NoContentFound';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
@@ -60,19 +60,22 @@ export default class Info extends Component {
                     name={this.props.route.params.title}
                     onClick={() => this.props.navigation.pop()}
                 />
-                <ScrollView>
-                    <View style={styles.details}>
-                        {
+                  {
                             this.state.isLoading ?
                                 <ThemeFullPageLoader size="small" color="#ffffff" />
                                 :
-                                this.state.data != null ?
+                <ScrollView>
+                    <View style={styles.details}>
+                      
+                                {this.state.data != null ?
                                     <HTMLView value={this.state.data} />
                                     :
                                     <NoContentFound />
-                        }
+                                }
+                      
                     </View>
                 </ScrollView>
+    }
             </SafeAreaView>
         );
     }

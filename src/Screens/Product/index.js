@@ -18,6 +18,7 @@ import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import styles from './styles';
 import ProductCard from '../../Component/ProductCard';
 import { fetchProductData } from '../../api/product';
+import { showToaster } from '../../api/func';
 const numColumns = 2;
 
 class Product extends Component {
@@ -60,20 +61,12 @@ class Product extends Component {
         }
         if (result.errors) {
           this.setState({ loader: false });
-          ToastAndroid.showWithGravity(
-            result.errors[0].msg,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
+          showToaster(result.errors[0].msg,'TOP');
         }
       })
       .catch(error => {
         this.setState({ loader: false });
-        ToastAndroid.showWithGravity(
-          'Network Error!',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
+        showToaster('Network Error!','TOP');
         console.log('error', error);
       });
   };
@@ -97,11 +90,7 @@ class Product extends Component {
       this.setState({ loader: false });
       console.log("Product > getProductList > Catch", error);
       this.setState({ loader: false });
-      ToastAndroid.showWithGravity(
-        'Network Error!',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-      );
+      showToaster('Network Error!','TOP');
     }
   };
 
