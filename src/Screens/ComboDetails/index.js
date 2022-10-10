@@ -247,30 +247,10 @@ export default class ComboDetails extends Component {
                                                             />
                                                         </View>
                                                         <View style={styles.prodDetailContainer}>
-                                                            <View>
-                                                                <Text
-                                                                    style={styles.prodText}>
-                                                                    {item.name}
-                                                                </Text>
-                                                            </View>
-                                                            <View style={styles.comboQty}>
-                                                                <Text
-                                                                    style={styles.prodQtyText}>
-                                                                    Qty not available
-                                                                </Text>
-                                                            </View>
-
-                                                            <View
-                                                                style={styles.prodPriceContainer}>
-                                                                <Text
-                                                                    style={styles.prodPriceText}>
-                                                                    price not available
-                                                                </Text>
-                                                                <Text
-                                                                    style={styles.prodDisPrice}>
-                                                                    {/* $dPrice */}
-                                                                </Text>
-                                                            </View>
+                                                            <Text
+                                                                style={styles.prodText}>
+                                                                {item.name}
+                                                            </Text>
                                                         </View>
                                                     </View>
                                                 </TouchableOpacity>

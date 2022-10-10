@@ -1,9 +1,8 @@
 import { Alert, ToastAndroid } from 'react-native';
-import { A_KEY, BASE_URL } from '../config';
 import { getAccessToken } from '../localstorage';
 
 
-export const isLoggedIn = async() => {
+export const isLoggedIn = async () => {
     const token = await getAccessToken();
     return token;
 }
@@ -23,18 +22,18 @@ export const showAlert = (title = 'Unauthorized User', msg = 'Please Sign-in / S
     );
 }
 
-export const showToaster = (title = 'Unauthorized User',align='BOTTOM') => {
-    if(align == 'BOTTOM'){
-    ToastAndroid.showWithGravity(
-        title,
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-      );
-    }else{
+export const showToaster = (title = 'Unauthorized User', align = 'BOTTOM') => {
+    if (align == 'BOTTOM') {
+        ToastAndroid.showWithGravity(
+            title,
+            ToastAndroid.LONG,
+            ToastAndroid.BOTTOM,
+        );
+    } else {
         ToastAndroid.showWithGravity(
             title,
             ToastAndroid.LONG,
             ToastAndroid.TOP,
-          );
+        );
     }
 }

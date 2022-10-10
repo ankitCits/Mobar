@@ -347,7 +347,6 @@ class Dashboard extends Component {
                                         {/* Promotion Banner */}
                                         {
                                             this.state.inviteShareImg &&
-
                                             <TouchableOpacity
                                                 onPress={() => this.props.navigation.navigate('InviteFriends')}
                                                 style={{
@@ -370,8 +369,8 @@ class Dashboard extends Component {
                                                             uri: `${this.state.hostUrl + this.state.inviteShareImg}`
                                                         }
                                                     }
-                                                    defaultSource={images.defaultBar}>
-                                                   
+                                                    defaultSource={images.defaultBar}
+                                                >
                                                 </ImageBackground>
                                             </TouchableOpacity>
                                         }

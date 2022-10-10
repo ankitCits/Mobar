@@ -57,7 +57,7 @@ class Collections extends Component {
         qty: 0
       },
       isLoading: true,
-      loader: false,
+      loader: true,
       refreshing: false,
       selectedWalletId: 0,
       userEmail: (props.redux.auth.userData) ? props.redux.auth.userData.result.profile.email : null,
@@ -66,19 +66,20 @@ class Collections extends Component {
   }
 
   async componentDidMount() {
-    
-    if(await isLoggedIn()){
-    async function initialize() {
-      await initStripe({
-        publishableKey: stripePublishableKey,
-      });
+
+    if (await isLoggedIn()) {
+      async function initialize() {
+        await initStripe({
+          publishableKey: stripePublishableKey,
+        });
+      }
+      initialize().catch("collection > componentDidMount > catch", console.error);
+      this.fetchData();
+      this.fetchActiveDateAmount();
+    } else {
+      this.setState({ isLoading: false });
+      showToaster(UnAuthorizedUser);
     }
-    initialize().catch("collection > componentDidMount > catch", console.error);
-    this.fetchData();
-    this.fetchActiveDateAmount();
-  }else{
-    showToaster(UnAuthorizedUser);
-  }
   }
 
   componentDidUpdate() {
@@ -115,7 +116,7 @@ class Collections extends Component {
     } catch (error) {
       this.setState({ isLoading: false });
       console.log("Collection > fetchActiveDateAmount > catch >", error);
-    showToaster(error)
+      showToaster(error)
     }
   }
 
@@ -222,6 +223,7 @@ class Collections extends Component {
                   {item.ecom_aca_product_unit.ecom_ac_product.name}
                 </Text>
               </View>
+              <Text>({item.ecom_aca_product_unit.unitQty}{item.ecom_aca_product_unit.unitType})</Text>
               <View style={styles.itemDes}>
                 <Text
                   style={styles.qtyText}>
@@ -400,7 +402,7 @@ class Collections extends Component {
             <ThemeFullPageLoader />
           ) : (
             <>
-              {/* <View style={styles.filterRow}>
+              <View style={styles.filterRow}>
                 <View style={styles.filterView}>
                   <View
                     style={styles.sort}>
@@ -420,25 +422,25 @@ class Collections extends Component {
                     </TouchableOpacity>
                   </View>
                 </View>
-              </View> */}
+              </View>
 
               {/* </View> */}
-                {this.state.data != null && this.state.data.length > 0 ?
-                  <FlatList
-                    nestedScrollEnabled={true}
-                    showsHorizontalScrollIndicator={false}
-                    style={{
-                      marginTop: 10,
-                    }}
-                    data={this.state.data}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item, index }) => this.renderProducts(item, index)}
-                    refreshControl={
-                      <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
-                    }
-                  />
-                  : (<NoContentFound title="No Data Found" />)
-                }
+              {this.state.data != null && this.state.data.length > 0 ?
+                <FlatList
+                  nestedScrollEnabled={true}
+                  showsHorizontalScrollIndicator={false}
+                  style={{
+                    marginTop: 10,
+                  }}
+                  data={this.state.data}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item, index }) => this.renderProducts(item, index)}
+                  refreshControl={
+                    <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+                  }
+                />
+                : (<NoContentFound title="No Data Found" />)
+              }
             </>
           )
         }

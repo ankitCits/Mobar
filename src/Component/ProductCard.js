@@ -39,33 +39,33 @@ class ProductCard extends Component {
             },
             modalVisible: false
         };
-        console.log('saved price > ',this.state.data.ecom_aca_product_units[0].savedPrices);
+        console.log('saved price > ', this.state.data.ecom_aca_product_units[0].savedPrices);
     }
 
     addCart = async () => {
-        console.log("addCart",await isLoggedIn());
-    if (await isLoggedIn()) {
-        console.log("Add Cart > product unit qty > ", this.state.data.ecom_aca_product_units[0].productUnitId);
-        try {
-            const sendData = {
-                productUnitId: this.state.data.ecom_aca_product_units[0].productUnitId,
-                comboId: 0,
-                qty: 1,
-            };
-            const response = await addToCart(sendData);
-            this.setState({
-                modalVisible: true,
-                selectedQty: {
-                    type: 1,
-                    name: this.state.data.name,
-                    unit: this.state.data.ecom_aca_product_units[0].unitQty + this.state.data.ecom_aca_product_units[0].unitType,
-                    qty: this.state.cart + 1
-                }
-            });
-            this.setState({ cart: this.state.cart + 1 });
-        } catch (error) {
-            showToaster(error);
-        }
+        console.log("addCart", await isLoggedIn());
+        if (await isLoggedIn()) {
+            console.log("Add Cart > product unit qty > ", this.state.data.ecom_aca_product_units[0].productUnitId);
+            try {
+                const sendData = {
+                    productUnitId: this.state.data.ecom_aca_product_units[0].productUnitId,
+                    comboId: 0,
+                    qty: 1,
+                };
+                const response = await addToCart(sendData);
+                this.setState({
+                    modalVisible: true,
+                    selectedQty: {
+                        type: 1,
+                        name: this.state.data.name,
+                        unit: this.state.data.ecom_aca_product_units[0].unitQty + this.state.data.ecom_aca_product_units[0].unitType,
+                        qty: this.state.cart + 1
+                    }
+                });
+                this.setState({ cart: this.state.cart + 1 });
+            } catch (error) {
+                showToaster(error);
+            }
         } else {
             showAlert();
         }
@@ -73,7 +73,7 @@ class ProductCard extends Component {
 
     updateCart = async (cartType, isOpen) => {
         if (await isLoggedIn()) {
-            try {  
+            try {
                 const sendData = {
                     cartId: this.state.data.ecom_aca_product_units[0].ecom_ba_cart.cartId,
                     type: cartType,//type 1 for add and 2 for substraction
@@ -130,7 +130,7 @@ class ProductCard extends Component {
                 this.state.data.ecom_ba_wishlist = wishlistData.result.data;
                 this.setState({ isFavorite: true });
             } catch (error) {
-            console.log("ProductCard > addFavorite > catch > ",error);
+                console.log("ProductCard > addFavorite > catch > ", error);
             }
         } else {
             showAlert();
@@ -175,15 +175,15 @@ class ProductCard extends Component {
 
 
                                 <Text style={styles.item}>
-                                 { 
+                                    {
                                         this.state.data.ecom_aca_product_units[0].unitQty + ' ' +
                                         this.state.data.ecom_aca_product_units[0].unitType}
                                 </Text>
 
                                 <TouchableOpacity
-                                style={{
-                                    margin:7,
-                                }}
+                                    style={{
+                                        margin: 7,
+                                    }}
                                     onPress={() => {
                                         this.state.isFavorite
                                             ? this.removeFavorite(this.state.data.ecom_ba_wishlist.wishlistId, index)
@@ -300,9 +300,9 @@ class ProductCard extends Component {
                         navigation={this.props.navigation}
                         modalVisible={this.state.modalVisible}
                         onModalChange={(type, isOpen) =>
-                            this.state.data.ecom_aca_product_units[0].ecom_ba_cart 
+                            this.state.data.ecom_aca_product_units[0].ecom_ba_cart
                                 ?
-                                this.updateCart(type, isOpen) : type == 1 ? this.addCart(): this.setState({modalVisible:false})}
+                                this.updateCart(type, isOpen) : type == 1 ? this.addCart() : this.setState({ modalVisible: false })}
                         onModalClose={this.onCloseModal} />
                 }
 
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
     },
     itemContainer: {
         flexDirection: 'column',
-        width: size - 22,
+        width: size - 10,
         //height: 200,
         shadowColor: '#000',
         shadowOffset: { width: 1, height: 1 },
@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingLeft:3
+        paddingLeft: 3
     },
     item: {
         fontFamily: FontFamily.TAJAWAL_REGULAR,
