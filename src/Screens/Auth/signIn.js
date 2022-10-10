@@ -53,15 +53,12 @@ class SignIn extends Component {
     } else {
       this.setState({ mobileError: null });
     }
-
     if (this.state.password == null || this.state.password.trim() == '') {
       this.setState({ passwordError: '* Invalid Password entered, Please check!', loader: false });
       return;
     } else {
       this.setState({ passwordError: null });
     }
-
-
     if (this.state.mobileError == null && this.state.passwordError == null) {
       this.processLogin();
     }

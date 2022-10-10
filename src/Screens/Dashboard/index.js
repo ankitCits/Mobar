@@ -30,7 +30,6 @@ import { setUserDetail, setUserLocationDetail } from '../../Redux/actions/auth';
 import { getUserDetails } from '../../api/auth';
 import images from '../../assets/images';
 import Geolocation from 'react-native-geolocation-service';
-import { lime100 } from 'react-native-paper/lib/typescript/styles/colors';
 import { inviteShare } from '../../api/common';
 import { isLoggedIn, showToaster } from '../../api/func';
 
@@ -41,7 +40,6 @@ const LazyPlaceholder = ({ route }) => (
     </View>
 );
 
-
 class Dashboard extends Component {
     constructor(props) {
         super(props);
@@ -51,7 +49,7 @@ class Dashboard extends Component {
             drinkObj: {},
             hostUrl: null,
             index: 0,
-            inviteShareImg:null,
+            inviteShareImg: null,
             routes: [],
             refreshing: false,
             locationPermission: false,
@@ -72,18 +70,19 @@ class Dashboard extends Component {
             this.getTabDetail();
         });
         await this.requestLocationPermission();
+        this.getReferralImage();
     }
 
     componentWillUnmount() {
         this.state._unsubscribe();
     }
 
-    async getReferralImage(){
-        try{
-        const res = await inviteShare();
-        this.setState({inviteShareImg:res.response.result.pageData.images})
-        }catch(error){
-            console.log("dashboard > getReferralImage > catch > getReferralImage",error);
+    async getReferralImage() {
+        try {
+            const res = await inviteShare();
+            this.setState({ inviteShareImg: res.response.result.pageData.images })
+        } catch (error) {
+            console.log("dashboard > getReferralImage > catch > getReferralImage", error);
         }
     }
 
@@ -157,7 +156,7 @@ class Dashboard extends Component {
             this.props.dispatch(setUserDetail(responseDetail.response));
         } catch (error) {
             this.setState({ loader: false });
-            showToaster(error,'TOP');
+            showToaster(error, 'TOP');
             console.log('Error_On_Data_Fetch getDetail', error);
         }
     }
@@ -199,12 +198,12 @@ class Dashboard extends Component {
                 }
                 if (result.errors) {
                     this.setState({ loader: false });
-                    showToaster(result.errors[0].msg,'TOP');
+                    showToaster(result.errors[0].msg, 'TOP');
                 }
             })
             .catch(error => {
                 this.setState({ loader: false });
-                showToaster('Network Error!','TOP');
+                showToaster('Network Error!', 'TOP');
                 console.log('Error_On_Data_Fetch getTabDetail', error);
             });
     };
@@ -348,63 +347,34 @@ class Dashboard extends Component {
                                         {/* Promotion Banner */}
                                         {
                                             this.state.inviteShareImg &&
-                                        
-                                        <TouchableOpacity
-                                        onPress={()=>this.props.navigation.navigate('InviteFriends')}
-                                            style={{
-                                                marginTop: 10,
-                                                backgroundColor: '#fff',
-                                                shadowColor: '#000',
-                                                shadowOffset: { width: 1, height: 1 },
-                                                shadowOpacity: 0.4,
-                                                shadowRadius: 15,
-                                                borderRadius: 15,
-                                                elevation: 5,
-                                                alignSelf: 'center',
 
-                                            }}>
-                                            <ImageBackground
-                                                style={styles.promotionsImg}
-                                                resizeMode={'cover'}
-                                                source={
-                                                    {
-                                                        uri: `${this.state.hostUrl+this.state.inviteShareImg}` 
+                                            <TouchableOpacity
+                                                onPress={() => this.props.navigation.navigate('InviteFriends')}
+                                                style={{
+                                                    marginTop: 10,
+                                                    backgroundColor: '#fff',
+                                                    shadowColor: '#000',
+                                                    shadowOffset: { width: 1, height: 1 },
+                                                    shadowOpacity: 0.4,
+                                                    shadowRadius: 15,
+                                                    borderRadius: 15,
+                                                    elevation: 5,
+                                                    alignSelf: 'center',
+
+                                                }}>
+                                                <ImageBackground
+                                                    style={styles.promotionsImg}
+                                                    resizeMode={'cover'}
+                                                    source={
+                                                        {
+                                                            uri: `${this.state.hostUrl + this.state.inviteShareImg}`
+                                                        }
                                                     }
-                                                }
-                                                defaultSource={images.defaultBar}>
-                                                <View style={{ marginTop: '10%', marginLeft: '65%' }}>
-                                                    <TouchableOpacity
-                                                        style={{
-                                                            alignItems: 'center',
-                                                            borderWidth: 1,
-                                                            borderColor: '#fff',
-                                                            borderRadius: 10,
-                                                            width: 100,
-                                                            alignSelf: 'center',
-                                                            paddingHorizontal: 10
-                                                        }}>
-                                                        <Text
-                                                            style={{
-                                                                color: '#fff',
-                                                                fontSize: 13,
-                                                                fontWeight: '400',
-                                                            }}>
-                                                            Redeem Now
-                                                        </Text>
-                                                    </TouchableOpacity>
-                                                    <TouchableOpacity
-                                                        style={{ alignItems: 'center', marginTop: 7 }}>
-                                                        <Text
-                                                            style={{
-                                                                color: '#fff',
-                                                            }}>
-                                                            VIRGIN MOJITO
-                                                        </Text>
-                                                    </TouchableOpacity>
-                                                </View>
-                                            </ImageBackground>
-                                        </TouchableOpacity>
-    }
+                                                    defaultSource={images.defaultBar}>
+                                                   
+                                                </ImageBackground>
+                                            </TouchableOpacity>
+                                        }
                                         {/* Promotion End */}
 
 
@@ -435,7 +405,7 @@ class Dashboard extends Component {
                                                     nestedScrollEnabled={true}> */}
                                                 {
                                                     this.state.drinkObj.barDatas.map((item, index) => (
-                                                        <BarCard navigation={this.props.navigation} onChange={(data)=>this.updateWishlist(data)} index={index} item={item} hostUrl={this.state.hostUrl} />
+                                                        <BarCard navigation={this.props.navigation} onChange={(data) => this.updateWishlist(data)} index={index} item={item} hostUrl={this.state.hostUrl} />
                                                     ))
                                                 }
                                                 <TouchableOpacity
@@ -529,7 +499,7 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 15,
         borderBottomRightRadius: 15,
         width: 360,
-        height: 181,
+        height: 180,
     },
 
 })

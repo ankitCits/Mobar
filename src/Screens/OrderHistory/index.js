@@ -1,21 +1,14 @@
-import moment from 'moment/moment';
 import React, { Component } from 'react';
 import {
   Text,
   View,
   StyleSheet,
-  ToastAndroid,
   StatusBar,
   ScrollView,
   Dimensions,
-  FlatList
 } from 'react-native';
 import { TabView, TabBar } from 'react-native-tab-view';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { orderHistory, redeemOrderHistory } from '../../api/order';
-import images from '../../assets/images';
-import { FontFamily } from '../../Theme/FontFamily';
-import NoContentFound from '../../Component/NoContentFound';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import HeaderSide from '../Component/HeaderSide';
@@ -25,7 +18,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { showToaster } from '../../api/func';
 
 const LazyPlaceholder = ({ route }) => (
-    <ThemeFullPageLoader />
+  <ThemeFullPageLoader />
 );
 export default class OrderHistory extends Component {
   constructor(props) {
@@ -56,7 +49,7 @@ export default class OrderHistory extends Component {
       this.setState({ url: res.response.result.hostUrl, data: res.response.result.data, loader: false })
     } catch (error) {
       this.setState({ loader: false });
-      showToaster(error,'TOP');
+      showToaster(error, 'TOP');
       console.log('fetchOrders Error', error);
     }
   };
@@ -69,7 +62,7 @@ export default class OrderHistory extends Component {
       this.setState({ url: res.response.result.hostUrl, redeemOrders: res.response.result.data, loader: false })
     } catch (error) {
       this.setState({ loader: false });
-      showToaster(error,'TOP');
+      showToaster(error, 'TOP');
       console.log('fetchRedeemOrders Error', error);
     }
   };
@@ -82,35 +75,39 @@ export default class OrderHistory extends Component {
     if (route.name == 'Order') {
       return (
         <View style={styles.redeemContainer}>
-        <ScrollView>
+          <ScrollView>
             <>
-        {this.state.data && this.state.data.length > 0 && 
-        this.state.data.map((item, oIndex) => {
-          return (<Order items={item} hostUrl={this.state.url} index={oIndex} navigation={this.props.navigation} />)
-        })
-      }
-       </>
-       </ScrollView>
-       </View>
+              {
+                this.state.data &&
+                this.state.data.length > 0 &&
+                this.state.data.map((item, oIndex) => {
+                  return (<Order items={item} hostUrl={this.state.url} index={oIndex} navigation={this.props.navigation} />)
+                })
+              }
+            </>
+          </ScrollView>
+        </View>
 
       )
     } else {
       return (
         <View style={styles.redeemContainer}>
-        <ScrollView>
-          <>
-        {this.state.redeemOrders && this.state.redeemOrders.length > 0 && 
-          this.state.redeemOrders.map((item, index) => {
-            return (<Redeems items={item} index={index} hostUrl={this.state.url}/>)
-        })
-        }
-     </>
-       </ScrollView>
-       </View>
+          <ScrollView>
+            <>
+              {
+                this.state.redeemOrders &&
+                this.state.redeemOrders.length > 0 &&
+                this.state.redeemOrders.map((item, index) => {
+                  return (<Redeems items={item} index={index} hostUrl={this.state.url} />)
+                })
+              }
+            </>
+          </ScrollView>
+        </View>
       )
+    };
   };
-  };
-  
+
   render() {
     return (
       <SafeAreaView
@@ -141,7 +138,7 @@ export default class OrderHistory extends Component {
               <TabBar
                 {...props}
                 indicatorStyle={{ backgroundColor: ThemeColors.CLR_WHITE, margin: 0 }}
-                tabStyle={{ backgroundColor:ThemeColors.CLR_WHITE , padding: 0, margin: 0 }}
+                tabStyle={{ backgroundColor: ThemeColors.CLR_WHITE, padding: 0, margin: 0 }}
                 style={{ backgroundColor: ThemeColors.CLR_BG }}
                 renderLabel={({ route }) => (
                   <>
@@ -171,7 +168,7 @@ export default class OrderHistory extends Component {
 }
 
 const styles = StyleSheet.create({
-  tabRow: {  marginHorizontal: 20 },
+  tabRow: { marginHorizontal: 20 },
   selectedTabText: {
     color: ThemeColors.CLR_TAB,
   },
