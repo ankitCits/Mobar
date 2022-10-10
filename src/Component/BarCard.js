@@ -8,10 +8,9 @@ import {
     Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { showAlert } from '../api/auth';
+import { isLoggedIn, showAlert } from '../api/func';
 import { addToWishlist, removeToWishlist } from '../api/wishlist';
 import images from '../assets/images';
-import { getAccessToken } from '../localstorage';
 import { FontFamily } from '../Theme/FontFamily';
 import { ThemeColors } from '../Theme/ThemeColors';
 import StarRating from './StarRatings';
@@ -30,31 +29,26 @@ class BarCard extends Component {
     }
 
     removeFavorite = async (id) => {
-        const token = getAccessToken();
-        if (token == null) {
-            showAlert();
-        } else {
+        if(await isLoggedIn()){
             const data = {
-                wishlistId: id
+                wishlistId: id,
             }
             try {
-                const response = await removeToWishlist(data);
+                await removeToWishlist(data);
                 this.setState({ isFavorite: false });
                 this.props.item.ecom_ba_wishlist = null;
-                console.log("BarCard > removeFavorite > Response", response);
             } catch (error) {
                 this.setState({ isFavorite: false });
                 this.props.item.ecom_ba_wishlist = null;
-                console.log("BarCard > removeFavorite > Error", error);
+                console.log("BarCard > removeFavorite > catch", error);
             }
+        } else {
+            showAlert();
         }
     }
 
     addFavorite = async (id, index) => {
-        const token = await getAccessToken();
-        if (token == null) {
-            showAlert();
-        } else {
+        if(await isLoggedIn()){
             const data = {
                 productId: 0,
                 comboId: 0,
@@ -62,15 +56,13 @@ class BarCard extends Component {
             };
             try {
                 const response = await addToWishlist(data);
-                console.log("BarCard > addFavorite > response", response.result.data.wishlistId);
-                this.props.item.ecom_ba_wishlist = {
-                    "wishlistId": response.result.data.wishlistId,
-                    "wishlistFor": "Bars"
-                };
+                this.props.item.ecom_ba_wishlist = response.result.data;
                 this.setState({ isFavorite: true });
             } catch (error) {
                 console.log("BarCard > addFavorite > Catch", error);
             }
+        } else {
+            showAlert();
         }
     }
 
@@ -96,7 +88,7 @@ class BarCard extends Component {
                 >
                     <TouchableOpacity
                         onPress={() => {
-                            this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId
+                            this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId != 0
                                 ? this.removeFavorite(this.props.item.ecom_ba_wishlist.wishlistId)
                                 : this.addFavorite(this.props.item.vendorId, index); // pass vendor id 
                         }}
@@ -105,10 +97,10 @@ class BarCard extends Component {
                         <View style={styles.favContainer}>
                             <Image
                                 resizeMode={'contain'}
-                                source={this.props.item.ecom_ba_wishlist ? images.heartFill : images.heart}
+                                // source={this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId != 0 ? images.heartFill : images.heart}
+                                // defaultSource={this.props.item.ecom_ba_wishlist && this.props.item.ecom_ba_wishlist.wishlistId != 0 ? images.heartFill : images.heart}
+                                source={this.state.isFavorite ? images.heartFill : images.heart}
                                 defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
-                                // source={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
-                                // defaultSource={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
                                 style={styles.favIcon}
                             />
                         </View>
@@ -207,11 +199,12 @@ const styles = StyleSheet.create({
     heartContainer: {
         marginTop: 15,
         marginRight: 15,
-        // fontSize: 15,
+        alignSelf:'flex-end'
     },
     favContainer: {
         width: 30,
         height: 30,
+        
         justifyContent: 'center',
         backgroundColor: ThemeColors.CLR_WHITE,
         elevation: 4,

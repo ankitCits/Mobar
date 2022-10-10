@@ -38,6 +38,7 @@ class ProductCard extends Component {
             },
             modalVisible: false
         };
+        console.log('saved price > ',this.state.data.ecom_aca_product_units[0].savedPrices);
     }
 
     addCart = async () => {
@@ -246,7 +247,7 @@ class ProductCard extends Component {
                                             style={styles.savedPriceImg}>
                                             <Text
                                                 style={styles.savedPriceText}>
-                                                Save ${this.state.data.ecom_aca_product_units.savedPrices}
+                                                Save ${this.state.data.ecom_aca_product_units[0].savedPrices}
                                             </Text>
                                         </ImageBackground>
                                     ) : (<ImageBackground style={styles.savedPriceImg}>

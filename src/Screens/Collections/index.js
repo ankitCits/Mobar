@@ -28,7 +28,7 @@ import { fetchPaymentIntentClientSecret, increaseActiveDate } from '../../api/or
 import { amountForActiveDate } from '../../api/order';
 import { connect } from 'react-redux';
 import NoContentFound from '../../Component/NoContentFound';
-import { authErrorMsg, stripePublishableKey } from '../../config';
+import { authErrorMsg, stripePublishableKey, UnAuthorizedUser } from '../../config';
 import { isLoggedIn, showAlert, showToaster } from '../../api/func';
 import { SafeAreaView } from 'react-native-safe-area-context';
 class Collections extends Component {
@@ -56,7 +56,7 @@ class Collections extends Component {
         unit: '0ml',
         qty: 0
       },
-      isLoading: false,
+      isLoading: true,
       loader: false,
       refreshing: false,
       selectedWalletId: 0,
@@ -77,7 +77,7 @@ class Collections extends Component {
     this.fetchData();
     this.fetchActiveDateAmount();
   }else{
-    showToaster(authErrorMsg);
+    showToaster(UnAuthorizedUser);
   }
   }
 

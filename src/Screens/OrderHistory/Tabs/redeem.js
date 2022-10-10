@@ -77,7 +77,9 @@ export default class Redeems extends Component {
                           <View style={styles.shopName}>
                             <Text
                               style={styles.productText}>
-                              Redeemed On : {moment(this.state.data.date).format('DD-MMM-YYYY hh:mm A')}
+                              Redeemed On : {moment(this.state.data.date).format('DD-MMM-YYYY')+" "+this.state.data.time
+                              }
+                              
                             </Text>
                           </View>
                           <View style={styles.shopName}>
@@ -185,7 +187,6 @@ const styles = StyleSheet.create({
         width: '28%',
         margin: 0,
         padding: 0,
-        backgroundColor: 'red',
         shadowColor: '#000',
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.4,

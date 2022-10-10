@@ -69,7 +69,7 @@ export default class HelpSupport extends Component {
           this.setState({ nameError: 'Please provide your name', loader: false, formError: 'Please provide your name' });
           return;
         } else {
-          this.setState({ nameError: '' });
+          this.setState({ nameError: null });
         }
         break;
       case 'email':
@@ -121,7 +121,6 @@ export default class HelpSupport extends Component {
   }
 
   onProceed = async () => {
-    this.setState({ loader: true });
     this.validateField('name');
     this.validateField('email');
     this.validateField('mobileNumber');
@@ -138,14 +137,24 @@ export default class HelpSupport extends Component {
         category: this.state.category,
       };
       try {
-        const response = await helpSupport(raw);
-        if (response && response.status == 'SUCCESS') {
-          this.setState({ categoryError: null, loader: false });
-          showToaster(mag,'TOP');
-        }
+        this.setState({ loader: true });
+        const res = await helpSupport(raw);
+        console.log("helpSupport > response > ",res.mag);
+        this.setState({ 
+          categoryError: null, 
+          name:null,
+          email:null,
+          mobileNumber:null,
+          category:null,
+          description:null,
+          loader: false });
+        showToaster(res.mag,'TOP');
       } catch (error) {
+        console.log("helpSupport > onProceed > catch > ",error);
         this.setState({ loader: false });
       }
+    }else{
+      showToaster('Try again!','TOP');
     }
   };
 
@@ -161,19 +170,6 @@ export default class HelpSupport extends Component {
     }
   }
 
-  renderFaqCategory = (item, index) => {
-    (
-      <View style={styles.helpBottomList} key={index}>
-        <Text style={styles.helpBottomListText}>Account</Text>
-        <Icon
-          name="navigate-next"
-          size={30}
-          color={ThemeColors.CLR_DARK_GREY}
-          style={styles.imageStyle}
-        />
-      </View>
-    )
-  }
 
   toggle = () => {
     this.setState({ isToggle: !this.state.isToggle });
@@ -317,14 +313,6 @@ export default class HelpSupport extends Component {
                 style={styles.imageStyle}
               />
             </View>
-
-            {/* <FlatList
-                  //nestedScrollEnabled={true}
-                  //showsHorizontalScrollIndicator={false}
-                  data={this.state.faqData}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item, index }) => this.renderFaqCategory(item,index)}
-                /> */}
 
             <View style={styles.helpBottom}>
               {
@@ -497,11 +485,13 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
     marginBottom: '20%',
+    zIndex:-1,
     borderRadius: 10,
   },
   helpBottomList: {
     margin: 10,
     flexDirection: 'row',
+    zIndex:0,
     justifyContent: 'space-between',
   },
   helpBottomListText: {

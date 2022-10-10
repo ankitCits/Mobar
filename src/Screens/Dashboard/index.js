@@ -3,7 +3,6 @@ import {
     View,
     StyleSheet,
     Dimensions,
-    ToastAndroid,
     SafeAreaView,
     TouchableOpacity,
     Text,
@@ -33,6 +32,7 @@ import images from '../../assets/images';
 import Geolocation from 'react-native-geolocation-service';
 import { lime100 } from 'react-native-paper/lib/typescript/styles/colors';
 import { inviteShare } from '../../api/common';
+import { isLoggedIn, showToaster } from '../../api/func';
 
 
 const LazyPlaceholder = ({ route }) => (
@@ -145,7 +145,7 @@ class Dashboard extends Component {
 
     getDetail = async () => {
         console.log('getDetail')
-        const token = await getAccessToken(token);
+        const token = await isLoggedIn();
         if (!token) {
             return this.setState({ loader: false });
         }
@@ -157,11 +157,7 @@ class Dashboard extends Component {
             this.props.dispatch(setUserDetail(responseDetail.response));
         } catch (error) {
             this.setState({ loader: false });
-            ToastAndroid.showWithGravity(
-                error,
-                ToastAndroid.LONG,
-                ToastAndroid.TOP,
-            );
+            showToaster(error,'TOP');
             console.log('Error_On_Data_Fetch getDetail', error);
         }
     }
@@ -203,20 +199,12 @@ class Dashboard extends Component {
                 }
                 if (result.errors) {
                     this.setState({ loader: false });
-                    ToastAndroid.showWithGravity(
-                        result.errors[0].msg,
-                        ToastAndroid.LONG,
-                        ToastAndroid.TOP,
-                    );
+                    showToaster(result.errors[0].msg,'TOP');
                 }
             })
             .catch(error => {
                 this.setState({ loader: false });
-                ToastAndroid.showWithGravity(
-                    'Network Error!',
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                );
+                showToaster('Network Error!','TOP');
                 console.log('Error_On_Data_Fetch getTabDetail', error);
             });
     };
@@ -447,7 +435,7 @@ class Dashboard extends Component {
                                                     nestedScrollEnabled={true}> */}
                                                 {
                                                     this.state.drinkObj.barDatas.map((item, index) => (
-                                                        <BarCard navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />
+                                                        <BarCard navigation={this.props.navigation} onChange={(data)=>this.updateWishlist(data)} index={index} item={item} hostUrl={this.state.hostUrl} />
                                                     ))
                                                 }
                                                 <TouchableOpacity

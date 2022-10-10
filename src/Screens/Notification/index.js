@@ -8,6 +8,7 @@ import { getNotification } from '../../api/common';
 import { isLoggedIn, showToaster } from '../../api/func';
 import NoContentFound from '../../Component/NoContentFound';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
+import { UnAuthorizedUser } from '../../config';
 import { ThemeColors } from '../../Theme/ThemeColors';
 import HeaderSide from '../Component/HeaderSide';
 import MyTabs from './Tabs';
@@ -25,7 +26,7 @@ export default class Notification extends Component {
     if(await isLoggedIn()){
    this.fetchData(); 
   }else{
-showToaster('You need to Sign in to visit your notification');
+showToaster(UnAuthorizedUser);
   }
 }
   fetchData= async () =>{

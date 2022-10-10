@@ -20,6 +20,7 @@ import Bars from './Tabs/Bars';
 import { wishlist } from '../../api/wishlist';
 import { connect } from 'react-redux';
 import { isLoggedIn, showToaster } from '../../api/func';
+import { UnAuthorizedUser } from '../../config';
 
 const LazyPlaceholder = ({ route }) => (
   
@@ -47,7 +48,7 @@ class Favourites extends Component {
       if(await isLoggedIn()){
         await this.fetchData();
       }else{
-        showToaster('You need to Sign in to visit My Favorites');
+        showToaster(UnAuthorizedUser);
       }
     });
 
@@ -279,7 +280,6 @@ const styles = StyleSheet.create({
   tabRow: { flexDirection: 'row' },
   imageStyle: {
     margin: 5,
-    resizeMode: 'stretch',
     alignItems: 'center',
   },
   selectedTabText: {

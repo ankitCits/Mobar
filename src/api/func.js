@@ -8,7 +8,7 @@ export const isLoggedIn = async() => {
     return token;
 }
 
-export const showAlert = (title = 'Unauthorized User', msg = 'Sign In / Sign Up to add this to your FAVOURITE or CART') => {
+export const showAlert = (title = 'Unauthorized User', msg = 'Please Sign-in / Sign-up to use this feature') => {
     Alert.alert(
         title,
         msg,

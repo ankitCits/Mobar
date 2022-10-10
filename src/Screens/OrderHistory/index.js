@@ -86,7 +86,7 @@ export default class OrderHistory extends Component {
             <>
         {this.state.data && this.state.data.length > 0 && 
         this.state.data.map((item, oIndex) => {
-          return (<Order items={item} hostUrl={this.state.hostUrl} index={oIndex} navigation={this.props.navigation} />)
+          return (<Order items={item} hostUrl={this.state.url} index={oIndex} navigation={this.props.navigation} />)
         })
       }
        </>
@@ -101,7 +101,7 @@ export default class OrderHistory extends Component {
           <>
         {this.state.redeemOrders && this.state.redeemOrders.length > 0 && 
           this.state.redeemOrders.map((item, index) => {
-            return (<Redeems items={item} index={index} />)
+            return (<Redeems items={item} index={index} hostUrl={this.state.url}/>)
         })
         }
      </>
