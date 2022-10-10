@@ -135,9 +135,12 @@ class Favourites extends Component {
           <View>
             <View
               style={styles.headerContainer}>
+                <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+            <Icon name="arrow-back" size={28} color="#4D4F50" />
+          </TouchableOpacity>
               <View style={styles.header}>
                 <Text style={styles.titleText}>
-                  Favourites
+                  Favorites
                 </Text>
               </View>
             </View>

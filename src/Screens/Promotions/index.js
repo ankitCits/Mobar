@@ -55,32 +55,25 @@ class Promotions extends Component {
   }
 
   renderPromotion = (item, index) => {
-   console.log('bar item and type >',item);
-    if (item.type == 1) {
-      return (
-        <View style={{ marginHorizontal: 15, }}>
-          <BarCard navigation={this.props.navigation} index={index} item={item.ecom_ae_vendor} hostUrl={this.state.hostUrl} />
-        </View>
-      );
-    } else {
-      return (
-        <View style={{ marginHorizontal: 15, marginTop: 10 }}>
-          <PromotionCard navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />
-        </View>
-      );
-    }
-  }
-
-  footerComponent = () =>
-    <View
-      style={styles.banner}>
-      <Image
-        resizeMode={'cover'}
-        source={images.promotionBanner}
-        defaultSource={images.promotionBanner}
-      />
+   return (
+    <View style={{ marginHorizontal: 15, marginTop: 10 }}>
+      <PromotionCard navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />
     </View>
-
+  );
+    // if (item.type == 1) {
+    //   return (
+    //     <View style={{ marginHorizontal: 15, }}>
+    //       <BarCard navigation={this.props.navigation} index={index} item={item.ecom_ae_vendor} hostUrl={this.state.hostUrl} />
+    //     </View>
+    //   );
+    // } else {
+    //   return (
+    //     <View style={{ marginHorizontal: 15, marginTop: 10 }}>
+    //       <PromotionCard navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />
+    //     </View>
+    //   );
+    // }
+  }
 
   render() {
     return (

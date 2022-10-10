@@ -168,6 +168,7 @@ class Product extends Component {
                   this.props.navigation.navigate('Notification')
                 }
                 IconName="arrow-back"
+                Image='Default'
                 IconColor="#4D4F33"
                 Address={
                   this.props.redux && this.props.redux.auth.userData && this.props.redux.auth.userData.result && this.props.redux.auth.userData.result.profile
@@ -179,10 +180,7 @@ class Product extends Component {
               //         ? this.props.redux.auth.userData.address
               //         : 'Duxten Road, 338750'
               // }
-              Image={
-                  this.props.redux && this.props.redux.auth.userData && this.props.redux.auth.userData.result && this.props.redux.auth.userData.result.profile
-                      ? this.props.redux.auth.userData.result.hostUrl + this.props.redux.auth.userData.result.profile.profilePic
-                      : 'Default'}
+              
               />    
             <View style={{ 
               flexDirection: 'row'

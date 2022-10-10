@@ -12,7 +12,15 @@ import { ThemeColors } from '../Theme/ThemeColors';
 export default class PromotionCard extends React.Component {
   constructor(props) {
     super(props);
-    console.log("promotion card > item > ",props.item);
+  }
+
+  handleRedirect = (item) => {
+    if (item.type == 1) {
+      this.props.navigation.navigate('ProductDetailBars', { id: item.vendorId });
+    } else {
+      this.props.navigation.navigate('ProductDetailDrinks', { id: item.productId })
+    }
+
   }
 
   render() {
@@ -21,7 +29,7 @@ export default class PromotionCard extends React.Component {
       hostUrl,
       navigation,
       index,
-      productUnit = this.props.item.ecom_ac_product.ecom_aca_product_units,
+      //productUnit = this.props.item.ecom_ac_product.ecom_aca_product_units,
     } = this.props;
 
     return (
@@ -30,15 +38,21 @@ export default class PromotionCard extends React.Component {
         {/* <View style={styles.container}> */}
         {this.state}
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('ProductDetailDrinks', { id: item.productId })
+          onPress={() => { this.handleRedirect(item) }
+
           }>
           <View
             style={styles.subContainer}>
             <View style={styles.productInnerView}>
               <Image
                 resizeMode={'cover'}
-                source={{ uri: `${hostUrl + item.images}` }}
+                style={{
+                  width: 329,
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
+                  height: 200
+                }}
+                source={{ uri: `${this.props.hostUrl + item.image}` }}
               />
             </View>
             <View style={styles.details}>
@@ -46,32 +60,32 @@ export default class PromotionCard extends React.Component {
                 style={styles.header}>
                 <Text
                   style={styles.title}>
-                  {item.ecom_ac_product.name}
+                  {item.title}
                 </Text>
               </View>
               <View>
                 <Text
                   style={styles.qty}>
-                  {productUnit[0].unitQty} {productUnit[0].unitType}
+                  {/* {productUnit[0].unitQty} {productUnit[0].unitType} */}
                 </Text>
               </View>
 
               <View
                 style={styles.priceContainer}>
-                {productUnit[0].unitUserPrice != " " || productUnit[0].unitUserPrice != null ?
+                {/* {productUnit[0].unitUserPrice != " " || productUnit[0].unitUserPrice != null ?
                   <Text
                     style={styles.priceText}>
                     {'$ ' + productUnit[0].unitUserPrice}
                   </Text> :
                   <Text></Text>
-                }
-                {productUnit[0].unitDiscountPrice != " " && productUnit[0].unitDiscountType != null ?
+                } */}
+                {/* {productUnit[0].unitDiscountPrice != " " && productUnit[0].unitDiscountType != null ?
                   <Text
                     style={styles.discountPrice}>
                     {productUnit[0].unitDiscountPrice + ' ' + productUnit[0].unitDiscountType}
                   </Text> :
                   <Text style={styles.discountPrice}></Text>
-                }
+                } */}
               </View>
             </View>
           </View>
@@ -94,18 +108,18 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     elevation: 5,
     alignSelf: 'center',
-    flexDirection: 'row',
-    marginTop: 15,
+    flexDirection: 'column',
+    marginVertical: 15,
   },
   productInnerView: {
-    width: '28%',
+    //width: '28%',
     alignItems: 'center',
     justifyContent: 'center',
   },
   details: {
     margin: 5,
-    alignSelf: 'center',
-    marginLeft: 0
+    alignSelf: 'flex-start',
+    marginHorizontal: 10
   },
   header: {
     marginTop: 5,

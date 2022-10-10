@@ -23,6 +23,7 @@ import { connect } from 'react-redux';
 import StarRating from '../../Component/StarRatings';
 import { isLoggedIn, showAlert, showToaster } from '../../api/func';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Carousel from 'react-native-snap-carousel';
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 class ProductDetailBars extends Component {
   constructor(props) {
@@ -407,7 +408,7 @@ redirectTo=(item)=>{
               </View>
             </View>
 
-            {/* <View style={{ margin: 15, marginTop: 20 }}>
+            <View style={{ margin: 15, marginTop: 20 }}>
               <Text
                 style={{
                   fontSize: 20,
@@ -417,7 +418,7 @@ redirectTo=(item)=>{
                 Special Offers
               </Text>
                 <View style={{ flexDirection: 'row' }}>
-                <View style={{ alignItems: 'center', height: screenHeight(26) }}>
+                <View style={{ alignItems: 'center', height: 200 }}>
                         <View style={{ marginVertical: 10 }}>
                             <Carousel
                                 ref={(c) => { this._carousel = c; }}
@@ -431,7 +432,7 @@ redirectTo=(item)=>{
                         </View>
                     </View>
                 </View>
-            </View> */}
+            </View>
 
             <View style={{ margin: 15, marginTop: 20 }}>
               <Text

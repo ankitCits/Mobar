@@ -20,6 +20,7 @@ export default class Redeems extends Component {
         index:props.index,
         url:props.hostUrl
       };
+      console.log("state dAta > ",this.state.data);
     }
 
     render() {
@@ -74,12 +75,20 @@ export default class Redeems extends Component {
                               Redeemed :{this.state.data.ecom_ac_product.name}
                             </Text>
                           </View>
+                          {
+                            this.state.data.mixerData != "" && this.state.data.mixerData != null && 
+                            <View style={styles.shopName}>
+                            <Text
+                              style={styles.productText}>
+                              Mixer  : {this.state.data.mixerData}
+                            </Text>
+                          </View>
+                          }
+
                           <View style={styles.shopName}>
                             <Text
                               style={styles.productText}>
-                              Redeemed On : {moment(this.state.data.date).format('DD-MMM-YYYY')+" "+this.state.data.time
-                              }
-                              
+                              Table No : {this.state.data.tableNo}
                             </Text>
                           </View>
                           <View style={styles.shopName}>

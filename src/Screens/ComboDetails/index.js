@@ -43,7 +43,7 @@ export default class ComboDetails extends Component {
             this.setState({ data: res.response.result.comboDatas, hostUrl: res.response.result.hostUrl })
         } catch (error) {
             console.log("ComboDetails > getComboDetailsById > catch >", error);
-            showToaster(error,'TOP');
+            showToaster(error, 'TOP');
         }
     }
 
@@ -94,10 +94,10 @@ export default class ComboDetails extends Component {
                     qty: 1,
                 };
                 await addToCart(cartItem);
-                showToaster('Item added to cart successfully','TOP');
+                showToaster('Item added to cart successfully', 'TOP');
             } catch (error) {
                 console.log("Combo Details > addCart > catch", error);
-                showToaster(error,'TOP');
+                showToaster(error, 'TOP');
             }
         } else {
             showAlert();
@@ -184,8 +184,40 @@ export default class ComboDetails extends Component {
                                             <View style={{ paddingLeft: 2, }}>
                                                 <HTMLView value={this.state.data.comboContent} />
                                             </View>
+                                            
+                                                <View style={styles.cartMargin}>
+                                                    <View style={styles.cartBtnContainer}>
+
+                                                        <TouchableOpacity
+                                                            style={styles.cartContainer}
+                                                            onPress={() => this.addCart()}
+                                                        >
+                                                            <Text
+                                                                style={styles.cartText}
+                                                            >
+                                                                ADD TO CART
+                                                            </Text>
+                                                            <View
+
+                                                                style={styles.cartIcon}>
+                                                                <Image
+                                                                    resizeMode={'cover'}
+                                                                    source={images.cart}
+                                                                    defaultSource={images.cart}
+                                                                    style={styles.cartImage}
+                                                                />
+                                                            </View>
+                                                        </TouchableOpacity>
+
+
+                                                    </View>
+
+                                                 
+                                                </View>
+                                            
                                         </View>
                                     </View>
+
                                     <View style={styles.body}>
                                         <Text
                                             style={styles.bodyText}>
@@ -283,15 +315,57 @@ const styles = StyleSheet.create({
     favIcon: {
         alignSelf: 'center',
     },
-    cardContainer: {
-        backgroundColor: ThemeColors.CLR_WHITE,
+    cart: {
+        backgroundColor: '#fff',
+        height: 200,
         shadowColor: '#000',
-        shadowOffset: { width: 3, height: 3 },
-        shadowRadius: 4,
-        elevation: 5,
-        borderRadius: 20,
-        padding: 5
+        shadowOffset: { width: 1, height: 1 },
+        shadowOpacity: 0.4,
+        shadowRadius: 3,
+        elevation: 3,
+        marginTop: -20,
+        alignContent: 'center',
+        zIndex: 0,
+      },
+    cartContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        backgroundColor: '#AD1832',
+        width: 192,
+        paddingVertical:13,
+        paddingHorizontal:13,
+        borderRadius: 30,
     },
+    cartMargin: {
+        margin: 40,
+    },
+    cartBtnContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginTop: 10,
+        padding:40,
+        paddingVertical:40,
+        //height:40,
+        alignContent: "center",
+        paddingLeft: 40,
+    },
+    cartText: {
+        fontSize: 15,
+        alignSelf: 'center',
+        fontFamily: FontFamily.TAJAWAL_REGULAR,
+        paddingLeft: 10,
+        color: ThemeColors.CLR_WHITE,
+        fontWeight: '700',
+    },
+    // cardContainer: {
+    //     backgroundColor: ThemeColors.CLR_WHITE,
+    //     shadowColor: '#000',
+    //     shadowOffset: { width: 3, height: 3 },
+    //     shadowRadius: 4,
+    //     elevation: 5,
+    //     borderRadius: 20,
+    //     padding: 5
+    // },
     cardHeader: {
         margin: 15
     },
