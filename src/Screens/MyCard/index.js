@@ -172,9 +172,6 @@ export default class MyCard extends Component {
           (
           <>
           {this.state.cart.length > 0 ?
-            this.state.cartLoader &&
-             (<><FullPageLoader /></>)
-            
             
             (<>
             <View style={styles.cartCount}>
@@ -183,6 +180,9 @@ export default class MyCard extends Component {
                 {this.state.totalQty} items in your cart
               </Text>
             </View>
+
+            {this.state.cartLoader && 
+             (<><FullPageLoader /></>)}
  
               <SwipeListView
                 data={this.state.cart}
