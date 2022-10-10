@@ -10,6 +10,7 @@ import {
     Image,
     Dimensions,
     ToastAndroid,
+    Alert,
 } from 'react-native';
 import images from '../assets/images';
 import Icon from 'react-native-vector-icons/MaterialIcons';
