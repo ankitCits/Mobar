@@ -57,7 +57,7 @@ class Collections extends Component {
         qty: 0
       },
       isLoading: true,
-      loader: true,
+      loader: false,
       refreshing: false,
       selectedWalletId: 0,
       userEmail: (props.redux.auth.userData) ? props.redux.auth.userData.result.profile.email : null,

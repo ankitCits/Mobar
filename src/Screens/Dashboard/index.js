@@ -276,6 +276,7 @@ class Dashboard extends Component {
                                                     lazy
                                                     navigationState={this.state}
                                                     renderScene={this._renderScene}
+                                                    swipeEnabled={false}
                                                     renderLazyPlaceholder={this._renderLazyPlaceholder}
                                                     onIndexChange={this._handleIndexChange}
                                                     initialLayout={{ width: Dimensions.get('window').width }}

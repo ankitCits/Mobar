@@ -18,32 +18,52 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { addToWishlist, removeToWishlist } from '../../api/wishlist';
 import { isLoggedIn, showAlert, showToaster } from '../../api/func';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { TextPropTypes } from 'deprecated-react-native-prop-types';
+import { fetchVendorForComboProduct } from '../../api/vendor';
+import { connect } from 'react-redux';
+import VendorCard from '../../Component/VendorCard';
 
-export default class ComboDetails extends Component {
+class ComboDetails extends Component {
     constructor(props) {
         super(props);
         this.state = {
             comboId: props.route.params.comboId,
             data: null,
+            vendorData: [],
             hostUrl: ''
         };
     }
     componentDidMount() {
         this.getComboDetailsById();
+        this.getVendorForCombo();
     }
 
     getComboDetailsById = async () => {
         try {
             const data = {
                 comboId: this.state.comboId,
-                latitude: 1.28668,
-                longitude: 103.853607
+                latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : '',
+                longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
             }
             const res = await fetchComboDetailsById(data);
             this.setState({ data: res.response.result.comboDatas, hostUrl: res.response.result.hostUrl })
         } catch (error) {
             console.log("ComboDetails > getComboDetailsById > catch >", error);
             showToaster(error, 'TOP');
+        }
+    }
+
+    getVendorForCombo = async () => {
+        try {
+            const data = {
+                comboId: this.state.comboId,
+                latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : '',
+                longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
+            }
+            const res = await fetchVendorForComboProduct(data);
+            this.setState({ vendorData: res.response.result.vendorDatas });
+        } catch (error) {
+            console.log("ComboDetails > getVendorForCombo > catch > ", error);
         }
     }
 
@@ -130,22 +150,6 @@ export default class ComboDetails extends Component {
                                                 <TouchableOpacity onPress={() => this.props.navigation.pop()}>
                                                     <Icon name="arrow-back" size={28} color="#fff" />
                                                 </TouchableOpacity>
-
-                                                <TouchableOpacity
-                                                    onPress={() => {
-                                                        this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ?
-                                                            this.removeFavorite(this.state.data.ecom_ba_wishlist.wishlistId)
-                                                            : this.addToFavorite(this.state.data.comboId);
-                                                    }}>
-                                                    <View style={styles.favContainer}>
-                                                        <Image
-                                                            resizeMode={'cover'}
-                                                            source={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
-                                                            defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
-                                                            style={styles.favIcon}
-                                                        />
-                                                    </View>
-                                                </TouchableOpacity>
                                             </View>
                                         </ImageBackground>
                                     </View>
@@ -166,11 +170,6 @@ export default class ComboDetails extends Component {
                                                         ${this.state.data.comboPrice}
                                                     </Text>
                                                 </View>
-                                                <TouchableOpacity
-                                                    onPress={() => { this.addCart() }}
-                                                    style={styles.cart}>
-                                                    <Icon name="add" size={18} color="#fff" />
-                                                </TouchableOpacity>
                                             </View>
 
                                             <View>
@@ -181,82 +180,71 @@ export default class ComboDetails extends Component {
                                                     </Text>
                                                 </View>
                                             </View>
-                                            <View style={{ paddingLeft: 2, }}>
-                                                <HTMLView value={this.state.data.comboContent} />
-                                            </View>
-                                            
-                                                <View style={styles.cartMargin}>
-                                                    <View style={styles.cartBtnContainer}>
+                                            {/* <HTMLView value={this.state.data.comboContent} /> */}
+                                            <View style={styles.cartBtnContainer}>
 
-                                                        <TouchableOpacity
-                                                            style={styles.cartContainer}
-                                                            onPress={() => this.addCart()}
-                                                        >
-                                                            <Text
-                                                                style={styles.cartText}
-                                                            >
-                                                                ADD TO CART
-                                                            </Text>
-                                                            <View
-
-                                                                style={styles.cartIcon}>
-                                                                <Image
-                                                                    resizeMode={'cover'}
-                                                                    source={images.cart}
-                                                                    defaultSource={images.cart}
-                                                                    style={styles.cartImage}
-                                                                />
-                                                            </View>
-                                                        </TouchableOpacity>
-
-
-                                                    </View>
-
-                                                 
-                                                </View>
-                                            
-                                        </View>
-                                    </View>
-
-                                    <View style={styles.body}>
-                                        <Text
-                                            style={styles.bodyText}>
-                                            Products
-                                        </Text>
-                                    </View>
-                                    {
-                                        this.state.data.ecom_ac_products.map((item, index) => (
-                                            (
                                                 <TouchableOpacity
-                                                    key={index}
-                                                    onPress={() => {
-                                                        this.props.navigation.navigate('ProductDetailDrinks', { id: item.productId });
-                                                    }}>
-                                                    <View
-                                                        style={styles.productView}
+                                                    style={styles.cartContainer}
+                                                    onPress={() => this.addCart()}
+                                                >
+                                                    <Text
+                                                        style={styles.cartText}
                                                     >
-                                                        <View style={styles.productInnerView}>
-                                                            <Image
-                                                                key={index}
-                                                                style={styles.prodImg}
-                                                                resizeMode={'cover'}
-                                                                source={{
-                                                                    uri: `${this.state.hostUrl + item.images}`,
-                                                                }}
-                                                                defaultSource={images.product2}
-                                                            />
-                                                        </View>
-                                                        <View style={styles.prodDetailContainer}>
-                                                            <Text
-                                                                style={styles.prodText}>
-                                                                {item.name}
-                                                            </Text>
-                                                        </View>
+                                                        ADD TO CART
+                                                    </Text>
+                                                    <View
+
+                                                        style={styles.cartIcon}>
+                                                        <Image
+                                                            resizeMode={'cover'}
+                                                            source={images.cart}
+                                                            defaultSource={images.cart}
+                                                            style={styles.cartImage}
+                                                        />
                                                     </View>
                                                 </TouchableOpacity>
-                                            )
-                                        ))
-                                    }
+
+                                                <TouchableOpacity style={styles.favContainer}
+                                                    onPress={() => {
+                                                        this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ?
+                                                            this.removeFavorite(this.state.data.ecom_ba_wishlist.wishlistId)
+                                                            : this.addToFavorite(this.state.data.comboId);
+                                                    }}
+                                                >
+                                                    <Image
+                                                        resizeMode={'cover'}
+                                                        source={this.state.data.ecom_ba_wishlist && this.state.data.ecom_ba_wishlist.wishlistId ? images.heartFill : images.heart}
+                                                        defaultSource={this.state.isFavorite ? images.heartFill : images.heart}
+                                                        style={styles.favIcon}
+                                                    />
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+                                    </View>
+                                </View>
+                                <View style={styles.redeem}>
+                                    <View style={styles.redeemContainer}>
+                                        <Text
+                                            style={styles.redeemHeader}>
+                                            Redeemable in Bars
+                                        </Text>
+
+                                        <Text
+                                            style={styles.redeemText}>
+                                            Select your nearest bar and redeem your drink
+                                        </Text>
+                                    </View>
+                                    <View
+                                        style={styles.vendor}>
+                                        {this.state.vendorData && this.state.vendorData.length > 0 ?
+                                            this.state.vendorData.map((item, index) => {
+                                                return (
+                                                    <VendorCard navigation={this.props.navigation} items={item} index={index} hostUrl={this.state.hostUrl} />
+
+                                                )
+                                            }) :
+                                            null}
+                                    </View>
                                 </View>
                             </ScrollView>
                         </>
@@ -266,6 +254,20 @@ export default class ComboDetails extends Component {
     }
 
 }
+
+function mapDispatchToProps(dispatch) {
+    return {
+        dispatch,
+    };
+}
+
+//getting props from redux
+function mapStateToProps(state) {
+    let redux = state;
+    return { redux };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ComboDetails);
 
 const styles = StyleSheet.create({
     safeAreaContainer: {
@@ -288,6 +290,8 @@ const styles = StyleSheet.create({
         width: 35,
         height: 35,
         justifyContent: 'center',
+        alignSelf: 'center',
+        marginLeft: 75,
         backgroundColor: ThemeColors.CLR_WHITE,
         elevation: 4,
         borderRadius: 25,
@@ -295,57 +299,46 @@ const styles = StyleSheet.create({
     favIcon: {
         alignSelf: 'center',
     },
-    cart: {
-        backgroundColor: '#fff',
-        height: 200,
-        shadowColor: '#000',
-        shadowOffset: { width: 1, height: 1 },
-        shadowOpacity: 0.4,
-        shadowRadius: 3,
-        elevation: 3,
-        marginTop: -20,
-        alignContent: 'center',
-        zIndex: 0,
-      },
     cartContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
         backgroundColor: '#AD1832',
         width: 192,
-        paddingVertical:13,
-        paddingHorizontal:13,
         borderRadius: 30,
     },
     cartMargin: {
-        margin: 40,
+        //margin: 40,
     },
     cartBtnContainer: {
         flexDirection: 'row',
-        justifyContent: 'center',
-        marginTop: 10,
-        padding:40,
-        paddingVertical:40,
-        //height:40,
-        alignContent: "center",
-        paddingLeft: 40,
+        justifyContent: 'flex-end',
     },
     cartText: {
         fontSize: 15,
         alignSelf: 'center',
         fontFamily: FontFamily.TAJAWAL_REGULAR,
-        paddingLeft: 10,
         color: ThemeColors.CLR_WHITE,
+        marginHorizontal: 5,
         fontWeight: '700',
     },
-    // cardContainer: {
-    //     backgroundColor: ThemeColors.CLR_WHITE,
-    //     shadowColor: '#000',
-    //     shadowOffset: { width: 3, height: 3 },
-    //     shadowRadius: 4,
-    //     elevation: 5,
-    //     borderRadius: 20,
-    //     padding: 5
-    // },
+    cartIcon: {
+        backgroundColor: '#D46679',
+        width: 75,
+        height: 44,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: ThemeColors.CLR_WHITE
+    },
+    cardContainer: {
+        backgroundColor: ThemeColors.CLR_WHITE,
+        shadowColor: '#000',
+        shadowOffset: { width: 3, height: 3 },
+        shadowRadius: 4,
+        elevation: 5,
+        borderRadius: 20,
+        padding: 5
+    },
     cardHeader: {
         margin: 15
     },
@@ -412,6 +405,32 @@ const styles = StyleSheet.create({
     prodImg: {
         width: 75,
         height: 75,
+    },
+    redeem: {
+        margin: 0,
+        marginTop: 20
+    },
+    redeemContainer: {
+        margin: 15
+    },
+    redeemHeader: {
+        fontFamily: FontFamily.ROBOTO_REGULAR,
+        fontSize: 15,
+        fontWeight: '500',
+        color: '#4D4F50',
+    },
+    redeemText: {
+        fontFamily: FontFamily.ROBOTO_REGULAR,
+        fontSize: 12,
+        fontWeight: '400',
+        color: '#ACACAC',
+        marginTop: 5,
+    },
+    vendor: {
+        backgroundColor: ThemeColors.CLR_WHITE,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        elevation: 2,
     },
     prodDetailContainer: { margin: 5, width: '60%' },
     prodText: {
