@@ -329,9 +329,14 @@ export const fetchCollectionData = () => {
         myHeaders.append('Content-Type', 'application/json');
         myHeaders.append('A_Key', A_KEY);
         myHeaders.append('Token', `${token}`);
+        const data = JSON.stringify({
+            validDateSort : "DESC",
+            availableQtySort : "ASC"
+        });
         const requestOptions = {
             method: 'POST',
             headers: myHeaders,
+            body: data,
         };
         fetch(`${BASE_URL}/redeem/collection`, requestOptions)
             .then(response => response.json())

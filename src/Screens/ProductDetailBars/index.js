@@ -147,7 +147,7 @@ class ProductDetailBars extends Component {
 };
 
 redirectTo=(item)=>{
-  console.log("selected product > ",item);
+  console.log("selected product > ",item.ecom_aa_category);
   //return;
   const data = {
     walletId: item.ecom_aca_product_units[0].ecom_ca_wallet.walletId,
@@ -173,6 +173,7 @@ redirectTo=(item)=>{
         images: item.images,
         description: item.description,
         ecom_acca_vendor_product_units: item.ecom_acca_vendor_product_units,
+        ecom_aa_category:item.ecom_aa_category
       }
     }
   };

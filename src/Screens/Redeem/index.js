@@ -44,7 +44,7 @@ export default class Redeem extends Component {
       successOrderData: [],
       moreData: [this.props.route.params.items]
     };
-    console.log('redeem params data > ',this.props.route.params.items);
+    console.log('redeem params data > ', this.state.data.ecom_aca_product_unit.ecom_ac_product.ecom_aa_category.categoryId);
   }
 
   componentDidMount() {
@@ -55,49 +55,48 @@ export default class Redeem extends Component {
   fetchMixerData = async () => {
     try {
       const data = {
-        vendorId: this.state.data.vendorId
+        vendorId: this.state.data.vendorId,
+        categoryId: this.state.data.ecom_aca_product_unit.ecom_ac_product.ecom_aa_category.categoryId
       };
       const res = await fetchRedeemMixerData(data);
-      const resData = res.response.result.data;
+      const resData = res.response.result.mixData;
 
       const mappedData = resData.map((x, i) => {
         return {
-          id: x.vendorId,
-          title: x.ecom_ah_mixer.mixerName
+          id: x.ecom_ai_vendor_mixer.vendorId,
+          title: x.mixerName
         }
-
       });
-      this.setState({ mixerData: mappedData });
+      this.state.moreData[0].ecom_aca_product_unit.ecom_ac_product.ecom_aa_category.ecom_ah_mixers = mappedData;
+      this.setState({ moreData: this.state.moreData });
     } catch (error) {
       console.log("Redeem > fetchMixerData > catch", error);
-      showToaster(error,'TOP');
+      showToaster(error, 'TOP');
     }
   }
 
   fetchMore = async () => {
     const raw = {
-      vendorId: this.state.data.vendorId,
+      vendorId: 4//this.state.data.vendorId,
     };
     try {
       const res = await fetchRedeemMoreData(raw);
+      res.response.result.data.filter((item => {
+        console.log("85 combo item > ", item);
+      }))
       this.setState({ addItemData: res.response.result.data });
     } catch (error) {
-      showToaster(error,'TOP');
+      showToaster(error, 'TOP');
     }
   };
 
   onSelectQty = (data, index, type, isComboProduct) => {
-    if (type == "Object") {
-      this.state.data.selectedQty = data.vendorUnitId;
-      this.setState({ data: this.state.data });
+    if (isComboProduct) {
+      this.state.moreData[index].selectedUnitQty = data.vendorUnitId
+      this.setState({ moreData: this.state.moreData })
     } else {
-      if (isComboProduct) {
-        this.state.moreData[index].selectedUnitQty = data.vendorUnitId
-        this.setState({ moreData: this.state.moreData })
-      } else {
-        this.state.moreData[index].ecom_aca_product_unit.ecom_ac_product.selectedUnitQty = data.vendorUnitId
-        this.setState({ moreData: this.state.moreData })
-      }
+      this.state.moreData[index].ecom_aca_product_unit.ecom_ac_product.selectedUnitQty = data.vendorUnitId
+      this.setState({ moreData: this.state.moreData })
     }
   }
 
@@ -114,21 +113,22 @@ export default class Redeem extends Component {
     }
   }
 
-  redirectHandle=()=>{
-    
-    console.log("redeem > redirect data > ",{ data: { walletId: this.props.route.params.items.walletId, productId: this.props.route.params.items.ecom_aca_product_unit.ecom_ac_product.productId } });
+  redirectHandle = () => {
+
+    console.log("redeem > redirect data > ", { data: { walletId: this.props.route.params.items.walletId, productId: this.props.route.params.items.ecom_aca_product_unit.ecom_ac_product.productId } });
     this.props.navigation.navigate('SelectBars', { data: { walletId: this.props.route.params.items.walletId, productId: this.props.route.params.items.ecom_aca_product_unit.ecom_ac_product.productId } })
   }
 
   onComboSelect = (data) => {
-
+    console.log("onComboSelect >", data);
     this.setState({ selectedComboData: data })
   }
 
   onComboModalSubmit = () => {
     this.setState({ comboModelVisible: false });
     this.state.selectedComboData.quantity = 0;
-    this.state.selectedComboData.selectedMixerData = 'mixerData';
+    this.state.selectedComboData.selectedMixerData = '';
+    console.log("selected more combo data > ", this.state.selectedComboData);
     this.state.moreData.push(this.state.selectedComboData);
   }
 
@@ -174,10 +174,17 @@ export default class Redeem extends Component {
 
   onItemModal = (data, type) => {
     if (type == 'Combo') { //if combo then open combo product modal
+      console.log("177 combo data > ", data.availableQty);
       const mappedData = data.ecom_ea_combo.ecom_ac_products.map((item, index) => {
+        item.ecom_aa_category.ecom_ah_mixers.map((x, i) => {
+          x.id = x.ecom_ai_vendor_mixer.vendorId,
+            x.title = x.mixerName
+        });
         return {
           ...item,
           walletId: data.walletId,
+          availableQty: data.availableQty,
+          unitType: data.unitType,
           id: item.productId,
           title: item.name
         }
@@ -185,6 +192,12 @@ export default class Redeem extends Component {
       this.setState({ comboData: mappedData });
       this.setState({ comboModelVisible: true });
     } else { // else selected product add in product array
+
+      //data.ecom_aca_product_unit.ecom_ac_product.ecom_aa_category.ecom_ah_mixers = 
+      data.ecom_aca_product_unit.ecom_ac_product.ecom_aa_category.ecom_ah_mixers.map((x, i) => {
+        x.id = x.ecom_ai_vendor_mixer.vendorId,
+          x.title = x.mixerName
+      });
       data.ecom_aca_product_unit.ecom_ac_product.quantity = 0;
       data.ecom_aca_product_unit.ecom_ac_product.selectedMixerData = "";
       const ifExist = this.state.moreData.find(x =>
@@ -192,7 +205,7 @@ export default class Redeem extends Component {
       );
 
       if (ifExist && ifExist.ecom_aca_product_unit.ecom_ac_product.productId) {
-        showToaster('This product already exists','TOP');
+        showToaster('This product already exists', 'TOP');
       } else {
         this.state.moreData.push(data);
         this.setState({ itemModalVisible: false })
@@ -201,12 +214,14 @@ export default class Redeem extends Component {
   }
 
   onRedeemOrder = async () => {
-    const data = this.state.moreData.map(item => {
+    const data = this.state.moreData.map((item, index) => {
+      console.log(index + "onRedeemOrder > Map > Item > ", item);
       let selectedData = item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
         item.ecom_aca_product_unit.ecom_ac_product.ecom_acca_vendor_product_units.find(x => x.vendorUnitId == item.ecom_aca_product_unit.ecom_ac_product.selectedUnitQty) :
         item.ecom_acca_vendor_product_units.find(x => x.vendorUnitId == item.selectedUnitQty);
       return {
         walletId: item.walletId,
+        availableQty: item.availableQty,
         productId: item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
           item.ecom_aca_product_unit.ecom_ac_product.productId : item.productId,
         productName: item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
@@ -216,12 +231,13 @@ export default class Redeem extends Component {
         unitProductId: item.ecom_aca_product_unit ? item.ecom_aca_product_unit.productUnitId : 0,
 
         comboId: item.ecom_eb_combo_detail ? item.ecom_eb_combo_detail.cId : 0,
-        vendorUnitId: item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
+        vendorUnitId: item.ecom_aca_product_unit ?
           item.ecom_aca_product_unit.ecom_ac_product.selectedUnitQty : item.selectedUnitQty,
 
         numberOfGlass: item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
           item.ecom_aca_product_unit.ecom_ac_product.quantity : item.quantity,
 
+        vendorProductUnitHide: item.ecom_aca_product_unit ? item.ecom_aca_product_unit.ecom_ac_product.ecom_aa_category.vendorProductUnitHide : item.ecom_aa_category.vendorProductUnitHide,
         productUnitType: selectedData ? selectedData.productUnitType : null,
         unitQty: selectedData ? selectedData.unitQty : 0,
         unitPrice: selectedData ? selectedData.unitPrice : 0.0,
@@ -231,18 +247,32 @@ export default class Redeem extends Component {
       }
     });
 
+
     let quantityError = data.find(x => x.numberOfGlass == 0);
     let unitQuantityError = data.find(x => x.unitQty == 0);
-    if (quantityError && quantityError.numberOfGlass == 0) {
-      showToaster('Please Select Unit','TOP');
+
+    if (quantityError && quantityError.numberOfGlass == 0) { // select unit like 1,2,3
+      showToaster('Please Select Unit', 'TOP');
       return;
     }
-    if (unitQuantityError && unitQuantityError.unitQty == 0) {
-      showToaster('Please select quantity','TOP');
-      return;
+    if (unitQuantityError && unitQuantityError.vendorProductUnitHide == 0) {
+      if (unitQuantityError.unitQty == 0) {// vendorProductUnitHide = 0 then show unit qty other hide unit quantity like 30ml 60ml
+        showToaster('Please select quantity', 'TOP');
+        return;
+      }
     }
+
+    data.filter((item) => {
+      let userSelectedQty = item.vendorProductUnitHide == 0 ?
+        item.numberOfGlass * item.unitQty : item.numberOfGlass;
+      if (userSelectedQty > item.availableQty) {
+        showToaster('Selected quantity should be less then from available qty', 'TOP');
+        return;
+      }
+    });
+
     if (this.state.tableNo.trim() == "") {
-      showToaster('Please enter  Table No.','TOP');
+      showToaster('Please enter  Table No.', 'TOP');
       return;
     }
 
@@ -255,16 +285,17 @@ export default class Redeem extends Component {
       this.setState({ isLoading: true });
       const res = await redeemOrder(payload);
       this.setState({ isLoading: false, modalVisible: true });
-      console.log("redeem details after submit order > ",res.response.result.data);
+      console.log("redeem details after submit order > ", res.response.result.data);
       this.setState({ successOrderData: res.response.result.data });
     } catch (error) {
       this.setState({ isLoading: false });
-      showToaster(error,'TOP');
+      showToaster(error, 'TOP');
     }
     //this.setState({ modalVisible: true })
   }
 
   onCloseModal = () => {
+    
     this.setState({ modalVisible: false }, this.props.navigation.navigate('OrderHistory'));
   }
 
@@ -300,7 +331,7 @@ export default class Redeem extends Component {
                 style={styles.topFooterContainer}>
                 <Icon name="self-improvement" size={25} color="#851729" />
                 <Text
-                  onPress={() => { this.redirectHandle()  }}
+                  onPress={() => { this.redirectHandle() }}
                   style={styles.topSubText}>
 
                   Select Other Bar
@@ -330,201 +361,330 @@ export default class Redeem extends Component {
           </View>
           {/* end vendor details */}
           {this.state.moreData && this.state.moreData.length > 0 &&
-            this.state.moreData.map((item, index) => (
-
-              <View
-                style={[styles.middleContainer, { zIndex: -(index + 1) }]}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    //height: 150,
-                  }}>
+            this.state.moreData.map((item, index) =>
+              item.ecom_aca_product_unit != null ?
+                (<View
+                  style={[styles.middleContainer, { zIndex: -(index + 1) }]}>
                   <View
                     style={{
-                      width: '40%',
-                      alignItems: 'center',
-                      alignSelf: 'center',
+                      flexDirection: 'row',
+                      //height: 150,
                     }}>
-                    <Image
-                      style={{
-                        width: 60,
-                        height: 120,
-                      }}
-                      resizeMode={'cover'}
-                      source={
-                        item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
-                          { uri: `${this.state.data.hostUrl + item.ecom_aca_product_unit.ecom_ac_product.images}` } :
-                          { uri: `${this.state.data.hostUrl + item.images}` }
-                      }
-                      defaultSource={images.defaultImg}
-                    />
-                  </View>
-                  <View
-                    style={{ width: '50%', }}>
-                    <Text
-                      style={styles.middleContainerText}>
-                      {item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
-                        item.ecom_aca_product_unit.ecom_ac_product.name :
-                        item.name
-                      }
-                    </Text>
-
-                    <View style={{ marginBottom: 0, margin: 20 }}>
-                    
-                    </View>
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        fontWeight: '500',
-                        color: '#424242',
-                        top: 5,
-                        left: 20,
-                      }}>
-                      {
-                        item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product.description &&
-                        'Available Qty: ' + item.availableQty + ' ' + item.unitType + ' '
-                      }
-                    </Text>
-                  </View>
-                </View>
-
-                <View
-                  style={{
-                    marginLeft: 15,
-                    marginTop: 15,
-                  }}>
-                  <Text
-                    style={styles.middleContainerSubText1}>
-                    Select Quantity:
-                  </Text>
-                  <ScrollView
-                    showsHorizontalScrollIndicator={false}
-                    style={{ width: '95%' }} horizontal={true}>
                     <View
                       style={{
-                        flexDirection: 'row',
+                        width: '40%',
+                        alignItems: 'center',
                         alignSelf: 'center',
-                        zIndex: -5,
-                        marginVertical: 8,
                       }}>
-
-                      {
-                        item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product.ecom_acca_vendor_product_units ?
-                          item.ecom_aca_product_unit.ecom_ac_product.ecom_acca_vendor_product_units.map((vItem, vIndex) => (
-                            <TouchableOpacity key={vIndex}
-                              onPress={() => this.onSelectQty(vItem, index, 'Array', false)}
-                              style={[
-                                item.ecom_aca_product_unit.ecom_ac_product.selectedUnitQty == vItem.vendorUnitId
-                                  ? styles.itemQuantitySelected
-                                  : styles.itemQuantity
-                              ]}>
-                              <View style={styles.middleContainerIcon} key={vIndex}>
-                                <Icon name="wine-bar" size={22} color="#7B7B7B" />
-                                <Text
-                                  style={{
-                                    fontSize: 15,
-                                    color: '#7B7B7B',
-                                  }}>
-                                  {vItem.unitQty + ' ' + vItem.productUnitType}
-                                </Text>
-                              </View>
-                            </TouchableOpacity>
-                          )) :
-                          item.ecom_acca_vendor_product_units.map((vItem, vIndex) => (
-                            <TouchableOpacity key={vIndex}
-                              onPress={() => this.onSelectQty(vItem, index, 'Array', true)}
-                              style={[
-                                item.selectedUnitQty == vItem.vendorUnitId
-                                  ? styles.itemQuantitySelected
-                                  : styles.itemQuantity
-                              ]}>
-
-                              <View style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-
-                              }} key={vIndex}>
-                                <Icon name="wine-bar" size={22} color="#7B7B7B" />
-                                <Text
-                                  style={{
-                                    fontSize: 15,
-                                    color: '#7B7B7B',
-                                  }}>
-                                  {vItem.unitQty + ' ' + vItem.productUnitType}
-                                </Text>
-                              </View>
-
-                            </TouchableOpacity>
-                          ))
-                      }
-                    </View>
-                  </ScrollView>
-                </View>
-
-                <View
-                  style={{
-                    marginLeft: 15,
-                    marginVertical: 15,
-                  }}>
-                  <Text
-                    style={styles.middleContainerSubText2}>
-                    Select Unit:
-                  </Text>
-                  <View
-                    style={styles.middleContainerSubTextIcon}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        item.quantity != undefined ?
-                          this.setInputQty(true, 'Array', true, index) :
-                          this.setInputQty(true, 'Array', false, index)
-                      }
-                      style={{
-                        padding: 4,
-                        backgroundColor: '#A1172F',
-                        borderRadius: 15,
-                      }}>
-                      <Icon name="remove" size={20} color="#fff" />
-                    </TouchableOpacity>
-                    <Text
-                      style={styles.middleContainerCounter}>
-                      {item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
-                        item.ecom_aca_product_unit.ecom_ac_product.quantity : item.quantity
-                      }
-                    </Text>
-
-                    <TouchableOpacity
-                      onPress={() =>
-                        item.quantity != undefined ?
-                          this.setInputQty(false, 'Array', true, index) :
-                          this.setInputQty(false, 'Array', false, index)
-                      }
-                      style={{
-                        padding: 4,
-                        backgroundColor: '#A1172F',
-                        borderRadius: 15,
-                      }}>
-                      <Icon name="add" size={20} color="#fff" />
-                    </TouchableOpacity>
-                  </View>
-                  {this.state.mixerData != '' &&
-                    <View style={{
-                      alignSelf: 'flex-start',
-                      marginTop: 13
-                    }}>
-                      <SelectInput items={this.state.mixerData}
-                        selectedItems={{ id: 0, title: 'Select Mixer Item' }}
-                        visible={false}
-                        onChange={(sItem) => {
-                          item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
-                            this.onSelect(sItem, 'Array', false, index) :
-                            this.onSelect(sItem, 'Array', true, index)
+                      <Image
+                        style={{
+                          width: 60,
+                          height: 120,
+                        }}
+                        resizeMode={'cover'}
+                        source={
+                          { uri: `${this.state.data.hostUrl + item.ecom_aca_product_unit.ecom_ac_product.images}` }
                         }
-                        } />
+                        defaultSource={images.defaultImg}
+                      />
+                    </View>
+                    <View
+                      style={{ width: '50%', }}>
+                      <Text
+                        style={styles.middleContainerText}>
+                        {item.ecom_aca_product_unit.ecom_ac_product.name}
+                      </Text>
+                      <View style={{ marginBottom: 0, margin: 20 }}>
+
+                      </View>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          fontWeight: '500',
+                          color: '#424242',
+                          top: 5,
+                          left: 20,
+                        }}>
+                        {
+                          item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product.description &&
+                          'Available Qty: ' + item.availableQty + ' ' + item.unitType + ' '
+                        }
+                      </Text>
+                    </View>
+                  </View>
+                  {item.ecom_aca_product_unit.ecom_ac_product.ecom_aa_category.vendorProductUnitHide == 0 &&
+                    <View
+                      style={{
+                        marginLeft: 15,
+                        marginTop: 15,
+                      }}>
+                      <Text
+                        style={styles.middleContainerSubText1}>
+                        Select Quantity:
+                      </Text>
+                      <ScrollView
+                        showsHorizontalScrollIndicator={false}
+                        style={{ width: '95%' }} horizontal={true}>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignSelf: 'center',
+                            zIndex: -5,
+                            marginVertical: 8,
+                          }}>
+
+                          {
+                            item.ecom_aca_product_unit.ecom_ac_product.ecom_acca_vendor_product_units.map((vItem, vIndex) => (
+                              <TouchableOpacity key={vIndex}
+                                onPress={() => this.onSelectQty(vItem, index, 'Array', false)}
+                                style={[
+                                  item.ecom_aca_product_unit.ecom_ac_product.selectedUnitQty == vItem.vendorUnitId
+                                    ? styles.itemQuantitySelected
+                                    : styles.itemQuantity
+                                ]}>
+                                <View style={styles.middleContainerIcon} key={vIndex}>
+                                  <Icon name="wine-bar" size={22} color="#7B7B7B" />
+                                  <Text
+                                    style={{
+                                      fontSize: 15,
+                                      color: '#7B7B7B',
+                                    }}>
+                                    {vItem.unitQty + ' ' + vItem.productUnitType}
+                                  </Text>
+                                </View>
+                              </TouchableOpacity>
+                            ))
+                          }
+                        </View>
+                      </ScrollView>
                     </View>
                   }
+
+                  <View
+                    style={{
+                      marginLeft: 15,
+                      marginVertical: 15,
+                    }}>
+                    <Text
+                      style={styles.middleContainerSubText2}>
+                      Select Unit:
+                    </Text>
+                    <View
+                      style={styles.middleContainerSubTextIcon}>
+                      <TouchableOpacity
+                        onPress={() =>
+                          item.quantity != undefined ?
+                            this.setInputQty(true, 'Array', true, index) :
+                            this.setInputQty(true, 'Array', false, index)
+                        }
+                        style={{
+                          padding: 4,
+                          backgroundColor: '#A1172F',
+                          borderRadius: 15,
+                        }}>
+                        <Icon name="remove" size={20} color="#fff" />
+                      </TouchableOpacity>
+                      <Text
+                        style={styles.middleContainerCounter}>
+                        {item.ecom_aca_product_unit.ecom_ac_product.quantity}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() =>
+                          item.quantity != undefined ?
+                            this.setInputQty(false, 'Array', true, index) :
+                            this.setInputQty(false, 'Array', false, index)
+                        }
+                        style={{
+                          padding: 4,
+                          backgroundColor: '#A1172F',
+                          borderRadius: 15,
+                        }}>
+                        <Icon name="add" size={20} color="#fff" />
+                      </TouchableOpacity>
+                    </View>
+                    {item.ecom_aca_product_unit.ecom_ac_product.ecom_aa_category.ecom_ah_mixers &&
+                      item.ecom_aca_product_unit.ecom_ac_product.ecom_aa_category.ecom_ah_mixers.length > 0 &&
+                      <View style={{
+                        alignSelf: 'flex-start',
+                        marginTop: 13
+                      }}>
+                        <SelectInput items={item.ecom_aca_product_unit.ecom_ac_product.ecom_aa_category.ecom_ah_mixers}
+                          selectedItems={{ id: 0, title: 'Select Mixer Item' }}
+                          visible={false}
+                          onChange={(sItem) => {
+                            item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
+                              this.onSelect(sItem, 'Array', false, index) :
+                              this.onSelect(sItem, 'Array', true, index)
+                          }
+                          } />
+                      </View>
+                    }
+                  </View>
+                </View>) :
+                (<View
+                  style={[styles.middleContainer, { zIndex: -(index + 1) }]}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      //height: 150,
+                    }}>
+                    <View
+                      style={{
+                        width: '40%',
+                        alignItems: 'center',
+                        alignSelf: 'center',
+                      }}>
+                      <Image
+                        style={{
+                          width: 60,
+                          height: 120,
+                        }}
+                        resizeMode={'cover'}
+                        source={
+                          { uri: `${this.state.data.hostUrl + item.images}` }
+                        }
+                        defaultSource={images.defaultImg}
+                      />
+                    </View>
+                    <View
+                      style={{ width: '50%', }}>
+                      <Text
+                        style={styles.middleContainerText}>
+                        {item.name}
+                      </Text>
+                      <View style={{ marginBottom: 0, margin: 20 }}>
+                      </View>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          fontWeight: '500',
+                          color: '#424242',
+                          top: 5,
+                          left: 20,
+                        }}>
+                        {
+
+                          'Available Qty: ' + item.availableQty + ' ' + item.unitType + ' '
+                        }
+                      </Text>
+                    </View>
+                  </View>
+                  {item.ecom_aa_category.vendorProductUnitHide == 0 ?
+                    <View
+                      style={{
+                        marginLeft: 15,
+                        marginTop: 15,
+                      }}>
+                      <Text
+                        style={styles.middleContainerSubText1}>
+                        Select Quantity:
+                      </Text>
+                      <ScrollView
+                        showsHorizontalScrollIndicator={false}
+                        style={{ width: '95%' }} horizontal={true}>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignSelf: 'center',
+                            zIndex: -5,
+                            marginVertical: 8,
+                          }}>
+
+                          {
+                            item.ecom_acca_vendor_product_units.map((vItem, vIndex) => (
+                              <TouchableOpacity key={vIndex}
+                                onPress={() => this.onSelectQty(vItem, index, 'Array', true)}
+                                style={[
+                                  item.selectedUnitQty == vItem.vendorUnitId
+                                    ? styles.itemQuantitySelected
+                                    : styles.itemQuantity
+                                ]}>
+
+                                <View style={{
+                                  flexDirection: 'row',
+                                  alignItems: 'center',
+
+                                }} key={vIndex}>
+                                  <Icon name="wine-bar" size={22} color="#7B7B7B" />
+                                  <Text
+                                    style={{
+                                      fontSize: 15,
+                                      color: '#7B7B7B',
+                                    }}>
+                                    {vItem.unitQty + ' ' + vItem.productUnitType}
+                                  </Text>
+                                </View>
+
+                              </TouchableOpacity>
+                            ))
+                          }
+                        </View>
+                      </ScrollView>
+                    </View> : null
+                  }
+                  <View
+                    style={{
+                      marginLeft: 15,
+                      marginVertical: 15,
+                    }}>
+                    <Text
+                      style={styles.middleContainerSubText2}>
+                      Select Unit:
+                    </Text>
+                    <View
+                      style={styles.middleContainerSubTextIcon}>
+                      <TouchableOpacity
+                        onPress={() =>
+                          item.quantity != undefined ?
+                            this.setInputQty(true, 'Array', true, index) :
+                            this.setInputQty(true, 'Array', false, index)
+                        }
+                        style={{
+                          padding: 4,
+                          backgroundColor: '#A1172F',
+                          borderRadius: 15,
+                        }}>
+                        <Icon name="remove" size={20} color="#fff" />
+                      </TouchableOpacity>
+                      <Text
+                        style={styles.middleContainerCounter}>
+                        {item.quantity}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() =>
+                          item.quantity != undefined ?
+                            this.setInputQty(false, 'Array', true, index) :
+                            this.setInputQty(false, 'Array', false, index)
+                        }
+                        style={{
+                          padding: 4,
+                          backgroundColor: '#A1172F',
+                          borderRadius: 15,
+                        }}>
+                        <Icon name="add" size={20} color="#fff" />
+                      </TouchableOpacity>
+                    </View>
+                    {item.ecom_aa_category.ecom_ah_mixers.length > 0 &&
+                      <View style={{
+                        alignSelf: 'flex-start',
+                        marginTop: 13
+                      }}>
+                        <SelectInput items={item.ecom_aa_category.ecom_ah_mixers}
+                          selectedItems={{ id: 0, title: 'Select Mixer Item' }}
+                          visible={false}
+                          onChange={(sItem) => {
+                            // item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
+                            //this.onSelect(sItem, 'Array', false, index) 
+                            this.onSelect(sItem, 'Array', true, index)
+                          }
+                          } />
+                      </View>
+                    }
+                  </View>
                 </View>
-              </View>
-            ))
+                )
+
+            )
           }
 
           {/* Add More Items */}
@@ -691,7 +851,7 @@ export default class Redeem extends Component {
                     </Text>
                     <Text
                       style={styles.redeemDetailsSubText1}>
-                      {moment(new Date()).format('DD MMM YYYY hh:mm A')} 
+                      {moment(new Date()).format('DD MMM YYYY hh:mm A')}
                     </Text>
                   </View>
                 </View>
@@ -1218,7 +1378,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 5,
     elevation: 5,
-    zIndex: -5,
+    zIndex: -1000,
     borderRadius: 5,
   },
   bottomContainerHeaderText: {

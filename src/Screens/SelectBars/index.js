@@ -29,6 +29,7 @@ class SelectBars extends Component {
       itemSelected: 0,
       hostUrl: '',
       vendorData: [],
+      category:null,
       isLoading: 'false',
       data:null
     };
@@ -53,9 +54,11 @@ class SelectBars extends Component {
         hostUrl: response.response.result.hostUrl,
         data: response.response.result.productWithBar,
         vendorData: response.response.result.productWithBar.ecom_ae_vendors,
+        category: response.response.result.productWithBar.ecom_aa_category,
         collectionWallet: response.response.result.collectionWallet,
         isLoading: false
       });
+      console.log("category > ",this.state.category);
     } catch (error) {
       console.log("Select bars > catch > error", error);
       this.setState({ isLoading: false });
@@ -80,6 +83,7 @@ class SelectBars extends Component {
       images: this.state.itemSelected.images,
       vendorId: this.state.itemSelected.vendorId,
       hostUrl: this.state.hostUrl,
+      category:this.state.category,
       ecom_aca_product_unit: {
         productUnitId: this.state.collectionWallet.ecom_aca_product_unit ? this.state.collectionWallet.ecom_aca_product_unit.productUnitId : 0,
         unitType: this.state.collectionWallet.ecom_aca_product_unit ? this.state.collectionWallet.ecom_aca_product_unit.unitType : '',
@@ -95,6 +99,7 @@ class SelectBars extends Component {
           images: this.state.data.images,
           description: this.state.data.shortDescription,
           ecom_acca_vendor_product_units: this.state.itemSelected.ecom_acca_vendor_product_units,
+          ecom_aa_category:this.state.category
         }
       }
     };

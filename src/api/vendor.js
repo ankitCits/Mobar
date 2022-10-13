@@ -74,7 +74,7 @@ export const fetchRedeemBars = (postData) => {
             headers: myHeaders,
             body: postDataStr,
         };
-
+        console.log("request Perameters > ",requestOptions);
         fetch(`${BASE_URL}/redeem/barForRedeem`, requestOptions)
             .then(response => response.json())
             .then(result => {
@@ -172,6 +172,38 @@ export const fetchVendorList = (postData) => {
         };
 
         fetch(`${BASE_URL}/vendor/allList`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                if (result.errors) {
+                    reject(result.errors[0].msg);
+                } else {
+                    resolve(result);
+                }
+            })
+            .catch(error => {
+                console.log('Api > Vendor > fetchPromotion > catch > error', error);
+                reject(error.message);
+            });
+    })
+}
+
+export const fetchVendorForComboProduct = (postData) => {
+    return new Promise(async (resolve, reject) => {
+        const token = await getAccessToken(token);
+        const myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+        myHeaders.append('A_Key', A_KEY);
+        if (token) {
+            myHeaders.append('Token', `${token}`);
+        }
+        const postDataStr = JSON.stringify(postData);
+        const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: postDataStr,
+        };
+
+        fetch(`${BASE_URL}/products/vendorOfComboProducts`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.errors) {
