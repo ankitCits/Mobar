@@ -100,6 +100,7 @@ export default class CategoryCard extends React.Component {
                         width:145,
                         height:147,
                         borderRadius:30,
+                        
                     }}>
 
                     <ImageBackground
@@ -218,10 +219,12 @@ const styles = StyleSheet.create({
         width: 147,
         height: 180,
         //height: 169,
+       borderRadius:10,
     },
     boxOuter: {
         bottom: 0,
         position: 'absolute',
+        borderRadius:10,
     },
     productImg: {
         marginTop: '-40%',

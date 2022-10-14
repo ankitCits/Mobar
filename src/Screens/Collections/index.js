@@ -265,7 +265,7 @@ class Collections extends Component {
                   style={styles.redeemBtn}>
                   <Text
                     style={styles.redeemBtnText}>
-                    {item.validDateStatus == 1 ? 'Active' : 'Redeem'}
+                    {item.validDateStatus == 1 ? 'Activate' : 'Redeem'}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -315,7 +315,7 @@ class Collections extends Component {
                   style={styles.redeemBtn}>
                   <Text
                     style={styles.redeemBtnText}>
-                    {item.validDateStatus == 1 ? 'Active' : 'Redeem'}
+                    {item.validDateStatus == 1 ? 'Activate' : 'Redeem'}
                   </Text>
                 </TouchableOpacity>
               </View>
