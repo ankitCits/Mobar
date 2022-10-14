@@ -48,7 +48,7 @@ class SelectBars extends Component {
         latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : '',
         longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
       };
-      console.log("post data > ",data);
+      
       const response = await fetchRedeemBars(data);
       this.setState({
         hostUrl: response.response.result.hostUrl,
@@ -58,7 +58,6 @@ class SelectBars extends Component {
         collectionWallet: response.response.result.collectionWallet,
         isLoading: false
       });
-      console.log("category > ",this.state.category);
     } catch (error) {
       console.log("Select bars > catch > error", error);
       this.setState({ isLoading: false });

@@ -71,11 +71,11 @@ class Product extends Component {
       });
   };
 
-  getProductList = async () => {
+  getProductList = async (text='') => {
     this.setState({ loader: true });
     try {
       const postData = {
-        searchText: this.state.searchText,
+        searchText: text,
         ids: [this.state.categoryList.data[this.state.itemIndex].categoryId]
       }
       const prodData = await fetchProductData(postData);
@@ -153,8 +153,7 @@ class Product extends Component {
   }
 
   onSearch = (text) => {
-    this.setState({ searchText: text });
-    this.getProductList();
+    this.getProductList(text);
   }
 
   render() {

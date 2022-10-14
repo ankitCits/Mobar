@@ -144,9 +144,9 @@ class BarList extends Component {
                     color: '#3C3C3C',
                   }}>
                   {
-                    this.props.redux.auth.userData
-                      ? this.props.redux.auth.userData.address
-                      : 'Duxten Road, 338750'
+                  this.props.redux && this.props.redux.auth.userData && this.props.redux.auth.userData.result && this.props.redux.auth.userData.result.profile
+                  ? this.props.redux.auth.userData.result.profile.address
+                  : 'Duxten Road, 338750'
                   }
                 </Text>
               </View>
@@ -215,6 +215,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(BarList);
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 15,
+    marginVertical:5,
   },
   promotions2Img: {
     borderBottomLeftRadius: 15,

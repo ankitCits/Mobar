@@ -20,13 +20,10 @@ export default class VendorCard extends Component {
             hostUrl: props.hostUrl,
             index: props.index
         };
-        console.log('VendorCard > ', props.items);
     }
 
     render() {
         const item = this.props.items;
-        console.log("items images > ", item);
-
         return (
             <>
                 <View style={styles.vendorContainer}>

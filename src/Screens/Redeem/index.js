@@ -44,12 +44,17 @@ export default class Redeem extends Component {
       successOrderData: [],
       moreData: [this.props.route.params.items]
     };
-    console.log('redeem params data > ', this.state.data.ecom_aca_product_unit.ecom_ac_product.ecom_aa_category.categoryId);
   }
 
   componentDidMount() {
-    this.fetchMore();
-    this.fetchMixerData();
+    this.props.navigation.addListener('focus', () => {
+      this.fetchMore();
+      this.fetchMixerData();
+    });
+  }
+
+  componentWillUnmount() {
+
   }
 
   fetchMixerData = async () => {
@@ -60,7 +65,6 @@ export default class Redeem extends Component {
       };
       const res = await fetchRedeemMixerData(data);
       const resData = res.response.result.mixData;
-
       const mappedData = resData.map((x, i) => {
         return {
           id: x.ecom_ai_vendor_mixer.vendorId,
@@ -75,15 +79,16 @@ export default class Redeem extends Component {
     }
   }
 
+  addMoreData = () => {
+    this.setState({ itemModalVisible: true });
+  }
+
   fetchMore = async () => {
     const raw = {
-      vendorId: 4//this.state.data.vendorId,
+      vendorId: this.props.route.params.items.vendorId,
     };
     try {
       const res = await fetchRedeemMoreData(raw);
-      res.response.result.data.filter((item => {
-        console.log("85 combo item > ", item);
-      }))
       this.setState({ addItemData: res.response.result.data });
     } catch (error) {
       showToaster(error, 'TOP');
@@ -114,13 +119,10 @@ export default class Redeem extends Component {
   }
 
   redirectHandle = () => {
-
-    console.log("redeem > redirect data > ", { data: { walletId: this.props.route.params.items.walletId, productId: this.props.route.params.items.ecom_aca_product_unit.ecom_ac_product.productId } });
-    this.props.navigation.navigate('SelectBars', { data: { walletId: this.props.route.params.items.walletId, productId: this.props.route.params.items.ecom_aca_product_unit.ecom_ac_product.productId } })
+    this.props.navigation.navigate('SelectBars', { data: { walletId: this.props.route.params.items.walletId, productId: this.props.route.params.items.ecom_aca_product_unit.ecom_ac_product.productId } });
   }
 
   onComboSelect = (data) => {
-    console.log("onComboSelect >", data);
     this.setState({ selectedComboData: data })
   }
 
@@ -128,7 +130,6 @@ export default class Redeem extends Component {
     this.setState({ comboModelVisible: false });
     this.state.selectedComboData.quantity = 0;
     this.state.selectedComboData.selectedMixerData = '';
-    console.log("selected more combo data > ", this.state.selectedComboData);
     this.state.moreData.push(this.state.selectedComboData);
   }
 
@@ -174,7 +175,6 @@ export default class Redeem extends Component {
 
   onItemModal = (data, type) => {
     if (type == 'Combo') { //if combo then open combo product modal
-      console.log("177 combo data > ", data.availableQty);
       const mappedData = data.ecom_ea_combo.ecom_ac_products.map((item, index) => {
         item.ecom_aa_category.ecom_ah_mixers.map((x, i) => {
           x.id = x.ecom_ai_vendor_mixer.vendorId,
@@ -192,9 +192,7 @@ export default class Redeem extends Component {
       this.setState({ comboData: mappedData });
       this.setState({ comboModelVisible: true });
     } else { // else selected product add in product array
-
-      //data.ecom_aca_product_unit.ecom_ac_product.ecom_aa_category.ecom_ah_mixers = 
-      data.ecom_aca_product_unit.ecom_ac_product.ecom_aa_category.ecom_ah_mixers.map((x, i) => {
+        data.ecom_aca_product_unit.ecom_ac_product.ecom_aa_category.ecom_ah_mixers.map((x, i) => {
         x.id = x.ecom_ai_vendor_mixer.vendorId,
           x.title = x.mixerName
       });
@@ -215,38 +213,46 @@ export default class Redeem extends Component {
 
   onRedeemOrder = async () => {
     const data = this.state.moreData.map((item, index) => {
-      console.log(index + "onRedeemOrder > Map > Item > ", item);
+
       let selectedData = item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
         item.ecom_aca_product_unit.ecom_ac_product.ecom_acca_vendor_product_units.find(x => x.vendorUnitId == item.ecom_aca_product_unit.ecom_ac_product.selectedUnitQty) :
         item.ecom_acca_vendor_product_units.find(x => x.vendorUnitId == item.selectedUnitQty);
-      return {
-        walletId: item.walletId,
-        availableQty: item.availableQty,
-        productId: item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
-          item.ecom_aca_product_unit.ecom_ac_product.productId : item.productId,
-        productName: item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
-          item.ecom_aca_product_unit.ecom_ac_product.name : item.name,
-        image: item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
-          item.ecom_aca_product_unit.ecom_ac_product.images : item.images,
-        unitProductId: item.ecom_aca_product_unit ? item.ecom_aca_product_unit.productUnitId : 0,
-
-        comboId: item.ecom_eb_combo_detail ? item.ecom_eb_combo_detail.cId : 0,
-        vendorUnitId: item.ecom_aca_product_unit ?
-          item.ecom_aca_product_unit.ecom_ac_product.selectedUnitQty : item.selectedUnitQty,
-
-        numberOfGlass: item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
-          item.ecom_aca_product_unit.ecom_ac_product.quantity : item.quantity,
-
-        vendorProductUnitHide: item.ecom_aca_product_unit ? item.ecom_aca_product_unit.ecom_ac_product.ecom_aa_category.vendorProductUnitHide : item.ecom_aa_category.vendorProductUnitHide,
-        productUnitType: selectedData ? selectedData.productUnitType : null,
-        unitQty: selectedData ? selectedData.unitQty : 0,
-        unitPrice: selectedData ? selectedData.unitPrice : 0.0,
-        mixerName: item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product ?
-          item.ecom_aca_product_unit.ecom_ac_product.selectedMixerData :
-          item.selectedMixerData
+      if (item.ecom_aca_product_unit) {
+        return {
+          walletId: item.walletId,
+          availableQty: item.availableQty,
+          productId: item.ecom_aca_product_unit.ecom_ac_product.productId,
+          productName: item.ecom_aca_product_unit.ecom_ac_product.name,
+          image: item.ecom_aca_product_unit.ecom_ac_product.images,
+          unitProductId: item.ecom_aca_product_unit.productUnitId,
+          comboId: 0,
+          vendorUnitId: item.ecom_aca_product_unit.ecom_ac_product.ecom_aa_category.vendorProductUnitHide == 0 ? item.ecom_aca_product_unit.ecom_ac_product.selectedUnitQty : 0,
+          numberOfGlass: item.ecom_aca_product_unit.ecom_ac_product.quantity,
+          vendorProductUnitHide: item.ecom_aca_product_unit.ecom_ac_product.ecom_aa_category.vendorProductUnitHide,
+          productUnitType: selectedData ? selectedData.productUnitType : "",
+          unitQty: selectedData ? selectedData.unitQty : 0,
+          unitPrice: selectedData ? selectedData.unitPrice : 0,
+          mixerName: item.ecom_aca_product_unit.ecom_ac_product.selectedMixerData
+        }
+      } else {
+        return {
+          walletId: item.walletId,
+          availableQty: item.availableQty,
+          productId: item.productId,
+          productName: item.name,
+          image: item.images,
+          unitProductId: 0,
+          comboId: item.ecom_eb_combo_detail ? item.ecom_eb_combo_detail.cId : 0,
+          vendorUnitId: item.ecom_aa_category.vendorProductUnitHide == 0 ? item.selectedUnitQty : 0,
+          numberOfGlass: item.quantity,
+          vendorProductUnitHide: item.ecom_aa_category.vendorProductUnitHide,
+          productUnitType: selectedData ? selectedData.productUnitType : "",
+          unitQty: selectedData ? selectedData.unitQty : 0,
+          unitPrice: selectedData ? selectedData.unitPrice : 0,
+          mixerName: item.selectedMixerData
+        }
       }
     });
-
 
     let quantityError = data.find(x => x.numberOfGlass == 0);
     let unitQuantityError = data.find(x => x.unitQty == 0);
@@ -262,19 +268,22 @@ export default class Redeem extends Component {
       }
     }
 
+    if (this.state.tableNo.trim() == "") {
+      showToaster('Please enter  Table No.', 'TOP');
+      return;
+    }
+
+    let isValid = true;
+
     data.filter((item) => {
       let userSelectedQty = item.vendorProductUnitHide == 0 ?
         item.numberOfGlass * item.unitQty : item.numberOfGlass;
       if (userSelectedQty > item.availableQty) {
         showToaster('Selected quantity should be less then from available qty', 'TOP');
+        isValid = false;
         return;
       }
     });
-
-    if (this.state.tableNo.trim() == "") {
-      showToaster('Please enter  Table No.', 'TOP');
-      return;
-    }
 
     const payload = {
       vendorId: this.props.route.params.items.vendorId,
@@ -282,20 +291,19 @@ export default class Redeem extends Component {
       redeemProducts: data
     };
     try {
-      this.setState({ isLoading: true });
-      const res = await redeemOrder(payload);
-      this.setState({ isLoading: false, modalVisible: true });
-      console.log("redeem details after submit order > ", res.response.result.data);
-      this.setState({ successOrderData: res.response.result.data });
+      if (isValid) {
+        this.setState({ isLoading: true });
+        const res = await redeemOrder(payload);
+        this.setState({ isLoading: false, modalVisible: true });
+        this.setState({ successOrderData: res.response.result.data });
+      }
     } catch (error) {
       this.setState({ isLoading: false });
       showToaster(error, 'TOP');
     }
-    //this.setState({ modalVisible: true })
   }
 
   onCloseModal = () => {
-    
     this.setState({ modalVisible: false }, this.props.navigation.navigate('OrderHistory'));
   }
 
@@ -406,7 +414,6 @@ export default class Redeem extends Component {
                           left: 20,
                         }}>
                         {
-                          item.ecom_aca_product_unit && item.ecom_aca_product_unit.ecom_ac_product.description &&
                           'Available Qty: ' + item.availableQty + ' ' + item.unitType + ' '
                         }
                       </Text>
@@ -694,7 +701,7 @@ export default class Redeem extends Component {
               style={styles.bottomContainerHeaderText}>
               <TouchableOpacity
                 style={styles.bottomContainerIcon}
-                onPress={() => this.setState({ itemModalVisible: true })}>
+                onPress={() => this.addMoreData()}>
                 <Icon name="add" size={28} color="#fff" />
               </TouchableOpacity>
 
@@ -899,11 +906,15 @@ export default class Redeem extends Component {
                                 item.redeemUnitQty + item.unitType + '  -  ' + item.reddemQty + ''
                             }
                           </Text>
-
-                          <Text
-                            style={styles.redeemDetailsContainerSubText}>
-                            {item.ecom_ac_product.mixerData != undefined ? item.ecom_ac_product.mixerData : item.mixerData}
-                          </Text>
+                          {item.ecom_ac_product.mixerData != undefined ?
+                            <Text
+                              style={styles.redeemDetailsContainerSubText}>
+                              {item.ecom_ac_product.mixerData}
+                            </Text> : <Text
+                              style={styles.redeemDetailsContainerSubText}>
+                              {item.mixerData}
+                            </Text>
+                          }
                           <Text
                             style={styles.redeemDetailsContainerSubText}>
                             {item.tableNo}

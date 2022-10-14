@@ -74,12 +74,18 @@ class Collections extends Component {
         });
       }
       initialize().catch("collection > componentDidMount > catch", console.error);
-      this.fetchData();
-      this.fetchActiveDateAmount();
+      this.props.navigation.addListener('focus', () => {
+        this.fetchData();
+        this.fetchActiveDateAmount();
+      });
     } else {
       this.setState({ isLoading: false });
       showToaster(UnAuthorizedUser);
     }
+  }
+
+  componentWillUnmount(){
+   
   }
 
   componentDidUpdate() {

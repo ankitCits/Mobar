@@ -32,8 +32,8 @@ class ProductDetailBars extends Component {
       modalVisible: true,
       loader: false,
       data: null,
-      offersData:[],
-      hostUrl:null,
+      offersData: [],
+      hostUrl: null,
       isFavorite: false,
     };
   }
@@ -51,14 +51,14 @@ class ProductDetailBars extends Component {
         longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
       };
       const data = await fetchVendorDetails(postData);
-      this.setState({ data: data.response.result,offersData:data.response.result.barOffers,hostUrl:data.response.result.hostUrl, loader: false });
+      this.setState({ data: data.response.result, offersData: data.response.result.barOffers, hostUrl: data.response.result.hostUrl, loader: false });
       this.setState({
         isFavorite: this.state.data.vendorDetail[0].ecom_ba_wishlist &&
           this.state.data.vendorDetail[0].ecom_ba_wishlist.wishlistId ?
           true : false
       });
     } catch (error) {
-      showToaster(error,'TOP');
+      showToaster(error, 'TOP');
     }
   };
 
@@ -95,7 +95,7 @@ class ProductDetailBars extends Component {
         this.setState({ isFavorite: false })
       } catch (error) {
         console.log("Product Details Bar > removeFavorite > Catch", error);
-       showToaster(error);
+        showToaster(error);
       }
     } else {
       showAlert();
@@ -115,11 +115,11 @@ class ProductDetailBars extends Component {
         qty: 1,
       };
       try {
-       await addToCart(cartItem);
-       showToaster('Item added to cart successfully','TOP');
+        await addToCart(cartItem);
+        showToaster('Item added to cart successfully', 'TOP');
       } catch (error) {
         console.log("Details Bars > addCart > catch", error);
-        showToaster(error,'TOP');
+        showToaster(error, 'TOP');
       }
     } else {
       showAlert();
@@ -128,58 +128,58 @@ class ProductDetailBars extends Component {
 
   renderSliderImage = ({ item, index }) => {
     return (
-        <View
-            key={index}
-            style={{
-                alignItems: 'center',
-                backgroundColor: 'white',
-                marginTop: 10,
-            }}>
-            <Image
-                resizeMode="cover"
-                // resizeMethod="resize"
-                style={{ width: viewportWidth - 30, height: 200,alignSelf:'flex-start' }}
-                defaultSource={images.defaultImg}
-                source={{ uri: `${this.state.hostUrl + item.images}` }}
-            />
-        </View>
+      <View
+        key={index}
+        style={{
+          alignItems: 'center',
+          backgroundColor: 'white',
+          marginTop: 10,
+        }}>
+        <Image
+          resizeMode="cover"
+          // resizeMethod="resize"
+          style={{ width: viewportWidth - 30, height: 200, alignSelf: 'flex-start' }}
+          defaultSource={images.defaultImg}
+          source={{ uri: `${this.state.hostUrl + item.images}` }}
+        />
+      </View>
     );
-};
-
-redirectTo=(item)=>{
-  console.log("selected product > ",item.ecom_aa_category);
-  //return;
-  const data = {
-    walletId: item.ecom_aca_product_units[0].ecom_ca_wallet.walletId,
-    availableQty: item.ecom_aca_product_units[0].ecom_ca_wallet.availableQty,
-    unitType: item.ecom_aca_product_units[0].ecom_ca_wallet.unitType,
-    vendorShopName: this.state.data.vendorDetail[0].vendorShopName,
-    description: this.state.data.vendorDetail[0].description,
-    images: this.state.data.vendorDetail[0].images,
-    vendorId: this.state.data.vendorDetail[0].vendorId,
-    hostUrl: this.state.hostUrl,
-    ecom_aca_product_unit: {
-      productUnitId: item.ecom_aca_product_units[0].productUnitId,
-      unitType: item.ecom_aca_product_units[0].unitType,
-      unitQty: item.ecom_aca_product_units[0].unitQty,
-      unitUserPrice: item.ecom_aca_product_units[0].unitUserPrice,
-      ecom_ac_product: {
-        selectedUnitQty: 0,
-        inputQty: 0,
-        selectedMixerData: "",
-        quantity: 0,
-        productId: item.productId,
-        name: item.name,
-        images: item.images,
-        description: item.description,
-        ecom_acca_vendor_product_units: item.ecom_acca_vendor_product_units,
-        ecom_aa_category:item.ecom_aa_category
-      }
-    }
   };
-  //console.log("redeem data > ",data);
-  this.props.navigation.navigate('Redeem', { items: data })
-}
+
+  redirectTo = (item) => {
+    console.log("selected product > ", item.ecom_aa_category);
+    //return;
+    const data = {
+      walletId: item.ecom_aca_product_units[0].ecom_ca_wallet.walletId,
+      availableQty: item.ecom_aca_product_units[0].ecom_ca_wallet.availableQty,
+      unitType: item.ecom_aca_product_units[0].ecom_ca_wallet.unitType,
+      vendorShopName: this.state.data.vendorDetail[0].vendorShopName,
+      description: this.state.data.vendorDetail[0].description,
+      images: this.state.data.vendorDetail[0].images,
+      vendorId: this.state.data.vendorDetail[0].vendorId,
+      hostUrl: this.state.hostUrl,
+      ecom_aca_product_unit: {
+        productUnitId: item.ecom_aca_product_units[0].productUnitId,
+        unitType: item.ecom_aca_product_units[0].unitType,
+        unitQty: item.ecom_aca_product_units[0].unitQty,
+        unitUserPrice: item.ecom_aca_product_units[0].unitUserPrice,
+        ecom_ac_product: {
+          selectedUnitQty: 0,
+          inputQty: 0,
+          selectedMixerData: "",
+          quantity: 0,
+          productId: item.productId,
+          name: item.name,
+          images: item.images,
+          description: item.description,
+          ecom_acca_vendor_product_units: item.ecom_acca_vendor_product_units,
+          ecom_aa_category: item.ecom_aa_category
+        }
+      }
+    };
+    //console.log("redeem data > ",data);
+    this.props.navigation.navigate('Redeem', { items: data })
+  }
 
   render() {
     return (
@@ -345,9 +345,9 @@ redirectTo=(item)=>{
                 </View>
                 {/* this.state.data.vendorDetail[0].vendorRating */}
                 <View style={{
-                  marginHorizontal:2
+                  marginHorizontal: 2
                 }}>
-                <StarRating isEdit={false} size={this.state.data.vendorDetail[0].vendorRating} />
+                  <StarRating isEdit={false} size={this.state.data.vendorDetail[0].vendorRating} />
                 </View>
 
                 <View
@@ -409,31 +409,33 @@ redirectTo=(item)=>{
               </View>
             </View>
 
-            <View style={{ margin: 15, marginTop: 20 }}>
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontWeight: '700',
-                  color: '#3C3C3C',
-                }}>
-                Special Offers
-              </Text>
+            {this.state.offersData.length > 0 &&
+              <View style={{ margin: 15, marginTop: 20 }}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: '700',
+                    color: '#3C3C3C',
+                  }}>
+                  Special Offers
+                </Text>
                 <View style={{ flexDirection: 'row' }}>
-                <View style={{ alignItems: 'center', height: 200 }}>
-                        <View style={{ marginVertical: 10 }}>
-                            <Carousel
-                                ref={(c) => { this._carousel = c; }}
-                                data={this.state.offersData}
-                                renderItem={this.renderSliderImage}
-                                sliderWidth={viewportWidth}
-                                sliderHeight={viewportWidth}
-                                itemWidth={viewportWidth}
-                                inactiveSlideOpacity={0}
-                            />
-                        </View>
+                  <View style={{ alignItems: 'center', height: 200 }}>
+                    <View style={{ marginVertical: 10 }}>
+                      <Carousel
+                        ref={(c) => { this._carousel = c; }}
+                        data={this.state.offersData}
+                        renderItem={this.renderSliderImage}
+                        sliderWidth={viewportWidth}
+                        sliderHeight={viewportWidth}
+                        itemWidth={viewportWidth}
+                        inactiveSlideOpacity={0}
+                      />
                     </View>
+                  </View>
                 </View>
-            </View>
+              </View>
+            }
 
             <View style={{ margin: 15, marginTop: 20 }}>
               <Text
@@ -454,7 +456,7 @@ redirectTo=(item)=>{
                     }}>
                     <View
                       style={[styles.productView,
-                        item.ecom_aca_product_units[0].ecom_ca_wallet == null ? styles.redeem:''
+                      item.ecom_aca_product_units[0].ecom_ca_wallet == null ? styles.redeem : ''
                       ]}
                     // onPress={() =>
                     //   this.props.navigation.navigate('OrderHistoryDetail')
@@ -509,7 +511,6 @@ redirectTo=(item)=>{
                           </Text>
                           {/* <HTMLView value={item.shortDescription} /> */}
                         </View>
-
                         <View
                           style={{
                             marginTop: 1,
@@ -554,14 +555,14 @@ redirectTo=(item)=>{
                         </View>
                       </View>
                       <View style={{
-                        flexDirection:'column',
-                        justifyContent:'space-between'
+                        flexDirection: 'column',
+                        justifyContent: 'space-between'
                       }}>
-                        <View style={{ 
-                          alignSelf:'flex-end',
-                          marginHorizontal:10,
-                          marginVertical:5
-                       }}>
+                        <View style={{
+                          alignSelf: 'flex-end',
+                          marginHorizontal: 10,
+                          marginVertical: 5
+                        }}>
                           <TouchableOpacity
                             onPress={() => { this.addCart(item.ecom_aca_product_units[0].productUnitId) }}
                             key={index}
@@ -577,7 +578,7 @@ redirectTo=(item)=>{
                         {item.ecom_aca_product_units[0].ecom_ca_wallet != null &&
                           <View
                             style={{
-                              marginHorizontal:10,marginVertical:5,
+                              marginHorizontal: 10, marginVertical: 5,
                             }}>
                             <TouchableOpacity
                               onPress={
@@ -723,10 +724,10 @@ const styles = StyleSheet.create({
     height: 241,
   },
   productView: {
-    backgroundColor:ThemeColors.CLR_WHITE,
+    backgroundColor: ThemeColors.CLR_WHITE,
     //height: 100,
     //width: '96%',
-    margin:20,
+    margin: 20,
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
@@ -737,8 +738,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 10,
   },
-  redeem:{
-    width:'100%'
+  redeem: {
+    width: '100%'
   },
   productInnerView: {
     backgroundColor: '#fff',
@@ -746,7 +747,7 @@ const styles = StyleSheet.create({
     width: '26%',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius:15
+    borderRadius: 15
   },
   favContainer: {
     width: 40,
