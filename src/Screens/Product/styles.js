@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     filterView: {
         backgroundColor: '#fff',
         //height: 45,
-        width: '50%',
+        width: '100%',
         justifyContent:'center',
         shadowColor: '#000',
         shadowOffset: { width: 1, height: 0 },

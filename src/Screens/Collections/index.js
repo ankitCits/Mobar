@@ -31,6 +31,9 @@ import NoContentFound from '../../Component/NoContentFound';
 import { authErrorMsg, stripePublishableKey, UnAuthorizedUser } from '../../config';
 import { isLoggedIn, showAlert, showToaster } from '../../api/func';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { connectActionSheet } from '@expo/react-native-action-sheet';
+const options = ['Sort By Date', 'Sort By Quantity', 'Cancel'];
+const cancelButtonIndex = 2;
 class Collections extends Component {
   constructor(props) {
     super(props);
@@ -95,10 +98,14 @@ class Collections extends Component {
     await this.fetchData();
   }
 
-  fetchData = async () => {
+  fetchData = async (dateSort='',qtySort='') => {
     try {
       this.setState({ isLoading: true });
-      const response = await fetchCollectionData();
+      const data={
+          validDateSort : dateSort,
+          availableQtySort:qtySort
+      };
+      const response = await fetchCollectionData(data);
       response.response.result.data.map((item) => {
         item.qty = 0
       });
@@ -393,6 +400,23 @@ class Collections extends Component {
     }
   }
 
+  sortBy = () => {
+    this.props.showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+      },
+      (buttonIndex) => {
+        console.log("buttonIndex > ",buttonIndex);
+        if (buttonIndex === 0) { // short by date or DESC
+          this.fetchData('DESC','');
+        } else if (buttonIndex === 1) { // short by date or ASC
+          this.fetchData('','ASC');
+        }
+      }
+    );
+  };
+
   render() {
 
     return (
@@ -408,18 +432,22 @@ class Collections extends Component {
             <ThemeFullPageLoader />
           ) : (
             <>
-              <View style={styles.filterRow}>
+              <TouchableOpacity 
+               onPress={()=>this.sortBy()}
+              style={styles.filterRow}>
                 <View style={styles.filterView}>
                   <View
                     style={styles.sort}>
-                    <TouchableOpacity style={styles.filterInnerView}>
+                    <TouchableOpacity 
+                    onPress={()=>this.sortBy()}
+                    style={styles.filterInnerView}>
                       <Icon name="swap-vert" size={28} color="#4D4F50" />
                       <Text style={styles.filterInnerText}>Sort</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
 
-                <View style={styles.filterView}>
+                {/* <View style={styles.filterView}>
                   <View
                     style={styles.filter}>
                     <TouchableOpacity style={styles.filterInnerView}>
@@ -427,8 +455,8 @@ class Collections extends Component {
                       <Text style={styles.filterInnerText}>Filter</Text>
                     </TouchableOpacity>
                   </View>
-                </View>
-              </View>
+                </View> */}
+              </TouchableOpacity>
 
               {/* </View> */}
               {this.state.data != null && this.state.data.length > 0 ?
@@ -875,7 +903,7 @@ const styles = StyleSheet.create({
   filterView: {
     backgroundColor: '#fff',
     height: 50,
-    width: '50%',
+    width: '100%',
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 0 },
     shadowOpacity: 0.4,
@@ -886,10 +914,10 @@ const styles = StyleSheet.create({
 
   },
   sort: {
-    margin: 12,
+    marginVertical: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
   },
   filterInnerView: {
     flexDirection: 'row',
@@ -1159,4 +1187,7 @@ function mapStateToProps(state) {
   let redux = state;
   return { redux };
 }
-export default connect(mapStateToProps, mapDispatchToProps)(Collections);
+
+const connectedApp = connectActionSheet(Collections);
+
+export default connect(mapStateToProps, mapDispatchToProps)(connectedApp);

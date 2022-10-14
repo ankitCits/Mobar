@@ -291,10 +291,7 @@ export const fetchProductDetails = (postData) => {
 }
 
 export const fetchProductData = (postData) => {
-    const data = JSON.stringify({
-        Keyword: postData.searchText,
-        categorys: postData.ids,
-    });
+    const data = JSON.stringify(postData);
     return new Promise(async (resolve, reject) => {
         const token = await getAccessToken(token);
         const myHeaders = new Headers();
@@ -322,17 +319,14 @@ export const fetchProductData = (postData) => {
     })
 }
 
-export const fetchCollectionData = () => {
+export const fetchCollectionData = (payload) => {
     return new Promise(async (resolve, reject) => {
         const token = await getAccessToken(token);
         const myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
         myHeaders.append('A_Key', A_KEY);
         myHeaders.append('Token', `${token}`);
-        const data = JSON.stringify({
-            validDateSort : "DESC",
-            availableQtySort : "ASC"
-        });
+        const data = JSON.stringify(payload);
         const requestOptions = {
             method: 'POST',
             headers: myHeaders,

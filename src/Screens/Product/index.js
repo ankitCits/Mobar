@@ -19,8 +19,10 @@ import styles from './styles';
 import ProductCard from '../../Component/ProductCard';
 import { fetchProductData } from '../../api/product';
 import { showToaster } from '../../api/func';
+import { connectActionSheet } from '@expo/react-native-action-sheet';
 const numColumns = 2;
-
+const options = ['Sort By Price', 'Sort By Unit Quantity', 'Cancel'];
+const cancelButtonIndex = 2;
 class Product extends Component {
   constructor(props) {
     super(props);
@@ -71,12 +73,14 @@ class Product extends Component {
       });
   };
 
-  getProductList = async (text='') => {
+  getProductList = async (text='',byPrice="",byQty="") => {
     this.setState({ loader: true });
     try {
       const postData = {
         searchText: text,
-        ids: [this.state.categoryList.data[this.state.itemIndex].categoryId]
+        ids: [this.state.categoryList.data[this.state.itemIndex].categoryId],
+        srotByPrice : byPrice,
+        srotByUnitQty : byQty
       }
       const prodData = await fetchProductData(postData);
       this.setState({
@@ -152,8 +156,26 @@ class Product extends Component {
     );
   }
 
+  sortBy = () => {
+    console.log("called");
+    this.props.showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+      },
+      (buttonIndex) => {
+        console.log("buttonIndex > ",buttonIndex);
+        if (buttonIndex === 0) { // short by Price or DESC
+          this.getProductList('','DESC','');
+        } else if (buttonIndex === 1) { // short by Unit Qty or ASC
+          this.getProductList('','','ASC');
+        }
+      }
+    );
+  };
+
   onSearch = (text) => {
-    this.getProductList(text);
+    this.getProductList(text,'','');
   }
 
   render() {
@@ -209,21 +231,16 @@ class Product extends Component {
                 </TouchableOpacity>
               </View>
             </View>
-            {/* <View style={{ flexDirection: 'row' }}>
+            <TouchableOpacity onPress={()=>this.sortBy()}
+             style={{ flexDirection: 'row' }}>
               <View style={styles.filterView}>
-                  <TouchableOpacity style={styles.filterInnerView}>
+                  <TouchableOpacity onPress={()=>this.sortBy()} style={styles.filterInnerView}>
                     <Icon name="swap-vert" size={28} color="#4D4F50" />
                     <Text style={styles.filterInnerText}>Sort</Text>
                   </TouchableOpacity>
               
               </View>
-              <View style={styles.filterView}>
-                  <TouchableOpacity style={styles.filterInnerView}>
-                    <Icon name="filter-list-alt" size={24} color="#4D4F50" />
-                    <Text style={styles.filterInnerText}>Filter</Text>
-                  </TouchableOpacity>
-              </View>
-            </View> */}
+            </TouchableOpacity>
         
 
           {this.state.loader ? (
@@ -292,4 +309,6 @@ function mapStateToProps(state) {
   return { redux };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Product);
+const connectedApp = connectActionSheet(Product);
+
+export default connect(mapStateToProps, mapDispatchToProps)(connectedApp);
