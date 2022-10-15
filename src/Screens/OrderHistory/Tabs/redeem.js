@@ -84,7 +84,7 @@ export default class Redeems extends Component {
                 <View style={styles.shopName}>
                   <Text
                     style={styles.productText}>
-                    Redeemed On : {moment(this.state.data.redeemDate).format('dd-MMM-yyyy hh:mm')}
+                    Redeemed On : {moment(this.state.data.redeemDate).format('DD-MMM-YYYY hh:mm')}
                   </Text>
                 </View>
 
