@@ -56,7 +56,7 @@ class Promotions extends Component {
 
   renderPromotion = (item, index) => {
    return (
-    <View style={{ marginHorizontal: 15, marginTop: 10 }}>
+    <View style={{ marginHorizontal: 15 }}>
       <PromotionCard navigation={this.props.navigation} index={index} item={item} hostUrl={this.state.hostUrl} />
     </View>
   );
@@ -82,6 +82,9 @@ class Promotions extends Component {
           name={'Promotions'}
           onClick={() => this.props.navigation.goBack()}
         />
+        <View style={{
+          marginVertical:13,
+        }}>
         <FlatList
           data={this.state.promotion}
           keyExtractor={(item, index) => index.toString()}
@@ -91,6 +94,7 @@ class Promotions extends Component {
           }
         //ListFooterComponent={this.footerComponent()}
         />
+        </View>
       </SafeAreaView>
     );
   }

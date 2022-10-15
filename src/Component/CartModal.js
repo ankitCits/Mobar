@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   cartModalHeader: {
-    paddingVertical: 7,
+    paddingTop: 10,
     flexDirection: "row",
     justifyContent: "space-between",
   },
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   },
   cartModalBody: {
     flexDirection: 'row',
-    paddingBottom: 15
+    paddingVertical: 30
   },
   modalTextDetail: {
     fontFamily: FontFamily.TAJAWAL_REGULAR,

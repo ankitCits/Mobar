@@ -47,6 +47,7 @@ class ComboDetails extends Component {
             }
             const res = await fetchComboDetailsById(data);
             this.setState({ data: res.response.result.comboDatas, hostUrl: res.response.result.hostUrl })
+            console.log("state product > ",this.state.data.ecom_ac_products);
         } catch (error) {
             console.log("ComboDetails > getComboDetailsById > catch >", error);
             showToaster(error, 'TOP');
@@ -180,6 +181,54 @@ class ComboDetails extends Component {
                                                     </Text>
                                                 </View>
                                             </View>
+                                            {
+                                                this.state.data.ecom_ac_products.length > 0 &&
+                                                this.state.data.ecom_ac_products.map((item, index) =>
+                                                (
+                                                <View
+                                                style={{
+                                                    flexDirection:'row',
+                                                    backgroundColor:ThemeColors.CLR_WHITE,
+                                                    borderRadius:10,
+                                                    elevation:5,
+                                                    padding:5,
+                                                    marginVertical:10,
+
+                                                }}
+                                                 key={index}>
+                                                    <View
+                                                    style={{
+                                                        margin:5,
+                                                        borderTopLeftRadius:10,
+                                                        borderTopRightRadius:10,
+                                                    }}>
+                                                        <Image
+                                                            style={{
+                                                                width: 65,
+                                                                height: 65
+                                                            }}
+                                                            source={{
+                                                                uri: this.state.hostUrl + item.images
+                                                            }}
+                                                            defaultSource={images.defaultImg}
+                                                        />
+                                                    </View>
+                                                    <View>
+                                                    <View>
+                                                       <Text style={{
+                                                        fontSize:17,
+                                                        fontWeight:'700'
+                                                       }}>{item.name}</Text> 
+                                                    </View>
+                                                    <View style={{
+                                                        width:'95%'
+                                                    }}>
+                                                    <HTMLView value={item.shortDescription} />
+                                                    </View>
+                                                    </View>
+                                                </View>
+                                                ))
+                                            }
                                             {/* <HTMLView value={this.state.data.comboContent} /> */}
                                             <View style={styles.cartBtnContainer}>
 
@@ -312,6 +361,7 @@ const styles = StyleSheet.create({
     cartBtnContainer: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
+        marginTop:10,
     },
     cartText: {
         fontSize: 15,

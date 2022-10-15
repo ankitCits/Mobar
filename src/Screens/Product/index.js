@@ -35,7 +35,9 @@ class Product extends Component {
       categoryData: null,
       itemIndex: (this.props.route.params && this.props.route.params.categoryIdx.key) ? this.props.route.params.categoryIdx.key : 0,
       innerLoader: false,
-      searchText: ''
+      searchText: '',
+      sort:'ASC',
+      deSort:'DESC'
     };
   }
 
@@ -73,14 +75,14 @@ class Product extends Component {
       });
   };
 
-  getProductList = async (text='',byPrice="",byQty="") => {
+  getProductList = async (text='',byPrice="",byName="") => {
     this.setState({ loader: true });
     try {
       const postData = {
         Keyword: text,
         categorys: [this.state.categoryList.data[this.state.itemIndex].categoryId],
         srotByPrice : byPrice,
-        srotByUnitQty : byQty
+        srotByName : byName
       }
       const prodData = await fetchProductData(postData);
       this.setState({
@@ -156,21 +158,32 @@ class Product extends Component {
     );
   }
 
-  sortBy = () => {
-    this.props.showActionSheetWithOptions(
-      {
-        options,
-        cancelButtonIndex,
-      },
-      (buttonIndex) => {
-        console.log("buttonIndex > ",buttonIndex);
-        if (buttonIndex === 0) { // short by Price or DESC
-          this.getProductList('','DESC','');
-        } else if (buttonIndex === 1) { // short by Unit Qty or ASC
-          this.getProductList('','','ASC');
-        }
-      }
-    );
+  sortBy = (type) => {
+    console.log("type > ",type);
+    if (this.state.sort == 'ASC') {
+      this.setState({ sort: 'DESC' });
+    } else {
+      this.setState({ sort: 'ASC' });
+    }
+    console.log("sort > ",this.state.sort);
+    if(type == "Price") 
+      this.getProductList('',this.state.sort,'');
+    else
+      this.getProductList('','',this.state.sort);
+    // this.props.showActionSheetWithOptions(
+    //   {
+    //     options,
+    //     cancelButtonIndex,
+    //   },
+    //   (buttonIndex) => {
+    //     console.log("buttonIndex > ",buttonIndex);
+    //     if (buttonIndex === 0) { // short by Price or DESC
+    //       this.getProductList('','DESC','');
+    //     } else if (buttonIndex === 1) { // short by Unit Qty or ASC
+    //       this.getProductList('','','ASC');
+    //     }
+    //   }
+    // );
   };
 
   onSearch = (text) => {
@@ -230,16 +243,30 @@ class Product extends Component {
                 </TouchableOpacity>
               </View>
             </View>
-            <TouchableOpacity onPress={()=>{this.state.categoryData && this.state.categoryData.data.length > 0 ? this.sortBy():''}}
-             style={{ flexDirection: 'row' }}>
-              <View style={styles.filterView}>
-                  <TouchableOpacity onPress={()=>{this.state.categoryData && this.state.categoryData.data.length > 0 ? this.sortBy():''}} style={styles.filterInnerView}>
+            <View style={{
+              flexDirection:'row',
+            }}>
+              <TouchableOpacity
+              onPress={()=>{this.state.categoryData && this.state.categoryData.data.length > 0 ? this.sortBy('Price'):''}}
+               style={styles.filterView}>
+                  <View style={{
+                    flexDirection:'row'
+                  }}>
                     <Icon name="swap-vert" size={28} color="#4D4F50" />
-                    <Text style={styles.filterInnerText}>Sort</Text>
-                  </TouchableOpacity>
-              
-              </View>
-            </TouchableOpacity>
+                    <Text style={styles.filterInnerText}>Sort By Price</Text>
+                  </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+              onPress={()=>{this.state.categoryData && this.state.categoryData.data.length > 0 ? this.sortBy('Alphabetic'):''}}
+               style={styles.filterView}>
+                  <View style={{
+                    flexDirection:'row'
+                  }}>
+                    <Icon name="swap-vert" size={28} color="#4D4F50" />
+                    <Text style={styles.filterInnerText}>Sort By A to Z</Text>
+                  </View>
+              </TouchableOpacity>
+            </View>
         
 
           {this.state.loader ? (

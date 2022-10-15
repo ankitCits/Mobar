@@ -49,7 +49,7 @@ export default class PromotionCard extends React.Component {
                 style={{
                   borderRadius: 10,
                   width:'100%',
-                  height: 200
+                  height: 175
                 }}
                 source={{ uri: `${this.props.hostUrl + item.image}` }}
               />
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     alignSelf: 'center',
     flexDirection: 'column',
-    marginVertical: 15,
+    marginVertical: 10,
   },
   productInnerView: {
     //width: '28%',

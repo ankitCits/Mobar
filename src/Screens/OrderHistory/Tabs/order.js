@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React, { Component } from 'react';
 import {
   Text,
@@ -76,7 +77,7 @@ export default class Order extends Component {
                                             color: '#4D4F50',
                                             fontWeight: '400',
                                         }}>
-                                        Purchased On : {this.formatDDMMM(this.state.data.orderDate)}
+                                        Purchased On : {moment(this.state.data.orderDate).format('dd-MMM-yyyy')}
                                     </Text>
                                 </View>
                                 {this.state.data.couponCode ? 

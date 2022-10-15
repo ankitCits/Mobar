@@ -53,6 +53,7 @@ class Collections extends Component {
       modalCartItem: null,
       item: null,
       type: 'Product',
+      sort:'ASC',
       index: null,
       selectedQty: {
         name: 'name',
@@ -397,21 +398,31 @@ class Collections extends Component {
     }
   }
 
-  sortBy = () => {
-    this.props.showActionSheetWithOptions(
-      {
-        options,
-        cancelButtonIndex,
-      },
-      (buttonIndex) => {
-        console.log("buttonIndex > ",buttonIndex);
-        if (buttonIndex === 0) { // short by date or DESC
-          this.fetchData('DESC','');
-        } else if (buttonIndex === 1) { // short by date or ASC
-          this.fetchData('','ASC');
-        }
-      }
-    );
+  sortBy = (type) => {
+    console.log("sort By > type ",type,this.state.sort);
+    if(this.state.sort == 'ASC')
+      this.setState({sort:'DESC'});
+    else
+      this.setState({sort:'ASC'});
+
+    if(type=='Qty')
+      this.fetchData('',this.state.sort);
+    else
+      this.fetchData(this.state.sort,'');
+    // this.props.showActionSheetWithOptions(
+    //   {
+    //     options,
+    //     cancelButtonIndex,
+    //   },
+    //   (buttonIndex) => {
+    //     console.log("buttonIndex > ",buttonIndex);
+    //     if (buttonIndex === 0) { // short by date or DESC
+    //       this.fetchData('DESC','');
+    //     } else if (buttonIndex === 1) { // short by date or ASC
+    //       this.fetchData('','ASC');
+    //     }
+    //   }
+    // );
   };
 
   render() {
@@ -432,21 +443,26 @@ class Collections extends Component {
             {this.state.data != null && this.state.data.length > 0 ?
               (
                 <>
-              <TouchableOpacity 
-               onPress={()=>this.sortBy()}
-              style={styles.filterRow}>
-                <View style={styles.filterView}>
-                  <View
-                    style={styles.sort}>
-                    <TouchableOpacity 
-                    onPress={()=>this.sortBy()}
-                    style={styles.filterInnerView}>
-                      <Icon name="swap-vert" size={28} color="#4D4F50" />
-                      <Text style={styles.filterInnerText}>Sort</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </TouchableOpacity>
+                      <View style={{
+                        flexDirection: 'row',
+                      }}>
+                        <TouchableOpacity
+                          onPress={() => this.sortBy('Qty')}
+                          style={styles.filterView}>
+                          <TouchableOpacity onPress={() => this.sortBy('Qty') } style={styles.filterInnerView}>
+                            <Icon name="swap-vert" size={28} color="#4D4F50" />
+                            <Text style={styles.filterInnerText}>Available Quantity</Text>
+                          </TouchableOpacity>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() => this.sortBy('Date')}
+                          style={styles.filterView}>
+                          <View onPress={() => this.sortBy('Date')} style={styles.filterInnerView}>
+                            <Icon name="swap-vert" size={28} color="#4D4F50" />
+                            <Text style={styles.filterInnerText}>Validity Date </Text>
+                          </View>
+                        </TouchableOpacity>
+                      </View>
                 <FlatList
                   nestedScrollEnabled={true}
                   showsHorizontalScrollIndicator={false}
@@ -890,14 +906,17 @@ const styles = StyleSheet.create({
   },
   filterView: {
     backgroundColor: '#fff',
-    height: 50,
-    width: '100%',
+    //height: 50,
+    flexDirection:'row',
+    width: '50%',
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 0 },
     shadowOpacity: 0.4,
+    justifyContent:'center',
     shadowRadius: 3,
     elevation: 5,
     borderTopWidth: 0,
+    paddingVertical:6,
     marginBottom: 10
 
   },

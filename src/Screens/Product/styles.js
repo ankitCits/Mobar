@@ -35,7 +35,8 @@ const styles = StyleSheet.create({
     filterView: {
         backgroundColor: '#fff',
         //height: 45,
-        width: '100%',
+        width: '50%',
+        flexDirection:'row',
         justifyContent:'center',
         shadowColor: '#000',
         shadowOffset: { width: 1, height: 0 },
@@ -46,8 +47,8 @@ const styles = StyleSheet.create({
         borderTopWidth: 0,
     },
     filterInnerView: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        //flexDirection: 'row',
+        justifyContent: 'center',
         alignSelf:'center',
         justifyContent:'center'
     },

@@ -51,11 +51,15 @@ class ProductCard extends Component {
                     comboId: 0,
                     qty: 1,
                 };
-                const response = await addToCart(sendData);
+                const res = await addToCart(sendData);
+                this.state.data.ecom_aca_product_units[0].ecom_ba_cart = res.response.result.data[0];
+                console.log("ProductCard > response > ",res.response.result.data[0]);
                 this.setState({
                     modalVisible: true,
+                    
                     selectedQty: {
                         type: 1,
+                        data:this.state.data,
                         name: this.state.data.name,
                         unit: this.state.data.ecom_aca_product_units[0].unitQty + this.state.data.ecom_aca_product_units[0].unitType,
                         qty: this.state.cart + 1
@@ -290,8 +294,8 @@ class ProductCard extends Component {
                         navigation={this.props.navigation}
                         modalVisible={this.state.modalVisible}
                         onModalChange={(type, isOpen) =>
-                            this.state.data.ecom_aca_product_units[0].ecom_ba_cart
-                                ?
+                            this.state.data.ecom_aca_product_units[0].ecom_ba_cart && 
+                            this.state.cart ?
                                 this.updateCart(type, isOpen) : type == 1 ? this.addCart() : this.setState({ modalVisible: false })}
                         onModalClose={this.onCloseModal} />
                 }

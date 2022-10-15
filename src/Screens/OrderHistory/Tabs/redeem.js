@@ -20,16 +20,12 @@ export default class Redeems extends Component {
       index: props.index,
       url: props.hostUrl
     };
-    console.log("state dAta > ", this.state.data);
   }
 
   render() {
     return (
       <View style={styles.redeemContainer}>
         <ScrollView>
-
-
-
           <>
             <View style={styles.header} key={this.state.index}>
               <Text
@@ -84,6 +80,13 @@ export default class Redeems extends Component {
                     </Text>
                   </View>
                 }
+
+                <View style={styles.shopName}>
+                  <Text
+                    style={styles.productText}>
+                    Redeemed On : {moment(this.state.data.redeemDate).format('dd-MMM-yyyy hh:mm')}
+                  </Text>
+                </View>
 
                 <View style={styles.shopName}>
                   <Text
@@ -235,13 +238,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   right: {
-    flexDirection: 'column',
-    justifyContent: 'space-between'
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignSelf:'flex-end',
   },
   closeContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginHorizontal: 5,
+    //marginHorizontal: 5,
   },
   row: {
     flexDirection: 'row',
@@ -249,11 +253,11 @@ const styles = StyleSheet.create({
   redeemBtnContainer: {
     flexDirection: 'row',
     backgroundColor: '#B51D36',
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 10,
     alignSelf: 'flex-end',
-    justifyContent: 'flex-end'
+    //justifyContent: 'flex-end'
   },
   redeemBtnText: {
     fontFamily: FontFamily.TAJAWAL_REGULAR,
