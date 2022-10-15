@@ -36,8 +36,7 @@ class Product extends Component {
       itemIndex: (this.props.route.params && this.props.route.params.categoryIdx.key) ? this.props.route.params.categoryIdx.key : 0,
       innerLoader: false,
       searchText: '',
-      sort:'ASC',
-      deSort:'DESC'
+      sort:'DESC',
     };
   }
 

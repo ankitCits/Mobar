@@ -399,7 +399,6 @@ class Collections extends Component {
   }
 
   sortBy = (type) => {
-    console.log("sort By > type ",type,this.state.sort);
     if(this.state.sort == 'ASC')
       this.setState({sort:'DESC'});
     else
@@ -451,7 +450,7 @@ class Collections extends Component {
                           style={styles.filterView}>
                           <TouchableOpacity onPress={() => this.sortBy('Qty') } style={styles.filterInnerView}>
                             <Icon name="swap-vert" size={28} color="#4D4F50" />
-                            <Text style={styles.filterInnerText}>Available Quantity</Text>
+                            <Text style={styles.filterInnerText}>Sort by A to Z</Text>
                           </TouchableOpacity>
                         </TouchableOpacity>
                         <TouchableOpacity
@@ -459,7 +458,7 @@ class Collections extends Component {
                           style={styles.filterView}>
                           <View onPress={() => this.sortBy('Date')} style={styles.filterInnerView}>
                             <Icon name="swap-vert" size={28} color="#4D4F50" />
-                            <Text style={styles.filterInnerText}>Validity Date </Text>
+                            <Text style={styles.filterInnerText}>Sort by Date </Text>
                           </View>
                         </TouchableOpacity>
                       </View>
