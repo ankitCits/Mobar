@@ -295,7 +295,7 @@ class Collections extends Component {
               <View>
                 <Text
                   style={[styles.validDate, styles.itemDes]}>
-                  Valid until: {item.validTillDate}
+                  Valid until: {moment(item.validTillDate).format('DD MMM YYYY')}
                 </Text>
               </View>
             </View>
