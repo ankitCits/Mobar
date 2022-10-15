@@ -54,13 +54,10 @@ export default class Order extends Component {
                                 />
                             </View>
 
-                            <View style={{ margin: 5, marginLeft: 10 }}>
+                            <View style={{marginVertical:5,paddingHorizontal:10,width:'50%',flexDirection:'column' }}>
                                 <View
                                     style={{
-                                        flexDirection: 'row',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
-                                        marginTop: 5,
+                                        
                                     }}>
                                     <Text
                                         style={{
@@ -114,7 +111,10 @@ export default class Order extends Component {
                                 }
                             </View>
 
-                            <View style={{ marginTop: 5, paddingLeft: 30 }}>
+                            <View style={{ 
+                              borderRadius:10,
+                              
+                            }}>
                                 <Text
                                     style={{
                                         fontSize: 12,
@@ -139,13 +139,10 @@ export default class Order extends Component {
                                 <View
                                     style={{
                                         backgroundColor: '#26B90E',
-                                        // height:30,
-                                        // width:90,
-                                        // right:15,
                                         padding: 5,
-                                        marginTop: 10,
-                                        marginLeft: 5,
+                                        marginTop:10,
                                         borderRadius: 10,
+                                        flexDirection:'column',
                                     }}>
                                     <Text
                                         style={{
@@ -205,9 +202,8 @@ redeemContainer: {
     color: '#ACACAC'
   },
   subContainer: {
-    backgroundColor: '#fff',
-    //    height: 96,
     width: '95%',
+    backgroundColor:ThemeColors.CLR_WHITE,
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
@@ -217,7 +213,6 @@ redeemContainer: {
     justifyContent: 'space-between',
     flexDirection: 'row',
     marginHorizontal: 10
-    //margin: 10,
   },
   productContainer: {
     marginVertical: 15

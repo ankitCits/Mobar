@@ -69,7 +69,7 @@ class Collections extends Component {
   }
 
   async componentDidMount() {
-
+    this.state._unsubscribe = this.props.navigation.addListener('focus', async () => {
     if (await isLoggedIn()) {
       async function initialize() {
         await initStripe({
@@ -77,21 +77,19 @@ class Collections extends Component {
         });
       }
       initialize().catch("collection > componentDidMount > catch", console.error);
-      this.props.navigation.addListener('focus', () => {
+        console.log("focus");
         this.fetchData();
         this.fetchActiveDateAmount();
-      });
+      
     } else {
       this.setState({ isLoading: false });
       showToaster(UnAuthorizedUser);
     }
+  });
   }
 
-  componentWillUnmount(){
-   
-  }
-
-  componentDidUpdate() {
+  componentWillUnmount() {
+    this.state._unsubscribe();
   }
 
   onRefresh = async () => {
@@ -114,6 +112,7 @@ class Collections extends Component {
         data: response.response.result.data,
         isLoading: false,
       });
+      console.log("collection > state",this.state.data);
     } catch (error) {
       console.log("collection > catch > error", error);
       this.setState({ isLoading: false });

@@ -77,8 +77,8 @@ class Product extends Component {
     this.setState({ loader: true });
     try {
       const postData = {
-        searchText: text,
-        ids: [this.state.categoryList.data[this.state.itemIndex].categoryId],
+        Keyword: text,
+        categorys: [this.state.categoryList.data[this.state.itemIndex].categoryId],
         srotByPrice : byPrice,
         srotByUnitQty : byQty
       }
