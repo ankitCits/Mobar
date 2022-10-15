@@ -1,24 +1,32 @@
 import React, { Component } from 'react';
 import {
-    ImageBackground,
-    StyleSheet,
     Text,
     View,
     Image,
     TouchableOpacity
 } from 'react-native';
 import images from '../assets/images';
+import LinearGradient from 'react-native-linear-gradient';
 class ComboOfferCard extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            colors: [
+                { color: ['#fff', '#FFC599', '#FFAE57'] },
+                { color: ['#fff', '#C599FF', '#E957FF'] },
+                { color: ['#fff', '#FFFF99', '#F8FF57'] },
+                { color: ['#fff', '#FF9999', '#FF5757'] },
+            ]
+        }
     }
+    // https://mycolor.space/gradient3?ori=to+right+top&hex=%23D16BA5&hex2=%2386A8E7&hex3=%235FFBF1&submit=submit
     render() {
         const {
             item,
             hostUrl,
-            navigation,
             index
-        } = this.props
+        } = this.props;
+        const currColor = this.state.colors[index % 4]
         return (
             <>
                 <TouchableOpacity
@@ -32,12 +40,13 @@ class ComboOfferCard extends Component {
                         marginHorizontal: 10,
                         marginBottom: 30,
                     }}>
-                    <ImageBackground
+                    {/* <ImageBackground
                         style={{ alignSelf: 'center', }}
                         resizeMode={'cover'}
                         source={images.combo}
                         defaultSource={images.combo}
-                    >
+                    > */}
+                    <LinearGradient colors={currColor.color}>
                         <View
                             style={{
                                 flexDirection: 'row',
@@ -135,7 +144,8 @@ class ComboOfferCard extends Component {
                                 )}
                             </View>
                         </View>
-                    </ImageBackground>
+                    </LinearGradient>
+                    {/* </ImageBackground> */}
 
                 </TouchableOpacity>
             </>
@@ -143,6 +153,3 @@ class ComboOfferCard extends Component {
     }
 }
 export default ComboOfferCard;
-const styles = StyleSheet.create({
-
-});
