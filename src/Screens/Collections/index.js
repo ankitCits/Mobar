@@ -77,7 +77,6 @@ class Collections extends Component {
         });
       }
       initialize().catch("collection > componentDidMount > catch", console.error);
-        console.log("focus");
         this.fetchData();
         this.fetchActiveDateAmount();
       
@@ -112,7 +111,6 @@ class Collections extends Component {
         data: response.response.result.data,
         isLoading: false,
       });
-      console.log("collection > state",this.state.data);
     } catch (error) {
       console.log("collection > catch > error", error);
       this.setState({ isLoading: false });
@@ -431,6 +429,9 @@ class Collections extends Component {
             <ThemeFullPageLoader />
           ) : (
             <>
+            {this.state.data != null && this.state.data.length > 0 ?
+              (
+                <>
               <TouchableOpacity 
                onPress={()=>this.sortBy()}
               style={styles.filterRow}>
@@ -445,20 +446,7 @@ class Collections extends Component {
                     </TouchableOpacity>
                   </View>
                 </View>
-
-                {/* <View style={styles.filterView}>
-                  <View
-                    style={styles.filter}>
-                    <TouchableOpacity style={styles.filterInnerView}>
-                      <Icon name="filter-list-alt" size={24} color="#4D4F50" />
-                      <Text style={styles.filterInnerText}>Filter</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View> */}
               </TouchableOpacity>
-
-              {/* </View> */}
-              {this.state.data != null && this.state.data.length > 0 ?
                 <FlatList
                   nestedScrollEnabled={true}
                   showsHorizontalScrollIndicator={false}
@@ -471,7 +459,8 @@ class Collections extends Component {
                   refreshControl={
                     <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
                   }
-                />
+                /></>
+                )
                 : (<NoContentFound title="No Data Found" />)
               }
             </>
