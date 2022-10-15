@@ -39,7 +39,6 @@ class ProductCard extends Component {
             },
             modalVisible: false
         };
-        console.log('saved price > ', this.state.data.ecom_aca_product_units[0].savedPrices);
     }
 
     addCart = async () => {
@@ -217,15 +216,6 @@ class ProductCard extends Component {
                                     style={styles.prodName}>
                                     {this.state.data.name.substring(0, 16)}
                                 </Text>
-                                {/* <Text
-                            style={styles.prodDesText}
-                             >
-                            {this.state.data.shortDescription = this.state.data.shortDescription.substring(3, 1) + '.'}
-                         </Text> */}
-                                <View style={styles.oneLine}>
-                                    <HTMLView value={this.state.data.shortDescription.substring(0, 20) + '..'} />
-                                </View>
-
                                 <Text
                                     style={styles.priceText}>
                                     ${this.state.data.ecom_aca_product_units[0].unitUserPrice}

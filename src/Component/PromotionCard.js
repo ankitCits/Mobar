@@ -47,9 +47,8 @@ export default class PromotionCard extends React.Component {
               <Image
                 resizeMode={'cover'}
                 style={{
-                  width: 329,
-                  borderTopLeftRadius: 10,
-                  borderTopRightRadius: 10,
+                  borderRadius: 10,
+                  width:'100%',
                   height: 200
                 }}
                 source={{ uri: `${this.props.hostUrl + item.image}` }}
@@ -113,8 +112,8 @@ const styles = StyleSheet.create({
   },
   productInnerView: {
     //width: '28%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    //alignItems: 'center',
+    //justifyContent: 'center',
   },
   details: {
     margin: 5,

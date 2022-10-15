@@ -157,7 +157,6 @@ class Product extends Component {
   }
 
   sortBy = () => {
-    console.log("called");
     this.props.showActionSheetWithOptions(
       {
         options,
@@ -231,10 +230,10 @@ class Product extends Component {
                 </TouchableOpacity>
               </View>
             </View>
-            <TouchableOpacity onPress={()=>this.sortBy()}
+            <TouchableOpacity onPress={()=>{this.state.categoryData && this.state.categoryData.data.length > 0 ? this.sortBy():''}}
              style={{ flexDirection: 'row' }}>
               <View style={styles.filterView}>
-                  <TouchableOpacity onPress={()=>this.sortBy()} style={styles.filterInnerView}>
+                  <TouchableOpacity onPress={()=>{this.state.categoryData && this.state.categoryData.data.length > 0 ? this.sortBy():''}} style={styles.filterInnerView}>
                     <Icon name="swap-vert" size={28} color="#4D4F50" />
                     <Text style={styles.filterInnerText}>Sort</Text>
                   </TouchableOpacity>

@@ -59,6 +59,11 @@ export default class OrderHistory extends Component {
       this.setState({ loader: true })
       const res = await redeemOrderHistory();
       console.log("redeemOrder history", res);
+      if (res.response && res.response.result.data && res.response.result.data.length > 0) {
+        res.response.result.data.map(item => {
+          item.redeemDate = item.date + ' ' + item.time
+        });
+      }
       this.setState({ url: res.response.result.hostUrl, redeemOrders: res.response.result.data, loader: false })
     } catch (error) {
       this.setState({ loader: false });
