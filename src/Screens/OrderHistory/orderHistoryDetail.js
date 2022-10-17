@@ -19,7 +19,8 @@ import HeaderSide from '../Component/HeaderSide';
 import { getAccessToken } from '../../localstorage';
 import FullPageLoader from '../../Component/FullPageLoader';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { showToaster } from '../../api/func';
+import { setDateFormate, showToaster } from '../../api/func';
+import moment from 'moment';
 export default class OrderHistoryDetail extends Component {
   constructor(props) {
     super(props);
@@ -178,7 +179,8 @@ export default class OrderHistoryDetail extends Component {
                 }}>
                 Purchase ID : {this.state.orderHistory.orderNumber}
               </Text>
-              <Text style={styles.innerText}>Date : {this.state.orderHistory.orderDate}</Text>
+              {/* <Text style={styles.innerText}>Date : {moment(this.state.orderHistory.orderDate).format('DD-MMM-YYYY')}</Text> */}
+              <Text style={styles.innerText}>Date : {setDateFormate(this.state.orderHistory.orderDate)}</Text>
             </View>
             <TouchableOpacity
               onPress={() => {
