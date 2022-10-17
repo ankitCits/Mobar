@@ -358,6 +358,7 @@ class Dashboard extends Component {
                                                     shadowOpacity: 0.4,
                                                     shadowRadius: 15,
                                                     borderRadius: 15,
+                                                    marginHorizontal:10,
                                                     elevation: 5,
                                                     alignSelf: 'center',
 
@@ -496,8 +497,6 @@ const styles = StyleSheet.create({
         height: 0,
     },
     promotionsImg: {
-        borderBottomLeftRadius: 15,
-        borderBottomRightRadius: 15,
         width: 360,
         height: 180,
     },

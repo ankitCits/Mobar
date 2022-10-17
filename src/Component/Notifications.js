@@ -9,6 +9,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { setDateFormate } from '../api/func';
 import images from '../assets/images';
 import { FontFamily } from '../Theme/FontFamily';
 
@@ -24,7 +25,7 @@ export default class Notifications extends Component {
       <>
         <View style={styles.container} key={this.props.index}>
           <View style={styles.header} key={this.props.index}>
-            <Text style={styles.title}>{moment(this.props.data.createDate).format('DD-MM-YYYY')}</Text>
+            <Text style={styles.title}>{setDateFormate(this.props.data.createDate,true)}</Text>
           </View>
           <View
             style={styles.body}>

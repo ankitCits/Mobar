@@ -15,7 +15,7 @@ import {
 import HTMLView from 'react-native-htmlview';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { showToaster } from '../../api/func';
+import { setDateFormate, showToaster } from '../../api/func';
 import { redeemOrder } from '../../api/order';
 import { fetchRedeemMixerData, fetchRedeemMoreData } from '../../api/vendor';
 import images from '../../assets/images';
@@ -295,6 +295,11 @@ export default class Redeem extends Component {
         this.setState({ isLoading: true });
         const res = await redeemOrder(payload);
         this.setState({ isLoading: false, modalVisible: true });
+        if (res.response.result && res.response.result.data && res.response.result.data.length > 0) {
+          res.response.result.data.map(item => {
+            item.currentDate = item.date + ' ' + item.time
+          });
+        }
         this.setState({ successOrderData: res.response.result.data });
       }
     } catch (error) {
@@ -858,7 +863,7 @@ export default class Redeem extends Component {
                     </Text>
                     <Text
                       style={styles.redeemDetailsSubText1}>
-                      {moment(new Date()).format('DD MMM YYYY hh:mm A')}
+                      {this.state.successOrderData.length > 0 ? setDateFormate(this.state.successOrderData[0].currentDate,true):''}
                     </Text>
                   </View>
                 </View>
@@ -1272,6 +1277,7 @@ const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: 'center',
+    //marginHorizontal:10,
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
@@ -1451,7 +1457,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.TAJAWAL_REGULAR,
     //top: 20,
     //left: 20,
-    paddingTop: 5,
+    paddingTop: 4,
   },
   redeemDetailsContainer: {
     width: '93%',

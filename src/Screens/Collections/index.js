@@ -29,7 +29,7 @@ import { amountForActiveDate } from '../../api/order';
 import { connect } from 'react-redux';
 import NoContentFound from '../../Component/NoContentFound';
 import { authErrorMsg, stripePublishableKey, UnAuthorizedUser } from '../../config';
-import { isLoggedIn, showAlert, showToaster } from '../../api/func';
+import { isLoggedIn, setDateFormate, showAlert, showToaster } from '../../api/func';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connectActionSheet } from '@expo/react-native-action-sheet';
 const options = ['Sort By Date', 'Sort By Quantity', 'Cancel'];
@@ -234,7 +234,6 @@ class Collections extends Component {
                   {item.ecom_aca_product_unit.ecom_ac_product.name}
                 </Text>
               </View>
-              <Text>({item.ecom_aca_product_unit.unitQty}{item.ecom_aca_product_unit.unitType})</Text>
               <View style={styles.itemDes}>
                 <Text
                   style={styles.qtyText}>
@@ -244,7 +243,7 @@ class Collections extends Component {
               <View>
                 <Text
                   style={[styles.validDate, styles.itemDes]}>
-                  Valid until: {moment(item.validTillDate).format('DD MMM YYYY')}
+                  Valid until: {setDateFormate(item.validTillDate)}
                 </Text>
               </View>
             </View>
@@ -296,7 +295,7 @@ class Collections extends Component {
               <View>
                 <Text
                   style={[styles.validDate, styles.itemDes]}>
-                  Valid until: {moment(item.validTillDate).format('DD MMM YYYY')}
+                  Valid until: {setDateFormate(item.validTillDate)}
                 </Text>
               </View>
             </View>
@@ -421,7 +420,7 @@ class Collections extends Component {
     //       this.fetchData('','ASC');
     //     }
     //   }
-    // );
+    // );  
   };
 
   render() {
@@ -450,7 +449,7 @@ class Collections extends Component {
                           style={styles.filterView}>
                           <TouchableOpacity onPress={() => this.sortBy('Qty') } style={styles.filterInnerView}>
                             <Icon name="swap-vert" size={28} color="#4D4F50" />
-                            <Text style={styles.filterInnerText}>Sort by A to Z</Text>
+                            <Text style={styles.filterInnerText}>Available Quantity</Text>
                           </TouchableOpacity>
                         </TouchableOpacity>
                         <TouchableOpacity
@@ -458,7 +457,7 @@ class Collections extends Component {
                           style={styles.filterView}>
                           <View onPress={() => this.sortBy('Date')} style={styles.filterInnerView}>
                             <Icon name="swap-vert" size={28} color="#4D4F50" />
-                            <Text style={styles.filterInnerText}>Sort by Date </Text>
+                            <Text style={styles.filterInnerText}>Validity Date </Text>
                           </View>
                         </TouchableOpacity>
                       </View>

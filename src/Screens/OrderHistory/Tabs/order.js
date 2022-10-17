@@ -8,6 +8,7 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
+import { setDateFormate } from '../../../api/func';
 import images from '../../../assets/images';
 import { FontFamily } from '../../../Theme/FontFamily';
 import { ThemeColors } from '../../../Theme/ThemeColors';
@@ -15,19 +16,12 @@ import { ThemeColors } from '../../../Theme/ThemeColors';
 export default class Order extends Component {
     constructor(props) {
       super(props);
-      console.log("Props > ",props.items);
       this.state = {
         data:props.items,
         index:props.index,
         url:props.hostUrl
       };
     }
-
-    formatDDMMM = s => {
-      var months = 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' ');
-      var b = s.split(/\D/);
-      return b[2] + ' ' + months[b[1] - 1];
-    };
 
     render() {
         return (
@@ -77,7 +71,7 @@ export default class Order extends Component {
                                             color: '#4D4F50',
                                             fontWeight: '400',
                                         }}>
-                                        Purchased On : {moment(this.state.data.orderDate).format('dd-MMM-yyyy')}
+                                        Purchased On : {setDateFormate(this.state.data.orderDate)}
                                     </Text>
                                 </View>
                                 {this.state.data.couponCode ? 

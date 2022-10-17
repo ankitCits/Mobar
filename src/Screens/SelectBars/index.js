@@ -17,7 +17,8 @@ import { connect } from 'react-redux';
 import ThemeFullPageLoader from '../../Component/ThemeFullPageLoader';
 import NoContentFound from '../../Component/NoContentFound';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { showToaster } from '../../api/func';
+import { setDateFormate, showToaster } from '../../api/func';
+import { ThemeColors } from '../../Theme/ThemeColors';
 
 class SelectBars extends Component {
   constructor(props) {
@@ -264,9 +265,9 @@ class SelectBars extends Component {
                 <View
                   style={{
                     width: '96%',
-                    height: 150,
-                    backgroundColor: '#fff',
-                    marginTop: 20,
+                    //height: 150,
+                    backgroundColor: ThemeColors.CLR_WHITE,
+                    //marginTop: 20,
                     alignSelf: 'center',
                     shadowColor: '#000',
                     shadowOffset: { width: 1, height: 1 },
@@ -278,12 +279,11 @@ class SelectBars extends Component {
                   <View
                     style={{
                       flexDirection: 'row',
-                      height: 150,
                     }}>
                     <View
                       style={{
                         width: '40%',
-                        alignItems: 'center',
+                        justifyContent: 'space-around',
                         alignSelf: 'center',
                       }}>
                       <Image
@@ -321,9 +321,8 @@ class SelectBars extends Component {
 
                       <View
                         style={{
-                          top: 15,
                           flexDirection: 'row',
-                          alignItems: 'center',
+                          alignItems:'center',
                         }}>
                         <Icon
                           name="more-time"
@@ -338,7 +337,7 @@ class SelectBars extends Component {
                             color: '#424242',
                             left: 5,
                           }}>
-                          Valid until: {this.state.collectionWallet.validTillDate}
+                          Valid until: {setDateFormate(this.state.collectionWallet.validTillDate)}
                         </Text>
                       </View>
                     </View>

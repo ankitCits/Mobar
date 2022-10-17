@@ -11,6 +11,7 @@ import images from '../../../assets/images';
 import { FontFamily } from '../../../Theme/FontFamily';
 import { ThemeColors } from '../../../Theme/ThemeColors';
 import moment from 'moment';
+import { setDateFormate } from '../../../api/func';
 
 export default class Redeems extends Component {
   constructor(props) {
@@ -31,9 +32,9 @@ export default class Redeems extends Component {
               <Text
                 style={styles.titleText}
               >{
-                  moment(this.state.data.date).format('DD-MMM-YYYY') == moment(new Date).format('DD-MMM-YYYY') ?
+                  setDateFormate(this.state.data.date) == setDateFormate(new Date) ?
                     'Today' :
-                    moment(this.state.data.date).format('DD-MMM-YYYY')
+                    setDateFormate(this.state.data.date)
                 }</Text>
             </View>
             <TouchableOpacity
@@ -83,8 +84,10 @@ export default class Redeems extends Component {
 
                 <View style={styles.shopName}>
                   <Text
-                    style={styles.productText}>
-                    Redeemed On : {moment(this.state.data.redeemDate).format('DD-MMM-YYYY hh:mm')}
+                    style={[styles.productText,{
+                      fontWeight:'800'
+                    }]}>
+                    Redeemed On : {setDateFormate(this.state.data.redeemDate,true)}
                   </Text>
                 </View>
 
