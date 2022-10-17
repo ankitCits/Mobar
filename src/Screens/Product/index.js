@@ -107,7 +107,7 @@ class Product extends Component {
         marginBottom: 0,
       }}
       onPress={() => {
-        this.setState({ itemIndex: index,sort:'' }, () => { this.getProductList(); });
+        this.setState({ itemIndex: index,sort:'DESC' }, () => { this.getProductList(); });
       }}
     >
       <View
@@ -158,7 +158,9 @@ class Product extends Component {
   }
 
   sortBy = (type) => {
-    this.setState({sort:''});
+    //console.log("state before set",this.state.sort);
+    //this.setState({sort:'ASC'});
+    console.log("state sort",this.state.sort);
     if(type == "Price") {
       this.state.sort == 'ASC' ? this.setState({ sort: 'DESC' }) : this.setState({ sort: 'ASC' });
       this.getProductList('',this.state.sort,'');

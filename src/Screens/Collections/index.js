@@ -54,6 +54,7 @@ class Collections extends Component {
       item: null,
       type: 'Product',
       sort:'ASC',
+      dSort:'DESC',
       index: null,
       selectedQty: {
         name: 'name',
@@ -335,7 +336,6 @@ class Collections extends Component {
   onSelectComboProduct = () => {
     this.setState({ isComboProduct: !this.state.isComboProduct },
       this.props.navigation.navigate('SelectBars', { data: this.state.comboProduct }));
-
   }
 
   onRedeem = (item) => {
@@ -398,14 +398,35 @@ class Collections extends Component {
   }
 
   sortBy = (type) => {
-    this.setState({sort:''});
     if(type=='Qty'){
-      this.state.sort == 'ASC' ?  this.setState({sort:'DESC'}):this.setState({sort:'ASC'});
+      if(this.state.sort == 'ASC')
+      {
+        this.setState({sort:'DESC'});
+      }else{
+        this.setState({sort:'ASC'});
+      }
       this.fetchData('',this.state.sort);
     }
     else{
-      this.state.sort == 'ASC' ?  this.setState({sort:'DESC'}):this.setState({sort:'ASC'});
-      this.fetchData(this.state.sort,'');
+      console.log("Sort >",this.state.sort);
+      // console.log("dSort >",this.state.dSort);
+      // console.log("sort equals to >",this.state.sort == 'DESC');
+      // if(this.state.sort == 'DESC'){
+      //   setTimeout(() => {
+      //     this.setState({dSort:'ASC'});
+      //     console.log("if block > DSort after Set >",this.state.dSort);
+      //   }, 500);
+      // }else{
+      //   this.setState({dSort:'DESC'});
+      //   console.log("else block > DSort after Set >",this.state.dSort);
+      // }
+      if(this.state.dSort == 'ASC')
+      {
+        this.setState({dSort:'DESC'});
+      }else{
+        this.setState({dSort:'ASC'}); 
+      }
+      this.fetchData(this.state.dSort,'');
     }
     // this.props.showActionSheetWithOptions(
     //   {
