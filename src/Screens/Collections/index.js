@@ -398,15 +398,15 @@ class Collections extends Component {
   }
 
   sortBy = (type) => {
-    if(this.state.sort == 'ASC')
-      this.setState({sort:'DESC'});
-    else
-      this.setState({sort:'ASC'});
-
-    if(type=='Qty')
+    this.setState({sort:''});
+    if(type=='Qty'){
+      this.state.sort == 'ASC' ?  this.setState({sort:'DESC'}):this.setState({sort:'ASC'});
       this.fetchData('',this.state.sort);
-    else
+    }
+    else{
+      this.state.sort == 'ASC' ?  this.setState({sort:'DESC'}):this.setState({sort:'ASC'});
       this.fetchData(this.state.sort,'');
+    }
     // this.props.showActionSheetWithOptions(
     //   {
     //     options,

@@ -250,7 +250,6 @@ const styles = StyleSheet.create({
   },
   imageStyle: {
     margin: 5,
-    resizeMode: 'stretch',
     alignItems: 'center',
   },
   InputHeader: {

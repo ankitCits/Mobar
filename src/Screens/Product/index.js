@@ -158,17 +158,14 @@ class Product extends Component {
   }
 
   sortBy = (type) => {
-    console.log("type > ",type);
-    if (this.state.sort == 'ASC') {
-      this.setState({ sort: 'DESC' });
-    } else {
-      this.setState({ sort: 'ASC' });
-    }
-    console.log("sort > ",this.state.sort);
-    if(type == "Price") 
+    this.setState({sort:''});
+    if(type == "Price") {
+      this.state.sort == 'ASC' ? this.setState({ sort: 'DESC' }) : this.setState({ sort: 'ASC' });
       this.getProductList('',this.state.sort,'');
-    else
+    }else{
+      this.state.sort == 'ASC' ? this.setState({ sort: 'DESC' }) : this.setState({ sort: 'ASC' });
       this.getProductList('','',this.state.sort);
+    }
     // this.props.showActionSheetWithOptions(
     //   {
     //     options,

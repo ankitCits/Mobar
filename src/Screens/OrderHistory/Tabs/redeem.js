@@ -174,10 +174,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 10,
     borderRadius: 10,
-    elevation: 5,
+    elevation: 6,
     justifyContent: 'space-between',
     flexDirection: 'row',
-    marginHorizontal: 10
+    marginHorizontal: 10,
+    marginVertical:5,
+
     //margin: 10,
   },
   productContainer: {
@@ -198,7 +200,7 @@ const styles = StyleSheet.create({
   },
   imageAvatar: {
     backgroundColor: '#fff',
-    height: 125,
+    height: 149,
     width: '28%',
     margin: 0,
     padding: 0,

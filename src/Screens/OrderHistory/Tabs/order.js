@@ -33,7 +33,7 @@ export default class Order extends Component {
                                 this.props.navigation.navigate('OrderHistoryDetail', { orderData: this.state.data, hostUrl: this.state.url })
                             }
                         >
-                            <View style={styles.imageContainer}>
+                            <View style={styles.imageContainer} key={this.state.index}>
                                 <Image
                                     style={{
                                         height: 80,
