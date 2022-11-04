@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     },
     filterInnerText: {
         marginLeft: 5,
-        fontSize: 18,
+        fontSize: 16,
         color: '#4D4F50',
     },
     categoryFlatList: {

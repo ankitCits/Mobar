@@ -96,7 +96,7 @@ export default class CategoryCard extends React.Component {
                     style={{
                         marginTop: 28,
                         marginBottom: 30,
-                        marginLeft: 10,
+                        marginLeft: index==0?0:10,
                         width:145,
                         height:147,
                         borderRadius:30,

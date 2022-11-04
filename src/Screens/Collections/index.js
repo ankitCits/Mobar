@@ -469,7 +469,7 @@ class Collections extends Component {
                           onPress={() => this.sortBy('Qty')}
                           style={styles.filterView}>
                           <TouchableOpacity onPress={() => this.sortBy('Qty') } style={styles.filterInnerView}>
-                            <Icon name="swap-vert" size={28} color="#4D4F50" />
+                            <Icon name="swap-vert" size={26} color="#4D4F50" />
                             <Text style={styles.filterInnerText}>Available Quantity</Text>
                           </TouchableOpacity>
                         </TouchableOpacity>
@@ -477,7 +477,7 @@ class Collections extends Component {
                           onPress={() => this.sortBy('Date')}
                           style={styles.filterView}>
                           <View onPress={() => this.sortBy('Date')} style={styles.filterInnerView}>
-                            <Icon name="swap-vert" size={28} color="#4D4F50" />
+                            <Icon name="swap-vert" size={26} color="#4D4F50" />
                             <Text style={styles.filterInnerText}>Validity Date </Text>
                           </View>
                         </TouchableOpacity>
@@ -953,7 +953,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontFamily: FontFamily.ROBOTO_REGULAR,
     fontWeight: '400',
-    fontSize: 18,
+    fontSize: 15,
     color: '#4D4F50',
   },
   productList: {

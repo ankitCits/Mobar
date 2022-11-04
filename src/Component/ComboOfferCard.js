@@ -36,9 +36,11 @@ class ComboOfferCard extends Component {
                     }}
                     style={{
                         marginTop: 28,
-                        marginRight: 10,
+                        // marginRight: 10,
                         marginHorizontal: 10,
                         marginBottom: 30,
+                        // right:2
+                        paddingRight:20
                     }}>
                     {/* <ImageBackground
                         style={{ alignSelf: 'center', }}

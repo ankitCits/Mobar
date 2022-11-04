@@ -32,17 +32,23 @@ class BarList extends Component {
   }
 
 
-  onFetch = async () => {
+  onFetch = async (text) => {
     try {
       this.setState({ loader: true })
 
       const postData = {
         "type": "", // featured
-        Keyword: this.state.searchString,
+        Keyword: text,
         latitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.latitude : '',
         longitude: this.props.redux.auth.position.isLocation ? this.props.redux.auth.position.longitude : '',
       }
+
+      // Check Send Data
+      console.log("POST_DATA_IN_BAR_SEARCH:",text,":,",postData)
       const res = await fetchVendorList(postData);
+
+      // Check Response Data
+      console.log("RESPONE_BAR_SEARCH:",res)
       this.setState({ hostUrl: res.response.result.hostUrl, data: res.response.result.vendorList, loader: false })
     } catch (error) {
       this.setState({ loader: false });
@@ -52,9 +58,13 @@ class BarList extends Component {
   }
 
   onSearch = (text) => {
+
+    //Text
     console.log(text)
+    //setText
     this.setState({ searchString: text });
-    this.onFetch();
+    // Fetch Detail on the basic of text entered.
+    this.onFetch(text);
   }
 
 

@@ -218,7 +218,7 @@ class ProductCard extends Component {
                                 </TouchableOpacity>
                                 <Text
                                     style={styles.prodName}>
-                                    {this.state.data.name.substring(0, 16)}
+                                    {this.state.data.name}
                                 </Text>
                                 <Text
                                     style={styles.priceText}>
@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
         width: 40,
     },
     prodName: {
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: '500',
         color: '#050505',
         fontFamily: FontFamily.TAJAWAL_REGULAR,
